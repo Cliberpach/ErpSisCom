@@ -1,0 +1,61 @@
+<?php
+
+namespace App\Almacenes;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+
+class DetalleNotaSalidad extends Model
+{
+    protected $table = 'detalle_nota_salidad';
+    protected $fillable = [
+        'id',
+        'nota_salidad_id',
+        'lote_id',
+        'cantidad',
+        'producto_id'
+    ];
+    public $timestamps = true;
+
+    public function nota_salidad(){
+        return $this->belongsTo(NotaSalidad::class,'nota_salidad_id','id');
+    }
+
+    public function producto()
+    {
+        return $this->belongsTo('App\Almacenes\Producto');
+    }
+
+    public function lote()
+    {
+        return $this->belongsTo('App\Almacenes\LoteProducto','lote_id');
+    }
+
+    protected static function booted()
+    {
+        static::created(function(DetalleNotaSalidad $detalle){
+
+            MovimientoNota::create([
+                'cantidad'=> $detalle->cantidad,
+                'observacion'=> $detalle->producto->nombre,
+                'movimiento'=> "SALIDA",
+                'lote_id'=> $detalle->lote_id,
+                'usuario_id'=> Auth()->user()->id,
+                'nota_id'=> $detalle->nota_salidad->id,
+                'producto_id'=> $detalle->producto_id,
+            ]);
+
+            $lote_producto = LoteProducto::findOrFail($detalle->lote_id);
+            $lote_productocantidad = $lote_producto->cantidad - $detalle->cantidad;
+            $lote_productocantidad_logica = $lote_producto->cantidad - $detalle->cantidad;
+            DB::update('update lote_productos set cantidad= ?,cantidad_logica = ? where id = ?', [$lote_productocantidad,$lote_productocantidad_logica,$detalle->lote_id]);
+
+             //RECORRER DETALLE NOTAS
+             $cantidadProductos = LoteProducto::where('producto_id',$detalle->producto_id)->where('estado','1')->sum('cantidad');
+             //ACTUALIZAR EL STOCK DEL PRODUCTO
+             $producto = Producto::findOrFail($detalle->producto_id);
+             $producto->stock = $cantidadProductos;
+             $producto->update();            
+        });
+    }
+}
