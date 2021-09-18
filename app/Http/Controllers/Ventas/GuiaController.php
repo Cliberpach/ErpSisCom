@@ -205,6 +205,7 @@ class GuiaController extends Controller
     public function show($id)
     {
         $guia = Guia::findOrFail($id);
+        return $guia->documento;
         if ($guia->sunat == '0' || $guia->sunat == '2' ) {
             //ARREGLO GUIA
             $arreglo_guia = array(
@@ -341,6 +342,7 @@ class GuiaController extends Controller
 
                             "details" =>  self::obtenerProductos($guia),
                     );
+                    
                     $data = enviarGuiaapi(json_encode($arreglo_guia));
                     //RESPUESTA DE LA SUNAT EN JSON
                     $json_sunat = json_decode($data);

@@ -935,11 +935,11 @@ function validarCertificado() {
     var correcto = true
     if ( $('#estado_fe').prop("checked") ) {
 
-        if ($('#estado_certificado').val() != "VERIFICADO") {
-            correcto = false
-            toastr.error("Certitificado Incorrecto.", 'Error');
-            $('#facturacion_link').click();
-        }
+        // if ($('#estado_certificado').val() != "VERIFICADO") {
+        //     correcto = false
+        //     toastr.error("Certitificado Incorrecto.", 'Error');
+        //     $('#facturacion_link').click();
+        // }
 
         if ($('#soap_usuario').val() == "") {
             correcto = false
@@ -975,7 +975,7 @@ function validarCertificado() {
         }
     }
 
-    
+    console.log(correcto);
     return correcto
 }
 
@@ -1029,6 +1029,7 @@ $('#enviar_empresa').submit(function(e) {
 
                             if (validarCertificado() == true) {
 
+                                console.log('validado');
                                 if ($('#estado').val() == "ACTIVO" || $('#estado').val() == "SIN VERIFICAR" ) {
                                     $("#estado").prop('disabled', false)
                                     $("#estado_dni_representante").prop('disabled', false)
@@ -1049,6 +1050,7 @@ $('#enviar_empresa').submit(function(e) {
                                     })
 
                                 } else {
+                                    console.log('no validado');
                                     $("#estado").prop('disabled', true)
                                     $("#estado_dni_representante").prop('disabled', true)
                                     toastr.error('Ingrese una empresa activa o sin verificar', 'Error');
@@ -1066,8 +1068,9 @@ $('#enviar_empresa').submit(function(e) {
                 }else{
 
                     if (validarCertificado() == true) {
-
+                        console.log('validar si')
                         if ($('#estado').val() == "ACTIVO" || $('#estado').val() == "SIN VERIFICAR") {
+                            console.log('validar si si')
                             $("#estado").prop('disabled', false)
                             $("#estado_dni_representante").prop('disabled', false)
                             cargarEntidades()
@@ -1084,6 +1087,7 @@ $('#enviar_empresa').submit(function(e) {
                                 }
                             })
                         } else {
+                            console.log('validar no')
                             $("#estado").prop('disabled', true)
                             $("#estado_dni_representante").prop('disabled', true)
                             toastr.error('Ingrese una empresa activa', 'Error');

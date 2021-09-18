@@ -16,10 +16,10 @@ class EmpresaSeeder extends Seeder
     {
         //Agroensancha S.R.L
         $empresa = new Empresa();
-        $empresa->ruc = '12345678912';
-        $empresa->razon_social = 'SISTEMAS XY S.R.L.';
-        $empresa->razon_social_abreviada = 'SISTEMAS XY S.R.L.';
-        $empresa->direccion_fiscal = 'AV. JUAN PABLO #9854 - LA LIBERTAD - TRUJILLO - TRUJILLO';
+        $empresa->ruc = '10706602009';
+        $empresa->razon_social = 'ESCOBEDO PEREZ GRISELDA';
+        $empresa->razon_social_abreviada = 'ESCOBEDO PEREZ GRISELDA';
+        $empresa->direccion_fiscal = 'Av. Cesar Vallejo 429 Urb. Palermo - Trujillo';
         $empresa->direccion_llegada = 'TRUJILLO';
         $empresa->dni_representante = '70004110';
         $empresa->nombre_representante = 'NOMBRE APELLIDOPAT APELLIDOMAT';

@@ -812,16 +812,19 @@ $(document).ready(function(){
     $("#tipo_comprobante").on('change', function () {
         $("#tipo_comprobante option:selected").each(function () {
             seleccionado = $(this).val();
-            var url = '{{ route("serie.empresa.facturacion", ":id")}}';
-            url = url.replace(':id',seleccionado);
-            $.ajax({
-                url: url,
-                type:'get',
-                success:  function (response) {
-                    console.log(response)
-                    $('#serie_comprobante').val($.trim(response));
-                },              
-            });
+            if(seleccionado != '')
+            {
+                var url = '{{ route("serie.empresa.facturacion", ":id")}}';
+                url = url.replace(':id',seleccionado);
+                $.ajax({
+                    url: url,
+                    type:'get',
+                    success:  function (response) {
+                        console.log(response)
+                        $('#serie_comprobante').val($.trim(response));
+                    },              
+                });
+            }
         });
    });
 });

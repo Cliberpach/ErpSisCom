@@ -16,7 +16,7 @@ class ParametroController extends Controller
 
         $url = "https://apiperu.dev/api/ruc/".$ruc;
         $client = new \GuzzleHttp\Client();
-        $token = '4b297f3cf07f893870d7d3db9b22e10ea47a8340e2bef32a3b8ca94153ae5a1c';
+        $token = 'c36358c49922c564f035d4dc2ff3492fbcfd31ee561866960f75b79f7d645d7d';
         $response = $client->get($url, [
             'headers' => [
                         'Content-Type' => 'application/json', 
@@ -38,7 +38,7 @@ class ParametroController extends Controller
 
         $url = "https://apiperu.dev/api/dni/".$dni;
             $client = new \GuzzleHttp\Client();
-            $token = '4b297f3cf07f893870d7d3db9b22e10ea47a8340e2bef32a3b8ca94153ae5a1c';
+            $token = 'c36358c49922c564f035d4dc2ff3492fbcfd31ee561866960f75b79f7d645d7d';
             $response = $client->get($url, [
                 'headers' => [
                             'Content-Type' => 'application/json', 

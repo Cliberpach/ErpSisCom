@@ -1435,11 +1435,11 @@
 
         if ($('#estado_fe').val()) {
             if ( $('#estado_fe').prop("checked")  ) {
-                if ($('#estado_certificado').val() != "VERIFICADO") {
-                    correcto = false
-                    toastr.error("Certitificado Incorrecto.", 'Error');
-                    $('#facturacion_link').click();
-                }
+                // if ($('#estado_certificado').val() != "VERIFICADO") {
+                //     correcto = false
+                //     toastr.error("Certitificado Incorrecto.", 'Error');
+                //     $('#facturacion_link').click();
+                // }
 
                 if ($('#logo_txt').text() == 'Seleccionar') {
                     correcto = false

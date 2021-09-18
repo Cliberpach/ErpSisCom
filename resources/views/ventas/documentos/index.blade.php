@@ -222,7 +222,6 @@ $(document).ready(function() {
                         "<li><a class='dropdown-item' target='_blank' onclick='comprobanteElectronico(" +data.id+ ")' title='Detalle'><b><i class='fa fa-eye'></i> Detalle</a></b></li>" +
                         "<li><a class='dropdown-item' onclick='eliminar(" + data.id + ")' title='Eliminar'><b><i class='fa fa-trash'></i> Eliminar</a></b></li>" +
                         "<li class='dropdown-divider'></li>" +
-                        "<li><a class='dropdown-item' onclick='pagar(" +data.id+","+data.tipo_pago+  ")'  title='Pagar'><b><i class='fa fa-money'></i> Pagar</a></b></li>" +
                         "<li><a class='dropdown-item' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-file'></i> Enviar Sunat</a></b></li>" +
                         "<li><a class='dropdown-item' onclick='guia(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-file'></i> Guia Remision</a></b></li>"
                         

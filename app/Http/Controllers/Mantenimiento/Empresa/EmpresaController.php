@@ -178,16 +178,15 @@ class EmpresaController extends Controller
 
             $json_empresa = json_encode($empresa_facturacion);
             //AGREGAR EMPRESA "FACTURACION ELECTRONICA"
-            $facturado = json_decode((agregarEmpresaapi($json_empresa)));
+            //$facturado = json_decode((agregarEmpresaapi($json_empresa)));
             //Facturacion Electronica (GUARDAR DATOS INGRESADO POR API)
             $facturacion = new Facturacion();
             $facturacion->empresa_id = $empresa->id; //RELACION CON LA EMPRESA
-            $facturacion->fe_id = $facturado->id; //ID EMPRESA API
-            $facturacion->sol_user = $facturado->sol_user;
-            $facturacion->sol_pass = $facturado->sol_pass;
-            $facturacion->plan = $facturado->plan->nombre;
-            $facturacion->ambiente = $facturado->environment->nombre;
-            $facturacion->ruta_certificado_pem = $facturado->certificado;
+            $facturacion->fe_id = 1048; //ID EMPRESA API
+            $facturacion->sol_user = $request->get('soap_usuario');
+            $facturacion->sol_pass = $request->get('soap_password');
+            $facturacion->plan = 'free';
+            $facturacion->ambiente = 'beta';
             $facturacion->certificado =  $request->get('certificado_base');
             $facturacion->save();
 
@@ -338,7 +337,6 @@ class EmpresaController extends Controller
             'instagram' => 'nullable',
             'estado_fe' => 'nullable',
             'logo' => 'image|mimetypes:image/jpeg,image/png,image/jpg|max:40000',
-            'certificado_base' => 'required_if:estado_fe,==,1',
             'soap_usuario' => 'required_if:estado_fe,==,1',
             'soap_password' => 'required_if:estado_fe,==,1',
 
@@ -469,35 +467,33 @@ class EmpresaController extends Controller
             if ($facturacion) {
                 
                 //MODIFICAR EMPRESA "FACTURACION ELECTRONICA"
-                $facturado = json_decode((modificarEmpresaapi($json_empresa,$facturacion->fe_id)));
+
+                //$facturado = json_decode((modificarEmpresaapi($json_empresa,$facturacion->fe_id)));
 
                 //Facturacion Electronica (GUARDAR DATOS INGRESADO POR API)
                 $facturacion = Facturacion::findOrFail($facturacion->id);
+                $facturacion->certificado =  $request->get('certificado_base');
                 $facturacion->empresa_id = $empresa->id; //RELACION CON LA EMPRESA
-                // $facturacion->fe_id = $facturado->id; //ID EMPRESA API
-                $facturacion->sol_user = $facturado->sol_user;
-                $facturacion->sol_pass = $facturado->sol_pass;
-                $facturacion->plan = $facturado->plan->nombre;
-                $facturacion->ambiente = $facturado->environment->nombre;
-                // $facturacion->logo =  base64_encode($contenidoImagen);
-                $facturacion->ruta_certificado_pem = $facturado->certificado;
+                $facturacion->fe_id = 1048; //ID EMPRESA API
+                $facturacion->sol_user = $request->get('soap_usuario');
+                $facturacion->sol_pass = $request->get('soap_password');
+                $facturacion->plan = 'free';
+                $facturacion->ambiente = 'beta';
                 $facturacion->certificado =  $request->get('certificado_base');
                 $facturacion->update();
             
             }else{
               
                 //AGREGAR EMPRESA "FACTURACION ELECTRONICA"
-                $agregar_api = json_decode((agregarEmpresaapi($json_empresa)));
+                //$agregar_api = json_decode((agregarEmpresaapi($json_empresa)));
                 //Facturacion Electronica (GUARDAR DATOS INGRESADO POR API)
                 $nueva_factura = new Facturacion();
                 $nueva_factura->empresa_id = $empresa->id; //RELACION CON LA EMPRESA
-                $nueva_factura->fe_id = $agregar_api->id; //ID EMPRESA API
-                $nueva_factura->sol_user = $agregar_api->sol_user;
-                $nueva_factura->sol_pass = $agregar_api->sol_pass;
-                $nueva_factura->plan = $agregar_api->plan->nombre;
-                $nueva_factura->ambiente = $agregar_api->environment->nombre;
-                // $nueva_factura->logo =  base64_encode($contenidoImagen);
-                $nueva_factura->ruta_certificado_pem = $agregar_api->certificado;
+                $nueva_factura->fe_id = 1048; //ID EMPRESA API
+                $nueva_factura->sol_user = $request->get('soap_usuario');
+                $nueva_factura->sol_pass = $request->get('soap_password');
+                $nueva_factura->plan = 'free';
+                $nueva_factura->ambiente = 'beta';
                 $nueva_factura->certificado =  $request->get('certificado_base');
                 $nueva_factura->save();
             }
