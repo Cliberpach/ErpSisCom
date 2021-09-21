@@ -921,7 +921,7 @@
 
         function sumaTotal() {
             var t = $('.dataTables-detalle-documento').DataTable();
-            let subtotal = 0.00;
+            let total = 0.00;
             let detalles = [];
 
             @if (!empty($cotizacion))
@@ -935,7 +935,7 @@
                         let valor_unitario = precio_unitario / (1 + igv_calculado);
                         let dinero = precio_unitario * (pdescuento / 100);
                         let precio_nuevo = precio_unitario - dinero;
-                        let valor_venta = (precio_nuevo * el[2]) / (1 + igv_calculado);
+                        let valor_venta = precio_nuevo * el[2];
 
                         let detalle = {
                             producto_id: el[0],
@@ -964,10 +964,10 @@
                     }
 
                     t.rows().data().each(function(el, index) {
-                        subtotal = Number(el[9]) + subtotal
+                        total = Number(el[9]) + total
                     });
 
-                    conIgv(convertFloat(subtotal),convertFloat('{{$cotizacion->igv}}'))
+                    conIgv(convertFloat(total),convertFloat('{{$cotizacion->igv}}'))
                 @else
                     t.rows().data().each(function(el, index) {
                         let igv = convertFloat(18);
@@ -978,7 +978,7 @@
                         let valor_unitario = precio_unitario / 1.18;              
                         let dinero = precio_unitario * (pdescuento / 100);
                         let precio_nuevo = precio_unitario - dinero;
-                        let valor_venta = (precio_nuevo * el[2]) / (1 + igv_calculado);
+                        let valor_venta = precio_nuevo * el[2];
                         // let precio_unitario = precio_inicial;
                         // let valor_unitario = precio_unitario / (1 + igv_calculado);
                         // let dinero = precio_unitario * (pdescuento / 100);
@@ -1012,10 +1012,10 @@
                     }
 
                     t.rows().data().each(function(el, index) {
-                        subtotal = Number(el[9]) + subtotal
+                        total = Number(el[9]) + total
                     });
 
-                    conIgv(convertFloat(subtotal), convertFloat(18))
+                    conIgv(convertFloat(total), convertFloat(18))
 
                 @endif
             @else
@@ -1028,7 +1028,7 @@
                     let valor_unitario = precio_unitario / (1 + igv_calculado);
                     let dinero = precio_unitario * (pdescuento / 100);
                     let precio_nuevo = precio_unitario - dinero;
-                    let valor_venta = (precio_nuevo * el[2]) / (1 + igv_calculado);
+                    let valor_venta = precio_nuevo * el[2];
 
                     let detalle = {
                         producto_id: el[0],
@@ -1057,24 +1057,17 @@
                 }
 
                 t.rows().data().each(function(el, index) {
-                    subtotal = Number(el[9]) + subtotal
+                    total = Number(el[9]) + total
                 });
 
-                conIgv(convertFloat(subtotal),convertFloat(18))
+                conIgv(convertFloat(total),convertFloat(18))
             @endif
             
 
         }
 
-        function sinIgv(subtotal) {
-            $('#igv_int').text('0%')
-            $('#subtotal').text(subtotal.toFixed(2))
-            $('#igv_monto').text(0.00)
-            $('#total').text(subtotal.toFixed(2))
-        }
-
-        function conIgv(subtotal, igv) {
-            let total = subtotal * (1 + (igv / 100));
+        function conIgv(total, igv) {
+            let subtotal = total / (1 + (igv / 100));
             let igv_calculado =  total - subtotal;
             $('#igv_int').text(igv + '%')
             $('#subtotal').text((Math.round(subtotal * 10) / 10).toFixed(2))

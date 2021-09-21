@@ -69,12 +69,12 @@ class ComprobanteController extends Controller
                 "descripcion"=> $detalles[$i]->nombre_producto.' - '.$detalles[$i]->codigo_lote,
                 "cantidad" => (float)$detalles[$i]->cantidad,
                 "mtoValorUnitario" => (float)($detalles[$i]->precio_nuevo / 1.18),
-                "mtoValorVenta" => (float)$detalles[$i]->valor_venta,
-                "mtoBaseIgv" => (float)$detalles[$i]->valor_venta, 
+                "mtoValorVenta" => (float)($detalles[$i]->valor_venta / 1.18),
+                "mtoBaseIgv" => (float)($detalles[$i]->valor_venta / 1.18), 
                 "porcentajeIgv" => 18,
-                "igv" => (float)(($detalles[$i]->valor_venta * 1.18) - ($detalles[$i]->valor_venta / 1.18)),
+                "igv" => (float)($detalles[$i]->valor_venta - ($detalles[$i]->valor_venta / 1.18)),
                 "tipAfeIgv" => 10,
-                "totalImpuestos" =>  (float)(($detalles[$i]->valor_venta * 1.18) - ($detalles[$i]->valor_venta / 1.18)),
+                "totalImpuestos" =>  (float)($detalles[$i]->valor_venta - ($detalles[$i]->valor_venta / 1.18)),
                 "mtoPrecioUnitario" => (float)$detalles[$i]->precio_nuevo
 
             );
@@ -138,7 +138,7 @@ class ComprobanteController extends Controller
                         "legends" =>  self::obtenerLeyenda($documento),
                     );
 
-                    //return $arreglo_comprobante;
+                    // return $arreglo_comprobante;
                     //OBTENER JSON DEL COMPROBANTE EL CUAL SE ENVIARA A SUNAT
                     $data = enviarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
 
