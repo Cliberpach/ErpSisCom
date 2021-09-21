@@ -74,15 +74,15 @@ class GenerarComprobante
                 "codProducto" => $detalles[$i]->codigo_producto,
                 "unidad" => $detalles[$i]->unidad,
                 "descripcion"=> $detalles[$i]->nombre_producto.' - '.$detalles[$i]->codigo_lote,
-                "cantidad" => $detalles[$i]->cantidad,
-                "mtoValorUnitario" => $detalles[$i]->precio / 1.18,
-                "mtoValorVenta" => ($detalles[$i]->precio / 1.18) * $detalles[$i]->cantidad,
-                "mtoBaseIgv" => ($detalles[$i]->precio / 1.18) * $detalles[$i]->cantidad, 
+                "cantidad" => (float)$detalles[$i]->cantidad,
+                "mtoValorUnitario" => (float)($detalles[$i]->precio_nuevo / 1.18),
+                "mtoValorVenta" => (float)($detalles[$i]->valor_venta / 1.18),
+                "mtoBaseIgv" => (float)($detalles[$i]->valor_venta / 1.18), 
                 "porcentajeIgv" => 18,
-                "igv" => ($detalles[$i]->precio - ($detalles[$i]->precio / 1.18 )) * $detalles[$i]->cantidad,
+                "igv" => (float)($detalles[$i]->valor_venta - ($detalles[$i]->valor_venta / 1.18)),
                 "tipAfeIgv" => 10,
-                "totalImpuestos" =>  ($detalles[$i]->precio - ($detalles[$i]->precio / 1.18 )) * $detalles[$i]->cantidad,
-                "mtoPrecioUnitario" => $detalles[$i]->precio
+                "totalImpuestos" =>  (float)($detalles[$i]->valor_venta - ($detalles[$i]->valor_venta / 1.18)),
+                "mtoPrecioUnitario" => (float)$detalles[$i]->precio_nuevo
 
             );
         }

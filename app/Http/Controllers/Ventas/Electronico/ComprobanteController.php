@@ -138,7 +138,7 @@ class ComprobanteController extends Controller
                         "legends" =>  self::obtenerLeyenda($documento),
                     );
 
-                    // return $arreglo_comprobante;
+                    //return $arreglo_comprobante;
                     //OBTENER JSON DEL COMPROBANTE EL CUAL SE ENVIARA A SUNAT
                     $data = enviarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
 
@@ -149,6 +149,7 @@ class ComprobanteController extends Controller
                         $documento->sunat = '1';
         
                         $data_comprobante = generarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
+
                         $name = $existe[0]->get('numeracion')->serie."-".$documento->correlativo.'.pdf';
                         
                         $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'.DIRECTORY_SEPARATOR.$name);

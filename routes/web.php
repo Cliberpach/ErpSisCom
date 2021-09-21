@@ -315,6 +315,7 @@ function(){
         Route::get('reporte/{id}','Ventas\DocumentoController@report')->name('ventas.documento.reporte');
         Route::get('tipoPago/{id}','Ventas\DocumentoController@TypePay')->name('ventas.documento.tipo_pago.existente');
         Route::get('comprobante/{id}','Ventas\DocumentoController@voucher')->name('ventas.documento.comprobante');
+        Route::get('xml/{id}','Ventas\DocumentoController@xml')->name('ventas.documento.xml');
 
         Route::post('cantidad', 'Ventas\DocumentoController@quantity')->name('ventas.documento.cantidad');
         Route::post('devolver/cantidad', 'Ventas\DocumentoController@returnQuantity')->name('ventas.documento.devolver.cantidades');

@@ -622,7 +622,8 @@
                         "targets": [4],
                     },
                     {
-                        "targets": [5],
+                        "targets": [5],                        
+                        'visible': false
                     },
                     {
                         "targets": [6],

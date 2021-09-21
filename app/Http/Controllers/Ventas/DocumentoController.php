@@ -560,15 +560,15 @@ class DocumentoController extends Controller
                 "codProducto" => $detalles[$i]->codigo_producto,
                 "unidad" => $detalles[$i]->unidad,
                 "descripcion"=> $detalles[$i]->nombre_producto.' - '.$detalles[$i]->codigo_lote,
-                "cantidad" => $detalles[$i]->cantidad,
-                "mtoValorUnitario" => $detalles[$i]->precio / 1.18,
-                "mtoValorVenta" => ($detalles[$i]->precio / 1.18) * $detalles[$i]->cantidad,
-                "mtoBaseIgv" => ($detalles[$i]->precio / 1.18) * $detalles[$i]->cantidad,
+                "cantidad" => (float)$detalles[$i]->cantidad,
+                "mtoValorUnitario" => (float)($detalles[$i]->precio_nuevo / 1.18),
+                "mtoValorVenta" => (float)($detalles[$i]->valor_venta / 1.18),
+                "mtoBaseIgv" => (float)($detalles[$i]->valor_venta / 1.18), 
                 "porcentajeIgv" => 18,
-                "igv" => ($detalles[$i]->precio - ($detalles[$i]->precio / 1.18 )) * $detalles[$i]->cantidad,
+                "igv" => (float)($detalles[$i]->valor_venta - ($detalles[$i]->valor_venta / 1.18)),
                 "tipAfeIgv" => 10,
-                "totalImpuestos" =>  ($detalles[$i]->precio - ($detalles[$i]->precio / 1.18 )) * $detalles[$i]->cantidad,
-                "mtoPrecioUnitario" => $detalles[$i]->precio
+                "totalImpuestos" =>  (float)($detalles[$i]->valor_venta - ($detalles[$i]->valor_venta / 1.18)),
+                "mtoPrecioUnitario" => (float)$detalles[$i]->precio_nuevo
 
             );
         }
@@ -652,6 +652,138 @@ class DocumentoController extends Controller
 
 
 
+    }
+
+    public function xml($id)
+    {
+
+        $documento = Documento::findOrFail($id);
+        if ($documento->sunat == '0' || $documento->sunat == '2' ) {
+            //ARREGLO COMPROBANTE
+            $arreglo_comprobante = array(
+                "tipoOperacion" => $documento->tipoOperacion(),
+                "tipoDoc"=> $documento->tipoDocumento(),
+                "serie" => '000',
+                "correlativo" => '000',
+                "fechaEmision" => self::obtenerFecha($documento),
+                "observacion" => $documento->observacion,
+                "tipoMoneda" => $documento->simboloMoneda(),
+                "client" => array(
+                    "tipoDoc" => $documento->tipoDocumentoCliente(),
+                    "numDoc" => $documento->documento_cliente,
+                    "rznSocial" => $documento->cliente,
+                    "address" => array(
+                        "direccion" => $documento->direccion_cliente,
+                    )),
+                "company" => array(
+                    "ruc" =>  $documento->ruc_empresa,
+                    "razonSocial" => $documento->empresa,
+                    "address" => array(
+                        "direccion" => $documento->direccion_fiscal_empresa,
+                    )),
+                "mtoOperGravadas" => $documento->sub_total,
+                "mtoOperExoneradas" => 0,
+                "mtoIGV" => $documento->total_igv,
+
+                "valorVenta" => $documento->sub_total,
+                "totalImpuestos" => $documento->total_igv,
+                "mtoImpVenta" => $documento->total ,
+                "ublVersion" => "2.1",
+                "details" => self::obtenerProductos($documento->id),
+                "legends" =>  self::obtenerLeyenda($documento),
+            );
+
+            $comprobante= json_encode($arreglo_comprobante);
+            $data = generarXmlapi($comprobante, $documento->empresa_id);
+            return $data;
+            $name = $documento->id.'.xml';
+            $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
+            if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'))) {
+                mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'));
+            }
+            file_put_contents($pathToFile, $data);
+            return response()->file($pathToFile);
+
+        }else{
+
+            //OBTENER CORRELATIVO DEL COMPROBANTE ELECTRONICO
+            $comprobante = event(new ComprobanteRegistrado($documento,$documento->serie));
+            //ENVIAR COMPROBANTE PARA LUEGO GENERAR XML
+            $data = generarXmlapi($comprobante[0],$documento->empresa_id);
+            $name = $documento->id.'.xml';
+            $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
+            if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'))) {
+                mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'));
+            }
+            file_put_contents($pathToFile, $data);
+            return response()->file($pathToFile);
+        }
+    }
+
+    public function qr($id)
+    {
+
+        $documento = Documento::findOrFail($id);
+        if ($documento->sunat == '0' || $documento->sunat == '2' ) {
+            //ARREGLO COMPROBANTE
+            $arreglo_comprobante = array(
+                "tipoOperacion" => $documento->tipoOperacion(),
+                "tipoDoc"=> $documento->tipoDocumento(),
+                "serie" => '000',
+                "correlativo" => '000',
+                "fechaEmision" => self::obtenerFecha($documento),
+                "observacion" => $documento->observacion,
+                "tipoMoneda" => $documento->simboloMoneda(),
+                "client" => array(
+                    "tipoDoc" => $documento->tipoDocumentoCliente(),
+                    "numDoc" => $documento->documento_cliente,
+                    "rznSocial" => $documento->cliente,
+                    "address" => array(
+                        "direccion" => $documento->direccion_cliente,
+                    )),
+                "company" => array(
+                    "ruc" =>  $documento->ruc_empresa,
+                    "razonSocial" => $documento->empresa,
+                    "address" => array(
+                        "direccion" => $documento->direccion_fiscal_empresa,
+                    )),
+                "mtoOperGravadas" => $documento->sub_total,
+                "mtoOperExoneradas" => 0,
+                "mtoIGV" => $documento->total_igv,
+
+                "valorVenta" => $documento->sub_total,
+                "totalImpuestos" => $documento->total_igv,
+                "mtoImpVenta" => $documento->total ,
+                "ublVersion" => "2.1",
+                "details" => self::obtenerProductos($documento->id),
+                "legends" =>  self::obtenerLeyenda($documento),
+            );
+
+            $comprobante= json_encode($arreglo_comprobante);
+            $data = generarXmlapi($comprobante, $documento->empresa_id);
+            return $data;
+            $name = $documento->id.'.xml';
+            $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
+            if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'))) {
+                mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'));
+            }
+            file_put_contents($pathToFile, $data);
+            return response()->file($pathToFile);
+
+        }else{
+
+            //OBTENER CORRELATIVO DEL COMPROBANTE ELECTRONICO
+            $comprobante = event(new ComprobanteRegistrado($documento,$documento->serie));
+            //ENVIAR COMPROBANTE PARA LUEGO GENERAR XML
+            $data = generarXmlapi($comprobante[0],$documento->empresa_id);
+            $name = $documento->id.'.xml';
+            $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
+            if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'))) {
+                mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'));
+            }
+            file_put_contents($pathToFile, $data);
+            return response()->file($pathToFile);
+        }
     }
 
     public function vouchersAvaible(Request $request)

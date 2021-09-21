@@ -104,6 +104,7 @@ class ProductoController extends Controller
             $producto->almacen_id = $request->get('almacen');
             $producto->categoria_id = $request->get('categoria');
             $producto->medida = $request->get('medida');
+            $producto->peso_producto = $request->get('peso_producto') ? $request->get('peso_producto') : 0;
             $producto->stock_minimo = $request->get('stock_minimo');
             $producto->precio_venta_minimo = $request->get('precio_venta_minimo');
             $producto->precio_venta_maximo = $request->get('precio_venta_maximo');
@@ -205,6 +206,7 @@ class ProductoController extends Controller
         $producto->almacen_id = $request->get('almacen');
         $producto->categoria_id = $request->get('categoria');
         $producto->medida = $request->get('medida');
+        $producto->peso_producto = $request->get('peso_producto') ? $request->get('peso_producto') : 0;
         $producto->stock_minimo = $request->get('stock_minimo');
         $producto->precio_venta_minimo = $request->get('precio_venta_minimo');
         $producto->precio_venta_maximo = $request->get('precio_venta_maximo');

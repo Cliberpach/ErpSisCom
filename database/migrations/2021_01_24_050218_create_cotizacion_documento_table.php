@@ -40,7 +40,7 @@ class CreateCotizacionDocumentoTable extends Migration
             $table->unsignedDecimal('efectivo', 15, 2)->nullable()->default(0.00);
             $table->unsignedDecimal('importe', 15, 2)->nullable()->default(0.00);
 
-            $table->string('tipo_pago')->nullable();
+            $table->longText('xml')->nullable();
             
             $table->string('igv_check',2)->nullable();
             $table->char('igv',3)->nullable();

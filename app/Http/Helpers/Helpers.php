@@ -718,17 +718,16 @@ if (!function_exists('generarXmlapi')) {
 
         $estado = $response->getStatusCode();
 
-        return $response->getBody()->getContents();
+        return $response->getBody();
 
 
 
         // dd( $response->getBody()->getContents());
-        if ($estado=='200'){
+        if ($estado == '200'){
 
             $resultado = $response->getBody()->getContents();
             json_decode($resultado);
             return $resultado;
-
         }
     }
 }
