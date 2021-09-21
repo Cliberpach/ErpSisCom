@@ -22,6 +22,7 @@ use App\Mantenimiento\Parametro\Parametro;
 use GuzzleHttp\Client;
 use App\Mantenimiento\Empresa\Facturacion;
 use App\Mantenimiento\Vendedor\Vendedor;
+use App\Pos\Caja;
 use App\Ventas\TipoPago;
 use Illuminate\Support\Facades\DB;
 
@@ -884,7 +885,22 @@ if (!function_exists('actualizarStockLotes')) {
     }
 }
 
+if(!function_exists('turnos'))
+{
+    function turnos()
+    {
+       return General::find(30)->detalles;
+    }
 
+}
+if(!function_exists('cajas'))
+{
+    function cajas()
+    {
+       return Caja::where('estado_caja','CERRADA')->get();
+    }
+
+}
 
 
 

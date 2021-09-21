@@ -14,13 +14,23 @@
                 <form role="form" action="{{ route('Caja.apertura') }}" method="POST" id="crear_caja_chica">
                     {{ csrf_field() }} {{ method_field('POST') }}
                     <div class="form-group">
+                        <label for="">Cajas</label>
+                        <select name="caja" id="caja" class="form-control select2_form" required>
+                            <option value=""></option>
+                            @foreach (cajas() as $caja)
+                                <option value="{{ $caja->id }}">{{ $caja->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label class="required">Colaborador:</label>
-                        <select class="form-control select2_form"
-                            style="text-transform: uppercase; width:100%"
+                        <select class="form-control select2_form" style="text-transform: uppercase; width:100%"
                             name="colaborador_id" id="colaborador_id" required>
                             <option></option>
-                            @foreach ($colaboradores as $colaborador )
-                            <option value="{{$colaborador->id}}">{{$colaborador->persona->apellido_paterno." ".$colaborador->persona->apellido_paterno." ".$colaborador->persona->nombre}}</option>
+                            @foreach ($colaboradores as $colaborador)
+                                <option value="{{ $colaborador->id }}">
+                                    {{ $colaborador->persona->apellido_paterno . ' ' . $colaborador->persona->apellido_paterno . ' ' . $colaborador->persona->nombre }}
+                                </option>
                             @endforeach
 
                         </select>
@@ -30,8 +40,7 @@
                             <label class="required">Saldo Inicial:</label>
                             <input type="text"
                                 class="form-control {{ $errors->has('saldo_inicial') ? ' is-invalid' : '' }}"
-                                id="saldo_inicial" name="saldo_inicial" value="{{ old('saldo_inicial') }}"
-                                 required>
+                                id="saldo_inicial" name="saldo_inicial" value="{{ old('saldo_inicial') }}" required>
                         </div>
                     </div>
             </div>

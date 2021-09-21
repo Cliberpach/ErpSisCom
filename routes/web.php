@@ -369,7 +369,8 @@ function(){
 
     });
     Route::prefix('caja')->group(function () {
-        Route::get('index','Pos\CajaController@index')->name('Caja.index');
+        Route::get('/index','Pos\Cajacontroller@index')->name('Caja.index');
+        Route::get('index/movimiento','Pos\CajaController@indexMovimiento')->name('Caja.Movimiento.index');
         Route::get('getMovimientosCajas','Pos\CajaController@getMovimientosCajas')->name('Caja.get_movimientos_cajas');
         Route::post('aperturaCaja','Pos\Cajacontroller@aperturaCaja')->name('Caja.apertura');
         Route::post('cerrarCaja','Pos\Cajacontroller@cerrarCaja')->name('Caja.cerrar');
@@ -384,6 +385,7 @@ function(){
         Route::post('update/{id}','Egresocontroller@update')->name('Egreso.update');
         Route::get('destroy/{id}','Egresocontroller@destroy')->name('Egreso.destroy');
     });
+
 });
 
 Route::get('ruta', function () {

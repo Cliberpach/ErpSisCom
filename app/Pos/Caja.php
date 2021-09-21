@@ -8,7 +8,7 @@ class Caja extends Model
 {
     protected $table="caja";
     protected $fillable=[
-        'nombre'
+        'nombre','estado','estado_caja'
     ];
     public $timestamps = true;
     public function movimientos()

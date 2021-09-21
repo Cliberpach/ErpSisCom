@@ -1,7 +1,7 @@
 @extends('layout') @section('content')
-    @include('pos.caja.create')
-    @include('pos.caja.cerrar')
- {{--@include('pos.caja_chica.edit') --}}
+    @include('pos.MovimientoCaja.create')
+    @include('pos.MovimientoCaja.cerrar')
+    {{-- @include('pos.caja_chica.edit') --}}
 @section('caja_chica-active', 'active')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10 col-md-10">
@@ -44,6 +44,7 @@
                                     <th class="text-center">CANTIDAD CIERRE</th>
                                     <th class="text-center">FECHA APERTURA</th>
                                     <th class="text-center">FECHA CIERRE</th>
+                                    <th class="text-center">ACCIONES</th>
                                 </tr>
                             </thead>
                         </table>
@@ -61,6 +62,7 @@
     .my-swal {
         z-index: 3000 !important;
     }
+
 </style>
 @endpush
 @push('scripts')
@@ -127,6 +129,13 @@
                 data: 'fecha_Cierre',
                 className: "text-center"
             },
+            {
+            data: null,
+            "render": function(data, type, row, meta) {
+                return "-"
+            }
+        }
+
 
         ],
         "language": {
@@ -139,30 +148,31 @@
 
 
     });
-    $(".btn-modal").click(function (e) {
+    $(".btn-modal").click(function(e) {
         e.preventDefault();
-        axios.get("{{route('Caja.estado')}}").then((value) => {
-                if(value.data=="Sin Aperturar")
-                {
-                    $("#modal_crear_caja").modal("show");
-                }
-                else{
-                    axios.get("{{route('Caja.datos.cierre')}}").then((value) => {
-                        var datos=value.data;
-                        $("#modal_cerrar_caja #colaborador").val(datos.colaborador);
-                        $("#modal_cerrar_caja #monto_inicial").val(datos.monto_inicial);
-                        $("#modal_cerrar_caja #ingreso").val(datos.ingresos);
-                        $("#modal_cerrar_caja #egreso").val(datos.egresos);
-                        $("#modal_cerrar_caja #saldo").val(datos.saldo);
-                        $("#modal_cerrar_caja").modal("show");
-                    }).catch((value) => {
+        $("#modal_crear_caja").modal("show");
+        // axios.get("{{ route('Caja.estado') }}").then((value) => {
+        //         if(value.data=="Sin Aperturar")
+        //         {
+        //             $("#modal_crear_caja").modal("show");
+        //         }
+        //         else{
+        //             axios.get("{{ route('Caja.datos.cierre') }}").then((value) => {
+        //                 var datos=value.data;
+        //                 $("#modal_cerrar_caja #colaborador").val(datos.colaborador);
+        //                 $("#modal_cerrar_caja #monto_inicial").val(datos.monto_inicial);
+        //                 $("#modal_cerrar_caja #ingreso").val(datos.ingresos);
+        //                 $("#modal_cerrar_caja #egreso").val(datos.egresos);
+        //                 $("#modal_cerrar_caja #saldo").val(datos.saldo);
+        //                 $("#modal_cerrar_caja").modal("show");
+        //             }).catch((value) => {
 
-                    })
+        //             })
 
-                }
-        }).catch((value) => {
+        //         }
+        // }).catch((value) => {
 
-        })
+        // })
 
     });
 </script>

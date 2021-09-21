@@ -700,7 +700,7 @@ class TablaDetalleSeeder extends Seeder
         $detalle->tabla_id = 13;
         $detalle->save();
 
-        
+
         $detalle = new Detalle();
         $detalle->descripcion = "ONZAS";
         $detalle->simbolo = "ONZ";
@@ -1233,7 +1233,7 @@ class TablaDetalleSeeder extends Seeder
         $tipo = new TipoPago();
         $tipo->descripcion = "TRANSFERENCIA";
         $tipo->simbolo = 'MT';
-        $tipo->estado = 'ACTIVO';        
+        $tipo->estado = 'ACTIVO';
         $tipo->editable = 1;
         $tipo->save();
 
@@ -1243,5 +1243,26 @@ class TablaDetalleSeeder extends Seeder
         $tipo->estado = 'ACTIVO';
         $tipo->editable = 1;
         $tipo->save();
+
+        $detalle = new Detalle();
+        $detalle->descripcion = "MAÑANA";
+        $detalle->simbolo = 'AM';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 30;
+        $detalle->save();
+
+        $detalle = new Detalle();
+        $detalle->descripcion = "TARDE";
+        $detalle->simbolo = 'PM';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 30;
+        $detalle->save();
+
+        $detalle = new Detalle();
+        $detalle->descripcion = "NOCHE";
+        $detalle->simbolo = 'PM';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 30;
+        $detalle->save();
     }
 }

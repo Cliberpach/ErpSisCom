@@ -15,10 +15,31 @@ use Yajra\DataTables\DataTables;
 
 class CajaController extends Controller
 {
-    public function index()
+
+    public function index(){
+        return view('pos.Cajas.index');
+    }
+    public function store(Request $request){
+        $caja=new Caja();
+        $caja->nombre=$request->nombre;
+        $caja->save();
+        return redirect()->route('Caja.index');
+    }
+    public function update(Request $request,$id)
+    {
+        $caja=Caja::findOrFail($id);
+        $caja->nombre=$request->nombre;
+        $caja->save();
+        return redirect()->route('Caja.index');
+    }
+    public function destroy($id)
+    {
+
+    }
+    public function indexMovimiento()
     {
         $colaboradores = Colaborador::where('estado', 'ACTIVO')->get();
-        return view('pos.caja.index', compact('colaboradores'));
+        return view('pos.MovimientoCaja.indexMovimiento', compact('colaboradores'));
     }
     public function getMovimientosCajas()
     {
@@ -49,13 +70,13 @@ class CajaController extends Controller
     public function aperturaCaja(Request $request)
     {
         $movimiento = new MovimientoCaja();
-        $movimiento->caja_id = 1; //como solo hay una caja siempre será 1
+        $movimiento->caja_id = $request->caja; //como solo hay una caja siempre será 1
         $movimiento->colaborador_id = $request->colaborador_id;
         $movimiento->monto_inicial = $request->saldo_inicial;
         $movimiento->estado_movimiento = "APERTURA";
         $movimiento->fecha_apertura = date('Y-m-d h:i:s');
         $movimiento->save();
-        return redirect()->route('Caja.index');
+        return redirect()->route('Caja.Movimiento.index');
     }
     public function cerrarCaja(Request $request)
     {
@@ -65,7 +86,7 @@ class CajaController extends Controller
         $movimiento->fecha_cierre= date('Y-m-d h:i:s');
         $movimiento->monto_final= $request->saldo;
         $movimiento->save();
-        return redirect()->route('Caja.index');
+        return redirect()->route('Caja.Movimiento.index');
     }
     public function cajaDatosCierre()
     {
