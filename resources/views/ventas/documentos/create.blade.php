@@ -62,12 +62,12 @@
                                             <input type="text" id="fecha_documento_campo" name="fecha_documento"
                                                 class="form-control {{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
                                                 value="{{old('fecha_documento',getFechaFormato($cotizacion->fecha_documento, 'd/m/Y'))}}"
-                                                autocomplete="off" required readonly disabled >
+                                                autocomplete="off" required readonly>
                                             @else
                                             <input type="text" id="fecha_documento_campo" name="fecha_documento"
                                                 class="form-control {{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
                                                 value="{{old('fecha_documento',getFechaFormato($fecha_hoy, 'd/m/Y'))}}"
-                                                autocomplete="off" required readonly disabled>
+                                                autocomplete="off" required readonly>
                                             @endif
 
                                             @if ($errors->has('fecha_documento'))

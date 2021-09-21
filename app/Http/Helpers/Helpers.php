@@ -153,6 +153,13 @@ if (!function_exists('tipos_venta')) {
     }
 }
 
+if (!function_exists('forma_pago')) {
+    function forma_pago()
+    {
+        return General::find(30)->detalles;
+    }
+}
+
 if (!function_exists('modos_pago')) {
     function modos_pago()
     {

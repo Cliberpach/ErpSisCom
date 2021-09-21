@@ -83,9 +83,19 @@ class ComprobanteController extends Controller
         return $arrayProductos;
     }
 
-    public function obtenerFecha($documento)
+    public function obtenerFechaEmision($documento)
     {
         $date = strtotime($documento->fecha_documento);
+        $fecha_emision = date('Y-m-d', $date); 
+        $hora_emision = date('H:i:s', $date); 
+        $fecha = $fecha_emision.'T'.$hora_emision.'-05:00';
+
+        return $fecha;
+    }
+
+    public function obtenerFechaVencimiento($documento)
+    {
+        $date = strtotime($documento->fecha_vencimiento);
         $fecha_emision = date('Y-m-d', $date); 
         $hora_emision = date('H:i:s', $date); 
         $fecha = $fecha_emision.'T'.$hora_emision.'-05:00';
@@ -109,8 +119,13 @@ class ComprobanteController extends Controller
                         "tipoDoc"=> $documento->tipoDocumento(),
                         "serie" => $existe[0]->get('numeracion')->serie,
                         "correlativo" => $documento->correlativo,
-                        "fechaEmision" => self::obtenerFecha($documento),
+                        "fechaEmision" => self::obtenerFechaEmision($documento),
+                        "fecVencimiento" => self::obtenerFechaVencimiento($documento),
                         "observacion" => $documento->observacion,
+                        "formaPago" => array(
+                            "moneda" =>  $documento->simboloMoneda(),
+                            "tipo" =>  $documento->formaPago(),
+                        ),
                         "tipoMoneda" => $documento->simboloMoneda(),
                         "client" => array(
                             "tipoDoc" => $documento->tipoDocumentoCliente(),

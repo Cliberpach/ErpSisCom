@@ -28,6 +28,7 @@ class CreateCotizacionDocumentoTable extends Migration
             $table->unsignedInteger('cliente_id'); //OBTENER TIENDAS DEL CLIENTE 
             
             $table->dateTime('fecha_documento');
+            $table->dateTime('fecha_vencimiento');
             $table->dateTime('fecha_atencion')->nullable();
 
             $table->string('tipo_venta');
@@ -40,6 +41,7 @@ class CreateCotizacionDocumentoTable extends Migration
             $table->unsignedDecimal('efectivo', 15, 2)->nullable()->default(0.00);
             $table->unsignedDecimal('importe', 15, 2)->nullable()->default(0.00);
 
+            $table->string('forma_pago');
             $table->longText('xml')->nullable();
             
             $table->string('igv_check',2)->nullable();

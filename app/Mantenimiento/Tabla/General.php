@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class General extends Model
 {
     protected $table = 'tablas';
-    protected $fillable = ['descripcion','sigla','editable'];
+    protected $fillable = ['descripcion','simbolo','sigla','editable'];
     public $timestamps = true;
 
     public function detalles()

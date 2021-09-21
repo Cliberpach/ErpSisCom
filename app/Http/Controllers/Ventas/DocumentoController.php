@@ -288,6 +288,7 @@ class DocumentoController extends Controller
             'fecha_documento'=> 'required',
             'fecha_atencion_campo'=> 'required',
             'tipo_venta'=> 'required',
+            'forma_pago'=> 'required',
             'tipo_pago_id'=> 'required',
             'efectivo'=> 'required',
             'importe'=> 'required',
@@ -300,6 +301,7 @@ class DocumentoController extends Controller
         $message = [
             'fecha_documento.required' => 'El campo Fecha de Emisión es obligatorio.',
             'tipo_venta.required' => 'El campo tipo de venta es obligatorio.',
+            'forma_pago.required' => 'El campo forma de pago es obligatorio.',
             'tipo_pago_id.required' => 'El campo modo de pago es obligatorio.',
             'importe.required' => 'El campo importe es obligatorio.',
             'efectivo.required' => 'El campo efectivo es obligatorio.',
@@ -317,6 +319,7 @@ class DocumentoController extends Controller
         $documento = new Documento();
         $documento->fecha_documento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_documento'))->format('Y-m-d');
         $documento->fecha_atencion = Carbon::createFromFormat('d/m/Y', $request->get('fecha_atencion_campo'))->format('Y-m-d');
+        $documento->fecha_vencimiento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_vencimiento_campo'))->format('Y-m-d');
         //EMPRESA
         $empresa = Empresa::findOrFail($request->get('empresa_id'));
         $documento->ruc_empresa =  $empresa->ruc;
@@ -333,6 +336,7 @@ class DocumentoController extends Controller
         $documento->cliente_id = $request->get('cliente_id'); //OBTENER TIENDA DEL CLIENTE
 
         $documento->tipo_venta = $request->get('tipo_venta');
+        $documento->forma_pago = $request->get('forma_pago');
         $documento->observacion = $request->get('observacion');
         $documento->user_id = auth()->user()->id;
         $documento->sub_total = $request->get('monto_sub_total');
@@ -390,9 +394,10 @@ class DocumentoController extends Controller
         $descripcion = "SE AGREGÓ EL DOCUMENTO DE VENTA CON LA FECHA: ". Carbon::parse($documento->fecha_documento)->format('d/m/y');
         $gestion = "DOCUMENTO DE VENTA";
         crearRegistro($documento , $descripcion , $gestion);
+        
         $ultimoMovimiento = MovimientoCaja::orderBy('id', 'desc')->first();
         $detalle=new DetalleMovimientoVentaCaja();
-        $detalle->cdocumento_id=$documento->id;
+        $detalle->cdocumento_id = $documento->id;
         $detalle->mcaja_id = $ultimoMovimiento->id;
         $detalle->save();
 

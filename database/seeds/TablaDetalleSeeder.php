@@ -14,7 +14,6 @@ class TablaDetalleSeeder extends Seeder
     public function run()
     {
         //Bancos
-
         $detalle = new Detalle();
         $detalle->descripcion = "BANCO DE LA NACION";
         $detalle->simbolo = "BN";
@@ -1220,6 +1219,21 @@ class TablaDetalleSeeder extends Seeder
         $detalle->simbolo = 'OP';
         $detalle->estado = 'ACTIVO';
         $detalle->tabla_id = 29;
+        $detalle->save();
+
+        //Formas de Pago
+        $detalle = new Detalle();
+        $detalle->descripcion = "CONTADO";
+        $detalle->simbolo = 'Contado';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 30;
+        $detalle->save();
+
+        $detalle = new Detalle();
+        $detalle->descripcion = "CRÉDITO";
+        $detalle->simbolo = 'Credito';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 30;
         $detalle->save();
 
         //Tipos de pago

@@ -82,7 +82,5 @@ class EmpresaSeeder extends Seeder
         // $cliente->telefono_movil = '1345678';
         // $cliente->activo = '1';
         // $cliente->save();
-
-
     }
 }

@@ -191,5 +191,11 @@ class TablaSeeder extends Seeder
        $tabla->descripcion = 'DESTINOS';
        $tabla->sigla = 'DE';
        $tabla->save();
+
+       //30
+       $tabla = new General();
+       $tabla->descripcion = 'FORMAS DE PAGO';
+       $tabla->sigla = 'FP';
+       $tabla->save();
     }
 }

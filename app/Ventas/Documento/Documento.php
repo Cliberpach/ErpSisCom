@@ -32,6 +32,7 @@ class Documento extends Model
         'igv',
         'igv_check',
         'tipo_venta',
+        'forma_pago',
         'cotizacion_venta',
         'sunat',
         'correlativo',
@@ -99,6 +100,15 @@ class Documento extends Model
     public function tipoDocumento(): string
     {
         $venta = tipos_venta()->where('id', $this->tipo_venta)->first();
+        if (is_null($venta))
+            return "-";
+        else
+            return strval($venta->simbolo);
+    }
+
+    public function formaPago(): string
+    {
+        $venta = forma_pago()->where('id', $this->forma_pago)->first();
         if (is_null($venta))
             return "-";
         else

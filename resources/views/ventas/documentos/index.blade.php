@@ -71,6 +71,12 @@
 @push('styles')
 <!-- DataTable -->
 <link href="{{asset('Inspinia/css/plugins/dataTables/datatables.min.css')}}" rel="stylesheet">
+<style>
+    .letrapequeña {
+        font-size: 11px;
+    }
+
+</style>
 @endpush
 
 @push('scripts')
