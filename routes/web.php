@@ -367,6 +367,22 @@ function(){
         // Route::get('sunat/comprobante/{id}','Ventas\GuiaController@sunat')->name('ventas.documento.sunat');
 
     });
+    Route::prefix('caja')->group(function () {
+        Route::get('index','Pos\CajaController@index')->name('Caja.index');
+        Route::get('getMovimientosCajas','Pos\CajaController@getMovimientosCajas')->name('Caja.get_movimientos_cajas');
+        Route::post('aperturaCaja','Pos\Cajacontroller@aperturaCaja')->name('Caja.apertura');
+        Route::post('cerrarCaja','Pos\Cajacontroller@cerrarCaja')->name('Caja.cerrar');
+        Route::get('estadoCaja','Pos\Cajacontroller@estadoCaja')->name('Caja.estado');
+        Route::get('cajaDatosCierre','Pos\Cajacontroller@cajaDatosCierre')->name('Caja.datos.cierre');
+    });
+    Route::prefix('egreso')->group(function () {
+        Route::get('index','EgresoController@index')->name('Egreso.index');
+        Route::get('getEgresos','EgresoController@getEgresos')->name('Egreso.getEgresos');
+        Route::get('getEgreso','EgresoController@getEgreso')->name('Egreso.getEgreso');
+        Route::post('store','Egresocontroller@store')->name('Egreso.store');
+        Route::post('update/{id}','Egresocontroller@update')->name('Egreso.update');
+        Route::get('destroy/{id}','Egresocontroller@destroy')->name('Egreso.destroy');
+    });
 });
 
 Route::get('ruta', function () {

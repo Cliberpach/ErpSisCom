@@ -21,5 +21,8 @@ class DatabaseSeeder extends Seeder
         $this->call(ParametroSeeder::class);
         $this->call(EmpresaSeeder::class);
         $this->call(PermissionsSeeder::class);
+
+        //--------Seeders Confirmados -----------
+        $this->call(CajaSeeder::class);
     }
 }

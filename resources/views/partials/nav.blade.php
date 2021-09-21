@@ -31,7 +31,10 @@
 </li>
 
 <li class="@yield('caja_chica-active')">
-    <a href="#"><i class="fa fa-archive"></i> <span class="nav-label">Caja Chica</span></a>
+    <a href="{{route('Caja.index')}}"><i class="fa fa-archive"></i> <span class="nav-label">Caja Chica</span></a>
+</li>
+<li class="@yield('egreso-active')">
+    <a href="{{route('Egreso.index')}}"><i class="fa fa-arrow-right"></i> <span class="nav-label">Egreso</span></a>
 </li>
 
 <li class="@yield('compras-active')">
@@ -39,7 +42,7 @@
             class="fa arrow"></span></a>
     <ul class="nav nav-second-level collapse">
         <li class="@yield('proveedor-active')"><a href="{{route('compras.proveedor.index')}}">Proveedores</a></li>
-        <li class="@yield('orden-compra-active')"><a href="{{route('compras.orden.index')}}">Orden Compra</a></li>          
+        <li class="@yield('orden-compra-active')"><a href="{{route('compras.orden.index')}}">Orden Compra</a></li>
         <li class="@yield('documento-active')"><a href="{{route('compras.documento.index')}}">Doc. Compra</a>
         </li>
     </ul>
@@ -94,7 +97,7 @@
                 <li><a href="#">Orden de Compra</a></li>
                 <li><a href="#">Doc. Compras</a></li>
             </ul>
-        </li>        
+        </li>
         <li class="@yield('cuenta_proveedor-active')"><a href="#">Cuenta Proveedor</a></li>
         <li class="@yield('cuenta_cliente-active')"><a href="#">Cuenta Cliente</a></li>
         <li class="@yield('nota_salida_consulta-active')"><a href="#">Nota Salida</a></li>

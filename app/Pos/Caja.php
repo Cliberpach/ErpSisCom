@@ -6,19 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Caja extends Model
 {
-    protected $table = 'pos_caja_chica';
-    protected $fillable = ['cierre',
-    'estado',
-    'num_referencia',
-    'saldo_inicial',
-    'colaborador_id',
-    'moneda',
-    'uso'
+    protected $table="caja";
+    protected $fillable=[
+        'nombre'
     ];
     public $timestamps = true;
-
-    public function empleado()
+    public function movimientos()
     {
-        return $this->belongsTo('App\Mantenimiento\Colaborador\Colaborador','colaborador_id');
+         return $this->hasOne(MovimientoCaja::class,'caja_id');
     }
 }
