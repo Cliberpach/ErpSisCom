@@ -16,6 +16,8 @@ use App\Compras\Proveedor;
 use App\Http\Controllers\Controller;
 use App\Mantenimiento\Empresa\Empresa;
 use App\Movimientos\MovimientoAlmacen;
+use App\Pos\DetalleMovimientoVentaCaja;
+use App\Pos\MovimientoCaja;
 use App\Ventas\Documento\Pago\Pago;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -29,7 +31,7 @@ class DocumentoController extends Controller
 {
     public function index()
     {
-        
+
         return view('compras.documentos.index');
     }
 
@@ -213,7 +215,7 @@ class DocumentoController extends Controller
         $documento->tipo_compra = $request->get('tipo_compra');
         $documento->orden_compra = $request->get('orden_id');
         $documento->save();
-        
+        $idd=$documento->id;
         $numero_doc = $documento->id;
         $documento->numero_doc = 'COMPRA-'.$numero_doc;
         $documento->update();
@@ -266,9 +268,11 @@ class DocumentoController extends Controller
         //Registro de actividad
         $descripcion = "SE AGREGÓ EL DOCUMENTO DE COMPRA CON LA FECHA DE EMISION: ". Carbon::parse($documento->fecha_emision)->format('d/m/y');
         $gestion = "DOCUMENTO DE COMPRA";
+
         crearRegistro($documento, $descripcion , $gestion);
         Session::flash('success','Documento de Compra creada.');
         return redirect()->route('compras.documento.index')->with('guardar', 'success');
+
     }
 
     public function edit($id)
@@ -353,7 +357,7 @@ class DocumentoController extends Controller
             {
                 MovimientoAlmacen::where('lote_id', $lot->id)->where('producto_id', $lot->producto_id)->where('compra_documento_id', $lot->compra_documento_id)->where('nota', 'COMPRA')->where('movimiento', 'INGRESO')->delete();
                 $lote = LoteProducto::find($lot->id);
-                $producto_id = $lote->producto_id;                
+                $producto_id = $lote->producto_id;
                 $lote->estado = '0';
                 $lote->update();
 
@@ -414,7 +418,7 @@ class DocumentoController extends Controller
             $gestion = "DOCUMENTO DE COMPRA";
             eliminarRegistro($documento, $descripcion , $gestion);
         }
-        
+
         Session::flash('success','Documento de Compra eliminada.');
         return redirect()->route('compras.documento.index')->with('eliminar', 'success');
     }
@@ -493,7 +497,7 @@ class DocumentoController extends Controller
             $decimal_total = number_format($subtotal, 2, '.', '');
             $decimal_igv = number_format($nuevo_igv, 2, '.', '');
         }
-        
+
         $presentaciones = presentaciones();
 
         // $data = [
@@ -509,7 +513,7 @@ class DocumentoController extends Controller
 
         // return $data;
 
-        
+
         $paper_size = array(0,0,360,360);
         $pdf = PDF::loadview('compras.documentos.reportes.detalle',[
             'documento' => $documento,
@@ -521,10 +525,10 @@ class DocumentoController extends Controller
             'igv' => $decimal_igv,
             'total' => $decimal_total,
             ])->setPaper('a4')->setWarnings(false);
-            
+
         return $pdf->stream();
     }
-    
+
     public function TypePay($id)
     {
         //ANULAR TIPO DE PAGO OTROS

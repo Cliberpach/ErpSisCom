@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEgresosTable extends Migration
+class CreateCuentaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,9 @@ class CreateEgresosTable extends Migration
      */
     public function up()
     {
-        Schema::create('egreso', function (Blueprint $table) {
+        Schema::create('cuenta', function (Blueprint $table) {
             $table->id();
-            $table->date('fecha');
-            $table->string('tipo_documento');
-            $table->string('numero_documento');
-            $table->foreignId('cuenta_id')->references('id')->on('cuenta')->onDelete('cascade');
-            $table->text('descripcion');
-            $table->decimal('importe');
+            $table->string('descripcion');
             $table->enum('estado',['ACTIVO','ANULADO'])->default('ACTIVO');
             $table->timestamps();
         });
@@ -33,6 +28,6 @@ class CreateEgresosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('egreso');
+        Schema::dropIfExists('cuenta');
     }
 }

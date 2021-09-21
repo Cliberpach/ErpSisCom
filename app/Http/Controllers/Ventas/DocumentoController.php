@@ -9,6 +9,8 @@ use App\Http\Controllers\Controller;
 use App\Mantenimiento\Empresa\Empresa;
 use App\Mantenimiento\Empresa\Numeracion;
 use App\Mantenimiento\Tabla\Detalle as TablaDetalle;
+use App\Pos\DetalleMovimientoVentaCaja;
+use App\Pos\MovimientoCaja;
 use App\Ventas\Cliente;
 use App\Ventas\Cotizacion;
 use App\Ventas\CotizacionDetalle;
@@ -92,7 +94,7 @@ class DocumentoController extends Controller
             $cotizacion =  Cotizacion::findOrFail( $request->get('cotizacion') );
             $detalles = CotizacionDetalle::where('cotizacion_id', $request->get('cotizacion'))->get();
             $lotes = self::cotizacionLote($detalles);
-            
+
             $nuevoDetalle = collect();
             if(count($lotes) === 0)
             {
@@ -100,7 +102,7 @@ class DocumentoController extends Controller
                 $coll->producto = '. No hay stock para ninguno de los productos';
                 $coll->cantidad = '.';
                 $errores->push($coll);
-                
+
                 return view('ventas.documentos.create',[
                     'cotizacion' => $cotizacion,
                     'empresas' => $empresas,
@@ -388,7 +390,11 @@ class DocumentoController extends Controller
         $descripcion = "SE AGREGÓ EL DOCUMENTO DE VENTA CON LA FECHA: ". Carbon::parse($documento->fecha_documento)->format('d/m/y');
         $gestion = "DOCUMENTO DE VENTA";
         crearRegistro($documento , $descripcion , $gestion);
-
+        $ultimoMovimiento = MovimientoCaja::orderBy('id', 'desc')->first();
+        $detalle=new DetalleMovimientoVentaCaja();
+        $detalle->cdocumento_id=$documento->id;
+        $detalle->mcaja_id = $ultimoMovimiento->id;
+        $detalle->save();
 
         Session::flash('success','Documento de Venta creada.');
         return redirect()->route('ventas.documento.index')->with('guardar', 'success');
@@ -769,7 +775,7 @@ class DocumentoController extends Controller
     public function returnLote(Request $request)
     {
         $data = $request->all();
-        $lote_id = $data['lote_id'];         
+        $lote_id = $data['lote_id'];
         $lote = LoteProducto::find($lote_id);
 
         if($lote)
@@ -792,11 +798,11 @@ class DocumentoController extends Controller
         try{
             DB::beginTransaction();
             $data = $request->all();
-            $lote_id = $data['lote_id'];         
-            $cantidad_sum = $data['cantidad_sum'];         
-            $cantidad_res = $data['cantidad_res'];         
+            $lote_id = $data['lote_id'];
+            $cantidad_sum = $data['cantidad_sum'];
+            $cantidad_res = $data['cantidad_res'];
             $lote = LoteProducto::find($lote_id);
-        
+
             if($lote)
             {
                 $lote->cantidad_logica = ($lote->cantidad_logica + $cantidad_sum) - $cantidad_res;
