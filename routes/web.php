@@ -370,8 +370,7 @@ function(){
 });
 
 Route::get('ruta', function () {
-    actualizarStockLotes();
-    return 'ok';
+    return tipos_venta();
     $lote = LoteProducto::find(2);
     return $lote->nota;
     $empresa = new Empresa();

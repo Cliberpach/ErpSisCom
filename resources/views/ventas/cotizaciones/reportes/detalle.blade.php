@@ -484,8 +484,8 @@
                         </td>
                         <td class="unit">{{ $detalle->producto->codigo . ' - ' . $detalle->producto->nombre }}
                         </td>
-                        <td class="qty">{{ 'S/. ' . $detalle->precio }}</td>
-                        <td class="total">{{ 'S/. ' . $detalle->importe }}</td>
+                        <td class="qty">{{ 'S/. ' . $detalle->precio_nuevo }}</td>
+                        <td class="total">{{ 'S/. ' . $detalle->valor_venta }}</td>
                     </tr>
                 @endforeach
             </tbody>

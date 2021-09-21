@@ -69,10 +69,6 @@ function convertFloat(number)
     return numero;
 }
 
-function isNumber(e) {
-    return (e.charCode == 8 || e.charCode == 0 || e.charCode == 13) ? null : e.charCode >= 48 && e.charCode <= 57 || e.charCode == 46;
-}
-
 $.ajaxSetup({
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

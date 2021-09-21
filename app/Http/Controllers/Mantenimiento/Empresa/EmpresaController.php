@@ -494,6 +494,7 @@ class EmpresaController extends Controller
                 $nueva_factura->sol_pass = $request->get('soap_password');
                 $nueva_factura->plan = 'free';
                 $nueva_factura->ambiente = 'beta';
+                $nueva_factura->token_code = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2MzEzNzE0NjQsImV4cCI6NDc4NDk3MTQ2NCwidXNlcm5hbWUiOiJMZXN0ZXIiLCJjb21wYW55IjoiMTA3MDY2MDIwMDkifQ.rO1aEO_yuX0YeDGeGYNaW6el_nlUpFe6asTNp646vIdpmV3ekHuoc5-aB-059M6qc9HJYiTzjykcHHTEhQM4PuLDMo8imS5q1zYRviVBTNYs6d4dY3BVamA2GJJCoPuKqsZo11NNWpVjThMyYzFeXKIeNZde_IN_8Nslkl-QsNxTPHpdmVkyxSgHtJGzTE3SuxDCbu9KiIQZPcpx3d6dCBhCc0bQCUZ0OTDTpiHXLA9JCiN3wXmlZwP0EUQfpHkDiD9k6Un-54Wd9ukq8ihL5iE47NkN6E1bhrgpuRsx_4GwqOli2Fkwuf7ywJWXYfm0UfMYssHgbrhvq7r3CDAgXtg7FhqZ9rXkFLsYgo0LxHuebecJ7o9cZm6aNU9S0IStsS8UBjWowtbuoBTni11GE8JEQQH7fsgDP8ftsvASElYFIXioPV2mG6Tuza1eFrnJHCIW9kzAe0Fbo4pF2ddHmzkD0d3Ujr7Jwv2uJX-5XK9rTOmdo9dWwj997GEbOJ9w7ZkeqYPBXzGXRf39JodhvBvzb8E4HY99IA8aItm0osMBk6gktGvQ2KKoU-RgyRdD_ksxpw1dSyQG6q51pGNctcOwlexSXlwswLxn3apbevgWhQQscapsKNR8xD4G5Nbk-qtApvHLxRk2DnqhnCMYAUs8u2dY2iOhjKCbFY38wfo';
                 $nueva_factura->certificado =  $request->get('certificado_base');
                 $nueva_factura->save();
             }

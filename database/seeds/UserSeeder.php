@@ -19,16 +19,16 @@ class UserSeeder extends Seeder
         $persona->documento = '71114110';
         $persona->codigo_verificacion = 2;
         $persona->nombres = 'CARLOS';
-        $persona->apellido_paterno = 'ALVAREZ';
-        $persona->apellido_materno = 'LOPEZ';
+        $persona->apellido_paterno = 'CUBAS';
+        $persona->apellido_materno = 'RODRIGUEZ';
         $persona->fecha_nacimiento = Carbon::parse('2000-01-01');
         $persona->sexo = 'H';
         $persona->estado_civil = 'S';
         $persona->departamento_id = '02';
         $persona->provincia_id = '0218';
         $persona->distrito_id = '021809';
-        $persona->direccion = 'GARATEA';
-        $persona->correo_electronico = 'AXELGUTIERREZLOPEZ26@GMAIL.COM';
+        $persona->direccion = 'CHEPEN';
+        $persona->correo_electronico = 'CCUBAS@UNITRU.EDU.PE';
         $persona->telefono_movil = '99999999999';
         $persona->estado = 'ACTIVO';
         $persona->save();
@@ -58,7 +58,7 @@ class UserSeeder extends Seeder
         $user = new User();
         $user->usuario = 'ADMINISTRADOR';
         $user->colaborador_id = 1;
-        $user->email = 'ADMIN@ECOVALLE.COM';
+        $user->email = 'ADMIN@SISCOM.COM';
         $user->password = bcrypt('ADMIN');
         $user->save();
 

@@ -26,8 +26,8 @@ class ParametroSeeder extends Seeder
          //FACTURACION ELECTRONICA
          //TOKEN LOGUEO
          $parametro = new Parametro();
-         $parametro->usuario_proveedor = 'Ecovalle';
-         $parametro->contra_proveedor =  'ecovallesistema123';
+         $parametro->usuario_proveedor = 'lester';
+         $parametro->contra_proveedor =  'perinango123';
          $parametro->save();
     }
 }

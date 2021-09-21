@@ -15,8 +15,13 @@ class Detalle extends Model
         'nombre_producto',
         'codigo_lote',
         'cantidad',
-        'precio',
-        'importe',
+        'precio_unitario',
+        'precio_inicial',
+        'precio_nuevo',
+        'descuento',
+        'dinero',
+        'valor_unitario',
+        'valor_venta',
         'estado'
     ];
 

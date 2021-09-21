@@ -32,7 +32,7 @@
                             <div class="col-lg-12 col-xs-12">
                                 <h4><b>Datos Generales</b></h4>
                             </div>
-                            <div class="col-lg-12 col-xs-12">
+                            <div class="col-lg-12 col-xs-12 d-none">
                                 <div class="form-group row">
                                     <div class="col-lg-6 col-xs-12" id="fecha_documento">
                                         <label class="required">Fecha de Documento</label>
@@ -51,23 +51,6 @@
                                             @endif
                                         </div>
                                     </div>
-                                    <div class="col-lg-6 col-xs-12" id="fecha_atencion">
-                                        <label class="required">Fecha de Atención</label>
-                                        <div class="input-group date">
-                                            <span class="input-group-addon">
-                                                <i class="fa fa-calendar"></i>
-                                            </span>
-                                            <input type="text" id="fecha_atencion" name="fecha_atencion"
-                                                class="form-control {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
-                                                value="{{ old('fecha_atencion', getFechaFormato($cotizacion->fecha_atencion, 'd/m/Y')) }}"
-                                                autocomplete="off" required readonly>
-                                            @if ($errors->has('fecha_atencion'))
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $errors->first('fecha_atencion') }}</strong>
-                                                </span>
-                                            @endif
-                                        </div>
-                                    </div>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-lg-6 col-xs-12">
@@ -78,38 +61,6 @@
                                         </select>
                                     </div>
                                     <div class="col-lg-6 col-xs-12">
-                                        <label id="igv_requerido">IGV (%):</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-addon">
-                                                    <input type="checkbox" id="igv_check" name="igv_check">
-                                                </span>
-                                            </div>
-                                            <input type="text" value="{{ old('igv', $cotizacion->igv) }}" maxlength="3"
-                                                class="form-control {{ $errors->has('igv') ? ' is-invalid' : '' }}"
-                                                name="igv" id="igv" onkeyup="return mayus(this)" required>
-                                            @if ($errors->has('igv'))
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $errors->first('igv') }}</strong>
-                                                </span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 col-xs-12">
-                                        <label class="___class_+?40___">Vendedor</label>
-                                        <select id="vendedor" name="vendedor" class="select2_form form-control">
-                                            <option value=""></option>
-                                            @foreach (vendedores() as $vendedor)
-                                                <option value="{{ $vendedor->id }}" {{$cotizacion->vendedor_id==null? '' :($cotizacion->vendedor_id==$vendedor->id ? 'selected' : '')}}>
-                                                    {{ $vendedor->persona->apellido_paterno . ' ' . $vendedor->persona->apellido_materno . ' ' . $vendedor->persona->nombres }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-lg-12 col-xs-12">
                                         <label class="required">Empresa</label>
                                         <select id="empresa" name="empresa"
                                             class="select2_form form-control {{ $errors->has('empresa') ? ' is-invalid' : '' }}">
@@ -128,9 +79,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-xs-12">
-                                <div class="form-group row">
-                                    <div class="col-lg-12 col-xs-12">
+                            <div class="col-lg-12 col-xs-12">
+                                <div class="row">
+                                    <div class="col-lg-4 col-xs-12">
                                         <label class="required">Cliente</label>
                                         <select id="cliente" name="cliente"
                                             class="select2_form form-control {{ $errors->has('cliente') ? ' is-invalid' : '' }}"
@@ -148,8 +99,61 @@
                                                 <strong>{{ $errors->first('cliente') }}</strong>
                                             </span>
                                         @endif
+                                    </div>                                    
+                                    <div class="col-lg-2 col-xs-12" id="fecha_atencion">
+                                        <label class="required">Fecha de Atención</label>
+                                        <div class="input-group date">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="text" id="fecha_atencion" name="fecha_atencion"
+                                                class="form-control {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
+                                                value="{{ old('fecha_atencion', getFechaFormato($cotizacion->fecha_atencion, 'd/m/Y')) }}"
+                                                autocomplete="off" required readonly>
+                                            @if ($errors->has('fecha_atencion'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('fecha_atencion') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 col-xs-12">
+                                        <label id="igv_requerido">IGV (%):</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-addon">
+                                                    <input type="checkbox" id="igv_check" name="igv_check">
+                                                </span>
+                                            </div>
+                                            <input type="text" value="{{ old('igv', $cotizacion->igv) }}" maxlength="3"
+                                                class="form-control {{ $errors->has('igv') ? ' is-invalid' : '' }}"
+                                                name="igv" id="igv" onkeyup="return mayus(this)" required>
+                                            @if ($errors->has('igv'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('igv') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-xs-12">
+                                        <label class="___class_+?40___">Vendedor</label>
+                                        <select id="vendedor" name="vendedor" class="select2_form form-control">
+                                            <option value=""></option>
+                                            @foreach (vendedores() as $vendedor)
+                                                <option value="{{ $vendedor->id }}" {{$cotizacion->vendedor_id==null? '' :($cotizacion->vendedor_id==$vendedor->id ? 'selected' : '')}}>
+                                                    {{ $vendedor->persona->apellido_paterno . ' ' . $vendedor->persona->apellido_materno . ' ' . $vendedor->persona->nombres }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
+                                <!-- OBTENER TIPO DE CLIENTE -->
+                                <input type="hidden" name="" id="tipo_cliente">
+                                <!-- OBTENER DATOS DEL PRODUCTO -->
+                                <input type="hidden" name="" id="presentacion_producto">
+                                <input type="hidden" name="" id="codigo_nombre_producto">
+                                <!-- LLENAR DATOS EN UN ARRAY -->
+                                <input type="hidden" id="productos_tabla" name="productos_tabla[]">
                             </div>
                         </div>
                         <hr>
@@ -194,7 +198,7 @@
                                                                     id="error-precio"></span></b></div>
                                                     </div>
                                                     <div class="col-lg-2 col-xs-12">
-                                                        <label class="required">P.Descuento</label>
+                                                        <label class="required">Descuento (%)</label>
                                                         <input type="text" id="pdescuento" class="form-control"
                                                             maxlength="15">
                                                         <div class="invalid-feedback"><b><span
@@ -208,21 +212,21 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row m-t-sm">
+                                        <div class="row m-t-sm" style="text-transform:uppercase">
                                             <div class="col-lg-12">
                                                 <div class="table-responsive">
                                                     <table
-                                                        class="table dataTables-detalle-cotizacion table-striped table-bordered table-hover"
-                                                        style="text-transform:uppercase">
+                                                        class="table dataTables-detalle-cotizacion table-striped table-bordered table-hover">
                                                         <thead>
                                                             <tr>
                                                                 <th></th>
                                                                 <th class="text-center">ACCIONES</th>
                                                                 <th class="text-center">CANT</th>
-                                                                <th class="text-center">DESCRIPCION DEL PRODUCTO</th>
-                                                                <th class="text-center">PRECIO</th>
+                                                                <th class="text-center">PRODUCTO</th>
+                                                                <th class="text-center">V. UNITARIO</th>
+                                                                <th class="text-center">P. UNITARIO</th>
                                                                 <th class="text-center">DESCUENTO</th>
-                                                                <th class="text-center">P.NUEVO</th>
+                                                                <th class="text-center">P. NUEVO</th>
                                                                 <th class="text-center">TOTAL</th>
                                                             </tr>
                                                         </thead>
@@ -231,55 +235,39 @@
                                                         </tbody>
                                                         <tfoot>
                                                             {{-- <tr>
-                                                                <th colspan="6" style="text-align: right !important;">
+                                                                <th colspan="8" style="text-align: right !important;">
                                                                     Sub Total:</th>
                                                                 <th class="text-center"><span
-                                                                        id="subtotal">{{ $cotizacion->sub_total }}</span>
-                                                                </th>
+                                                                        id="subtotal">0.00</span></th>
 
                                                             </tr>
                                                             <tr>
-                                                                <th colspan="6" class="text-right">IGV <span
+                                                                <th colspan="8" class="text-right">IGV <span
                                                                         id="igv_int"></span>:</th>
-                                                                <th class="text-center"><span id="igv_monto">
-                                                                        {{ $cotizacion->total_igv }}</span></th>
+                                                                <th class="text-center"><span
+                                                                        id="igv_monto">0.00</span></th>
                                                             </tr> --}}
                                                             <tr>
-                                                                <th colspan="7" class="text-right">TOTAL:</th>
-                                                                <th class="text-center"><span
-                                                                        id="total">{{ $cotizacion->total }}</span></th>
+                                                                <th colspan="8" class="text-right">TOTAL:</th>
+                                                                <th class="text-center"><span id="total">0.00</span>
+                                                                </th>
                                                             </tr>
                                                         </tfoot>
                                                     </table>
                                                 </div>
                                             </div>
-                                            <!-- <input type="hidden" name="detalles" id="detalles" value="{{ old('detalles', $detalles) }}">
-                                            <input type="hidden" name="monto_sub_total" id="monto_sub_total" value="{{ $cotizacion->sub_total }}">
-                                            <input type="hidden" name="monto_total_igv" id="monto_total_igv" value="{{ old('monto_total_igv', $cotizacion->total_igv) }}">
-                                            <input type="hidden" name="monto_total" id="monto_total" value="{{ old('monto_total', $cotizacion->total) }}"> -->
 
-                                            <!-- OBTENER TIPO DE CLIENTE -->
-                                            <input type="hidden" name="" id="tipo_cliente"
-                                                value="{{ $cotizacion->cliente->detalle->descripcion }}">
-                                            <!-- OBTENER DATOS DEL PRODUCTO -->
-                                            <input type="hidden" name="" id="presentacion_producto">
-                                            <input type="hidden" name="" id="codigo_nombre_producto">
-                                            <!-- LLENAR DATOS EN UN ARRAY -->
-                                            <input type="hidden" id="productos_tabla" name="productos_tabla[]">
-
-                                            <!-- MONTOS -->
-                                            <input type="hidden" name="monto_sub_total" id="monto_sub_total"
-                                                value="{{ old('monto_sub_total', $cotizacion->sub_total) }}">
-                                            <input type="hidden" name="monto_total_igv" id="monto_total_igv"
-                                                value="{{ old('monto_total_igv', $cotizacion->total_igv) }}">
-                                            <input type="hidden" name="monto_total" id="monto_total"
-                                                value="{{ old('monto_total', $cotizacion->total) }}">
 
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" name="monto_sub_total" id="monto_sub_total"
+                            value="{{ old('monto_sub_total',$cotizacion->sub_total) }}">
+                        <input type="hidden" name="monto_total_igv" id="monto_total_igv"
+                            value="{{ old('monto_total_igv',$cotizacion->total_igv) }}">
+                        <input type="hidden" name="monto_total" id="monto_total" value="{{ old('monto_total',$cotizacion->total) }}">
                         <div class="hr-line-dashed"></div>
                         <div class="row">
                             <div class="col-lg-12">
@@ -441,87 +429,91 @@
         format: "dd/mm/yyyy"
     });
 
+
     function sumaTotal() {
-        var total = 0;
-        var igv = $('#igv').val()
+        let total = 0.00;
+        let igv = convertFloat($('#igv').val());
+        let igv_calculado = convertFloat(igv / 100);
+
+        let detalles = [];
+
         table.rows().data().each(function(el, index) {
-            console.log(el);
-            var dinero;
-            var precionuevo;
-            var pdescuento;
-            var precio = convertFloat(el[4]);
-            if (igv) {
-                precionuevo = precio;
-                dinero = 0;
-                table.cell({
-                    row: index,
-                    column: 6
-                }).data(precionuevo.toFixed(2));
-                table.cell({
-                    row: index,
-                    column: 7
-                }).data((precionuevo.toFixed(2)* el[2]).toFixed(2));
-                table.cell({
-                    row: index,
-                    column: 5
-                }).data(dinero.toFixed(2));
+            let pdescuento = convertFloat(el[10]);
+            let precio_inicial = convertFloat(el[9]);
+            let precio_unitario = 0.00;
+            let valor_unitario = 0.00;
+            let dinero = 0.00;
+            let precio_nuevo = 0.00;
+            let valor_venta = 0.00;
+
+            if ($("#igv_check").prop('checked')) {
+                precio_unitario = precio_inicial;
+                valor_unitario = precio_unitario / (1 + igv_calculado);
+                dinero = precio_unitario * (pdescuento / 100);
+                precio_nuevo = precio_unitario - dinero;
+                valor_venta = precio_nuevo * el[2];
+                let detalle = {
+                    producto_id: el[0],
+                    producto: el[3],
+                    precio_unitario: precio_unitario,
+                    valor_unitario: valor_unitario,
+                    valor_venta: valor_venta,
+                    cantidad: convertFloat(el[2]),
+                    descuento: pdescuento,
+                    precio_nuevo: precio_nuevo,
+                    dinero: dinero,
+                    precio_inicial: precio_inicial
+                }
+                detalles.push(detalle);
             } else {
-
-                precionuevo = precio - (precio * 0.18);
-                dinero = convertFloat(precio) - convertFloat(precionuevo);
-                table.cell({
-                    row: index,
-                    column: 6
-                }).data(precionuevo.toFixed(2));
-                table.cell({
-                    row: index,
-                    column: 5
-                }).data(dinero.toFixed(2));
-                table.cell({
-                    row: index,
-                    column: 7
-                }).data((precionuevo.toFixed(2) * el[2]).toFixed(2));
+                precio_unitario = precio_inicial / 1.18;
+                valor_unitario = precio_unitario / 1.18;
+                dinero = precio_unitario * (pdescuento / 100);
+                precio_nuevo = precio_unitario - dinero;
+                valor_venta = precio_nuevo * el[2];
+                let detalle = {
+                    producto_id: el[0],
+                    producto: el[3],
+                    precio_unitario: precio_unitario,
+                    valor_unitario: valor_unitario,
+                    valor_venta: valor_venta,
+                    cantidad: convertFloat(el[2]),
+                    descuento: pdescuento,
+                    dinero: dinero,
+                    precio_nuevo: precio_nuevo,
+                    precio_inicial: precio_inicial
+                }
+                detalles.push(detalle);
             }
-
-
         });
 
-        table.rows().data().each(function(el, index) {
-            total = Number(el[7]) + total
-        });
-        $('#total').text(total.toFixed(2))
-        // if (igv) {
-        //     sinIgv(subtotal)
-        // } else {
-        //     conIgv(subtotal)
-        // }
-    }
+        table.clear().draw();
 
-
-    function conIgv(subtotal) {
-        // CALCULAR IGV (BASE)
-        var igv = $('#igv').val()
-        if (igv) {
-            var calcularIgv = subtotal * (igv / 100)
-            var total = subtotal + calcularIgv
-            $('#igv_int').text(igv + ' %')
-            $('#subtotal').text(subtotal.toFixed(2))
-            $('#igv_monto').text(calcularIgv.toFixed(2))
-            $('#total').text(total.toFixed(2))
-        } else {
-            toastr.error('Ingrese Igv.', 'Error');
+        if(detalles.length > 0)
+        {
+            for(let i = 0; i < detalles.length; i++)
+            {
+                agregarTabla(detalles[i]);
+            }
         }
 
+        table.rows().data().each(function(el, index) {
+            total = Number(el[8]) + total
+        });
+        
+        $('#total').text((Math.round(total * 10) / 10).toFixed(2));
+        //conIgv(total, igv)
     }
 
-    function sinIgv(subtotal) {
-        /// CALCULAR IGV (BASE)
-        var base = subtotal / (1 + 0.18)
-        var nuevo_igv = subtotal - base;
-        $('#igv_int').text('18 %')
-        $('#subtotal').text(base.toFixed(2))
-        $('#igv_monto').text(nuevo_igv.toFixed(2))
-        $('#total').text(subtotal.toFixed(2))
+
+    function conIgv(subtotal, igv) {
+        let total = subtotal * (1 + (igv / 100));
+        let igv_calculado =  total - subtotal;
+        $('#igv_int').text(igv + '%')
+        $('#subtotal').text((Math.round(subtotal * 10) / 10).toFixed(2))
+        $('#igv_monto').text((Math.round(igv_calculado * 10) / 10).toFixed(2))
+        $('#total').text((Math.round(total * 10) / 10).toFixed(2))
+        //Math.round(fDescuento * 10) / 10
     }
 
     $(document).ready(function() {
@@ -577,12 +569,15 @@
                 },
                 {
                     "targets": [8],
-                    "visible": false,
                 },
                 {
                     "targets": [9],
-                    "visible": false,
+                    'visible': false,
                 },
+                {
+                    "targets": [10],
+                    'visible': false,
+                }
             ],
             'bAutoWidth': false,
             'aoColumns': [{
@@ -612,6 +607,14 @@
                     sWidth: '15%',
                     sClass: 'text-center'
                 },
+                {
+                    sWidth: '0%',
+                    sClass: 'text-center'
+                },
+                {
+                    sWidth: '0%',
+                    sClass: 'text-center'
+                }
             ],
             "language": {
                 url: "{{ asset('Spanish.json') }}"
@@ -628,7 +631,6 @@
             $('#igv').prop('required', true)
             var igv = ($('#igv').val()) + ' %'
             $('#igv_int').text(igv)
-
 
         @else
             $("#igv_check").attr('checked', false);
@@ -680,6 +682,7 @@
         if (producto.value.length > 0) {
             var tipo = $('#tipo_cliente').val()
             $.get('/almacenes/productos/obtenerProducto/' + producto.value, function(data) {
+                console.log(data);
                 for (var i = 0; i < data.cliente_producto.length; i++)
                 {
                     //SOLO SOLES LOS MONTOS
@@ -688,14 +691,17 @@
                             var monto = Number(data.cliente_producto[i].monto * 0.18) + Number(data
                                 .cliente_producto[i].monto)
                             $('#precio').val(Number(monto).toFixed(2))
+                            
                         } else {
                             var monto = data.cliente_producto[i].monto
                             $('#precio').val(Number(monto).toFixed(2))
+                            
                         }
                     }
                 }
             });
         }
+
 
     }
 
@@ -724,15 +730,16 @@
             '',
             "{{ $detalle->cantidad }}",
             "{{ $detalle->producto->codigo . ' - ' . $detalle->producto->nombre }}",
-            "{{ $detalle->precio }}",
+            "{{ $detalle->valor_unitario }}",
+            "{{ $detalle->precio_unitario }}",
             "{{ $detalle->dinero }}",
             "{{ $detalle->precio_nuevo }}",
-            ("{{ $detalle->precio_nuevo}}" * "{{ $detalle->cantidad }}").toFixed(2),
-            "{{ $detalle->producto->medida }}",
+            ("{{ $detalle->valor_venta }}"),
+            "{{ $detalle->precio_inicial }}",
             "{{ $detalle->descuento}}",
             ]).draw(false);
-            console.log()
         @endforeach
+        sumaTotal();
     }
 
 
@@ -808,17 +815,18 @@
         table.row.add([
             $detalle.producto_id,
             '',
-            $detalle.cantidad,
+            $detalle.cantidad.toFixed(2),
             $detalle.producto,
-            $detalle.precio,
-            $detalle.dinero,
-            $detalle.precioNuevo,
-            $detalle.precioNuevo * $detalle.cantidad,
-            $detalle.presentacion,
-            $detalle.descuento
-        ]).draw(false);
-        cargarProductos()
+            $detalle.valor_unitario.toFixed(2),               
+            $detalle.precio_unitario.toFixed(2),         
+            $detalle.dinero.toFixed(2),
+            $detalle.precio_nuevo.toFixed(2),
+            $detalle.valor_venta.toFixed(2),
+            $detalle.precio_inicial.toFixed(2),
+            $detalle.descuento.toFixed(2),
 
+        ]).draw(false);
+        cargarProductos();
     }
 
     function obtenerMedida(id) {
@@ -832,46 +840,62 @@
     }
 
     function llegarDatos() {
-        var pdescuento = $("#pdescuento").val().length > 0 ? $("#pdescuento").val():0;
-        var precio = $('#precio').val();
-        var igv = $("#igv").val();
-        var precionuevo;
-        var dinero;
-        if (igv) {
-            dinero = (precio * pdescuento) / 100;
-            precionuevo = precio - dinero
+        let pdescuento = $("#pdescuento").val().length > 0 ? convertFloat($("#pdescuento").val()) : 0;
+        let precio_inicial = convertFloat($('#precio').val());
+        let igv = convertFloat($('#igv').val());
+        let igv_calculado = convertFloat(igv / 100);
 
+        let valor_unitario = 0.00;
+        let precio_unitario = 0.00;
+        let dinero = 0.00;
+        let precio_nuevo = 0.00;
+        let valor_venta = 0.00;
+        let cantidad = convertFloat($('#cantidad').val())
+        if ($("#igv_check").prop('checked')) {
+            precio_unitario = precio_inicial;
+            valor_unitario = precio_unitario / (1 + igv_calculado);                
+            dinero = precio_unitario * (pdescuento / 100);
+            precio_nuevo = precio_unitario - dinero;
+            valor_venta = precio_nuevo * cantidad;
         } else {
-            dinero = ((precio / 1.18) * pdescuento) / 100
-            precionuevo = (precio / 1.18) - dinero
+            precio_unitario = precio_inicial / 1.18;
+            valor_unitario = precio_unitario / 1.18;              
+            dinero = precio_unitario * (pdescuento / 100);
+            precio_nuevo = precio_unitario - dinero;
+            valor_venta = precio_nuevo * cantidad;
         }
+
         var detalle = {
             producto_id: $('#producto').val(),
-            presentacion: $('#presentacion_producto').val(),
             producto: $('#codigo_nombre_producto').val(),
-            precio: String(precio),
-            precioNuevo: String(precionuevo),
-            cantidad: $('#cantidad').val(),
+            precio_unitario: precio_unitario,
+            valor_unitario: valor_unitario,
+            valor_venta: valor_venta,
+            cantidad: cantidad,
+            dinero: dinero,
             descuento: pdescuento,
-            dinero: dinero
+            precio_nuevo: precio_nuevo,
+            precio_inicial: precio_inicial
         }
+        console.log(detalle);
         agregarTabla(detalle);
     }
 
     function cargarProductos() {
-
         var productos = [];
         var data = table.rows().data();
         data.each(function(value, index) {
             let fila = {
                 producto_id: value[0],
                 presentacion: value[3],
-                precio: value[4],
-                dinero:value[5],
-                descuento:value[9],
-                precionuevo: value[6],
+                precio_unitario: value[5],
+                valor_unitario:value[4],
+                dinero:value[6],
+                precio_inicial:value[9],
+                precio_nuevo:value[7],
+                descuento:value[10],
                 cantidad: value[2],
-                total: value[7],
+                valor_venta: value[8],
             };
 
             productos.push(fila);

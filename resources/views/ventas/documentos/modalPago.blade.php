@@ -12,11 +12,11 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label class="col-form-label required">Monto</label>
-                    <input type="text" class="form-control" id="monto_venta" name="monto_venta" onkeypress="return isNumber(event)" readonly> 
+                    <input type="text" class="form-control" id="monto_venta" name="monto_venta" onkeypress="return filterFloat(event, this);" readonly> 
                 </div>
                 <div class="form-group">
                     <label class="col-form-label required">Efectivo</label>
-                    <input type="text" value="0.00" class="form-control" id="efectivo_venta" onkeypress="return isNumber(event)" onkeyup="changeEfectivo(this)" name="efectivo_venta"> 
+                    <input type="text" value="0.00" class="form-control" id="efectivo_venta" onkeypress="return filterFloat(event, this);" onkeyup="changeEfectivo(this)" name="efectivo_venta"> 
                 </div>
                 <div class="form-group">
                     <label class="col-form-label required">Modo de pago</label>
@@ -29,7 +29,7 @@
                 </div>
                 <div class="form-group">
                     <label  class="col-form-label required">Importe</label>
-                    <input type="text" class="form-control" id="importe_venta" onkeypress="return isNumber(event)" onkeyup="changeImporte(this)" name="importe_venta"> 
+                    <input type="text" class="form-control" id="importe_venta" onkeypress="return filterFloat(event, this);" onkeyup="changeImporte(this)" name="importe_venta"> 
                 </div>
             </div>
             <div class="modal-footer">

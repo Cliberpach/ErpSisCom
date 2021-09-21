@@ -118,11 +118,24 @@
                                             name="tipo_venta" id="tipo_venta" required  @if (!empty($cotizacion)) '' @else onchange="consultarSeguntipo()" @endif >
                                             <option></option>
                                             
-                                                @foreach (tipos_venta() as $tipo)
-                                                    @if( $tipo->tipo == 'VENTA' || $tipo->tipo == 'AMBOS' )
-                                                        <option value="{{$tipo->id}}" @if(old('tipo_venta')==$tipo->nombre ) {{'selected'}} @endif >{{$tipo->nombre}}</option>
-                                                    @endif
-                                                @endforeach
+                                                @if(!empty($cotizacion))
+                                                    @foreach (tipos_venta() as $tipo)
+                                                        @if( $tipo->tipo == 'VENTA' || $tipo->tipo == 'AMBOS')
+                                                            @if($cotizacion->cliente->tipo_documento === 'RUC' && $tipo->id === 127)
+                                                            <option value="{{$tipo->id}}" @if(old('tipo_venta')==$tipo->nombre ) {{'selected'}} @endif >{{$tipo->nombre}}</option>
+                                                            @endif
+                                                            @if($cotizacion->cliente->tipo_documento != 'RUC' && $tipo->id != 127)
+                                                            <option value="{{$tipo->id}}" @if(old('tipo_venta')==$tipo->nombre ) {{'selected'}} @endif >{{$tipo->nombre}}</option>
+                                                            @endif
+                                                        @endif
+                                                    @endforeach
+                                                @else
+                                                    @foreach (tipos_venta() as $tipo)
+                                                        @if( $tipo->tipo == 'VENTA' || $tipo->tipo == 'AMBOS')
+                                                            <option value="{{$tipo->id}}" @if(old('tipo_venta')==$tipo->nombre ) {{'selected'}} @endif >{{$tipo->nombre}}</option>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
 
                                                 @if ($errors->has('tipo_venta'))
                                                 <span class="invalid-feedback" role="alert">
@@ -313,11 +326,13 @@
                                                         <th></th>
                                                         <th class="text-center">ACCIONES</th>
                                                         <th class="text-center">CANTIDAD</th>
-                                                        <th class="text-center">UNIDAD DE MEDIDA</th>
-                                                        <th class="text-center">DESCRIPCION DEL PRODUCTO</th>
-                                                        <th class="text-center">PRECIO</th>
+                                                        <th class="text-center">UM</th>
+                                                        <th class="text-center">PRODUCTO</th>
+                                                        <th class="text-center">V. UNITARIO</th>
+                                                        <th class="text-center">P. UNITARIO</th>
+                                                        <th class="text-center">DESCUENTO</th>
+                                                        <th class="text-center">P. NUEVO</th>
                                                         <th class="text-center">TOTAL</th>
-
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -325,20 +340,17 @@
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <th colspan="6" style="text-align:right">Sub Total:</th>
-                                                        <th><span id="subtotal">@if (!empty($cotizacion)) {{$cotizacion->sub_total}} @else 0.0 @endif</span></th>
-
+                                                        <th class="text-center" colspan="9">Sub Total:</th>
+                                                        <th class="text-center"><span id="subtotal">@if (!empty($cotizacion)) {{$cotizacion->sub_total}} @else 0.0 @endif</span></th>
                                                     </tr>
                                                     <tr>
-                                                        <th colspan="6" class="text-center">IGV <span
+                                                        <th class="text-center" colspan="9">IGV <span
                                                                 id="igv_int"></span>:</th>
                                                         <th class="text-center"><span id="igv_monto">@if (!empty($cotizacion)) {{$cotizacion->total_igv}} @else 0.0 @endif</span></th>
-
                                                     </tr>
                                                     <tr>
-                                                        <th colspan="6" class="text-center">TOTAL:</th>
+                                                        <th class="text-center" colspan="9">TOTAL:</th>
                                                         <th class="text-center"><span id="total">@if (!empty($cotizacion)) {{$cotizacion->total}} @else 0.0 @endif</span></th>
-
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -455,12 +467,11 @@
                     $('#indice').val(indice);
                     $('#producto_lote_editar').val(data[4]);
                     $('#producto_editar').val(data[0]);
-                    $('#precio_editar').val(data[5]);
-                    $('#presentacion_producto_editar').val(data[3]);
+                    $('#precio_editar').val(data[10]);
                     $('#codigo_nombre_producto_editar').val(data[4]);
                     $('#cantidad_editar').val(data[2]);
                     $('#cantidad_editar_actual').val(data[2]);
-                    $('#medida_editar').val(data[7]);
+                    $('#medida_editar').val(data[3]);
                     $('#modal_editar_detalle').modal('show');
 
                     let suma_cant = parseFloat(response.lote.cantidad_logica) + parseFloat(data[2]);
@@ -618,8 +629,21 @@
                     },
                     {
                         "targets": [7],
-                        "visible": false,
                     },
+                    {
+                        "targets": [8],
+                    },
+                    {
+                        "targets": [9],
+                    },
+                    {
+                        "targets": [10],
+                        'visible': false
+                    },
+                    {
+                        "targets": [11],
+                        'visible': false
+                    }
                 ],
                 'bAutoWidth': false,
                 'aoColumns': [
@@ -639,31 +663,28 @@
 
             @if (!empty($cotizacion))
 
-            @if ($cotizacion->igv_check == '1') 
+                @if ($cotizacion->igv_check == '1') 
+                    $('#igv').prop('disabled', false)
+                    $("#igv_check").prop('checked',true)
 
-                $('#igv').prop('disabled', false)
-                $("#igv_check").prop('checked',true)
-
-                $('#igv_requerido').addClass("required")
-                $('#igv').prop('required', true)
-                var igv = ($('#igv').val()) + ' %'
-                $('#igv_int').text(igv)
-                // sumaTotal()
-            @else
-                if ($("#igv_check").prop('checked')) {
-                    $('#igv').attr('disabled', false)
                     $('#igv_requerido').addClass("required")
-                } else {
-                    $('#igv').attr('disabled', true)
-                    $('#igv_requerido').removeClass("required")
-                }
-            @endif
+                    $('#igv').prop('required', true)
+                    var igv = ($('#igv').val()) + ' %'
+                    $('#igv_int').text(igv)
+                    // sumaTotal()
+                @else
+                    if ($("#igv_check").prop('checked')) {
+                        $('#igv').attr('disabled', false)
+                        $('#igv_requerido').addClass("required")
+                    } else {
+                        $('#igv').attr('disabled', true)
+                        $('#igv_requerido').removeClass("required")
+                    }
+                @endif
 
-            @if ($lotes) 
-                obtenerTabla()
-                // sumaTotal()
-            @endif
-
+                @if ($lotes) 
+                    obtenerTabla()
+                @endif
             @endif
 
 
@@ -747,8 +768,9 @@
                     cancelButtonText: "No, Cancelar",
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        llegarDatos()
-                        $('#asegurarCierre').val(1)
+                        llegarDatos();
+                        sumaTotal();
+                        $('#asegurarCierre').val(1);
                     } else if (
                         /* Read more about handling dismissals below */
                         result.dismiss === Swal.DismissReason.cancel
@@ -779,13 +801,37 @@
         }
 
         function llegarDatos() {
-            var detalle = {
-                producto_id: $('#producto_id').val(),
-                presentacion: $('#producto_unidad').val(),
-                producto: $('#producto_lote').val(),
-                precio: $('#precio').val(),
-                cantidad: $('#cantidad').val(),
-            }
+            let pdescuento = 0;
+            let precio_inicial = convertFloat($('#precio').val());
+            let igv = convertFloat($('#igv').val());
+            let igv_calculado = convertFloat(igv / 100);
+
+            let valor_unitario = 0.00;
+            let precio_unitario = 0.00;
+            let dinero = 0.00;
+            let precio_nuevo = 0.00;
+            let valor_venta = 0.00;
+            let cantidad = convertFloat($('#cantidad').val());
+
+            precio_unitario = precio_inicial;
+            valor_unitario = precio_unitario / (1 + igv_calculado);                
+            dinero = precio_unitario * (pdescuento / 100);
+            precio_nuevo = precio_unitario - dinero;
+            valor_venta = precio_nuevo * cantidad;
+
+            let detalle = {
+                        producto_id: $('#producto_id').val(),
+                        unidad: $('#producto_unidad').val(),
+                        producto: $('#producto_lote').val(),
+                        precio_unitario: precio_unitario,
+                        valor_unitario: valor_unitario,
+                        valor_venta: valor_venta,
+                        cantidad: cantidad,
+                        precio_inicial: precio_inicial,
+                        dinero: dinero,
+                        descuento: pdescuento,
+                        precio_nuevo: precio_nuevo,
+                    }
             agregarTabla(detalle);
             cambiarCantidad(detalle,'1');
         }
@@ -797,15 +843,19 @@
                 $detalle.producto_id,
                 '',
                 Number($detalle.cantidad),
-                $detalle.presentacion,
-                $detalle.producto,
-                Number($detalle.precio).toFixed(2),
-                ($detalle.cantidad * $detalle.precio).toFixed(2),
-                $detalle.presentacion
+                $detalle.unidad,
+                $detalle.producto,                
+                Number($detalle.valor_unitario).toFixed(2),
+                Number($detalle.precio_unitario).toFixed(2),
+                Number($detalle.dinero).toFixed(2),
+                Number($detalle.precio_nuevo).toFixed(2),
+                Number( $detalle.valor_venta).toFixed(2),
+                $detalle.precio_inicial,
+                $detalle.descuento,
             ]).draw(false);
-            cargarProductos()
+            //cargarProductos()
             //INGRESADO EL PRODUCTO SUMA TOTAL DEL DETALLE
-            sumaTotal()
+            //sumaTotal()
             //LIMPIAR LOS CAMPOS DESPUES DE LA BUSQUEDA
             $('#precio').val('')
             $('#cantidad').val('')
@@ -821,10 +871,15 @@
             data.each(function(value, index) {
                 let fila = {
                     producto_id: value[0],
-                    presentacion: value[3],
-                    precio: value[5],
+                    unidad: value[3],
+                    valor_unitario: value[5],
+                    precio_unitario: value[6],
+                    dinero: value[7],
+                    precio_nuevo: value[8],
+                    precio_inicial: value[10],
+                    descuento: value[11],
                     cantidad: value[2],
-                    total: value[6],
+                    valor_venta: value[9],
                 };
                 productos.push(fila);
             });
@@ -866,67 +921,166 @@
 
         function sumaTotal() {
             var t = $('.dataTables-detalle-documento').DataTable();
-            var subtotal = 0;
-            t.rows().data().each(function(el, index) {
-                subtotal = Number(el[6]) + subtotal
-            });
+            let subtotal = 0.00;
+            let detalles = [];
 
             @if (!empty($cotizacion))
                 @if ($cotizacion->igv_check == '1')
-                    table.rows().data().each(function(el, index) {
-                        var dinero;
-                        var precionuevo;
-                        var pdescuento = 0;
-                        var precio = el[5];
-                        dinero = precio * (convertFloat('{{ $cotizacion->igv }}')/100),
-                        precionuevo = precio - dinero;
-                        table.cell({
-                            row: index,
-                            column: 5
-                        }).data(precionuevo.toFixed(2));
-                        table.cell({
-                            row: index,
-                            column: 6
-                        }).data((precionuevo.toFixed(2) * el[2]).toFixed(2));
+                    t.rows().data().each(function(el, index) {
+                        let igv = convertFloat('{{$cotizacion->igv}}');
+                        let igv_calculado = convertFloat(igv / 100);
+                        let pdescuento = convertFloat(el[11]);
+                        let precio_inicial = convertFloat(el[10]);
+                        let precio_unitario = precio_inicial;
+                        let valor_unitario = precio_unitario / (1 + igv_calculado);
+                        let dinero = precio_unitario * (pdescuento / 100);
+                        let precio_nuevo = precio_unitario - dinero;
+                        let valor_venta = (precio_nuevo * el[2]) / (1 + igv_calculado);
+
+                        let detalle = {
+                            producto_id: el[0],
+                            unidad: el[3],
+                            producto: el[4],
+                            precio_unitario: precio_unitario,
+                            valor_unitario: valor_unitario,
+                            valor_venta: valor_venta,
+                            cantidad: convertFloat(el[2]),
+                            precio_inicial: precio_inicial,
+                            dinero: dinero,
+                            descuento: pdescuento,
+                            precio_nuevo: precio_nuevo,
+                        }
+                        detalles.push(detalle);
                     });
-                    //conIgv(subtotal)
-                    let igv_back = convertFloat('{{ $cotizacion->igv }}');
-                    let calcularIgv = igv_back / 100;
-                    let igv =  subtotal * calcularIgv;
-                    let total = subtotal - igv
-                    $('#igv_int').text(igv_back+'%')
-                    $('#subtotal').text(total.toFixed(2))
-                    $('#igv_monto').text(igv.toFixed(2))
-                    $('#total').text(subtotal.toFixed(2))
+
+                    t.clear().draw();
+
+                    if(detalles.length > 0)
+                    {
+                        for(let i = 0; i < detalles.length; i++)
+                        {
+                            agregarTabla(detalles[i]);
+                        }
+                    }
+
+                    t.rows().data().each(function(el, index) {
+                        subtotal = Number(el[9]) + subtotal
+                    });
+
+                    conIgv(convertFloat(subtotal),convertFloat('{{$cotizacion->igv}}'))
                 @else
-                    sinIgv(subtotal)
+                    t.rows().data().each(function(el, index) {
+                        let igv = convertFloat(18);
+                        let igv_calculado = convertFloat(igv / 100);
+                        let pdescuento = convertFloat(el[11]);
+                        let precio_inicial = convertFloat(el[10]);
+                        let precio_unitario = precio_inicial / 1.18;
+                        let valor_unitario = precio_unitario / 1.18;              
+                        let dinero = precio_unitario * (pdescuento / 100);
+                        let precio_nuevo = precio_unitario - dinero;
+                        let valor_venta = (precio_nuevo * el[2]) / (1 + igv_calculado);
+                        // let precio_unitario = precio_inicial;
+                        // let valor_unitario = precio_unitario / (1 + igv_calculado);
+                        // let dinero = precio_unitario * (pdescuento / 100);
+                        // let precio_nuevo = precio_unitario - dinero;
+                        // let valor_venta = (precio_nuevo * el[2]) / (1 + igv_calculado);
+
+                        let detalle = {
+                            producto_id: el[0],
+                            unidad: el[3],
+                            producto: el[4],
+                            precio_unitario: precio_unitario,
+                            valor_unitario: valor_unitario,
+                            valor_venta: valor_venta,
+                            cantidad: convertFloat(el[2]),
+                            precio_inicial: precio_inicial,
+                            dinero: dinero,
+                            descuento: pdescuento,
+                            precio_nuevo: precio_nuevo,
+                        }
+                        detalles.push(detalle);
+                    });
+
+                    t.clear().draw();
+
+                    if(detalles.length > 0)
+                    {
+                        for(let i = 0; i < detalles.length; i++)
+                        {
+                            agregarTabla(detalles[i]);
+                        }
+                    }
+
+                    t.rows().data().each(function(el, index) {
+                        subtotal = Number(el[9]) + subtotal
+                    });
+
+                    conIgv(convertFloat(subtotal), convertFloat(18))
+
                 @endif
             @else
-                conIgv(subtotal)
+                t.rows().data().each(function(el, index) {
+                    let igv = convertFloat(18);
+                    let igv_calculado = convertFloat(igv / 100);
+                    let pdescuento = convertFloat(el[11]);
+                    let precio_inicial = convertFloat(el[10]);
+                    let precio_unitario = precio_inicial;
+                    let valor_unitario = precio_unitario / (1 + igv_calculado);
+                    let dinero = precio_unitario * (pdescuento / 100);
+                    let precio_nuevo = precio_unitario - dinero;
+                    let valor_venta = (precio_nuevo * el[2]) / (1 + igv_calculado);
+
+                    let detalle = {
+                        producto_id: el[0],
+                        unidad: el[3],
+                        producto: el[4],
+                        precio_unitario: precio_unitario,
+                        valor_unitario: valor_unitario,
+                        valor_venta: valor_venta,
+                        cantidad: convertFloat(el[2]),
+                        precio_inicial: precio_inicial,
+                        dinero: dinero,
+                        descuento: pdescuento,
+                        precio_nuevo: precio_nuevo,
+                    }
+                    detalles.push(detalle);
+                });
+
+                t.clear().draw();
+
+                if(detalles.length > 0)
+                {
+                    for(let i = 0; i < detalles.length; i++)
+                    {
+                        agregarTabla(detalles[i]);
+                    }
+                }
+
+                t.rows().data().each(function(el, index) {
+                    subtotal = Number(el[9]) + subtotal
+                });
+
+                conIgv(convertFloat(subtotal),convertFloat(18))
             @endif
+            
 
         }
 
         function sinIgv(subtotal) {
-            var calcularIgv = 18 / 100
-            var base = subtotal / (1 + calcularIgv)
-            //var nuevo_igv = subtotal - base;
-            var nuevo_igv = 0;
-            //$('#igv_int').text(18+'%')
-            $('#igv_int').text(0+'%')
+            $('#igv_int').text('0%')
             $('#subtotal').text(subtotal.toFixed(2))
-            $('#igv_monto').text(nuevo_igv.toFixed(2))
+            $('#igv_monto').text(0.00)
             $('#total').text(subtotal.toFixed(2))
         }
 
-        function conIgv(subtotal) {
-            let igv =  subtotal * 0.18
-            let total = subtotal - igv
-            $('#igv_int').text('18%')
-            $('#subtotal').text(total.toFixed(2))
-            $('#igv_monto').text(igv.toFixed(2))
-            $('#total').text(subtotal.toFixed(2))
-
+        function conIgv(subtotal, igv) {
+            let total = subtotal * (1 + (igv / 100));
+            let igv_calculado =  total - subtotal;
+            $('#igv_int').text(igv + '%')
+            $('#subtotal').text((Math.round(subtotal * 10) / 10).toFixed(2))
+            $('#igv_monto').text((Math.round(igv_calculado * 10) / 10).toFixed(2))
+            $('#total').text((Math.round(total * 10) / 10).toFixed(2))
+            //Math.round(fDescuento * 10) / 10
         }
 
         function registrosProductos() {
@@ -1200,9 +1354,13 @@
                         "{{$lote->cantidad}}",
                         "{{$lote->unidad}}",
                         "{{$lote->descripcion_producto}}",
-                        "{{$lote->precio}}",
-                        "{{$lote->importe}}",
-                        "{{$lote->presentacion}}",
+                        "{{$lote->valor_unitario}}",
+                        "{{$lote->precio_unitario}}",
+                        "{{$lote->dinero}}",
+                        "{{$lote->precio_nuevo}}",
+                        "{{$lote->valor_venta}}",
+                        "{{$lote->precio_inicial}}",
+                        "{{$lote->descuento}}",
                     ])                    
                 @endforeach
                 //SUMATORIA TOTAL
@@ -1308,7 +1466,6 @@
         if($('#asegurarCierre').val() == 1 ) {devolverCantidades()}
     
     };
-
 </script>
 
 

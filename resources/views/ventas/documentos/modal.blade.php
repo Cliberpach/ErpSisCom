@@ -13,8 +13,8 @@
             <div class="modal-body">
                 
                 <input type="hidden" id="id_editar" name="id_editar">
-                <input type="hidden" id="medida_editar" name="medida_editar">
-                <input type="text" id="indice" name="indice">
+                <input type="hidden" id="presentacion_producto_editar" name="presentacion_producto_editar">
+                <input type="hidden" id="indice" name="indice">
                 <input type="hidden" id="codigo_nombre_producto_editar" name="codigo_nombre_producto_editar">
 
                 <div class="form-group">
@@ -24,7 +24,7 @@
                 </div>
                 <div class="form-group">
                     <label class="">Unidad de Medida</label>
-                    <input type="text" id="presentacion_producto_editar" name="presentacion_producto_editar" class="form-control" disabled>
+                    <input type="text" id="medida_editar" name="medida_editar" class="form-control" disabled>
                 </div>
                 <div class="form-group row">
 
@@ -66,6 +66,7 @@ $('#cantidad_editar').on('input', function() {
         this.value = max;
     }
 });
+
 //Validacion al ingresar tablas
 $("#btn_editar_detalle").click(function() {
     // limpiarErrores()
@@ -169,16 +170,58 @@ function actualizarTabla(i) {
     var table = $('.dataTables-detalle-documento').DataTable();
     table.row(i).remove().draw();
 
-    var detalle = {
-        producto_id: $('#producto_editar').val(),
-        producto: $('#codigo_nombre_producto_editar').val(),
-        presentacion:  $('#medida_editar').val(),
-        precio: $('#precio_editar').val(),
-        cantidad: $('#cantidad_editar').val(),
-    }
+    let pdescuento = 0;
+    let precio_inicial = convertFloat($('#precio_editar').val());
+    let igv = convertFloat($('#igv').val());
+    let igv_calculado = convertFloat(igv / 100);
 
+    let valor_unitario = 0.00;
+    let precio_unitario = 0.00;
+    let dinero = 0.00;
+    let precio_nuevo = 0.00;
+    let valor_venta = 0.00;
+    let cantidad = convertFloat($('#cantidad_editar').val());
+
+    precio_unitario = precio_inicial;
+    valor_unitario = precio_unitario / (1 + igv_calculado);                
+    dinero = precio_unitario * (pdescuento / 100);
+    precio_nuevo = precio_unitario - dinero;
+    valor_venta = precio_nuevo * cantidad;
+
+    let detalle = {
+                producto_id: $('#producto_editar').val(),
+                unidad: $('#medida_editar').val(),
+                producto: $('#codigo_nombre_producto_editar').val(),
+                precio_unitario: precio_unitario,
+                valor_unitario: valor_unitario,
+                valor_venta: valor_venta,
+                cantidad: cantidad,
+                precio_inicial: precio_inicial,
+                dinero: dinero,
+                descuento: pdescuento,
+                precio_nuevo: precio_nuevo,
+            }
+
+    // let precio_inicial = convertFloat($('#precio_editar').val());
+    // let igv = 18;
+    // let igv_calculado = convertFloat(igv / 100);
+    // let valor_unitario = 0.00;
+    // let valor_venta = 0.00;
+    // let cantidad = convertFloat($('#cantidad_editar').val())
+    // valor_unitario = precio_unitario - (precio_unitario * igv_calculado);
+    // valor_venta = precio_unitario * cantidad;
+    // var detalle = {
+    //     producto_id: $('#producto_editar').val(),
+    //     unidad: $('#medida_editar').val(),
+    //     producto: $('#codigo_nombre_producto_editar').val(),
+    //     precio_unitario: precio_unitario,
+    //     valor_unitario: valor_unitario,
+    //     valor_venta: valor_venta,
+    //     cantidad: cantidad,
+    //     presentacion:  $('#presentacion_producto_editar').val(),
+    // }
     agregarTabla(detalle);
-
+    sumaTotal()
 }
 
 function limpiar() {

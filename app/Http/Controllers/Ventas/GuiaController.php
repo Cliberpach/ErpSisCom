@@ -205,7 +205,6 @@ class GuiaController extends Controller
     public function show($id)
     {
         $guia = Guia::findOrFail($id);
-        return $guia->documento;
         if ($guia->sunat == '0' || $guia->sunat == '2' ) {
             //ARREGLO GUIA
             $arreglo_guia = array(

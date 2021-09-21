@@ -917,25 +917,31 @@
             if (objeto.value === undefined)
                 return;
 
-            var nombres = objeto.value.nombres;
-            var apellido_paterno = objeto.value.apellidoPaterno;
-            var apellido_materno = objeto.value.apellidoMaterno;
-            var codigo_verificacion = objeto.value.codVerifica;
+            if(objeto.value.success)
+            {
+                var nombres = objeto.value.data.nombres;
+                var apellido_paterno = objeto.value.data.apellido_paterno;
+                var apellido_materno = objeto.value.data.apellido_materno;
+                var codigo_verificacion = objeto.value.data.codigo_verificacion;
 
-            var nombre = "";
-            if (nombres !== '-' && nombres !== "NULL") {
-                nombre += nombres;
+                var nombre = "";
+                if (nombres !== '-' && nombres !== "NULL") {
+                    nombre += nombres;
+                }
+                if (apellido_paterno !== '-' && apellido_paterno !== "NULL") {
+                    nombre += (nombre.length === 0) ? apellido_paterno : ' ' + apellido_paterno
+                }
+                if (apellido_materno !== '-' && apellido_materno !== "NULL") {
+                    nombre += (nombre.length === 0) ? apellido_materno : ' ' + apellido_materno
+                }
+                $("#nombre").val(nombre);
+                $("#activo").val("ACTIVO");
+                if (codigo_verificacion !== '-' && codigo_verificacion !== "NULL") {
+                    $('#codigo_verificacion').val(codigo_verificacion);
+                }
             }
-            if (apellido_paterno !== '-' && apellido_paterno !== "NULL") {
-                nombre += (nombre.length === 0) ? apellido_paterno : ' ' + apellido_paterno
-            }
-            if (apellido_materno !== '-' && apellido_materno !== "NULL") {
-                nombre += (nombre.length === 0) ? apellido_materno : ' ' + apellido_materno
-            }
-            $("#nombre").val(nombre);
-            $("#activo").val("ACTIVO");
-            if (codigo_verificacion !== '-' && codigo_verificacion !== "NULL") {
-                $('#codigo_verificacion').val(codigo_verificacion);
+            else{
+                toastr.error('No se encontraron datos.')
             }
         }
 
@@ -1232,32 +1238,38 @@
         }
 
         function camposRUC(objeto) {
-
+            console.log(objeto);
             if (objeto.value === undefined)
                 return;
+            if(objeto.value.success)
+            {
+                var razonsocial = objeto.value.data.nombre_o_razon_social;
+                var direccion = objeto.value.data.direccion;
+                var departamento = objeto.value.data.ubigeo[0];
+                var provincia = objeto.value.data.ubigeo[1];
+                var distrito = objeto.value.data.ubigeo[2];
+                var estado = objeto.value.data.estado;
 
-            var razonsocial = objeto.value.razonSocial;
-            var direccion = objeto.value.direccion;
-            var departamento = objeto.value.departamento;
-            var provincia = objeto.value.provincia;
-            var distrito = objeto.value.distrito;
-            var estado = objeto.value.estado;
+                if (razonsocial != '-' && razonsocial != "NULL") {
+                    $('#nombre').val(razonsocial);
+                }
 
-            if (razonsocial != '-' && razonsocial != "NULL") {
-                $('#nombre').val(razonsocial);
+                if (estado == "ACTIVO") {
+                    $('#activo').val(estado);
+                } else {
+                    toastr.error('Cliente con RUC no se encuentra "Activo"', 'Error');
+                }
+
+                if (direccion != '-' && direccion != "NULL") {
+                    $('#direccion').val(direccion);
+                }
+
+                camposUbigeoApi(departamento, provincia, distrito);
             }
-
-            if (estado == "ACTIVO") {
-                $('#activo').val(estado);
-            } else {
-                toastr.error('Cliente con RUC no se encuentra "Activo"', 'Error');
+            else
+            {
+                toastr.error('No se encontraron datos.')
             }
-
-            if (direccion != '-' && direccion != "NULL") {
-                $('#direccion').val(direccion);
-            }
-
-            camposUbigeoApi(departamento, provincia, distrito);
         }
 
         function camposUbigeoApi(departamento, provincia, distrito) {

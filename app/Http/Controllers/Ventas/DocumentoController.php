@@ -92,8 +92,25 @@ class DocumentoController extends Controller
             $cotizacion =  Cotizacion::findOrFail( $request->get('cotizacion') );
             $detalles = CotizacionDetalle::where('cotizacion_id', $request->get('cotizacion'))->get();
             $lotes = self::cotizacionLote($detalles);
-            //COMPROBACION DE LOTES SI LAS CANTIDADES ENVIADAS SON IGUALES A LAS SOLICITADAS
+            
             $nuevoDetalle = collect();
+            if(count($lotes) === 0)
+            {
+                $coll = new Collection();
+                $coll->producto = '. No hay stock para ninguno de los productos';
+                $coll->cantidad = '.';
+                $errores->push($coll);
+                
+                return view('ventas.documentos.create',[
+                    'cotizacion' => $cotizacion,
+                    'empresas' => $empresas,
+                    'clientes' => $clientes,
+                    'productos' => $productos,
+                    'lotes' => $nuevoDetalle,
+                    'errores' => $errores,
+                ]);
+            }
+            //COMPROBACION DE LOTES SI LAS CANTIDADES ENVIADAS SON IGUALES A LAS SOLICITADAS
             foreach ($detalles as $detalle) {
                 $cantidadDetalle = $lotes->where('producto',$detalle->producto_id)->sum('cantidad');
                 if($cantidadDetalle != $detalle->cantidad){
@@ -111,10 +128,15 @@ class DocumentoController extends Controller
                         $coll = new Collection();
                         $coll->producto_id = $devolucion->producto_id;
                         $coll->cantidad = $devolucion->cantidad;
-                        $coll->precio = $devolucion->precio;
+                        $coll->precio_unitario = $devolucion->precio_unitario;
+                        $coll->precio_inicial = $devolucion->precio_inicial;
+                        $coll->precio_nuevo = $devolucion->precio_nuevo;
+                        $coll->descuento = $devolucion->descuento;
+                        $coll->dinero = $devolucion->dinero;
+                        $coll->valor_unitario = $devolucion->valor_unitario;
+                        $coll->valor_venta = $devolucion->valor_venta;
                         $coll->unidad = $devolucion->unidad;
                         $coll->descripcion_producto = $devolucion->descripcion_producto;
-                        $coll->importe = $devolucion->cantidad * $devolucion->precio;
                         $coll->presentacion = $devolucion->presentacion;
                         $coll->producto = $devolucion->producto;
                         $nuevoDetalle->push( $coll);
@@ -177,10 +199,15 @@ class DocumentoController extends Controller
                         $coll = new Collection();
                         $coll->producto_id = $lote->id;
                         $coll->cantidad = $lote->cantidad_logica;
-                        $coll->precio = $detalle->precio_nuevo;
+                        $coll->precio_unitario = $detalle->precio_unitario;
+                        $coll->precio_inicial = $detalle->precio_inicial;
+                        $coll->precio_nuevo = $detalle->precio_nuevo;
+                        $coll->descuento = $detalle->descuento;
+                        $coll->dinero = $detalle->dinero;
+                        $coll->valor_unitario = $detalle->valor_unitario;
+                        $coll->valor_venta = $detalle->valor_venta;
                         $coll->unidad = $lote->producto->medidaCompleta();
-                        $coll->descripcion_producto= $lote->producto->nombre.' - '.$lote->codigo;
-                        $coll->importe = $detalle->importe;
+                        $coll->descripcion_producto= $lote->producto->nombre.' - '.$lote->codigo_lote;
                         $coll->presentacion = $lote->producto->medida;
                         $coll->producto = $lote->producto->id;
                         $nuevoDetalle->push( $coll);
@@ -190,19 +217,23 @@ class DocumentoController extends Controller
                         $cantidadSolicitada = 0;
                         $lote->update();
                     }else{
-
                         if ($lote->cantidad_logica < $cantidadSolicitada) {
                             //CREAMOS EL NUEVO DETALLE
                             $coll = new Collection();
                             $coll->producto_id = $lote->id;
                             $coll->cantidad = $lote->cantidad_logica;
-                            $coll->precio = $detalle->precio_nuevo;
+                            $coll->precio_unitario = $detalle->precio_unitario;
+                            $coll->precio_inicial = $detalle->precio_inicial;
+                            $coll->precio_nuevo = $detalle->precio_nuevo;
+                            $coll->descuento = $detalle->descuento;
+                            $coll->dinero = $detalle->dinero;
+                            $coll->valor_unitario = $detalle->valor_unitario;
+                            $coll->valor_venta = $detalle->valor_venta;
                             $coll->unidad = $lote->producto->medidaCompleta();
-                            $coll->descripcion_producto= $lote->producto->nombre.' - '.$lote->codigo;
-                            $coll->importe = $detalle->importe;
+                            $coll->descripcion_producto= $lote->producto->nombre.' - '.$lote->codigo_lote;
                             $coll->presentacion = $lote->producto->medida;
                             $coll->producto = $lote->producto->id;
-                            $nuevoDetalle->push( $coll);
+                            $nuevoDetalle->push($coll);
                             //REDUCIMOS LA CANTIDAD SOLICITADA
                             $cantidadSolicitada = $cantidadSolicitada - $lote->cantidad_logica;
                             //ACTUALIZAMOS EL LOTE
@@ -214,10 +245,15 @@ class DocumentoController extends Controller
                                 $coll = new Collection();
                                 $coll->producto_id = $lote->id;
                                 $coll->cantidad = $cantidadSolicitada ;
-                                $coll->precio = $detalle->precio_nuevo;
+                                $coll->precio_unitario = $detalle->precio_unitario;
+                                $coll->precio_inicial = $detalle->precio_inicial;
+                                $coll->precio_nuevo = $detalle->precio_nuevo;
+                                $coll->descuento = $detalle->descuento;
+                                $coll->dinero = $detalle->dinero;
+                                $coll->valor_unitario = $detalle->valor_unitario;
+                                $coll->valor_venta = $detalle->valor_venta;
                                 $coll->unidad = $lote->producto->medidaCompleta();
-                                $coll->descripcion_producto = $lote->producto->nombre.' - '.$lote->codigo;
-                                $coll->importe = $detalle->importe;
+                                $coll->descripcion_producto = $lote->producto->nombre.' - '.$lote->codigo_lote;
                                 $coll->presentacion = $lote->producto->medida;
                                 $coll->producto = $lote->producto->id;
                                 $nuevoDetalle->push( $coll);
@@ -245,6 +281,7 @@ class DocumentoController extends Controller
     public function store(Request $request){
 
         $data = $request->all();
+
         $rules = [
             'fecha_documento'=> 'required',
             'fecha_atencion_campo'=> 'required',
@@ -319,7 +356,6 @@ class DocumentoController extends Controller
         //Llenado de los articulos
         $productosJSON = $request->get('productos_tabla');
         $productotabla = json_decode($productosJSON[0]);
-
         foreach ($productotabla as $producto) {
             $lote = LoteProducto::findOrFail($producto->producto_id);
             Detalle::create([
@@ -330,8 +366,13 @@ class DocumentoController extends Controller
                 'nombre_producto' => $lote->producto->nombre,
                 'codigo_lote' => $lote->codigo_lote,
                 'cantidad' => $producto->cantidad,
-                'precio' => $producto->precio,
-                'importe' => $producto->total,
+                'precio_unitario' => $producto->precio_unitario,
+                'precio_inicial' => $producto->precio_inicial,
+                'precio_nuevo' => $producto->precio_nuevo,
+                'dinero' => $producto->dinero,
+                'descuento' => $producto->descuento,
+                'valor_unitario' => $producto->valor_unitario,
+                'valor_venta' => $producto->valor_venta,
             ]);
 
             $lote->cantidad =  $lote->cantidad - $producto->cantidad;

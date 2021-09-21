@@ -98,9 +98,9 @@ class UbigeoController extends Controller
 
         // Hacemos la consulta a distritos (contiene los nombre del ubigeo completo)
         $distritos = Distrito::where([
-                                ['departamento', $request->departamento],
-                                ['provincia', $request->provincia],
-                                ['nombre', $request->distrito]
+                                ['departamento_id', $request->departamento],
+                                ['provincia_id', $request->provincia],
+                                ['id', $request->distrito]
                             ])->get();
         $ubigeo = null;
         if ($distritos->count() > 0)

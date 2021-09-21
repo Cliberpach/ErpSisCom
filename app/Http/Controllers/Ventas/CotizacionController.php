@@ -8,6 +8,7 @@ use App\Mantenimiento\Empresa\Empresa;
 use App\Ventas\Cliente;
 use App\Ventas\Cotizacion;
 use App\Ventas\CotizacionDetalle;
+use App\Ventas\Documento\Detalle;
 use App\Ventas\Documento\Documento;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -55,7 +56,6 @@ class CotizacionController extends Controller
 
     public function store(Request $request)
     {
-       // return $request;
         $data = $request->all();
         $rules = [
             'empresa' => 'required',
@@ -79,6 +79,11 @@ class CotizacionController extends Controller
 
         Validator::make($data, $rules, $message)->validate();
 
+        $igv = $request->get('igv') && $request->get('igv_check') == "on" ? (float) $request->get('igv') : 18;
+        $total = (float) $request->get('monto_total');
+        $sub_total = $total / (1 + ($igv/100));
+        $total_igv = $total - $sub_total;
+
         $cotizacion = new Cotizacion();
         $cotizacion->empresa_id = $request->get('empresa');
         $cotizacion->cliente_id = $request->get('cliente');
@@ -87,9 +92,9 @@ class CotizacionController extends Controller
         $cotizacion->fecha_documento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_documento'))->format('Y-m-d');
         $cotizacion->fecha_atencion = Carbon::createFromFormat('d/m/Y', $request->get('fecha_atencion_campo'))->format('Y-m-d');
 
-        $cotizacion->sub_total = 0;
-        $cotizacion->total_igv =0;
-        $cotizacion->total = (float) $request->get('monto_total');
+        $cotizacion->sub_total = $sub_total;
+        $cotizacion->total_igv = $total_igv;
+        $cotizacion->total = $total;
 
         $cotizacion->user_id = Auth::id();
         $cotizacion->igv = $request->get('igv');
@@ -101,17 +106,18 @@ class CotizacionController extends Controller
         //Llenado de los Productos
         $productosJSON = $request->get('productos_tabla');
         $productotabla = json_decode($productosJSON[0]);
-
         foreach ($productotabla as $producto) {
             CotizacionDetalle::create([
                 'cotizacion_id' => $cotizacion->id,
                 'producto_id' => $producto->producto_id,
                 'descuento'=> $producto->descuento,
                 'dinero'=> $producto->dinero,
-                'precio_nuevo' => $producto->precionuevo,
+                'valor_unitario' => $producto->valor_unitario,
+                'precio_unitario' => $producto->precio_unitario,
+                'precio_inicial' => $producto->precio_inicial,
+                'precio_nuevo' => $producto->precio_nuevo,
                 'cantidad' => $producto->cantidad,
-                'precio' => $producto->precio,
-                'importe' => $producto->total,
+                'valor_venta' => $producto->valor_venta,
             ]);
         }
 
@@ -147,7 +153,6 @@ class CotizacionController extends Controller
     public function update(Request $request,$id)
     {
         $data = $request->all();
-
         $rules = [
             'empresa' => 'required',
             'cliente' => 'required',
@@ -170,53 +175,52 @@ class CotizacionController extends Controller
 
         Validator::make($data, $rules, $message)->validate();
 
+        $igv = $request->get('igv') && $request->get('igv_check') == "on" ? (float) $request->get('igv') : 18;
+        $total = (float) $request->get('monto_total');
+        $sub_total = $total / (1 + ($igv/100));
+        $total_igv = $total - $sub_total;
+        $cotizacion =  Cotizacion::findOrFail($id);
+        $cotizacion->empresa_id = $request->get('empresa');
+        $cotizacion->cliente_id = $request->get('cliente');
+        $cotizacion->vendedor_id = $request->get('vendedor');
+        $cotizacion->fecha_documento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_documento'))->format('Y-m-d');
+        $cotizacion->fecha_atencion = Carbon::createFromFormat('d/m/Y', $request->get('fecha_atencion'))->format('Y-m-d');
 
-            $cotizacion =  Cotizacion::findOrFail($id);
-            $cotizacion->empresa_id = $request->get('empresa');
-            $cotizacion->cliente_id = $request->get('cliente');
-            $cotizacion->vendedor_id = $request->get('vendedor');
-            $cotizacion->fecha_documento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_documento'))->format('Y-m-d');
-            $cotizacion->fecha_atencion = Carbon::createFromFormat('d/m/Y', $request->get('fecha_atencion'))->format('Y-m-d');
+        $cotizacion->sub_total = $sub_total;
+        $cotizacion->total_igv = $total_igv;
+        $cotizacion->total = $total;
 
-            // $cotizacion->sub_total = (float) $request->get('monto_sub_total');
-            // $cotizacion->total_igv = (float) $request->get('monto_total_igv');
-            $cotizacion->sub_total =0;
-            $cotizacion->total_igv =0;
-            $cotizacion->total = (float) $request->get('monto_total');
+        $cotizacion->user_id = Auth::id();
+        $cotizacion->igv = $request->get('igv');
 
-            $cotizacion->user_id = Auth::id();
-            $cotizacion->igv = $request->get('igv');
+        if ($request->get('igv_check') == "on") {
+            $cotizacion->igv_check = "1";
+        }else{
+            $cotizacion->igv_check = '';
+        }
 
-            if ($request->get('igv_check') == "on") {
-                $cotizacion->igv_check = "1";
-            }else{
-                $cotizacion->igv_check = '';
+        $cotizacion->update();
+
+        $productosJSON = $request->get('productos_tabla');
+        $productotabla = json_decode($productosJSON[0]);
+        if ($productotabla) {
+            CotizacionDetalle::where('cotizacion_id', $id)->delete();
+
+            foreach ($productotabla as $producto) {
+                CotizacionDetalle::create([
+                    'cotizacion_id' => $cotizacion->id,
+                    'producto_id' => $producto->producto_id,
+                    'descuento'=> $producto->descuento,
+                    'dinero'=> $producto->dinero,
+                    'valor_unitario' => $producto->valor_unitario,
+                    'precio_unitario' => $producto->precio_unitario,
+                    'precio_inicial' => $producto->precio_inicial,
+                    'precio_nuevo' => $producto->precio_nuevo,
+                    'cantidad' => $producto->cantidad,
+                    'valor_venta' => $producto->valor_venta,
+                ]);
             }
-
-            $cotizacion->update();
-
-            $productosJSON = $request->get('productos_tabla');
-            $productotabla = json_decode($productosJSON[0]);
-            if ($productotabla) {
-                CotizacionDetalle::where('cotizacion_id', $id)->delete();
-
-                foreach ($productotabla as $cotizacion_detalle) {
-                    CotizacionDetalle::create([
-                        'cotizacion_id'=> $cotizacion->id,
-                        'producto_id' => $cotizacion_detalle->producto_id,
-                        'cantidad' => $cotizacion_detalle->cantidad,
-                        'descuento'=>$cotizacion_detalle->descuento==""? 0 :$cotizacion_detalle->descuento,
-                        'dinero'=>$cotizacion_detalle->dinero,
-                        'precio_nuevo' =>$cotizacion_detalle->precionuevo,
-                        'precio' => $cotizacion_detalle->precio,
-                        'importe' => $cotizacion_detalle->total,
-                    ]);
-                }
-
-
-
-
-            }
+        }
 
         //Registro de actividad
         $descripcion = "SE MODIFICÓ LA COTIZACION CON LA FECHA: ". Carbon::parse($cotizacion->fecha_documento)->format('d/m/y');;
@@ -229,6 +233,18 @@ class CotizacionController extends Controller
             $documento->estado = 'ANULADO';
             $documento->update();
 
+            $detalles = Detalle::where('documento_id',$id)->get();
+            foreach ($detalles as $detalle) {
+                $lote = LoteProducto::find($detalle->lote_id);
+                $cantidad = $lote->cantidad + $detalle->cantidad;
+                $lote->cantidad = $cantidad;
+                $lote->cantidad_logica = $cantidad;
+                $lote->update();
+                //ANULAMOS EL DETALLE
+                $detalle->estado = "ANULADO";
+                $detalle->update();
+            }
+
             Session::flash('success','Cotización modificada y documento eliminado.');
             return redirect()->route('ventas.cotizacion.index')->with('modificar', 'success');
 
@@ -237,9 +253,6 @@ class CotizacionController extends Controller
             return redirect()->route('ventas.cotizacion.index')->with('modificar', 'success');
 
         }
-
-
-
     }
 
     public function show($id)

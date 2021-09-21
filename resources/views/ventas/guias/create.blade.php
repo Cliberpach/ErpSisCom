@@ -365,13 +365,11 @@
                                                             <td>-</td>
                                                             <td>{{ $detalle->cantidad }}</td>
                                                             <td>{{ $detalle->lote->producto->getMedida()}}</td>
-                                                            <td>{{ $detalle->lote->producto->peso_producto }}</td>
+                                                            <td>{{ number_format($detalle->lote->producto->peso_producto *  $detalle->cantidad,2 , '.', '') }}</td>
                                                             <td>{{ $detalle->lote->producto->nombre.' - '. $detalle->lote->codigo }}</td>
-                                                            <td>{{ $detalle->precio }}</td> 
-                                                            <td>{{ number_format($detalle->precio *  $detalle->cantidad,2 , '.', '') }}</td>
+                                                            <td>{{ $detalle->precio_nuevo }}</td> 
+                                                            <td>{{ number_format($detalle->precio_nuevo *  $detalle->cantidad,2 , '.', '') }}</td>
                                                             <td>{{ $detalle->lote->producto->medida }}</td>
-                                                            
-                                                            
                                                         </tr>
                                                     @endforeach
 

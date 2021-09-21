@@ -12,10 +12,12 @@ class CotizacionDetalle extends Model
         'producto_id',
         'cantidad',
         'descuento',
-        'precio',
-        'precio_nuevo',
         'dinero',
-        'importe',
+        'precio_inicial',
+        'precio_nuevo',
+        'valor_unitario',
+        'precio_unitario',
+        'valor_venta',
         'estado'
     ];
 

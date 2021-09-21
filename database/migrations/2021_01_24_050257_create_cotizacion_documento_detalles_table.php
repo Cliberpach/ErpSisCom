@@ -23,9 +23,14 @@ class CreateCotizacionDocumentoDetallesTable extends Migration
             $table->string('nombre_producto');
             $table->string('codigo_lote');
             // $table->foreign('lote_id')->references('id')->on('lote_productos')->onDelete('cascade');
-            $table->unsignedInteger('cantidad');
-            $table->unsignedDecimal('precio', 15, 2);
-            $table->unsignedDecimal('importe', 15, 2);
+            $table->unsignedInteger('cantidad');            
+            $table->unsignedDecimal('precio_inicial', 15, 2);
+            $table->unsignedDecimal('precio_unitario', 15, 2);
+            $table->unsignedDecimal('descuento', 15, 2)->default(0.00);
+            $table->unsignedDecimal('dinero', 15, 2)->default(0.00);            
+            $table->unsignedDecimal('precio_nuevo', 15, 2);
+            $table->unsignedDecimal('valor_unitario', 15, 2);
+            $table->unsignedDecimal('valor_venta', 15, 2);
             $table->enum('estado',['ACTIVO','ANULADO'])->default('ACTIVO');
             $table->timestamps();
         });

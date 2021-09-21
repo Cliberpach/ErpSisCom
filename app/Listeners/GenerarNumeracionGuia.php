@@ -33,7 +33,7 @@ class GenerarNumeracionGuia
                             ->join('empresas','empresas.id','=','empresa_numeracion_facturaciones.empresa_id')
                             ->join('cotizacion_documento','cotizacion_documento.empresa_id','=','empresas.id')
                             ->join('guias_remision','guias_remision.documento_id','=','cotizacion_documento.id')
-                            ->where('empresa_numeracion_facturaciones.tipo_comprobante',135)
+                            ->where('empresa_numeracion_facturaciones.tipo_comprobante',132)
                             ->where('empresa_numeracion_facturaciones.empresa_id',$guia->documento->empresa_id)
                             ->where('guias_remision.sunat',"1")
                             ->select('guias_remision.*','empresa_numeracion_facturaciones.*')
@@ -54,7 +54,7 @@ class GenerarNumeracionGuia
             //DOCUMENTO DE VENTA ES NUEVO EN SUNAT 
             if($guia->sunat != '1' ){
                 $ultimo_comprobante = $serie_comprobantes->first();
-                $guia->correlativo = $ultimo_comprobante->correlativo+1;
+                $guia->correlativo = $ultimo_comprobante->correlativo + 1;
                 $guia->serie = $numeracion->serie;
                 $guia->update();
 

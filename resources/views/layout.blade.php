@@ -6,10 +6,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Ecovalle | Sistema de Producción</title>
+    <title>ErpSiscom | Sistema de Producción</title>
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="icon" href="{{asset('img/ecologo.ico')}}" />
+    <link rel="icon" href="{{asset('img/siscom.ico')}}" />
 
     <link href="{{asset('Inspinia/css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('Inspinia/font-awesome/css/font-awesome.css')}}" rel="stylesheet">

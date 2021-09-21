@@ -67,15 +67,15 @@ class ComprobanteController extends Controller
                 "codProducto" => $detalles[$i]->codigo_producto,
                 "unidad" => $detalles[$i]->unidad,
                 "descripcion"=> $detalles[$i]->nombre_producto.' - '.$detalles[$i]->codigo_lote,
-                "cantidad" => $detalles[$i]->cantidad,
-                "mtoValorUnitario" => $detalles[$i]->precio / 1.18,
-                "mtoValorVenta" => ($detalles[$i]->precio / 1.18) * $detalles[$i]->cantidad,
-                "mtoBaseIgv" => ($detalles[$i]->precio / 1.18) * $detalles[$i]->cantidad, 
+                "cantidad" => (float)$detalles[$i]->cantidad,
+                "mtoValorUnitario" => (float)($detalles[$i]->precio_nuevo / 1.18),
+                "mtoValorVenta" => (float)$detalles[$i]->valor_venta,
+                "mtoBaseIgv" => (float)$detalles[$i]->valor_venta, 
                 "porcentajeIgv" => 18,
-                "igv" => ($detalles[$i]->precio - ($detalles[$i]->precio / 1.18 )) * $detalles[$i]->cantidad,
+                "igv" => (float)(($detalles[$i]->valor_venta * 1.18) - ($detalles[$i]->valor_venta / 1.18)),
                 "tipAfeIgv" => 10,
-                "totalImpuestos" =>  ($detalles[$i]->precio - ($detalles[$i]->precio / 1.18 )) * $detalles[$i]->cantidad,
-                "mtoPrecioUnitario" => $detalles[$i]->precio
+                "totalImpuestos" =>  (float)(($detalles[$i]->valor_venta * 1.18) - ($detalles[$i]->valor_venta / 1.18)),
+                "mtoPrecioUnitario" => (float)$detalles[$i]->precio_nuevo
 
             );
         }
@@ -125,20 +125,20 @@ class ComprobanteController extends Controller
                             "address" => array(
                                 "direccion" => $documento->direccion_fiscal_empresa,
                             )),
-                        "mtoOperGravadas" => $documento->sub_total,
+                        "mtoOperGravadas" => (float)$documento->sub_total,
                         "mtoOperExoneradas" => 0,
-                        "mtoIGV" => $documento->total_igv,
+                        "mtoIGV" => (float)$documento->total_igv,
                         
-                        "valorVenta" => $documento->sub_total,
-                        "totalImpuestos" => $documento->total_igv,
-                        "mtoImpVenta" => $documento->total ,
+                        "valorVenta" => (float)$documento->sub_total,
+                        "totalImpuestos" => (float)$documento->total_igv,
+                        "subTotal" => (float)$documento->total,
+                        "mtoImpVenta" => (float)$documento->total,
                         "ublVersion" => "2.1",
                         "details" => self::obtenerProductos($documento->id),
                         "legends" =>  self::obtenerLeyenda($documento),
                     );
 
-                    return $arreglo_comprobante;
-
+                    //return $arreglo_comprobante;
                     //OBTENER JSON DEL COMPROBANTE EL CUAL SE ENVIARA A SUNAT
                     $data = enviarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
 

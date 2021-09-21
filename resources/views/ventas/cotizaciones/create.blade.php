@@ -54,14 +54,12 @@
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-lg-6 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="___class_+?31___">Moneda</label>
-                                            <select id="moneda" name="moneda"
-                                                class="select2_form form-control {{ $errors->has('moneda') ? ' is-invalid' : '' }}"
-                                                disabled>
-                                                <option selected>SOLES</option>
-                                            </select>
-                                        </div>
+                                        <label class="___class_+?31___">Moneda</label>
+                                        <select id="moneda" name="moneda"
+                                            class="select2_form form-control {{ $errors->has('moneda') ? ' is-invalid' : '' }}"
+                                            disabled>
+                                            <option selected>SOLES</option>
+                                        </select>
                                     </div>
                                     <div class="col-lg-6 col-xs-12">
                                         <label class="required">Empresa</label>
@@ -210,9 +208,9 @@
                                                                     id="error-precio"></span></b></div>
                                                     </div>
                                                     <div class="col-lg-2 col-xs-12">
-                                                        <label class="required">P.Descuento</label>
+                                                        <label class="required">Descuento (%)</label>
                                                         <input type="text" id="pdescuento" class="form-control"
-                                                            maxlength="15">
+                                                            maxlength="15" onkeypress="return filterFloat(event, this);">
                                                         <div class="invalid-feedback"><b><span
                                                                     id="error-precio"></span></b></div>
                                                     </div>
@@ -234,10 +232,11 @@
                                                                 <th></th>
                                                                 <th class="text-center">ACCIONES</th>
                                                                 <th class="text-center">CANT</th>
-                                                                <th class="text-center">DESCRIPCION DEL PRODUCTO</th>
-                                                                <th class="text-center">PRECIO</th>
+                                                                <th class="text-center">PRODUCTO</th>
+                                                                <th class="text-center">V. UNITARIO</th>
+                                                                <th class="text-center">P. UNITARIO</th>
                                                                 <th class="text-center">DESCUENTO</th>
-                                                                <th class="text-center">P.NUEVO</th>
+                                                                <th class="text-center">P. NUEVO</th>
                                                                 <th class="text-center">TOTAL</th>
                                                             </tr>
                                                         </thead>
@@ -259,7 +258,7 @@
                                                                         id="igv_monto">0.00</span></th>
                                                             </tr> --}}
                                                             <tr>
-                                                                <th colspan="7" class="text-right">TOTAL:</th>
+                                                                <th colspan="8" class="text-right">TOTAL:</th>
                                                                 <th class="text-center"><span id="total">0.00</span>
                                                                 </th>
                                                             </tr>
@@ -413,12 +412,15 @@
                 },
                 {
                     "targets": [8],
-                    "visible": false,
                 },
                 {
                     "targets": [9],
-                    "visible": false,
+                    'visible': false,
                 },
+                {
+                    "targets": [10],
+                    'visible': false,
+                }
             ],
             'bAutoWidth': false,
             'aoColumns': [{
@@ -438,7 +440,11 @@
                 },
                 {
                     sWidth: '15%',
-                    sClass: 'text-left'
+                    sClass: 'text-center'
+                },
+                {
+                    sWidth: '15%',
+                    sClass: 'text-center'
                 },
                 {
                     sWidth: '15%',
@@ -448,6 +454,18 @@
                     sWidth: '15%',
                     sClass: 'text-center'
                 },
+                {
+                    sWidth: '15%',
+                    sClass: 'text-center'
+                },
+                {
+                    sWidth: '0%',
+                    sClass: 'text-center'
+                },
+                {
+                    sWidth: '0%',
+                    sClass: 'text-center'
+                }
             ],
             "language": {
                 url: "{{ asset('Spanish.json') }}"
@@ -579,8 +597,8 @@
             $('#igv').prop('required', true)
             $('#igv').val('18')
             var igv = ($('#igv').val()) + ' %'
-            $('#igv_int').text(igv)
-            sumaTotal()
+            $('#igv_int').text(igv);
+            sumaTotal();
 
         } else {
             $('#igv').attr('disabled', true)
@@ -629,6 +647,7 @@
         $('#presentacion_producto').val('')
         $('#codigo_nombre_producto').val('')
         $('#producto').val($('#producto option:first-child').val()).trigger('change');
+        $('#pdescuento').val('')
 
     }
 
@@ -707,16 +726,18 @@
         table.row.add([
             $detalle.producto_id,
             '',
-            $detalle.cantidad,
+            $detalle.cantidad.toFixed(2),
             $detalle.producto,
-            $detalle.precio,
-            $detalle.dinero,
-            $detalle.precioNuevo,
-            $detalle.precioNuevo * $detalle.cantidad,
-            $detalle.presentacion,
-            $detalle.descuento
+            $detalle.valor_unitario.toFixed(2),               
+            $detalle.precio_unitario.toFixed(2),         
+            $detalle.dinero.toFixed(2),
+            $detalle.precio_nuevo.toFixed(2),
+            $detalle.valor_venta.toFixed(2),
+            $detalle.precio_inicial.toFixed(2),
+            $detalle.descuento.toFixed(2),
+
         ]).draw(false);
-        cargarProductos()
+        cargarProductos();
     }
 
     function obtenerMedida(id) {
@@ -730,46 +751,62 @@
     }
 
     function llegarDatos() {
-        var pdescuento = $("#pdescuento").val().length > 0 ? $("#pdescuento").val():0;
-        var precio = $('#precio').val();
-        var igv = $("#igv").val();
-        var precionuevo;
-        var dinero;
-        if (igv) {
-            dinero = (precio * pdescuento) / 100;
-            precionuevo = precio - dinero
+        let pdescuento = $("#pdescuento").val().length > 0 ? convertFloat($("#pdescuento").val()) : 0;
+        let precio_inicial = convertFloat($('#precio').val());
+        let igv = convertFloat($('#igv').val());
+        let igv_calculado = convertFloat(igv / 100);
 
+        let valor_unitario = 0.00;
+        let precio_unitario = 0.00;
+        let dinero = 0.00;
+        let precio_nuevo = 0.00;
+        let valor_venta = 0.00;
+        let cantidad = convertFloat($('#cantidad').val())
+        if ($("#igv_check").prop('checked')) {
+            precio_unitario = precio_inicial;
+            valor_unitario = precio_unitario / (1 + igv_calculado);                
+            dinero = precio_unitario * (pdescuento / 100);
+            precio_nuevo = precio_unitario - dinero;
+            valor_venta = precio_nuevo * cantidad;
         } else {
-            dinero = ((precio / 1.18) * pdescuento) / 100
-            precionuevo = (precio / 1.18) - dinero
+            precio_unitario = precio_inicial / 1.18;
+            valor_unitario = precio_unitario / 1.18;              
+            dinero = precio_unitario * (pdescuento / 100);
+            precio_nuevo = precio_unitario - dinero;
+            valor_venta = precio_nuevo * cantidad;
         }
+
         var detalle = {
             producto_id: $('#producto').val(),
-            presentacion: $('#presentacion_producto').val(),
             producto: $('#codigo_nombre_producto').val(),
-            precio: String(precio),
-            precioNuevo: String(precionuevo),
-            cantidad: $('#cantidad').val(),
+            precio_unitario: precio_unitario,
+            valor_unitario: valor_unitario,
+            valor_venta: valor_venta,
+            cantidad: cantidad,
+            dinero: dinero,
             descuento: pdescuento,
-            dinero: dinero
+            precio_nuevo: precio_nuevo,
+            precio_inicial: precio_inicial
         }
+        console.log(detalle);
         agregarTabla(detalle);
     }
 
     function cargarProductos() {
-
         var productos = [];
         var data = table.rows().data();
         data.each(function(value, index) {
             let fila = {
                 producto_id: value[0],
                 presentacion: value[3],
-                precio: value[4],
-                dinero:value[5],
-                descuento:value[9],
-                precionuevo: value[6],
+                precio_unitario: value[5],
+                valor_unitario:value[4],
+                dinero:value[6],
+                precio_inicial:value[9],
+                precio_nuevo:value[7],
+                descuento:value[10],
                 cantidad: value[2],
-                total: value[7],
+                valor_venta: value[8],
             };
 
             productos.push(fila);
@@ -780,88 +817,88 @@
     }
 
     function sumaTotal() {
-        var total = 0;
-        var igv = $('#igv').val()
+        let total = 0.00;
+        let igv = convertFloat($('#igv').val());
+        let igv_calculado = convertFloat(igv / 100);
+
+        let detalles = [];
 
         table.rows().data().each(function(el, index) {
-            var dinero;
-            var precionuevo;
-            var pdescuento = el[9];
-            var precio = convertFloat(el[4]);
-            if (igv) {
-                precionuevo = precio;
-                dinero = 0;
-                
-                table.cell({
-                    row: index,
-                    column: 6
-                }).data(precionuevo.toFixed(2));
+            let pdescuento = convertFloat(el[10]);
+            let precio_inicial = convertFloat(el[9]);
+            let precio_unitario = 0.00;
+            let valor_unitario = 0.00;
+            let dinero = 0.00;
+            let precio_nuevo = 0.00;
+            let valor_venta = 0.00;
 
-                table.cell({
-                    row: index,
-                    column: 7
-                }).data((precionuevo.toFixed(2)* el[2]).toFixed(2));
-
-                table.cell({
-                    row: index,
-                    column: 5
-                }).data(dinero.toFixed(2));
+            if ($("#igv_check").prop('checked')) {
+                precio_unitario = precio_inicial;
+                valor_unitario = precio_unitario / (1 + igv_calculado);
+                dinero = precio_unitario * (pdescuento / 100);
+                precio_nuevo = precio_unitario - dinero;
+                valor_venta = precio_nuevo * el[2];
+                let detalle = {
+                    producto_id: el[0],
+                    producto: el[3],
+                    precio_unitario: precio_unitario,
+                    valor_unitario: valor_unitario,
+                    valor_venta: valor_venta,
+                    cantidad: convertFloat(el[2]),
+                    descuento: pdescuento,
+                    precio_nuevo: precio_nuevo,
+                    dinero: dinero,
+                    precio_inicial: precio_inicial
+                }
+                detalles.push(detalle);
             } else {
-
-                precionuevo = precio - (precio * 0.18);
-                dinero = convertFloat(precio) - convertFloat(precionuevo);
-                table.cell({
-                    row: index,
-                    column: 6
-                }).data(precionuevo.toFixed(2));
-                table.cell({
-                    row: index,
-                    column: 5
-                }).data(dinero.toFixed(2));
-                table.cell({
-                    row: index,
-                    column: 7
-                }).data((precionuevo.toFixed(2) * el[2]).toFixed(2));
+                precio_unitario = precio_inicial / 1.18;
+                valor_unitario = precio_unitario / 1.18;
+                dinero = precio_unitario * (pdescuento / 100);
+                precio_nuevo = precio_unitario - dinero;
+                valor_venta = precio_nuevo * el[2];
+                let detalle = {
+                    producto_id: el[0],
+                    producto: el[3],
+                    precio_unitario: precio_unitario,
+                    valor_unitario: valor_unitario,
+                    valor_venta: valor_venta,
+                    cantidad: convertFloat(el[2]),
+                    descuento: pdescuento,
+                    dinero: dinero,
+                    precio_nuevo: precio_nuevo,
+                    precio_inicial: precio_inicial
+                }
+                detalles.push(detalle);
             }
-
-
         });
 
-        table.rows().data().each(function(el, index) {
-            total = Number(el[7]) + total
-        });
-        $('#total').text(total.toFixed(2))
-        // if (igv) {
-        //     sinIgv(subtotal)
-        // } else {
-        //     conIgv(subtotal)
-        // }
-    }
+        table.clear().draw();
 
-    function conIgv(subtotal) {
-        // CALCULAR IGV (BASE)
-        var igv = $('#igv').val()
-        if (igv) {
-            toastr.error('Ingrese Igv.', 'Error');
-
-        } else {
-            var calcularIgv = subtotal * (igv / 100)
-            var total = subtotal + calcularIgv
-            $('#igv_int').text(igv + ' %')
-            $('#subtotal').text(subtotal.toFixed(2))
-            $('#igv_monto').text(calcularIgv.toFixed(2))
-            $('#total').text(total.toFixed(2))
+        if(detalles.length > 0)
+        {
+            for(let i = 0; i < detalles.length; i++)
+            {
+                agregarTabla(detalles[i]);
+            }
         }
 
+        table.rows().data().each(function(el, index) {
+            total = Number(el[8]) + total
+        });
+        
+        $('#total').text((Math.round(total * 10) / 10).toFixed(2))
+        //conIgv(total,igv)
     }
 
-    function sinIgv(subtotal) {
-        var base = subtotal / (1 + 0.18)
-        var nuevo_igv = subtotal - base;
-        $('#igv_int').text('18 %')
-        $('#subtotal').text(base.toFixed(2))
-        $('#igv_monto').text(nuevo_igv.toFixed(2))
-        $('#total').text(subtotal.toFixed(2))
+    function conIgv(subtotal, igv) {
+        let total = subtotal * (1 + (igv / 100));
+        let igv_calculado =  total - subtotal;
+        $('#igv_int').text(igv + '%')
+        $('#subtotal').text((Math.round(subtotal * 10) / 10).toFixed(2))
+        $('#igv_monto').text((Math.round(igv_calculado * 10) / 10).toFixed(2))
+        $('#total').text((Math.round(total * 10) / 10).toFixed(2))
+        //Math.round(fDescuento * 10) / 10
     }
 
 
