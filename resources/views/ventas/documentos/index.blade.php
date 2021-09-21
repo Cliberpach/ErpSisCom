@@ -48,9 +48,9 @@
                                     <th class="text-center">TIPO</th>
                                     <th class="text-center">CLIENTE</th>
                                     <th class="text-center">MONTO</th>
-                                    <th class="text-center">TRANSFERENCIA</th>
+                                    <th class="text-center">TRANSF.</th>
                                     <th class="text-center">OTROS</th>
-                                    <th class="text-center">EFECTIVO</th>
+                                    <th class="text-center">EFECT.</th>
                                     <th class="text-center">ESTADO</th>
                                     <th class="text-center">SUNAT</th>
                                     <th class="text-center">ACCIONES</th>
@@ -114,7 +114,7 @@ $(document).ready(function() {
             //DOCUMENTO DE VENTA
             {
                 data: 'cotizacion_venta',
-                className: "text-center",
+                className: "text-center letrapequeña",
                 visible: false
             },
 
@@ -122,7 +122,7 @@ $(document).ready(function() {
 
             {
                 data: null,
-                className: "text-center",
+                className: "text-center letrapequeña",
                 render: function(data) {
                     if (data.cotizacion_venta) {
                         return "<input type='checkbox' disabled checked>"
@@ -134,43 +134,43 @@ $(document).ready(function() {
             },
             {
                 data: 'id',
-                className: "text-center",
+                className: "text-center letrapequeña",
             },
             {
                 data: 'fecha_documento',
-                className: "text-center"
+                className: "text-center letrapequeña"
             },
             {
                 data: 'tipo_venta',
-                className: "text-center",
+                className: "text-center letrapequeña",
             },
             {
                 data: 'cliente',
-                className: "text-left"
+                className: "text-left letrapequeña"
             },
 
             {
                 data: 'total',
-                className: "text-center"
+                className: "text-center letrapequeña"
             },
             {
                 data: 'transferencia',
-                className: "text-center"
+                className: "text-center letrapequeña"
             },
 
             {
                 data: 'otros',
-                className: "text-center"
+                className: "text-center letrapequeña"
             },
             {
                 data: 'efectivo',
-                className: "text-center"
+                className: "text-center letrapequeña"
             },
 
 
             {
                 data: null,
-                className: "text-center",
+                className: "text-center letrapequeña",
                 render: function(data) {
                     switch (data.estado) {
                         case "PENDIENTE":
@@ -194,7 +194,7 @@ $(document).ready(function() {
 
             {
                 data: null,
-                className: "text-center",
+                className: "text-center letrapequeña",
                 render: function(data) {
                     switch (data.sunat) {
                         case "1":
@@ -211,7 +211,7 @@ $(document).ready(function() {
 
             {
                 data: null,
-                className: "text-center",
+                className: "text-center letrapequeña",
                 render: function(data) {
                     //Ruta Detalle
                     var url_detalle = '{{ route("ventas.documento.show", ":id")}}';
