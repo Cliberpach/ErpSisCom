@@ -1,8 +1,9 @@
 @extends('layout') @section('content')
- {{--@include('pos.caja_chica.edit') --}}
+    {{-- @include('pos.caja_chica.edit') --}}
 @section('egreso-active', 'active')
 @include('Egreso.create')
 @include('Egreso.edit')
+@include('Egreso.modalImpreso')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10 col-md-10">
         <h2 style="text-transform:uppercase"><b>lista de Egresos</b></h2>
@@ -21,18 +22,12 @@
             <i class="fa fa-plus-square"></i> Añadir nuevo
         </a>
     </div>
-
 </div>
-
-
 <div class="wrapper wrapper-content animated fadeInRight">
-
     <div class="row">
         <div class="col-lg-12">
             <div class="ibox ">
-
                 <div class="ibox-content">
-
                     <div class="table-responsive">
                         <table class="table dataTables-cajas table-striped table-bordered table-hover"
                             style="text-transform:uppercase">
@@ -40,6 +35,8 @@
                                 <tr>
                                     <th class="text-center">ID</th>
                                     <th class="text-center">DESCRIPCION</th>
+                                    <th class="text-center">TIPO DOCUMENTO</th>
+                                    <th class="text-center">DOCUMENTO</th>
                                     <th class="text-center">IMPORTE</th>
                                     <th class="text-center">FECHA</th>
                                     <th class="text-center">ACCIONES</th>
@@ -60,6 +57,7 @@
     .my-swal {
         z-index: 3000 !important;
     }
+
 </style>
 @endpush
 @push('scripts')
@@ -110,6 +108,14 @@
                 className: "text-center"
             },
             {
+                data: 'tipoDocumento',
+                className: "text-center"
+            },
+            {
+                data: 'documento',
+                className: "text-center"
+            },
+            {
                 data: 'importe',
                 className: "text-center"
             },
@@ -119,23 +125,28 @@
             },
             {
                 data: null,
-                    className:"text-center",
-                    render: function (data) {
-                        //Ruta Detalle
-                        // var url_detalle = '{{ route("clientes.tienda.show", ":id")}}';
-                        // url_detalle = url_detalle.replace(':id',data.id);
+                className: "text-center",
+                render: function(data) {
+                    //Ruta Detalle
+                    // var url_detalle = '{{ route('clientes.tienda.show', ':id') }}';
+                    // url_detalle = url_detalle.replace(':id',data.id);
 
-                        //Ruta Modificar
-                        var url_edit = '{{ route("clientes.tienda.edit", ":id")}}';
-                        url_edit = url_edit.replace(':id',data.id);
-
-
-                        return "<div class='btn-group'><a class='btn btn-warning btn-sm modificarDetalle' onclick='editar("+data.id+")' title='Modificar'><i class='fa fa-edit'></i></a>"
-                        +"<a class='btn btn-danger btn-sm' href='#' onclick='eliminar("+data.id+")' title='Eliminar'><i class='fa fa-trash'></i></a></div>"
+                    //Ruta Modificar
+                    var url_edit = '{{ route('clientes.tienda.edit', ':id') }}';
+                    url_edit = url_edit.replace(':id', data.id);
 
 
+                    return "<div class='btn-group'>" +
+                        "<a class='btn btn-primary btn-sm' style='color:white;' onclick='imprimir(" +
+                        data.id + ")' title='Modificar'><i class='fa fa-file-pdf-o'></i></a>" +
+                        "<a class='btn btn-warning btn-sm' style='color:white;' onclick='editar(" + data
+                        .id + ")' title='Modificar'><i class='fa fa-edit'></i></a>" +
+                        "<a class='btn btn-danger btn-sm' href='#' onclick='eliminar(" + data.id +
+                        ")' title='Eliminar'><i class='fa fa-trash'></i></a></div>"
 
-                    }
+
+
+                }
             }
 
         ],
@@ -149,27 +160,37 @@
 
 
     });
-    function editar(id)
-    {
-        axios.get("{{route('Egreso.getEgreso')}}",{
-            params:{
-                id:id
+
+    function imprimir(id) {
+
+        $("#frm_imprimir #egreso_id").val(id)
+        $("#modal_imprimir").modal("show");
+        //  var url = "{{ route('Egreso.recibo', ':id') }}"
+        // window.location.href= url.replace(":id", id)
+    }
+
+    function editar(id) {
+        axios.get("{{ route('Egreso.getEgreso') }}", {
+            params: {
+                id: id
             }
         }).then((value) => {
-
-            var url="{{route('Egreso.update',':id')}}"
-            url=url.replace(':id',id)
-            $("#frm_editar_egreso").attr('action',url);
+            console.log(value)
+            var url = "{{ route('Egreso.update', ':id') }}"
+            url = url.replace(':id', id)
+            $("#frm_editar_egreso").attr('action', url);
             $("#modal_editar_egreso #descripcion_editar").html(value.data.descripcion)
             $("#modal_editar_egreso #importe_editar").val(value.data.importe)
+            $("#modal_editar_egreso #cuenta_editar").val(value.data.cuenta_id).trigger('change');
+            $("#modal_editar_egreso #tipo_documento_editar").val(value.data.tipodocumento_id).trigger('change');
             $("#modal_editar_egreso").modal("show");
         }).catch((value) => {
 
         })
 
     }
-    function eliminar(id)
-    {
+
+    function eliminar(id) {
         Swal.fire({
             title: 'Opción Eliminar',
             text: "¿Seguro que desea guardar cambios?",
@@ -178,31 +199,28 @@
             confirmButtonColor: "#1ab394",
             confirmButtonText: 'Si, Confirmar',
             cancelButtonText: "No, Cancelar",
-            }).then((result) => {
+        }).then((result) => {
             if (result.isConfirmed) {
                 //Ruta Eliminar
-                var url_eliminar = '{{ route("Egreso.destroy", ":id")}}';
-                url_eliminar = url_eliminar.replace(':id',id);
-                $(location).attr('href',url_eliminar);
+                var url_eliminar = '{{ route('Egreso.destroy', ':id') }}';
+                url_eliminar = url_eliminar.replace(':id', id);
+                $(location).attr('href', url_eliminar);
 
-                }else if (
+            } else if (
                 /* Read more about handling dismissals below */
                 result.dismiss === Swal.DismissReason.cancel
             ) {
                 swalWithBootstrapButtons.fire(
-                'Cancelado',
-                'La Solicitud se ha cancelado.',
-                'error'
+                    'Cancelado',
+                    'La Solicitud se ha cancelado.',
+                    'error'
                 )
             }
-            })
+        })
     }
-    $(".btn-modal").click(function (e) {
+    $(".btn-modal").click(function(e) {
         e.preventDefault();
-
-                    $("#modal_crear_egreso").modal("show");
-
-
+        $("#modal_crear_egreso").modal("show");
     });
 </script>
 @endpush

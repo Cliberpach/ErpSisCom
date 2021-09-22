@@ -389,6 +389,7 @@ function(){
         Route::post('store','Egresocontroller@store')->name('Egreso.store');
         Route::post('update/{id}','Egresocontroller@update')->name('Egreso.update');
         Route::get('destroy/{id}','Egresocontroller@destroy')->name('Egreso.destroy');
+        Route::get('recibo/{size}','Egresocontroller@recibo')->name('Egreso.recibo');
     });
 
 });

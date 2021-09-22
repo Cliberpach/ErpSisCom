@@ -198,5 +198,11 @@ class TablaSeeder extends Seeder
        $tabla->sigla = 'TURNO';
        $tabla->save();
 
+       //31
+       $tabla = new General();
+       $tabla->descripcion = 'CUENTAS';
+       $tabla->sigla = 'CUENTAS';
+       $tabla->save();
+
     }
 }

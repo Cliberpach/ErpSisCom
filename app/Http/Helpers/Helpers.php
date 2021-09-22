@@ -919,6 +919,12 @@ if(!function_exists('colaboradoresDisponibles'))
     }
 
 }
+if(!function_exists('cuentas'))
+{
+    function cuentas(){
+        return General::find(31)->detalles;
+    }
+}
 
 
 

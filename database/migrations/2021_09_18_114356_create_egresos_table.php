@@ -15,10 +15,9 @@ class CreateEgresosTable extends Migration
     {
         Schema::create('egreso', function (Blueprint $table) {
             $table->id();
-            $table->date('fecha');
-            $table->string('tipo_documento');
-            $table->string('numero_documento');
-            $table->foreignId('cuenta_id')->references('id')->on('cuenta')->onDelete('cascade');
+            $table->unsignedInteger('tipodocumento_id');
+            $table->unsignedInteger('cuenta_id');
+            $table->string('documento')->nullable();
             $table->text('descripcion');
             $table->decimal('importe');
             $table->enum('estado',['ACTIVO','ANULADO'])->default('ACTIVO');

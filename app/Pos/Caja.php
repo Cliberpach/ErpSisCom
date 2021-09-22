@@ -13,6 +13,6 @@ class Caja extends Model
     public $timestamps = true;
     public function movimientos()
     {
-         return $this->hasOne(MovimientoCaja::class,'caja_id');
+         return $this->hasMany(MovimientoCaja::class,'caja_id');
     }
 }

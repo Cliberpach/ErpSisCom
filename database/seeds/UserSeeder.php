@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
         $persona->save();
 
         $colaborador = new Colaborador();
-        $colaborador->persona_id = 1;
+        $colaborador->persona_id = $persona->id;
         $colaborador->area = 'COMERCIAL';
         $colaborador->profesion = 'ING.SISTEMAS';
         $colaborador->cargo = 'GERENTE GENERAL';
