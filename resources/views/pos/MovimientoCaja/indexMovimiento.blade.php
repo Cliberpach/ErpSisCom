@@ -1,19 +1,18 @@
 @extends('layout') @section('content')
     @include('pos.MovimientoCaja.create')
     @include('pos.MovimientoCaja.cerrar')
-    {{-- @include('pos.caja_chica.edit') --}}
-@section('caja_chica-active', 'active')
+@section('caja-movimiento-active', 'active')
+@section('caja-chica-active', 'active')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10 col-md-10">
-        <h2 style="text-transform:uppercase"><b>LISTADO DE CAJAS</b></h2>
+        <h2 style="text-transform:uppercase"><b>LISTADO DE MOVIMIENTOS DE CAJAS</b></h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{ route('home') }}">Panel de Control</a>
             </li>
             <li class="breadcrumb-item active">
-                <strong>Caja</strong>
+                <strong>Movimiento Caja</strong>
             </li>
-
         </ol>
     </div>
     <div class="col-lg-2 col-md-2">
@@ -21,18 +20,12 @@
             <i class="fa fa-plus-square"></i> Añadir nuevo
         </a>
     </div>
-
 </div>
-
-
 <div class="wrapper wrapper-content animated fadeInRight">
-
     <div class="row">
         <div class="col-lg-12">
             <div class="ibox ">
-
                 <div class="ibox-content">
-
                     <div class="table-responsive">
                         <table class="table dataTables-cajas table-striped table-bordered table-hover"
                             style="text-transform:uppercase">
@@ -79,7 +72,6 @@
                 titleAttr: 'Excel',
                 title: 'Tablas Generales'
             },
-
             {
                 titleAttr: 'Imprimir',
                 extend: 'print',
@@ -87,7 +79,6 @@
                 customize: function(win) {
                     $(win.document.body).addClass('white-bg');
                     $(win.document.body).css('font-size', '10px');
-
                     $(win.document.body).find('table')
                         .addClass('compact')
                         .css('font-size', 'inherit');
@@ -130,13 +121,20 @@
                 className: "text-center"
             },
             {
-            data: null,
-            "render": function(data, type, row, meta) {
-                return "-"
+                data: null,
+                className: "text-center",
+                "render": function(data, type, row, meta) {
+                    var html =
+                        "<div class='btn-group'><a class='btn btn-primary btn-sm' href='#' title='Caja Cerrada'><i class='fa fa-check'> Caja Cerrada</i></a></div>";
+                    if (data.fecha_Cierre == "-") {
+                        html =
+                            "<div class='btn-group'><a class='btn btn-warning btn-sm' href='#'  onclick='cerrarCaja(" +
+                            data.id +
+                            ")' title='Modificar'><i class='fa fa-lock'> Cerrar Caja</i></a></div>"
+                    }
+                    return html;
+                }
             }
-        }
-
-
         ],
         "language": {
             "url": "{{ asset('Spanish.json') }}"
@@ -144,36 +142,28 @@
         "order": [
             [0, "desc"]
         ],
-
-
-
     });
+
+    function cerrarCaja(id) {
+        axios.get("{{ route('Caja.datos.cierre') }}", {
+            params: {
+                id: id
+            }
+        }).then((value) => {
+            var datos = value.data;
+            $("#modal_cerrar_caja #movimiento_id").val(id);
+            $("#modal_cerrar_caja #caja").val(datos.caja);
+            $("#modal_cerrar_caja #colaborador").val(datos.colaborador);
+            $("#modal_cerrar_caja #monto_inicial").val(datos.monto_inicial);
+            $("#modal_cerrar_caja #ingreso").val(datos.ingresos);
+            $("#modal_cerrar_caja #egreso").val(datos.egresos);
+            $("#modal_cerrar_caja #saldo").val(datos.saldo);
+            $("#modal_cerrar_caja").modal("show");
+        }).catch((value) => {})
+    }
     $(".btn-modal").click(function(e) {
         e.preventDefault();
         $("#modal_crear_caja").modal("show");
-        // axios.get("{{ route('Caja.estado') }}").then((value) => {
-        //         if(value.data=="Sin Aperturar")
-        //         {
-        //             $("#modal_crear_caja").modal("show");
-        //         }
-        //         else{
-        //             axios.get("{{ route('Caja.datos.cierre') }}").then((value) => {
-        //                 var datos=value.data;
-        //                 $("#modal_cerrar_caja #colaborador").val(datos.colaborador);
-        //                 $("#modal_cerrar_caja #monto_inicial").val(datos.monto_inicial);
-        //                 $("#modal_cerrar_caja #ingreso").val(datos.ingresos);
-        //                 $("#modal_cerrar_caja #egreso").val(datos.egresos);
-        //                 $("#modal_cerrar_caja #saldo").val(datos.saldo);
-        //                 $("#modal_cerrar_caja").modal("show");
-        //             }).catch((value) => {
-
-        //             })
-
-        //         }
-        // }).catch((value) => {
-
-        // })
-
     });
 </script>
 @endpush

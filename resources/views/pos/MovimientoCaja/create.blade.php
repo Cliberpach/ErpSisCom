@@ -11,10 +11,10 @@
                 <small class="font-bold">Apertura de Cajaa</small>
             </div>
             <div class="modal-body">
-                <form role="form" action="{{ route('Caja.apertura') }}" method="POST" id="crear_caja_chica">
+                <form role="form" action="{{ route('Caja.apertura') }}" method="POST" id="crear_caja_movimiento">
                     {{ csrf_field() }} {{ method_field('POST') }}
                     <div class="form-group">
-                        <label for="">Cajas</label>
+                        <label for="">Cajas Disponible</label>
                         <select name="caja" id="caja" class="form-control select2_form" required>
                             <option value=""></option>
                             @foreach (cajas() as $caja)
@@ -27,12 +27,22 @@
                         <select class="form-control select2_form" style="text-transform: uppercase; width:100%"
                             name="colaborador_id" id="colaborador_id" required>
                             <option></option>
-                            @foreach ($colaboradores as $colaborador)
+                            @foreach (colaboradoresDisponibles() as $colaborador)
                                 <option value="{{ $colaborador->id }}">
                                     {{ $colaborador->persona->apellido_paterno . ' ' . $colaborador->persona->apellido_paterno . ' ' . $colaborador->persona->nombre }}
                                 </option>
                             @endforeach
 
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Turno:</label>
+                        <select class="form-control select2_form" style="text-transform: uppercase; width:100%"
+                            name="turno" id="turno" required>
+                            <option ></option>
+                            <option>Mañana</option>
+                            <option>Tarde</option>
+                            <option>Noche</option>
                         </select>
                     </div>
                     <div class="form-group row">

@@ -199,17 +199,9 @@
     }
     $(".btn-modal").click(function (e) {
         e.preventDefault();
-        axios.get("{{route('Caja.estado')}}").then((value) => {
-                if(value.data!="Sin Aperturar")
-                {
-                    $("#modal_crear_egreso").modal("show");
-                }
-                else{
-                    toastr.warning('No se ha aperturado Caja',"Advertencia")
-                }
-        }).catch((value) => {
 
-        })
+                    $("#modal_crear_egreso").modal("show");
+
 
     });
 </script>

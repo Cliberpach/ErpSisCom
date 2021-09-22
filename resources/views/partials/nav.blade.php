@@ -26,12 +26,14 @@
             control</span></a>
 </li>
 
-<li class="@yield('caja_chica-active')">
+<li class="@yield('caja-chica-active')">
     <a href="#"><i class="fa fa-archive"></i> <span class="nav-label">Caja Chica</span><span
             class="fa arrow"></span></a>
     <ul class="nav nav-second-level collapse">
-        <li><a href="{{ route('Caja.index') }}"><i class="fa fa-arrow-right"></i>Cajas</a></li>
-        <li><a href="{{ route('Caja.Movimiento.index') }}"><i class="fa fa-arrow-right"></i> Apertura y Cierre Caja</a></li>
+        <li class="@yield('caja-active')"><a href="{{ route('Caja.index') }}"><i
+                    class="fa fa-archive"></i>Cajas</a></li>
+        <li class="@yield('caja-movimiento-active')"><a href="{{ route('Caja.Movimiento.index') }}"><i
+                    class="fa fa-registered"></i> Apertura y Cierre Caja</a></li>
         <li class="@yield('egreso-active')"> <a href="{{ route('Egreso.index') }}"><i class="fa fa-arrow-right"></i>
                 <span class="nav-label">Egreso</span></a></li>
     </ul>
@@ -72,7 +74,8 @@
         <li class="@yield('producto-active')"><a href="{{ route('almacenes.producto.index') }}">Producto</a></li>
         <li class="@yield('nota_ingreso-active')"><a href="{{ route('almacenes.nota_ingreso.index') }}">Nota
                 Ingreso</a></li>
-        <li class="@yield('nota_salidad-active')"><a href="{{ route('almacenes.nota_salidad.index') }}">Nota Salida</a>
+        <li class="@yield('nota_salidad-active')"><a href="{{ route('almacenes.nota_salidad.index') }}">Nota
+                Salida</a>
         </li>
     </ul>
 </li>
@@ -146,7 +149,8 @@
                 href="{{ route('mantenimiento.colaborador.index') }}">Colaboradores</a></li>
         <li class="@yield('vendedores-active')"><a href="{{ route('mantenimiento.vendedor.index') }}">Vendedores</a>
         </li>
-        <li class="@yield('empresas-active')"><a href="{{ route('mantenimiento.empresas.index') }}">Empresas</a></li>
+        <li class="@yield('empresas-active')"><a href="{{ route('mantenimiento.empresas.index') }}">Empresas</a>
+        </li>
         <li class="@yield('tablas-active')"><a href="{{ route('mantenimiento.tabla.general.index') }}">Tablas
                 Generales</a></li>
     </ul>

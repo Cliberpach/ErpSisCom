@@ -11,7 +11,7 @@ use App\Compras\Documento\Detalle as Detalle_Documento;
 use App\Compras\Detalle;
 use App\Compras\Orden;
 use App\Compras\Documento\Documento;
-
+use App\Mantenimiento\Colaborador\Colaborador;
 //Bitacora de actividades
 use Spatie\Activitylog\Contracts\Activity;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +23,7 @@ use GuzzleHttp\Client;
 use App\Mantenimiento\Empresa\Facturacion;
 use App\Mantenimiento\Vendedor\Vendedor;
 use App\Pos\Caja;
+use App\Pos\MovimientoCaja;
 use App\Ventas\TipoPago;
 use Illuminate\Support\Facades\DB;
 
@@ -897,7 +898,24 @@ if(!function_exists('cajas'))
 {
     function cajas()
     {
-       return Caja::where('estado_caja','CERRADA')->get();
+       return Caja::where('estado_caja','CERRADA')->where('estado','ACTIVO')->get();
+    }
+
+}
+if(!function_exists('colaboradoresDisponibles'))
+{
+    function colaboradoresDisponibles()
+    {
+        $colaboradores=Colaborador::where('estado', 'ACTIVO')->get();
+        $datos=array();
+        foreach ($colaboradores as $key => $value) {
+            $consulta=MovimientoCaja::where('colaborador_id',$value->id)->where('estado_movimiento','APERTURA');
+            if($consulta->count()==0)
+            {
+                array_push($datos,$value);
+            }
+        }
+       return $datos;
     }
 
 }

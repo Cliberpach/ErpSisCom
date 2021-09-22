@@ -13,6 +13,11 @@
             <div class="modal-body">
                 <form role="form" action="{{ route('Caja.cerrar') }}" method="POST" >
                     {{ csrf_field() }} {{ method_field('POST') }}
+                    <input type="hidden" name="movimiento_id" id="movimiento_id" >
+                    <div class="form-group">
+                        <label class="required">Caja:</label>
+                        <input type="text" name="caja" id="caja" disabled class="form-control" placeholder="">
+                    </div>
                     <div class="form-group">
                         <label class="required">Colaborador:</label>
                         <input type="text" name="colaborador" id="colaborador" disabled class="form-control" placeholder="">
