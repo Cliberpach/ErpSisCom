@@ -13,6 +13,9 @@ class Detalle extends Model
                         'nombre',
                         'descripcion',
                         'simbolo',
+                        'parametro',
+                        'operacion',
+                        'tipo',
                         'editable',
                         'estado'];
 

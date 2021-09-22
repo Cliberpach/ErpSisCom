@@ -738,6 +738,37 @@ if (!function_exists('generarXmlapi')) {
         }
     }
 }
+
+//GENERAR XML
+if (!function_exists('generarQrApi')) {
+    function generarQrApi($comprobante,$empresa)
+    {
+        $url = "https://facturacion.apisperu.com/api/v1/sale/qr";
+        $client = new \GuzzleHttp\Client();
+        $token = tokenEmpresa($empresa);
+        $response = $client->post($url, [
+            'headers' => [
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                        'Authorization' => "Bearer {$token}"
+                    ],
+            'body'    => $comprobante
+        ]);
+
+        $estado = $response->getStatusCode();
+
+        return $response->getBody();
+
+        // dd( $response->getBody()->getContents());
+        if ($estado == '200'){
+
+            $resultado = $response->getBody()->getContents();
+            json_decode($resultado);
+            return $resultado;
+        }
+    }
+}
+
 //ENVIAR A  SUNAT
 if (!function_exists('enviarComprobanteapi')) {
     function enviarComprobanteapi($comprobante,$empresa)

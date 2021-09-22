@@ -708,7 +708,7 @@
             var existe = false
             var table = $('.dataTables-clientes').DataTable();
             table.rows().data().each(function(el, index) {
-                if (el[1] == 'NORMAL' && el[4] == '4' ) {
+                if (el[1] == 'NORMAL' && el[4] == '1' ) {
                     existe = true
                 }
             });

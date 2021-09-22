@@ -106,6 +106,15 @@ class Documento extends Model
             return strval($venta->simbolo);
     }
 
+    public function nombreDocumento(): string
+    {
+        $venta = tipos_venta()->where('id', $this->tipo_venta)->first();
+        if (is_null($venta))
+            return "-";
+        else
+            return strval($venta->nombre);
+    }
+
     public function formaPago(): string
     {
         $venta = forma_pago()->where('id', $this->forma_pago)->first();

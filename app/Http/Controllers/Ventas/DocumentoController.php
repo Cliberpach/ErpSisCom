@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Ventas;
 use App\Almacenes\LoteProducto;
 use App\Almacenes\Producto;
 use App\Events\ComprobanteRegistrado;
+use App\Events\DocumentoNumeracion;
 use App\Http\Controllers\Controller;
 use App\Mantenimiento\Empresa\Empresa;
 use App\Mantenimiento\Empresa\Numeracion;
@@ -280,129 +281,158 @@ class DocumentoController extends Controller
 
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
+        ini_set("max_execution_time", 60000);
+        try{
+            DB::beginTransaction();
+            $data = $request->all();
 
-        $data = $request->all();
+            $rules = [
+                'fecha_documento'=> 'required',
+                'fecha_atencion_campo'=> 'required',
+                'tipo_venta'=> 'required',
+                'forma_pago'=> 'required',
+                'tipo_pago_id'=> 'required',
+                'efectivo'=> 'required',
+                'importe'=> 'required',
+                'empresa_id'=> 'required',
+                'cliente_id'=> 'required',
+                'observacion' => 'nullable',
+                'igv' => 'required_if:igv_check,==,on|numeric|digits_between:1,3',
 
-        $rules = [
-            'fecha_documento'=> 'required',
-            'fecha_atencion_campo'=> 'required',
-            'tipo_venta'=> 'required',
-            'forma_pago'=> 'required',
-            'tipo_pago_id'=> 'required',
-            'efectivo'=> 'required',
-            'importe'=> 'required',
-            'empresa_id'=> 'required',
-            'cliente_id'=> 'required',
-            'observacion' => 'nullable',
-            'igv' => 'required_if:igv_check,==,on|numeric|digits_between:1,3',
-
-        ];
-        $message = [
-            'fecha_documento.required' => 'El campo Fecha de Emisión es obligatorio.',
-            'tipo_venta.required' => 'El campo tipo de venta es obligatorio.',
-            'forma_pago.required' => 'El campo forma de pago es obligatorio.',
-            'tipo_pago_id.required' => 'El campo modo de pago es obligatorio.',
-            'importe.required' => 'El campo importe es obligatorio.',
-            'efectivo.required' => 'El campo efectivo es obligatorio.',
-            'fecha_atencion_campo.required' => 'El campo Fecha de Entrega es obligatorio.',
-            'empresa_id.required' => 'El campo Empresa es obligatorio.',
-            'cliente_id.required' => 'El campo Cliente es obligatorio.',
-            'igv.required_if' => 'El campo Igv es obligatorio.',
-            'igv.digits' => 'El campo Igv puede contener hasta 3 dígitos.',
-            'igv.numeric' => 'El campo Igv debe se numérico.',
+            ];
+            $message = [
+                'fecha_documento.required' => 'El campo Fecha de Emisión es obligatorio.',
+                'tipo_venta.required' => 'El campo tipo de venta es obligatorio.',
+                'forma_pago.required' => 'El campo forma de pago es obligatorio.',
+                'tipo_pago_id.required' => 'El campo modo de pago es obligatorio.',
+                'importe.required' => 'El campo importe es obligatorio.',
+                'efectivo.required' => 'El campo efectivo es obligatorio.',
+                'fecha_atencion_campo.required' => 'El campo Fecha de Entrega es obligatorio.',
+                'empresa_id.required' => 'El campo Empresa es obligatorio.',
+                'cliente_id.required' => 'El campo Cliente es obligatorio.',
+                'igv.required_if' => 'El campo Igv es obligatorio.',
+                'igv.digits' => 'El campo Igv puede contener hasta 3 dígitos.',
+                'igv.numeric' => 'El campo Igv debe se numérico.',
 
 
-        ];
-        Validator::make($data, $rules, $message)->validate();
+            ];
+            Validator::make($data, $rules, $message)->validate();
 
-        $documento = new Documento();
-        $documento->fecha_documento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_documento'))->format('Y-m-d');
-        $documento->fecha_atencion = Carbon::createFromFormat('d/m/Y', $request->get('fecha_atencion_campo'))->format('Y-m-d');
-        $documento->fecha_vencimiento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_vencimiento_campo'))->format('Y-m-d');
-        //EMPRESA
-        $empresa = Empresa::findOrFail($request->get('empresa_id'));
-        $documento->ruc_empresa =  $empresa->ruc;
-        $documento->empresa =  $empresa->razon_social;
-        $documento->direccion_fiscal_empresa =  $empresa->direccion_fiscal;
-        $documento->empresa_id = $request->get('empresa_id'); //OBTENER NUMERACION DE LA EMPRESA
-        //CLIENTE
-        $cliente = Cliente::findOrFail($request->get('cliente_id'));
+            $documento = new Documento();
+            $documento->fecha_documento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_documento'))->format('Y-m-d');
+            $documento->fecha_atencion = Carbon::createFromFormat('d/m/Y', $request->get('fecha_atencion_campo'))->format('Y-m-d');
+            $documento->fecha_vencimiento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_vencimiento_campo'))->format('Y-m-d');
+            //EMPRESA
+            $empresa = Empresa::findOrFail($request->get('empresa_id'));
+            $documento->ruc_empresa =  $empresa->ruc;
+            $documento->empresa =  $empresa->razon_social;
+            $documento->direccion_fiscal_empresa =  $empresa->direccion_fiscal;
+            $documento->empresa_id = $request->get('empresa_id'); //OBTENER NUMERACION DE LA EMPRESA
+            //CLIENTE
+            $cliente = Cliente::findOrFail($request->get('cliente_id'));
 
-        $documento->tipo_documento_cliente =  $cliente->tipo_documento;
-        $documento->documento_cliente =  $cliente->documento;
-        $documento->direccion_cliente =  $cliente->direccion;
-        $documento->cliente =  $cliente->nombre;
-        $documento->cliente_id = $request->get('cliente_id'); //OBTENER TIENDA DEL CLIENTE
+            $documento->tipo_documento_cliente =  $cliente->tipo_documento;
+            $documento->documento_cliente =  $cliente->documento;
+            $documento->direccion_cliente =  $cliente->direccion;
+            $documento->cliente =  $cliente->nombre;
+            $documento->cliente_id = $request->get('cliente_id'); //OBTENER TIENDA DEL CLIENTE
 
-        $documento->tipo_venta = $request->get('tipo_venta');
-        $documento->forma_pago = $request->get('forma_pago');
-        $documento->observacion = $request->get('observacion');
-        $documento->user_id = auth()->user()->id;
-        $documento->sub_total = $request->get('monto_sub_total');
-        $documento->total_igv = $request->get('monto_total_igv');
-        $documento->total = $request->get('monto_total');
-        $documento->igv = $request->get('igv');
-        $documento->moneda = 4;
+            $documento->tipo_venta = $request->get('tipo_venta');
+            $documento->forma_pago = $request->get('forma_pago');
+            $documento->observacion = $request->get('observacion');
+            $documento->user_id = auth()->user()->id;
+            $documento->sub_total = $request->get('monto_sub_total');
+            $documento->total_igv = $request->get('monto_total_igv');
+            $documento->total = $request->get('monto_total');
+            $documento->igv = $request->get('igv');
+            $documento->moneda = 1;
 
-        $documento->tipo_pago_id = $request->get('tipo_pago_id');
-        $documento->importe = $request->get('importe');
-        $documento->efectivo = $request->get('efectivo');
+            $documento->tipo_pago_id = $request->get('tipo_pago_id');
+            $documento->importe = $request->get('importe');
+            $documento->efectivo = $request->get('efectivo');
 
-        if ($request->get('igv_check') == "on") {
-            $documento->igv_check = "1";
-        };
+            if ($request->get('igv_check') == "on") {
+                $documento->igv_check = "1";
+            };
 
-        $documento->cotizacion_venta = $request->get('cotizacion_id');
-        $documento->save();
+            $documento->cotizacion_venta = $request->get('cotizacion_id');
+            $documento->save();
 
-        $numero_doc = $documento->id;
-        $documento->numero_doc = 'VENTA-'.$numero_doc;
+            $numero_doc = $documento->id;
+            $documento->numero_doc = 'VENTA-'.$numero_doc;
 
-        //Llenado de los articulos
-        $productosJSON = $request->get('productos_tabla');
-        $productotabla = json_decode($productosJSON[0]);
-        foreach ($productotabla as $producto) {
-            $lote = LoteProducto::findOrFail($producto->producto_id);
-            Detalle::create([
-                'documento_id' => $documento->id,
-                'lote_id' => $producto->producto_id, //LOTE
-                'codigo_producto' => $lote->producto->codigo,
-                'unidad' => $lote->producto->getMedida(),
-                'nombre_producto' => $lote->producto->nombre,
-                'codigo_lote' => $lote->codigo_lote,
-                'cantidad' => $producto->cantidad,
-                'precio_unitario' => $producto->precio_unitario,
-                'precio_inicial' => $producto->precio_inicial,
-                'precio_nuevo' => $producto->precio_nuevo,
-                'dinero' => $producto->dinero,
-                'descuento' => $producto->descuento,
-                'valor_unitario' => $producto->valor_unitario,
-                'valor_venta' => $producto->valor_venta,
-            ]);
+            //Llenado de los articulos
+            $productosJSON = $request->get('productos_tabla');
+            $productotabla = json_decode($productosJSON[0]);
+            foreach ($productotabla as $producto) {
+                $lote = LoteProducto::findOrFail($producto->producto_id);
+                Detalle::create([
+                    'documento_id' => $documento->id,
+                    'lote_id' => $producto->producto_id, //LOTE
+                    'codigo_producto' => $lote->producto->codigo,
+                    'unidad' => $lote->producto->getMedida(),
+                    'nombre_producto' => $lote->producto->nombre,
+                    'codigo_lote' => $lote->codigo_lote,
+                    'cantidad' => $producto->cantidad,
+                    'precio_unitario' => $producto->precio_unitario,
+                    'precio_inicial' => $producto->precio_inicial,
+                    'precio_nuevo' => $producto->precio_nuevo,
+                    'dinero' => $producto->dinero,
+                    'descuento' => $producto->descuento,
+                    'valor_unitario' => $producto->valor_unitario,
+                    'valor_venta' => $producto->valor_venta,
+                ]);
 
-            $lote->cantidad =  $lote->cantidad - $producto->cantidad;
-            $lote->update();
+                $lote->cantidad =  $lote->cantidad - $producto->cantidad;
+                $lote->update();
+            }
+
+            if((int)$documento->tipo_venta === 127 || (int)$documento->tipo_venta === 128)
+            {
+                $envio = self::sunat($documento->id);
+
+                if(!$envio['success'])
+                {
+                    DB::rollBack();
+                    foreach ($productotabla as $producto) {
+                        $lote = LoteProducto::findOrFail($producto->producto_id);
+                        $lote->cantidad_logica =  $lote->cantidad_logica + $producto->cantidad;
+                        $lote->update();
+                    }
+                    Session::flash('error',$envio['mensaje']);
+                    return back()->with('sunat_error', 'error');
+                }
+            }
+
+            //Registro de actividad
+            $descripcion = "SE AGREGÓ EL DOCUMENTO DE VENTA CON LA FECHA: ". Carbon::parse($documento->fecha_documento)->format('d/m/y');
+            $gestion = "DOCUMENTO DE VENTA";
+            crearRegistro($documento , $descripcion , $gestion);
+            
+            $ultimoMovimiento = MovimientoCaja::orderBy('id', 'desc')->first();
+            $detalle=new DetalleMovimientoVentaCaja();
+            $detalle->cdocumento_id = $documento->id;
+            $detalle->mcaja_id = $ultimoMovimiento->id;
+            $detalle->save();
+
+            DB::commit();
+
+            Session::flash('success','Documento de Venta creada.');
+            return redirect()->route('ventas.documento.index')->with('guardar', 'success');
         }
-
-
-
-        // event(new VentaRegistrada($documento));
-
-
-        //Registro de actividad
-        $descripcion = "SE AGREGÓ EL DOCUMENTO DE VENTA CON LA FECHA: ". Carbon::parse($documento->fecha_documento)->format('d/m/y');
-        $gestion = "DOCUMENTO DE VENTA";
-        crearRegistro($documento , $descripcion , $gestion);
-        
-        $ultimoMovimiento = MovimientoCaja::orderBy('id', 'desc')->first();
-        $detalle=new DetalleMovimientoVentaCaja();
-        $detalle->cdocumento_id = $documento->id;
-        $detalle->mcaja_id = $ultimoMovimiento->id;
-        $detalle->save();
-
-        Session::flash('success','Documento de Venta creada.');
-        return redirect()->route('ventas.documento.index')->with('guardar', 'success');
+        catch(Exception $e)
+        {
+            DB::rollBack();
+            foreach ($productotabla as $producto) {
+                $lote = LoteProducto::findOrFail($producto->producto_id);
+                $lote->cantidad_logica =  $lote->cantidad_logica + $producto->cantidad;
+                $lote->update();
+            }
+            Session::flash('error', $e->getMessage());
+            return back();
+        }
     }
 
     public function destroy($id)
@@ -541,6 +571,245 @@ class DocumentoController extends Controller
         return redirect()->route('ventas.documento.index')->with('exitosa', 'success');
     }
 
+    // public function obtenerLeyenda($documento)
+    // {
+    //     $formatter = new NumeroALetras();
+    //     $convertir = $formatter->toInvoice($documento->total, 2, 'SOLES');
+
+    //     //CREAR LEYENDA DEL COMPROBANTE
+    //     $arrayLeyenda = Array();
+    //     $arrayLeyenda[] = array(
+    //         "code" => "1000",
+    //         "value" => $convertir
+    //     );
+    //     return $arrayLeyenda;
+    // }
+
+    // public function obtenerProductos($id)
+    // {
+    //     $detalles = Detalle::where('documento_id',$id)->get();
+    //     $arrayProductos = Array();
+    //     for($i = 0; $i < count($detalles); $i++){
+
+    //         $arrayProductos[] = array(
+    //             "codProducto" => $detalles[$i]->codigo_producto,
+    //             "unidad" => $detalles[$i]->unidad,
+    //             "descripcion"=> $detalles[$i]->nombre_producto.' - '.$detalles[$i]->codigo_lote,
+    //             "cantidad" => (float)$detalles[$i]->cantidad,
+    //             "mtoValorUnitario" => (float)($detalles[$i]->precio_nuevo / 1.18),
+    //             "mtoValorVenta" => (float)($detalles[$i]->valor_venta / 1.18),
+    //             "mtoBaseIgv" => (float)($detalles[$i]->valor_venta / 1.18), 
+    //             "porcentajeIgv" => 18,
+    //             "igv" => (float)($detalles[$i]->valor_venta - ($detalles[$i]->valor_venta / 1.18)),
+    //             "tipAfeIgv" => 10,
+    //             "totalImpuestos" =>  (float)($detalles[$i]->valor_venta - ($detalles[$i]->valor_venta / 1.18)),
+    //             "mtoPrecioUnitario" => (float)$detalles[$i]->precio_nuevo
+
+    //         );
+    //     }
+
+    //     return $arrayProductos;
+    // }
+
+    public function obtenerFecha($documento)
+    {
+        $date = strtotime($documento->fecha_documento);
+        $fecha_emision = date('Y-m-d', $date);
+        $hora_emision = date('H:i:s', $date);
+        $fecha = $fecha_emision.'T'.$hora_emision.'-05:00';
+
+        return $fecha;
+    }
+
+    public function voucher($id)
+    {
+        $documento = Documento::findOrFail($id);
+        if((int)$documento->tipo_venta === 127 || (int)$documento->tipo_venta === 128)
+        {
+            if ($documento->sunat == '0' || $documento->sunat == '2' ) {
+                //ARREGLO COMPROBANTE
+                $arreglo_comprobante = array(
+                    "tipoOperacion" => $documento->tipoOperacion(),
+                    "tipoDoc"=> $documento->tipoDocumento(),
+                    "serie" => '000',
+                    "correlativo" => '000',
+                    "fechaEmision" => self::obtenerFecha($documento),
+                    "observacion" => $documento->observacion,
+                    "tipoMoneda" => $documento->simboloMoneda(),
+                    "client" => array(
+                        "tipoDoc" => $documento->tipoDocumentoCliente(),
+                        "numDoc" => $documento->documento_cliente,
+                        "rznSocial" => $documento->cliente,
+                        "address" => array(
+                            "direccion" => $documento->direccion_cliente,
+                        )),
+                    "company" => array(
+                        "ruc" =>  $documento->ruc_empresa,
+                        "razonSocial" => $documento->empresa,
+                        "address" => array(
+                            "direccion" => $documento->direccion_fiscal_empresa,
+                        )),
+                    "mtoOperGravadas" => $documento->sub_total,
+                    "mtoOperExoneradas" => 0,
+                    "mtoIGV" => $documento->total_igv,
+    
+                    "valorVenta" => $documento->sub_total,
+                    "totalImpuestos" => $documento->total_igv,
+                    "mtoImpVenta" => $documento->total ,
+                    "ublVersion" => "2.1",
+                    "details" => self::obtenerProductos($documento->id),
+                    "legends" =>  self::obtenerLeyenda($documento),
+                );
+    
+                $comprobante= json_encode($arreglo_comprobante);
+                $data = generarComprobanteapi($comprobante, $documento->empresa_id);
+                $name = $documento->id.'.pdf';
+                $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
+                if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'))) {
+                    mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'));
+                }
+                file_put_contents($pathToFile, $data);
+                //return response()->file($pathToFile);
+                $empresa = Empresa::first();            
+    
+                $legends = self::obtenerLeyenda($documento);
+                $legends = json_encode($legends,true);
+                $legends = json_decode($legends,true);
+    
+                $pdf = PDF::loadview('ventas.documentos.impresion.boleta_normal',[
+                    'documento' => $documento,
+                    'detalles' => $documento->detalles,
+                    'moneda' => $documento->simboloMoneda(),
+                    'empresa' => $empresa,
+                    "legends" =>  $legends,
+                    ])->setPaper('a4')->setWarnings(false);
+        
+                return $pdf->stream();
+            }else{
+    
+                //OBTENER CORRELATIVO DEL COMPROBANTE ELECTRONICO
+                $comprobante = event(new ComprobanteRegistrado($documento,$documento->serie));
+                //ENVIAR COMPROBANTE PARA LUEGO GENERAR PDF
+                $data = generarComprobanteapi($comprobante[0],$documento->empresa_id);
+                $name = $documento->id.'.pdf';
+                $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
+                if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'))) {
+                    mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'));
+                }
+                file_put_contents($pathToFile, $data);
+    
+                $empresa = Empresa::first();
+    
+                $legends = self::obtenerLeyenda($documento);            
+                $legends = json_encode($legends,true);
+                $legends = json_decode($legends,true);
+    
+                $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_normal',[
+                    'documento' => $documento,
+                    'detalles' => $documento->detalles,
+                    'moneda' => $documento->simboloMoneda(),
+                    'empresa' => $empresa,                
+                    "legends" =>  $legends,
+                    ])->setPaper('a4')->setWarnings(false);
+    
+                return $pdf->stream();
+            }
+        }
+        else
+        {
+            $empresa = Empresa::first();
+    
+            $legends = self::obtenerLeyenda($documento);            
+            $legends = json_encode($legends,true);
+            $legends = json_decode($legends,true);
+
+            $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_normal',[
+                'documento' => $documento,
+                'detalles' => $documento->detalles,
+                'moneda' => $documento->simboloMoneda(),
+                'empresa' => $empresa,                
+                "legends" =>  $legends,
+                ])->setPaper('a4')->setWarnings(false);
+
+            return $pdf->stream();
+        }
+    }
+
+    public function xml($id)
+    {
+
+        $documento = Documento::findOrFail($id);
+        if((int)$documento->tipo_venta === 127 || (int)$documento->tipo_venta === 128)
+        {
+            if ($documento->sunat == '0' || $documento->sunat == '2' ) {
+                //ARREGLO COMPROBANTE
+                $arreglo_comprobante = array(
+                    "tipoOperacion" => $documento->tipoOperacion(),
+                    "tipoDoc"=> $documento->tipoDocumento(),
+                    "serie" => '000',
+                    "correlativo" => '000',
+                    "fechaEmision" => self::obtenerFecha($documento),
+                    "observacion" => $documento->observacion,
+                    "tipoMoneda" => $documento->simboloMoneda(),
+                    "client" => array(
+                        "tipoDoc" => $documento->tipoDocumentoCliente(),
+                        "numDoc" => $documento->documento_cliente,
+                        "rznSocial" => $documento->cliente,
+                        "address" => array(
+                            "direccion" => $documento->direccion_cliente,
+                        )),
+                    "company" => array(
+                        "ruc" =>  $documento->ruc_empresa,
+                        "razonSocial" => $documento->empresa,
+                        "address" => array(
+                            "direccion" => $documento->direccion_fiscal_empresa,
+                        )),
+                    "mtoOperGravadas" => $documento->sub_total,
+                    "mtoOperExoneradas" => 0,
+                    "mtoIGV" => $documento->total_igv,
+    
+                    "valorVenta" => $documento->sub_total,
+                    "totalImpuestos" => $documento->total_igv,
+                    "mtoImpVenta" => $documento->total ,
+                    "ublVersion" => "2.1",
+                    "details" => self::obtenerProductos($documento->id),
+                    "legends" =>  self::obtenerLeyenda($documento),
+                );
+    
+                $comprobante= json_encode($arreglo_comprobante);
+                $data = generarXmlapi($comprobante, $documento->empresa_id);
+                return $data;
+                $name = $documento->id.'.xml';
+                $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
+                if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'))) {
+                    mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'));
+                }
+                file_put_contents($pathToFile, $data);
+                return response()->file($pathToFile);
+    
+            }else{
+    
+                //OBTENER CORRELATIVO DEL COMPROBANTE ELECTRONICO
+                $comprobante = event(new ComprobanteRegistrado($documento,$documento->serie));
+                //ENVIAR COMPROBANTE PARA LUEGO GENERAR XML
+                $data = generarXmlapi($comprobante[0],$documento->empresa_id);
+                $name = $documento->id.'.xml';
+                $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
+                if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'))) {
+                    mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'));
+                }
+                file_put_contents($pathToFile, $data);
+                return response()->file($pathToFile);
+            }
+        }
+        else
+        {
+            Session::flash('error', 'Este documento no retorna este formato.');
+            return back();
+        }
+        
+    }
+
     public function obtenerLeyenda($documento)
     {
         $formatter = new NumeroALetras();
@@ -548,7 +817,7 @@ class DocumentoController extends Controller
 
         //CREAR LEYENDA DEL COMPROBANTE
         $arrayLeyenda = Array();
-        $arrayLeyenda[] = array(
+        $arrayLeyenda[] = array(  
             "code" => "1000",
             "value" => $convertir
         );
@@ -581,148 +850,192 @@ class DocumentoController extends Controller
         return $arrayProductos;
     }
 
-    public function obtenerFecha($documento)
+    public function obtenerFechaEmision($documento)
     {
         $date = strtotime($documento->fecha_documento);
-        $fecha_emision = date('Y-m-d', $date);
-        $hora_emision = date('H:i:s', $date);
+        $fecha_emision = date('Y-m-d', $date); 
+        $hora_emision = date('H:i:s', $date); 
         $fecha = $fecha_emision.'T'.$hora_emision.'-05:00';
 
         return $fecha;
     }
 
-    public function voucher($id)
+    public function obtenerFechaVencimiento($documento)
     {
+        $date = strtotime($documento->fecha_vencimiento);
+        $fecha_emision = date('Y-m-d', $date); 
+        $hora_emision = date('H:i:s', $date); 
+        $fecha = $fecha_emision.'T'.$hora_emision.'-05:00';
 
-        $documento = Documento::findOrFail($id);
-        if ($documento->sunat == '0' || $documento->sunat == '2' ) {
-            //ARREGLO COMPROBANTE
-            $arreglo_comprobante = array(
-                "tipoOperacion" => $documento->tipoOperacion(),
-                "tipoDoc"=> $documento->tipoDocumento(),
-                "serie" => '000',
-                "correlativo" => '000',
-                "fechaEmision" => self::obtenerFecha($documento),
-                "observacion" => $documento->observacion,
-                "tipoMoneda" => $documento->simboloMoneda(),
-                "client" => array(
-                    "tipoDoc" => $documento->tipoDocumentoCliente(),
-                    "numDoc" => $documento->documento_cliente,
-                    "rznSocial" => $documento->cliente,
-                    "address" => array(
-                        "direccion" => $documento->direccion_cliente,
-                    )),
-                "company" => array(
-                    "ruc" =>  $documento->ruc_empresa,
-                    "razonSocial" => $documento->empresa,
-                    "address" => array(
-                        "direccion" => $documento->direccion_fiscal_empresa,
-                    )),
-                "mtoOperGravadas" => $documento->sub_total,
-                "mtoOperExoneradas" => 0,
-                "mtoIGV" => $documento->total_igv,
-
-                "valorVenta" => $documento->sub_total,
-                "totalImpuestos" => $documento->total_igv,
-                "mtoImpVenta" => $documento->total ,
-                "ublVersion" => "2.1",
-                "details" => self::obtenerProductos($documento->id),
-                "legends" =>  self::obtenerLeyenda($documento),
-            );
-
-            $comprobante= json_encode($arreglo_comprobante);
-            $data = generarComprobanteapi($comprobante, $documento->empresa_id);
-            $name = $documento->id.'.pdf';
-            $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
-            if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'))) {
-                mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'));
-            }
-            file_put_contents($pathToFile, $data);
-            return response()->file($pathToFile);
-
-        }else{
-
-            //OBTENER CORRELATIVO DEL COMPROBANTE ELECTRONICO
-            $comprobante = event(new ComprobanteRegistrado($documento,$documento->serie));
-            //ENVIAR COMPROBANTE PARA LUEGO GENERAR PDF
-            $data = generarComprobanteapi($comprobante[0],$documento->empresa_id);
-            $name = $documento->id.'.pdf';
-            $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
-            if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'))) {
-                mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'));
-            }
-            file_put_contents($pathToFile, $data);
-            return response()->file($pathToFile);
-        }
-
-
-
+        return $fecha;
     }
 
-    public function xml($id)
-    {
 
+    public function sunat($id)
+    {       
         $documento = Documento::findOrFail($id);
-        if ($documento->sunat == '0' || $documento->sunat == '2' ) {
-            //ARREGLO COMPROBANTE
-            $arreglo_comprobante = array(
-                "tipoOperacion" => $documento->tipoOperacion(),
-                "tipoDoc"=> $documento->tipoDocumento(),
-                "serie" => '000',
-                "correlativo" => '000',
-                "fechaEmision" => self::obtenerFecha($documento),
-                "observacion" => $documento->observacion,
-                "tipoMoneda" => $documento->simboloMoneda(),
-                "client" => array(
-                    "tipoDoc" => $documento->tipoDocumentoCliente(),
-                    "numDoc" => $documento->documento_cliente,
-                    "rznSocial" => $documento->cliente,
-                    "address" => array(
-                        "direccion" => $documento->direccion_cliente,
-                    )),
-                "company" => array(
-                    "ruc" =>  $documento->ruc_empresa,
-                    "razonSocial" => $documento->empresa,
-                    "address" => array(
-                        "direccion" => $documento->direccion_fiscal_empresa,
-                    )),
-                "mtoOperGravadas" => $documento->sub_total,
-                "mtoOperExoneradas" => 0,
-                "mtoIGV" => $documento->total_igv,
+        //OBTENER CORRELATIVO DEL COMPROBANTE ELECTRONICO
+        $existe = event(new DocumentoNumeracion($documento));
+        if($existe[0]){
+            if ($existe[0]->get('existe') == true) {
+                if ($documento->sunat != '1') {
+                    //ARREGLO COMPROBANTE
+                    $arreglo_comprobante = array(
+                        "tipoOperacion" => $documento->tipoOperacion(),
+                        "tipoDoc"=> $documento->tipoDocumento(),
+                        "serie" => $existe[0]->get('numeracion')->serie,
+                        "correlativo" => $documento->correlativo,
+                        "fechaEmision" => self::obtenerFechaEmision($documento),
+                        "fecVencimiento" => self::obtenerFechaVencimiento($documento),
+                        "observacion" => $documento->observacion,
+                        "formaPago" => array(
+                            "moneda" =>  $documento->simboloMoneda(),
+                            "tipo" =>  $documento->formaPago(),
+                        ),
+                        "tipoMoneda" => $documento->simboloMoneda(),
+                        "client" => array(
+                            "tipoDoc" => $documento->tipoDocumentoCliente(),
+                            "numDoc" => $documento->documento_cliente,
+                            "rznSocial" => $documento->cliente,
+                            "address" => array(
+                                "direccion" => $documento->direccion_cliente,
+                            )),
+                        "company" => array(
+                            "ruc" =>  $documento->ruc_empresa,
+                            "razonSocial" => $documento->empresa,
+                            "address" => array(
+                                "direccion" => $documento->direccion_fiscal_empresa,
+                            )),
+                        "mtoOperGravadas" => (float)$documento->sub_total,
+                        "mtoOperExoneradas" => 0,
+                        "mtoIGV" => (float)$documento->total_igv,
+                        
+                        "valorVenta" => (float)$documento->sub_total,
+                        "totalImpuestos" => (float)$documento->total_igv,
+                        "subTotal" => (float)$documento->total,
+                        "mtoImpVenta" => (float)$documento->total,
+                        "ublVersion" => "2.1",
+                        "details" => self::obtenerProductos($documento->id),
+                        "legends" =>  self::obtenerLeyenda($documento),
+                    );
 
-                "valorVenta" => $documento->sub_total,
-                "totalImpuestos" => $documento->total_igv,
-                "mtoImpVenta" => $documento->total ,
-                "ublVersion" => "2.1",
-                "details" => self::obtenerProductos($documento->id),
-                "legends" =>  self::obtenerLeyenda($documento),
-            );
+                    //return $arreglo_comprobante;
+                    //OBTENER JSON DEL COMPROBANTE EL CUAL SE ENVIARA A SUNAT
+                    $data = enviarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
 
-            $comprobante= json_encode($arreglo_comprobante);
-            $data = generarXmlapi($comprobante, $documento->empresa_id);
-            return $data;
-            $name = $documento->id.'.xml';
-            $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
-            if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'))) {
-                mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'));
+                    //RESPUESTA DE LA SUNAT EN JSON
+                    $json_sunat = json_decode($data);
+                    if ($json_sunat->sunatResponse->success == true) {
+        
+                        $documento->sunat = '1';
+        
+                        $data_comprobante = generarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
+
+                        $name = $existe[0]->get('numeracion')->serie."-".$documento->correlativo.'.pdf';
+                        
+                        $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'.DIRECTORY_SEPARATOR.$name);
+        
+                        if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'))) {
+                            mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'));
+                        }
+
+                        file_put_contents($pathToFile, $data_comprobante);
+
+                        $arreglo_qr = array(
+                            "ruc" => $documento->ruc_empresa,
+                            "tipo" => $documento->tipoDocumento(),
+                            "serie" => $existe[0]->get('numeracion')->serie,
+                            "numero" => $documento->correlativo,
+                            "emision" => self::obtenerFechaEmision($documento),
+                            "igv" => 18,
+                            "total" => (float)$documento->total,
+                            "clienteTipo" => $documento->tipoDocumentoCliente(),
+                            "clienteNumero" => $documento->documento_cliente
+                        );
+
+                        $data_qr = generarQrApi(json_encode($arreglo_qr), $documento->empresa_id);
+
+                        $name_qr = $existe[0]->get('numeracion')->serie."-".$documento->correlativo.'.svg';
+                        
+                        $pathToFile_qr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'.DIRECTORY_SEPARATOR.$name_qr);
+        
+                        if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'))) {
+                            mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'));
+                        }
+
+                        file_put_contents($pathToFile_qr, $data_qr);
+
+                        $documento->nombre_comprobante_archivo = $name;
+                        $documento->hash = $json_sunat->hash;
+                        $documento->ruta_comprobante_archivo = 'public/sunat/'.$name;
+                        $documento->ruta_qr = 'public/qrs/'.$name_qr;
+                        $documento->update(); 
+        
+        
+                        //Registro de actividad
+                        $descripcion = "SE AGREGÓ EL COMPROBANTE ELECTRONICO: ". $existe[0]->get('numeracion')->serie."-".$documento->correlativo;
+                        $gestion = "COMPROBANTES ELECTRONICOS";
+                        crearRegistro($documento , $descripcion , $gestion);
+                        
+                        // Session::flash('success','Documento de Venta enviada a Sunat con exito.');
+                        // return view('ventas.documentos.index',[
+                            
+                        //     'id_sunat' => $json_sunat->sunatResponse->cdrResponse->id,
+                        //     'descripcion_sunat' => $json_sunat->sunatResponse->cdrResponse->description,
+                        //     'notas_sunat' => $json_sunat->sunatResponse->cdrResponse->notes,
+                        //     'sunat_exito' => true
+        
+                        // ])->with('sunat_exito', 'success');
+                        return array('success' => true,'mensaje' => 'Documento de Venta enviada a Sunat con exito.');
+        
+                    }else{
+
+                        //COMO SUNAT NO LO ADMITE VUELVE A SER 0 
+                        $documento->correlativo = null;
+                        $documento->serie = null;
+                        $documento->sunat = '2';
+                        $documento->update(); 
+                        
+                        if ($json_sunat->sunatResponse->error) {
+                            $id_sunat = $json_sunat->sunatResponse->error->code;
+                            $descripcion_sunat = $json_sunat->sunatResponse->error->message;
+        
+                        
+                        }else {
+                            $id_sunat = $json_sunat->sunatResponse->cdrResponse->id;
+                            $descripcion_sunat = $json_sunat->sunatResponse->cdrResponse->description;
+                            
+                        };
+        
+        
+                        // Session::flash('error','Documento de Venta sin exito en el envio a sunat.');
+                        // return view('ventas.documentos.index',[
+                        //     'id_sunat' =>  $id_sunat,
+                        //     'descripcion_sunat' =>  $descripcion_sunat,
+                        //     'sunat_error' => true,
+        
+                        // ])->with('sunat_error', 'error');
+                        return array('success' => false, 'mensaje' => $descripcion_sunat);
+                    }
+                }else{
+                    $documento->sunat = '1';
+                    $documento->update();
+                    // Session::flash('error','Documento de venta fue enviado a Sunat.');
+                    // return redirect()->route('ventas.documento.index')->with('sunat_existe', 'error');
+                    
+                    return array('success' => false, 'mensaje' => 'Documento de venta fue enviado a Sunat.');
+                }
+            }else{
+                // Session::flash('error','Tipo de Comprobante no registrado en la empresa.');
+                // return redirect()->route('ventas.documento.index')->with('sunat_existe', 'error');
+                return array('success' => false, 'mensaje' => 'Tipo de Comprobante no registrado en la empresa.');
             }
-            file_put_contents($pathToFile, $data);
-            return response()->file($pathToFile);
-
         }else{
-
-            //OBTENER CORRELATIVO DEL COMPROBANTE ELECTRONICO
-            $comprobante = event(new ComprobanteRegistrado($documento,$documento->serie));
-            //ENVIAR COMPROBANTE PARA LUEGO GENERAR XML
-            $data = generarXmlapi($comprobante[0],$documento->empresa_id);
-            $name = $documento->id.'.xml';
-            $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
-            if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'))) {
-                mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'));
-            }
-            file_put_contents($pathToFile, $data);
-            return response()->file($pathToFile);
+            // Session::flash('error','Empresa sin parametros para emitir comprobantes electronicos.');
+            // return redirect()->route('ventas.documento.index');
+            return array('success' => false, 'mensaje' => 'Empresa sin parametros para emitir comprobantes electronicos.');
         }
+        
     }
 
     public function qr($id)
@@ -852,8 +1165,8 @@ class DocumentoController extends Controller
                     'productos_clientes.monto as precio_venta','categorias.descripcion as categoria', DB::raw('DATE_FORMAT(lote_productos.fecha_vencimiento, "%d/%m/%Y") as fecha_venci'))
             ->where('lote_productos.cantidad_logica','>',0)
             ->where('lote_productos.estado','1')
-            ->where('productos_clientes.cliente','24') //TIPO DE CLIENTE CONSUMIDOR TABLA DETALLE (29)
-            ->where('productos_clientes.moneda','4') // TABLA DETALLE SOLES(4)
+            ->where('productos_clientes.cliente','121') //TIPO DE CLIENTE CONSUMIDOR TABLA DETALLE (29)
+            ->where('productos_clientes.moneda','1') // TABLA DETALLE SOLES(4)
             ->orderBy('lote_productos.id','ASC')
             ->where('productos_clientes.estado','ACTIVO')
         )->toJson();

@@ -13,6 +13,25 @@ class TablaDetalleSeeder extends Seeder
      */
     public function run()
     {
+        // Tipo de Monedas
+        $detalle = new Detalle();
+        $detalle->descripcion = "SOLES";
+        $detalle->simbolo = 'S/.';
+        $detalle->parametro = 'PEN';
+        $detalle->estado = 'ACTIVO';
+        $detalle->editable = 1;
+        $detalle->tabla_id = 1;
+        $detalle->save();
+
+        $detalle = new Detalle();
+        $detalle->descripcion = "DOLARES";
+        $detalle->simbolo = '$';
+        $detalle->parametro = 'USD';
+        $detalle->estado = 'ACTIVO';
+        $detalle->editable = 1;
+        $detalle->tabla_id = 1;
+        $detalle->save();
+
         //Bancos
         $detalle = new Detalle();
         $detalle->descripcion = "BANCO DE LA NACION";
@@ -38,46 +57,7 @@ class TablaDetalleSeeder extends Seeder
         $detalle->tabla_id = 2;
         $detalle->save();
 
-        // Tipo de Monedas
-
-        $detalle = new Detalle();
-        $detalle->descripcion = "SOLES";
-        $detalle->simbolo = 'S/.';
-        $detalle->parametro = 'PEN';
-        $detalle->estado = 'ACTIVO';
-        $detalle->editable = 1;
-        $detalle->tabla_id = 1;
-        $detalle->save();
-
-        $detalle = new Detalle();
-        $detalle->descripcion = "DOLARES";
-        $detalle->simbolo = '$';
-        $detalle->parametro = 'USD';
-        $detalle->estado = 'ACTIVO';
-        $detalle->editable = 1;
-        $detalle->tabla_id = 1;
-        $detalle->save();
-
-
-        //TIPO DE CONDICION DE REPARTO
-        $detalle = new Detalle();
-        $detalle->descripcion = "OFICINA";
-        $detalle->simbolo = 'OFICINA';
-        $detalle->estado = 'ACTIVO';
-        $detalle->editable = 1;
-        $detalle->tabla_id = 18;
-        $detalle->save();
-
-        $detalle = new Detalle();
-        $detalle->descripcion = "DOMICILIO";
-        $detalle->simbolo = 'DOMICILIO';
-        $detalle->estado = 'ACTIVO';
-        $detalle->editable = 1;
-        $detalle->tabla_id = 18;
-        $detalle->save();
-
         // TIPO DE DOCUMENTO
-
         $detalle = new Detalle();
         $detalle->descripcion = "DOCUMENTO NACIONAL DE IDENTIDAD";
         $detalle->simbolo = 'DNI';
@@ -201,21 +181,6 @@ class TablaDetalleSeeder extends Seeder
         $detalle->simbolo = 'SURESTE';
         $detalle->estado = 'ACTIVO';
         $detalle->tabla_id = 6;
-        $detalle->save();
-
-        //TIPO DE CLIENTE
-        $detalle = new Detalle();
-        $detalle->descripcion = "NORMAL";
-        $detalle->simbolo = 'NORMAL';
-        $detalle->estado = 'ACTIVO';
-        $detalle->tabla_id = 17;
-        $detalle->save();
-
-        $detalle = new Detalle();
-        $detalle->descripcion = "DISTRIBUIDOR"; // REVISAR PRODUCTO EL TIPO DE CLIENTE DISTRIBUIDOR CAMBIAR NOMBRE
-        $detalle->simbolo = 'DISTRIBUIDOR';
-        $detalle->estado = 'ACTIVO';
-        $detalle->tabla_id = 17;
         $detalle->save();
 
 // --------------------------NO MODIFICABLE-------------------------------------------------
@@ -928,6 +893,37 @@ class TablaDetalleSeeder extends Seeder
         $detalle->tabla_id = 16;
         $detalle->save();
 
+        //TIPO DE CLIENTE
+        $detalle = new Detalle();
+        $detalle->descripcion = "NORMAL";
+        $detalle->simbolo = 'NORMAL';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 17;
+        $detalle->save();
+
+        $detalle = new Detalle();
+        $detalle->descripcion = "DISTRIBUIDOR"; // REVISAR PRODUCTO EL TIPO DE CLIENTE DISTRIBUIDOR CAMBIAR NOMBRE
+        $detalle->simbolo = 'DISTRIBUIDOR';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 17;
+        $detalle->save();
+
+         //TIPO DE CONDICION DE REPARTO
+         $detalle = new Detalle();
+         $detalle->descripcion = "OFICINA";
+         $detalle->simbolo = 'OFICINA';
+         $detalle->estado = 'ACTIVO';
+         $detalle->editable = 1;
+         $detalle->tabla_id = 18;
+         $detalle->save();
+ 
+         $detalle = new Detalle();
+         $detalle->descripcion = "DOMICILIO";
+         $detalle->simbolo = 'DOMICILIO';
+         $detalle->estado = 'ACTIVO';
+         $detalle->editable = 1;
+         $detalle->tabla_id = 18;
+         $detalle->save();
 
 
         //TIPO DE PAGO CAJA CHICA
@@ -948,7 +944,6 @@ class TablaDetalleSeeder extends Seeder
         $detalle->save();
 
         //TIPO DE DOCUMENTO (VENTA)
-
         $detalle = new Detalle();
         $detalle->descripcion = "FACTURA ELECTRÓNICA";
         $detalle->nombre = "FACTURA";

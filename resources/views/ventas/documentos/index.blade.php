@@ -229,7 +229,7 @@ $(document).ready(function() {
                         "<li><a class='dropdown-item' target='_blank' onclick='xmlElectronico(" +data.id+ ")' title='Detalle'><b><i class='fa fa-code'></i> XML</a></b></li>" +
                         "<li><a class='dropdown-item' onclick='eliminar(" + data.id + ")' title='Eliminar'><b><i class='fa fa-trash'></i> Eliminar</a></b></li>" +
                         "<li class='dropdown-divider'></li>" +
-                        "<li><a class='dropdown-item' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-file'></i> Enviar Sunat</a></b></li>" +
+                        
                         "<li><a class='dropdown-item' onclick='guia(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-file'></i> Guia Remision</a></b></li>"
                         
                     "</ul></div>"

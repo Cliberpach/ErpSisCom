@@ -220,7 +220,7 @@ function ingresarProducto(producto) {
 }
 
 function evaluarPrecioigv(producto) {
-    if ( producto.moneda == 4 ) {
+    if ( producto.moneda == 1 ) {
         //PRODUCTO SIN IGV
         if ( producto.igv == '0' ) {
             var precio = Number(producto.precio_venta * 0.18) + Number(producto.precio_venta)

@@ -111,6 +111,35 @@
 
                                 <div class="form-group row">
                                     <div class="col-lg-6 col-xs-12">
+                                        <label class="required">Forma de pago</label>
+                                        <select name="forma_pago" id="forma_pago" class="select2_form form-control {{ $errors->has('forma_pago') ? ' is-invalid' : '' }}"
+                                            style="text-transform: uppercase; width:100%" value="{{old('forma_pago')}}" required>
+                                            <option value=""></option>
+                                            @foreach(forma_pago() as $pago)
+                                                <option value="{{ $pago->id }}">{{ $pago->descripcion }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-6 col-xs-12" id="fecha_vencimiento">
+                                        <label class="required">Fecha de vencimiento</label>
+                                        <div class="input-group date">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="text" id="fecha_vencimiento_campo" name="fecha_vencimiento_campo" class="form-control" autocomplete="off"
+                                                {{ $errors->has('fecha_vencimiento_campo') ? ' is-invalid' : '' }}
+                                                    value="{{old('fecha_vencimiento_campo',getFechaFormato( $fecha_hoy ,'d/m/Y'))}}" required>
+                                            @if ($errors->has('fecha_vencimiento_campo'))
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $errors->first('fecha_vencimiento_campo') }}</strong>
+                                            </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-lg-6 col-xs-12">
                                         <label class="required">Tipo: </label>
                                         <select
                                             class="select2_form form-control {{ $errors->has('tipo_venta') ? ' is-invalid' : '' }}"
@@ -551,13 +580,10 @@
                 width: '100%',
             });
 
-            $('.input-group.date').datepicker({
-                todayBtn: "linked",
-                keyboardNavigation: false,
-                forceParse: false,
-                autoclose: true,
-                language: 'es',
-                format: "dd/mm/yyyy"
+            $("#form_pago").select2({
+                placeholder: "SELECCIONAR",
+                allowClear: true,
+                width: '100%',
             });
         });
 
@@ -691,6 +717,15 @@
 
             //Controlar Error
             $.fn.DataTable.ext.errMode = 'throw';
+
+            $('.input-group.date #fecha_vencimiento_campo').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true,
+                language: 'es',
+                format: "dd/mm/yyyy",
+            });
         });
 
         function limpiarErrores() {
@@ -1290,8 +1325,10 @@
             let correcto = true;
             let moneda = $('#moneda').val();
             let observacion = $('#observacion').val();
+            let forma_pago = $('#forma_pago').val();
             let fecha_documento_campo = $('#fecha_documento_campo').val();
             let fecha_atencion_campo = $('#fecha_atencion_campo').val();
+            let fecha_vencimiento_campo = $('#fecha_vencimiento_campo').val();
             let empresa_id = $('#empresa_id').val();
             let cliente_id = $('#cliente_id').val();
             let tipo_venta = $('#tipo_venta').val();
@@ -1309,6 +1346,11 @@
                 correcto = false;
                 toastr.error('El campo moneda es requerido.');
             }
+            if(forma_pago == null || forma_pago == '')
+            {
+                correcto = false;
+                toastr.error('El campo forma de pago es requerido.');
+            }
             if(fecha_documento_campo == null || fecha_documento_campo == '')
             {
                 correcto = false;
@@ -1318,6 +1360,18 @@
             {
                 correcto = false;
                 toastr.error('El campo fecha de atención es requerido.');
+            }
+            if(fecha_vencimiento_campo == null || fecha_vencimiento_campo == '')
+            {
+                correcto = false;
+                toastr.error('El campo fecha de vencimiento es requerido.');
+            }
+            console.log(fecha_vencimiento_campo);
+            console.log(fecha_documento_campo);
+            if(fecha_documento_campo >fecha_vencimiento_campo)
+            {
+                correcto = false;
+                toastr.error('El campo fecha de vencimiento debe ser mayor a la fecha de atención.');
             }
             if(empresa_id == null || empresa_id == '')
             {

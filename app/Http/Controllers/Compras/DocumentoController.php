@@ -180,6 +180,7 @@ class DocumentoController extends Controller
             'tipo_cambio' => 'nullable|numeric',
             'igv' => 'required_if:igv_check,==,on|numeric|digits_between:1,3',
         ];
+
         $message = [
             'fecha_emision.required' => 'El campo Fecha de Emisión es obligatorio.',
             'tipo_compra.required' => 'El campo Tipo es obligatorio.',
@@ -193,6 +194,7 @@ class DocumentoController extends Controller
             'igv.numeric' => 'El campo Igv debe se numérico.',
             'tipo_cambio.numeric' => 'El campo Tipo de Cambio debe se numérico.',
         ];
+        
         Validator::make($data, $rules, $message)->validate();
         $documento = new Documento();
         $documento->fecha_emision = Carbon::createFromFormat('d/m/Y', $request->get('fecha_emision'))->format('Y-m-d');
