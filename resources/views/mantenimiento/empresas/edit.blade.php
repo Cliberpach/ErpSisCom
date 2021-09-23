@@ -243,7 +243,7 @@
                                                                 <div class="custom-file">
                                                                     <input id="logo" type="file" name="logo" id="logo"
                                                                         class="custom-file-input {{ $errors->has('logo') ? ' is-invalid' : '' }}"
-                                                                        accept="image/*" src="{{ Storage::url($empresa->ruta_logo)}}" @if($empresa->estado_fe) disabled @else '' @endif >
+                                                                        accept="image/*" src="{{ Storage::url($empresa->ruta_logo)}}" @if($empresa->estado_fe) '' @else '' @endif >
 
 
                                                                     <label for="logo" id="logo_txt"

@@ -39,7 +39,9 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\GuiaRegistrado::class => [
             \App\Listeners\GenerarGuiaRemisionElectronica::class,
         ],
-
+        \App\Events\NotaRegistrada::class => [
+            \App\Listeners\GeneraNota::class,
+        ],
     ];
 
     /**

@@ -6,6 +6,7 @@ use App\Almacenes\LoteProducto;
 use App\Almacenes\Producto;
 use App\Events\ComprobanteRegistrado;
 use App\Events\DocumentoNumeracion;
+use App\Events\NotaRegistrada;
 use App\Http\Controllers\Controller;
 use App\Mantenimiento\Empresa\Empresa;
 use App\Mantenimiento\Empresa\Numeracion;
@@ -286,10 +287,10 @@ class DocumentoController extends Controller
         ini_set("max_execution_time", 60000);
         try{
             DB::beginTransaction();
-            $data = $request->all();
-
+            $data = $request->all(); 
+            
             $rules = [
-                'fecha_documento'=> 'required',
+                'fecha_documento_campo'=> 'required',
                 'fecha_atencion_campo'=> 'required',
                 'tipo_venta'=> 'required',
                 'forma_pago'=> 'required',
@@ -303,7 +304,7 @@ class DocumentoController extends Controller
 
             ];
             $message = [
-                'fecha_documento.required' => 'El campo Fecha de Emisión es obligatorio.',
+                'fecha_documento_campo.required' => 'El campo Fecha de Emisión es obligatorio.',
                 'tipo_venta.required' => 'El campo tipo de venta es obligatorio.',
                 'forma_pago.required' => 'El campo forma de pago es obligatorio.',
                 'tipo_pago_id.required' => 'El campo modo de pago es obligatorio.',
@@ -321,9 +322,9 @@ class DocumentoController extends Controller
             Validator::make($data, $rules, $message)->validate();
 
             $documento = new Documento();
-            $documento->fecha_documento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_documento'))->format('Y-m-d');
-            $documento->fecha_atencion = Carbon::createFromFormat('d/m/Y', $request->get('fecha_atencion_campo'))->format('Y-m-d');
-            $documento->fecha_vencimiento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_vencimiento_campo'))->format('Y-m-d');
+            $documento->fecha_documento = $request->get('fecha_documento_campo');
+            $documento->fecha_atencion =  $request->get('fecha_atencion_campo');
+            $documento->fecha_vencimiento =  $request->get('fecha_vencimiento_campo');
             //EMPRESA
             $empresa = Empresa::findOrFail($request->get('empresa_id'));
             $documento->ruc_empresa =  $empresa->ruc;
@@ -362,7 +363,6 @@ class DocumentoController extends Controller
 
             $numero_doc = $documento->id;
             $documento->numero_doc = 'VENTA-'.$numero_doc;
-
             //Llenado de los articulos
             $productosJSON = $request->get('productos_tabla');
             $productotabla = json_decode($productosJSON[0]);
@@ -424,13 +424,15 @@ class DocumentoController extends Controller
         }
         catch(Exception $e)
         {
+            $productosJSON = $request->get('productos_tabla');
+            $productotabla = json_decode($productosJSON[0]);
             DB::rollBack();
             foreach ($productotabla as $producto) {
                 $lote = LoteProducto::findOrFail($producto->producto_id);
                 $lote->cantidad_logica =  $lote->cantidad_logica + $producto->cantidad;
                 $lote->update();
             }
-            Session::flash('error', $e->getMessage());
+            Session::flash('error', (string) $e->getMessage());
             return back();
         }
     }
@@ -621,8 +623,11 @@ class DocumentoController extends Controller
         return $fecha;
     }
 
-    public function voucher($id)
+    public function voucher($value)
     {
+        $cadena = explode('-',$value);
+        $id = $cadena[0];
+        $size = (int) $cadena[1];
         $documento = Documento::findOrFail($id);
         if((int)$documento->tipo_venta === 127 || (int)$documento->tipo_venta === 128)
         {
@@ -676,15 +681,29 @@ class DocumentoController extends Controller
                 $legends = json_encode($legends,true);
                 $legends = json_decode($legends,true);
     
-                $pdf = PDF::loadview('ventas.documentos.impresion.boleta_normal',[
-                    'documento' => $documento,
-                    'detalles' => $documento->detalles,
-                    'moneda' => $documento->simboloMoneda(),
-                    'empresa' => $empresa,
-                    "legends" =>  $legends,
-                    ])->setPaper('a4')->setWarnings(false);
+                if($size === 80)
+                {
+                    $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_ticket',[
+                        'documento' => $documento,
+                        'detalles' => $documento->detalles,
+                        'moneda' => $documento->simboloMoneda(),
+                        'empresa' => $empresa,                
+                        "legends" =>  $legends,
+                        ])->setPaper([0, 0, 226.772, 651.95]);
+                    return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
+                }
+                else
+                {
+                    $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_normal',[
+                        'documento' => $documento,
+                        'detalles' => $documento->detalles,
+                        'moneda' => $documento->simboloMoneda(),
+                        'empresa' => $empresa,                
+                        "legends" =>  $legends,
+                        ])->setPaper('a4')->setWarnings(false);
         
-                return $pdf->stream();
+                    return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
+                }
             }else{
     
                 //OBTENER CORRELATIVO DEL COMPROBANTE ELECTRONICO
@@ -704,6 +723,57 @@ class DocumentoController extends Controller
                 $legends = json_encode($legends,true);
                 $legends = json_decode($legends,true);
     
+                if($size === 80)
+                {
+                    $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_ticket',[
+                        'documento' => $documento,
+                        'detalles' => $documento->detalles,
+                        'moneda' => $documento->simboloMoneda(),
+                        'empresa' => $empresa,                
+                        "legends" =>  $legends,
+                        ])->setPaper([0, 0, 226.772, 651.95]);
+                    return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
+                }
+                else
+                {
+                    $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_normal',[
+                        'documento' => $documento,
+                        'detalles' => $documento->detalles,
+                        'moneda' => $documento->simboloMoneda(),
+                        'empresa' => $empresa,                
+                        "legends" =>  $legends,
+                        ])->setPaper('a4')->setWarnings(false);
+        
+                    return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
+                }
+            }
+        }
+        else
+        {
+            
+            if(empty($documento->correlativo))
+            {
+                event(new DocumentoNumeracion($documento));
+            }
+            $empresa = Empresa::first();
+    
+            $legends = self::obtenerLeyenda($documento);            
+            $legends = json_encode($legends,true);
+            $legends = json_decode($legends,true);
+
+            if($size === 80)
+            {
+                $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_ticket',[
+                    'documento' => $documento,
+                    'detalles' => $documento->detalles,
+                    'moneda' => $documento->simboloMoneda(),
+                    'empresa' => $empresa,                
+                    "legends" =>  $legends,
+                    ])->setPaper([0, 0, 226.772, 651.95]);
+                return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
+            }
+            else
+            {
                 $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_normal',[
                     'documento' => $documento,
                     'detalles' => $documento->detalles,
@@ -712,26 +782,8 @@ class DocumentoController extends Controller
                     "legends" =>  $legends,
                     ])->setPaper('a4')->setWarnings(false);
     
-                return $pdf->stream();
+                return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
             }
-        }
-        else
-        {
-            $empresa = Empresa::first();
-    
-            $legends = self::obtenerLeyenda($documento);            
-            $legends = json_encode($legends,true);
-            $legends = json_decode($legends,true);
-
-            $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_normal',[
-                'documento' => $documento,
-                'detalles' => $documento->detalles,
-                'moneda' => $documento->simboloMoneda(),
-                'empresa' => $empresa,                
-                "legends" =>  $legends,
-                ])->setPaper('a4')->setWarnings(false);
-
-            return $pdf->stream();
         }
     }
 

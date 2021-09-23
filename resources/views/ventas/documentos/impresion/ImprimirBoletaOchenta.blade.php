@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Pedido Nº {{ $pedido->id }}</title>
+    <title>Venta Nº {{ $documento->id }}</title>
     <style>
         .tipo-letra {
             font-size: 9pt;
@@ -23,34 +23,34 @@
         </div>
         <br>
         <div style="text-align: center; font-size: 12pt">
-            <span>{{ DB::table('empresa')->count() == 0 ? 'EMPRESA RESTAURANT ' : DB::table('empresa')->first()->nombre }}</span>
+            <span>{{ DB::table('empresas')->count() == 0 ? 'SISCOM' : DB::table('empresas')->first()->razon_social }}</span>
             <br>
-            <span>Ruc: {{ DB::table('empresa')->count() == 0 ? '- ' :  DB::table('empresa')->first()->ruc }}</span>
+            <span>Ruc: {{ DB::table('empresas')->count() == 0 ? '- ' :  DB::table('empresas')->first()->ruc }}</span>
             <br>
-            <span>Direccion:{{ DB::table('empresa')->count() == 0 ? '- ' : DB::table('empresa')->first()->direccion }}</span>
+            <span>Direccion:{{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->direccion_fiscal }}</span>
             <br>
-            <span>Correo: {{ DB::table('empresa')->count() == 0 ? '- ' : DB::table('empresa')->first()->email }}</span>
+            <span>Correo: {{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->correo }}</span>
             <br>
-            <span>Telefono: {{ DB::table('empresa')->count() == 0 ? '- ' : DB::table('empresa')->first()->telefono }}</span>
+            <span>Telefono: {{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->telefono }}</span>
         </div>
         <br>
         <div style="text-align: center; font-size: 10pt; margin-top: 10pt">
-            <span>BOLETA DE VENTA-ELECTRONICA</span>
+            <span>{{ $documento->nombreDocumento() }}</span>
             <br>
-            <span>{{$pedido->tipoDocumento()->serie}}</span>
+            <span>{{$documento->serie.'-'.$documento->correlativo}}</span>
         </div>
         <br>
         <div style="margin-top: 5pt">
-            <span>Cliente: {{$pedido->cliente->persona->nombres . ' ' . $pedido->cliente->persona->apellidos}}</span>
+            <span>Cliente: {{ $documento->clienteEntidad->nombre }}</span>
         </div>
         <div style="margin-top: 5pt">
-            <span>Dni-Cliente: {{$pedido->cliente->persona->dni }}</span>
+            <span>Dni-Cliente: {{ $documento->clienteEntidad->documento  }}</span>
         </div>
         <div style="margin-top: 5pt">
-            <span>Fecha Emision: {{ date('Y-m-d h:i') }}</span>
+            <span>Fecha Emision: {{ getFechaFormato( $documento->fecha_documento ,'d/m/Y') }}</span>
         </div>
         <div style="margin-top: 5pt">
-            <span>Estado: {{ $pedido->estado }}</span>
+            <span>Estado: {{ $documento->estado }}</span>
         </div>
         <br>
         <div>
@@ -67,22 +67,20 @@
 
                 </tr>
             </thead>
-            {{$total=0}}
             <tbody class="cuerpoTabla">
-                @foreach ($pedido->DPedido as $i => $item)
+                @foreach ($documento->detalles as $i => $item)
                    <tr>
-                       <td style="text-align: center">{{ $item->Plato_Prod->nombre }}</td>
-                       <td style="text-align: center">{{ number_format($item->p_venta, 2) }}</td>
+                       <td style="text-align: center">{{ $item->nombre_producto }}</td>
+                       <td style="text-align: center">{{ $item->precio_unitario }}</td>
                        <td style="text-align: center">{{ $item->cantidad }}</td>
-                       <td style="text-align: center">{{ number_format($item->p_venta * $item->cantidad, 2) }}</td>
-                       {{ $total = $total +$item->p_venta * $item->cantidad }}
+                       <td style="text-align: center">{{ $item->valor_venta }}</td>
                    </tr>
                @endforeach
            </tbody>
             <tfoot>
                 <tr>
                     <th style="text-align:center" colspan="3">Total</th>
-                    <th style="text-align:center">{{ $total}}</th>
+                    <th style="text-align:center">{{ number_format($documento->total, 2) }}</th>
                 </tr>
             </tfoot>
         </table>
@@ -90,25 +88,21 @@
             <span>----------------------------------------------------------------</span>
         </div>
         <div>
-            Pago:
-            <br>
-            <span>{{ DB::table('empresa')->count() == 0 ? 'Cuenta :-' : 'Cuenta: '.DB::table('empresa')->first()->cuenta }}</span>
-            <br>
-            <span>{{ DB::table('empresa')->count() == 0 ? 'CCI :-' : 'CCI: '.DB::table('empresa')->first()->cci }}</span>
+            
         </div>
         <br>
         <br><br>
         <br>
         <div style="margin-top: 5pt; text-align: center">
-            <span>!!! PEDIDO IMPRESO !!!</span>
+            <span>!!! documento IMPRESO !!!</span>
         </div>
         <br><br>
         <div style="text-align: center">
-            <span>{{ DB::table('empresa')->count() == 0 ? '!!! GRACIAS POR SU CONFIANZA !!! ' : DB::table('empresa')->first()->mensaje_reporte }}</span>
+            <span>!!! GRACIAS POR SU CONFIANZA !!! </span>
         </div>
         <span style="position:absolute;top:90%;left:8%;">
             {{ (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
-            "https" : "http") . "://" . $_SERVER['HTTP_HOST']."/buscarDocumento"}}
+            "https" : "http") . "://" . $_SERVER['HTTP_HOST'].""}}
         </span>
     </div>
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,77 +8,36 @@
         <title>{{ $documento->nombreDocumento() }}</title>
         <link rel="icon" href="{{ base_path() . '/img/siscom.ico' }}" />
         <style>
-            body {
+            body{
+                font-size: 6pt;
                 font-family: Arial, Helvetica, sans-serif;
                 color: black;
             }
 
-            .cabecera{
+            .cabecera {
+                align-content: center;
+                text-align: center;
+            }
+
+            .logo{
                 width: 100%;
-                position: relative;
-                height: 100px;
-                max-height: 150px;
-            }
-
-            .logo {
-                width: 25%;
-                position: absolute;
-                left: 0%;
-            }
-
-            .logo .logo-img
-            {
-                position: relative;
-                width: 95%;
-                margin-right: 5%;
-                height: 90px;
+                margin: 0px;
+                padding: 0px;
             }
 
             .img-fluid {
-                width: 100%;
-                height: 100%;
+                width: 60%;
+                height: 70px;
+                margin-bottom: 10px;
             }
 
             .empresa {
-                width: 45%;
-                position: absolute;
-                left: 25%;
-            }
-
-            .empresa .empresa-info {
                 position: relative;
-                width: 100%;
-            }
-
-            .nombre-empresa {
-                font-size: 16px;
-            }
-
-            .ruc-empresa {
-                font-size: 15px;
-            }
-
-            .direccion-empresa {
-                font-size: 12px;
-            }
-
-            .text-info-empresa {
-                font-size: 12px;
+                align-content: center;
             }
 
             .comprobante {
-                width: 30%;
-                position: absolute;
-                left: 70%;
-            }
-
-            .comprobante .comprobante-info {
-                position: relative;
                 width: 100%;
-                display: flex;
-                align-content: center;
-                align-items: center;
-                text-align: center;
             }
 
             .numero-documento {
@@ -85,7 +45,6 @@
                 padding-top: 20px;
                 padding-bottom: 20px;                
                 border: 1px solid #8f8f8f;
-                font-size: 14px;
             }
 
             .informacion{
@@ -95,17 +54,16 @@
 
             .tbl-informacion {
                 width: 100%;
-                font-size: 12px;
             }
 
             .cuerpo{
                 width: 100%;
                 position: relative;
+                margin-bottom: 10px;
             }
 
             .tbl-detalles {
                 width: 100%;
-                font-size: 12px;
             }
 
             .tbl-detalles thead{
@@ -118,12 +76,16 @@
                 border-bottom: 1px solid;
             }
 
-            .text-cuerpo{
-                font-size: 12px
-            }
-
             .tbl-qr {
                 width: 100%;
+            }
+
+            .qr {
+                position: relative;
+                width: 100%;
+                align-content: center;
+                text-align: center;
+                margin-top: 10px;
             }
             /*---------------------------------------------*/
 
@@ -144,38 +106,33 @@
     <body>
         <div class="cabecera">
             <div class="logo">
-                <div class="logo-img">
-                    <img src="{{ base_path() . '/storage/app/'.$empresa->ruta_logo }}" class="img-fluid">
-                </div>
+                <img src="{{ base_path() . '/storage/app/'.$empresa->ruta_logo }}" class="img-fluid">
             </div>
             <div class="empresa">
-                <div class="empresa-info">
-                    <p class="m-0 p-0 text-uppercase nombre-empresa">{{ DB::table('empresas')->count() == 0 ? 'SISCOM ' : DB::table('empresas')->first()->razon_social }}</p>
-                    <p class="m-0 p-0 text-uppercase ruc-empresa">RUC {{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->ruc }}</p>
-                    <p class="m-0 p-0 text-uppercase direccion-empresa">{{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->direccion_fiscal }}</p>
-                    
-                    <p class="m-0 p-0 text-info-empresa">Central telefónica: {{ DB::table('empresas')->count() == 0 ? '-' : DB::table('empresas')->first()->celular }}</p>
-                    <p class="m-0 p-0 text-info-empresa">Email: {{ DB::table('empresas')->count() == 0 ? '-' : DB::table('empresas')->first()->correo }}</p>
-                </div>
-            </div>
+                <p class="m-0 p-0 text-uppercase nombre-empresa">{{ DB::table('empresas')->count() == 0 ? 'SISCOM ' : DB::table('empresas')->first()->razon_social }}</p>
+                <p class="m-0 p-0 text-uppercase ruc-empresa">RUC {{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->ruc }}</p>
+                <p class="m-0 p-0 text-uppercase direccion-empresa">{{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->direccion_fiscal }}</p>
+                
+                <p class="m-0 p-0 text-info-empresa">Central telefónica: {{ DB::table('empresas')->count() == 0 ? '-' : DB::table('empresas')->first()->celular }}</p>
+                <p class="m-0 p-0 text-info-empresa">Email: {{ DB::table('empresas')->count() == 0 ? '-' : DB::table('empresas')->first()->correo }}</p>
+            </div><br>
             <div class="comprobante">
-                <div class="comprobante-info">
-                    <div class="numero-documento">
-                        <p class="m-0 p-0 text-uppercase">{{ $documento->nombreDocumento() }}</p>
-                        <p class="m-0 p-0 text-uppercase">{{$documento->serie.'-'.$documento->correlativo}}</p>
-                    </div>
+                <div class="numero-documento">
+                    <p class="m-0 p-0 text-uppercase">{{ $documento->nombreDocumento() }}</p>
+                    <p class="m-0 p-0 text-uppercase">{{$documento->serie.'-'.$documento->correlativo}}</p>
                 </div>
             </div>
-        </div><br>
+        </div>
+            <br>
         <div class="informacion">
             <table class="tbl-informacion">
                 <tr>
-                    <td>FECHA DE EMISIÓN</td>
+                    <td>F. EMISIÓN</td>
                     <td>:</td>
                     <td>{{ getFechaFormato( $documento->fecha_documento ,'d/m/Y')}}</td>
                 </tr>
                 <tr>
-                    <td>FECHA DE VENCIMIENTO</td>
+                    <td>F. VENC.</td>
                     <td>:</td>
                     <td>{{ getFechaFormato( $documento->fecha_vencimiento ,'d/m/Y')}}</td>
                 </tr>
@@ -202,7 +159,7 @@
             </table>
         </div><br>
         <div class="cuerpo">
-            <table class="tbl-detalles text-uppercase" cellpadding="5" cellspacing="0">
+            <table class="tbl-detalles text-uppercase" cellpadding="2" cellspacing="0">
                 <thead>
                     <tr >
                         <th style="text-align: center">CANT</th>
@@ -225,18 +182,15 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="3" hidden></th>
-                        <th style="text-align:right">Sub Total: S/.</th>
+                        <th colspan="4" style="text-align:right">Sub Total: S/.</th>
                         <th style="text-align:right">{{ number_format($documento->sub_total, 2) }}</th>
                     </tr>
                     <tr>
-                        <th colspan="3" hidden></th>
-                        <th style="text-align:right">IGV: S/.</th>
+                        <th colspan="4" style="text-align:right">IGV: S/.</th>
                         <th style="text-align:right">{{ number_format($documento->total_igv, 2) }}</th>
                     </tr>
                     <tr>
-                        <th colspan="3" hidden></th>
-                        <th style="text-align:right">Total a pagar: S/.</th>
+                        <th colspan="4" style="text-align:right">Total a pagar: S/.</th>
                         <th style="text-align:right">{{ number_format($documento->total, 2) }}</th>
                     </tr>
                 </tfoot>
@@ -246,19 +200,20 @@
             <br>
             <table class="tbl-qr">
                 <tr>
-                    <td style="width: 60%">
+                    <td>
                         @foreach($empresa->bancos as $banco)
                             <p class="m-0 p-0 text-cuerpo"><b class="text-uppercase">{{ $banco->descripcion}}</b> {{ $banco->tipo_moneda}} <b>N°: </b> {{ $banco->num_cuenta}} <b>CCI:</b> {{ $banco->cci}}</p>
                         @endforeach
                     </td>
-                    <td style="text-align: right;">
-                        @if($documento->ruta_qr)
-                        <img src="{{ base_path() . '/storage/app/'.$documento->ruta_qr }}">
-                        <p class="m-0 p-0" style="font-size: 9px;">Código Hash: {{ $documento->hash }}</p>
-                        @endif
-                    </td>
                 </tr>
             </table>
+        </div><br>
+        <div class="qr">            
+            @if($documento->ruta_qr)
+            <img src="{{ base_path() . '/storage/app/'.$documento->ruta_qr }}">
+            <p class="m-0 p-0">Código Hash: {{ $documento->hash }}</p>
+            @endif
         </div>
     </body>
+
 </html>

@@ -34,7 +34,6 @@ class ConsultarTipoNumeracion
                             ->where('empresa_numeracion_facturaciones.tipo_comprobante',$documento->tipo_venta)
                             ->where('empresa_numeracion_facturaciones.empresa_id',$documento->empresa_id)
                             ->where('cotizacion_documento.tipo_venta',$documento->tipo_venta)
-                            ->where('cotizacion_documento.sunat',"1")
                             ->select('cotizacion_documento.*','empresa_numeracion_facturaciones.*')
                             ->orderBy('cotizacion_documento.correlativo','DESC')
                             ->get();
@@ -52,9 +51,9 @@ class ConsultarTipoNumeracion
 
         }else{
             //DOCUMENTO DE VENTA ES NUEVO EN SUNAT 
-            if($documento->sunat != '1' ){
+            if($documento->sunat != '1' || $documento->tipo_venta === 129){
                 $ultimo_comprobante = $serie_comprobantes->first();
-                $documento->correlativo = $ultimo_comprobante->correlativo+1;
+                $documento->correlativo = $ultimo_comprobante->correlativo + 1;
                 $documento->serie = $numeracion->serie;
                 $documento->update();
 

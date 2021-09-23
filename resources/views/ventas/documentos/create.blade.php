@@ -59,20 +59,20 @@
                                                 <i class="fa fa-calendar"></i>
                                             </span>
                                             @if (!empty($cotizacion))
-                                            <input type="text" id="fecha_documento_campo" name="fecha_documento"
+                                            <input type="date" id="fecha_documento_campo" name="fecha_documento_campo"
                                                 class="form-control {{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
                                                 value="{{old('fecha_documento',getFechaFormato($cotizacion->fecha_documento, 'd/m/Y'))}}"
                                                 autocomplete="off" required readonly>
                                             @else
-                                            <input type="text" id="fecha_documento_campo" name="fecha_documento"
+                                            <input type="date" id="fecha_documento_campo" name="fecha_documento_campo"
                                                 class="form-control {{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
-                                                value="{{old('fecha_documento',getFechaFormato($fecha_hoy, 'd/m/Y'))}}"
+                                                value="{{old('fecha_documento', $fecha_hoy)}}"
                                                 autocomplete="off" required readonly>
                                             @endif
 
-                                            @if ($errors->has('fecha_documento'))
+                                            @if ($errors->has('fecha_documento_campo'))
                                             <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $errors->first('fecha_documento') }}</strong>
+                                                <strong>{{ $errors->first('fecha_documento_campo') }}</strong>
                                             </span>
                                             @endif
                                         </div>
@@ -86,15 +86,15 @@
                                             </span>
                                             
                                             @if (!empty($cotizacion))
-                                            <input type="text" id="fecha_atencion_campo" name="fecha_atencion_campo"
+                                            <input type="date" id="fecha_atencion_campo" name="fecha_atencion_campo"
                                                 class="form-control {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
                                                 value="{{old('fecha_atencion',getFechaFormato( $cotizacion->fecha_atencion ,'d/m/Y'))}}"
                                                 autocomplete="off" readonly disabled>
                                             @else
 
-                                            <input type="text" id="fecha_atencion_campo" name="fecha_atencion_campo"
+                                            <input type="date" id="fecha_atencion_campo" name="fecha_atencion_campo"
                                                 class="form-control {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
-                                                value="{{old('fecha_atencion',getFechaFormato( $fecha_hoy ,'d/m/Y'))}}"
+                                                value="{{old('fecha_atencion',$fecha_hoy)}}"
                                                 autocomplete="off" required readonly disabled>
 
                                             @endif
@@ -126,9 +126,9 @@
                                             <span class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </span>
-                                            <input type="text" id="fecha_vencimiento_campo" name="fecha_vencimiento_campo" class="form-control" autocomplete="off"
+                                            <input type="date" id="fecha_vencimiento_campo" name="fecha_vencimiento_campo" class="form-control" autocomplete="off"
                                                 {{ $errors->has('fecha_vencimiento_campo') ? ' is-invalid' : '' }}
-                                                    value="{{old('fecha_vencimiento_campo',getFechaFormato( $fecha_hoy ,'d/m/Y'))}}" required>
+                                                    value="{{old('fecha_vencimiento_campo', $fecha_hoy)}}" required>
                                             @if ($errors->has('fecha_vencimiento_campo'))
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $errors->first('fecha_vencimiento_campo') }}</strong>
@@ -717,15 +717,6 @@
 
             //Controlar Error
             $.fn.DataTable.ext.errMode = 'throw';
-
-            $('.input-group.date #fecha_vencimiento_campo').datepicker({
-                todayBtn: "linked",
-                keyboardNavigation: false,
-                forceParse: false,
-                autoclose: true,
-                language: 'es',
-                format: "dd/mm/yyyy",
-            });
         });
 
         function limpiarErrores() {
@@ -1286,7 +1277,7 @@
                     cancelButtonText: "No, Cancelar",
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        var tipo = validarTipo()
+                        var tipo = validarTipo();
 
                         if (tipo == false) {
                             cargarProductos();
@@ -1366,9 +1357,16 @@
                 correcto = false;
                 toastr.error('El campo fecha de vencimiento es requerido.');
             }
-            console.log(fecha_vencimiento_campo);
-            console.log(fecha_documento_campo);
-            if(fecha_documento_campo >fecha_vencimiento_campo)
+            // let cadena_hoy = fecha_documento_campo.split('/');
+            // let conv_hoy = cadena_hoy[0]+'-'+cadena_hoy[1]+'-'+cadena_hoy[2];
+
+            // let cadena_ven = fecha_vencimiento_campo.split('/');
+            // let conv_ven = cadena_ven[0]+'-'+cadena_ven[1]+'-'+cadena_ven[2];
+
+            // let fecha_hoy_aux = new Date(cadena_hoy[2], cadena_hoy[1], cadena_hoy[0]);
+            // let fecha_venc_aux = new Date(cadena_ven[2], cadena_ven[1], cadena_ven[0]);
+
+            if( fecha_documento_campo > fecha_vencimiento_campo )
             {
                 correcto = false;
                 toastr.error('El campo fecha de vencimiento debe ser mayor a la fecha de atención.');
@@ -1515,7 +1513,4 @@
     
     };
 </script>
-
-
-
 @endpush

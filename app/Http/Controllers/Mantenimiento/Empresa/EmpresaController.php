@@ -533,7 +533,7 @@ class EmpresaController extends Controller
             $bancos = EmpresaBanco::where('empresa_id', $empresa->id)->get();
             foreach ($bancos as $banco) {
                 $banco->estado= "ANULADO";
-                $banco->update();
+                $banco->delete();
             }
             foreach ($entidadtabla as $entidad) {
                 EmpresaBanco::create([

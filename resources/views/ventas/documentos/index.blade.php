@@ -226,6 +226,7 @@ $(document).ready(function() {
                     return "<div class='btn-group' style='text-transform:capitalize;'><button data-toggle='dropdown' class='btn btn-primary btn-sm  dropdown-toggle'><i class='fa fa-bars'></i></button><ul class='dropdown-menu'>" +
                     
                         "<li><a class='dropdown-item' target='_blank' onclick='comprobanteElectronico(" +data.id+ ")' title='Detalle'><b><i class='fa fa-file-pdf-o'></i> Pdf</a></b></li>" +
+                        "<li><a class='dropdown-item' target='_blank' onclick='comprobanteElectronicoTicket(" +data.id+ ")' title='Detalle'><b><i class='fa fa-ticket'></i> Ticket</a></b></li>" +
                         "<li><a class='dropdown-item' target='_blank' onclick='xmlElectronico(" +data.id+ ")' title='Detalle'><b><i class='fa fa-code'></i> XML</a></b></li>" +
                         "<li><a class='dropdown-item' onclick='eliminar(" + data.id + ")' title='Eliminar'><b><i class='fa fa-trash'></i> Eliminar</a></b></li>" +
                         "<li class='dropdown-divider'></li>" +
@@ -457,7 +458,57 @@ function comprobanteElectronico(id) {
         if (result.value) {
             
             var url = '{{ route("ventas.documento.comprobante", ":id")}}';
-            url = url.replace(':id',id);
+            url = url.replace(':id',id+'-100');
+
+            window.location.href = url
+
+            Swal.fire({
+                title: '¡Cargando!',
+                type: 'info',
+                text: 'Generando Detalle',
+                showConfirmButton: false,
+                onBeforeOpen: () => {
+                    Swal.showLoading()
+                }
+            })
+
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            swalWithBootstrapButtons.fire(
+                'Cancelado',
+                'La Solicitud se ha cancelado.',
+                'error'
+            )
+        }
+    })
+
+}
+
+function comprobanteElectronicoTicket(id) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger',
+        },
+        buttonsStyling: false
+    })
+
+    Swal.fire({
+        title: "Opción Detalle",
+        text: "¿Seguro que desea obtener el documento de venta?",
+        showCancelButton: true,
+        icon: 'info',
+        confirmButtonColor: "#1ab394",
+        confirmButtonText: 'Si, Confirmar',
+        cancelButtonText: "No, Cancelar",
+        // showLoaderOnConfirm: true,
+    }).then((result) => {
+        if (result.value) {
+            
+            var url = '{{ route("ventas.documento.comprobante", ":id")}}';
+            url = url.replace(':id',id+'-80');
 
             window.location.href = url
 
