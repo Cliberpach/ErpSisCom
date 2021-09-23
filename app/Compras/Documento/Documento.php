@@ -20,12 +20,13 @@ class Documento extends Model
             'empresa_id',
             'proveedor_id',
             'modo_compra',
+            'numero_doc',
             'moneda',
             'observacion',
             'igv',
             'igv_check',
             'tipo_cambio',
-            
+
             'tipo_compra',
             'orden_compra',
             'tipo_pago',
@@ -34,7 +35,7 @@ class Documento extends Model
             'total_igv',
             'total',
 
-        
+
             'estado',
             'enviado',
             'usuario_id',
@@ -52,12 +53,12 @@ class Documento extends Model
     public function usuario()
     {
         return $this->belongsTo('App\User','usuario_id');
-    } 
+    }
 
     public function cuenta()
     {
         return $this->hasOne('App\Compras\CuentaProveedor','compra_documento_id');
-    } 
+    }
 
     public function lotes()
     {
@@ -73,11 +74,11 @@ class Documento extends Model
             {
                 $cuenta_proveedor = new CuentaProveedor();
                 $cuenta_proveedor->compra_documento_id = $documento->id;
-                $cuenta_proveedor->numero_doc = $documento->numero_doc;
-                $cuenta_proveedor->fecha_doc = $documento->fecha_doc;
-                $cuenta_proveedor->monto = $documento->total;
-                $cuenta_proveedor->acta = 'DOCUMENTO COMPRA';
+                // $cuenta_proveedor->numero_doc = $documento->numero_doc;
+                // $cuenta_proveedor->fecha_doc = $documento->fecha_doc;
+                // $cuenta_proveedor->monto = $documento->total;
                 $cuenta_proveedor->saldo = $documento->total;
+                $cuenta_proveedor->acta = 'DOCUMENTO COMPRA';
                 $cuenta_proveedor->save();
             }
         });
@@ -93,5 +94,5 @@ class Documento extends Model
         });
 
     }
- 
+
 }
