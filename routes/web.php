@@ -369,7 +369,13 @@ function(){
 
     });
     Route::prefix('caja')->group(function () {
-        Route::get('index','Pos\CajaController@index')->name('Caja.index');
+        Route::get('/index','Pos\Cajacontroller@index')->name('Caja.index');
+        Route::get('/getCajas','Pos\Cajacontroller@getCajas')->name('Caja.getCajas');
+        Route::post('/store','Pos\Cajacontroller@store')->name('Caja.store');
+        Route::post('/update/{id}','Pos\Cajacontroller@update')->name('Caja.update');
+        Route::get('/destroy/{id}','Pos\Cajacontroller@destroy')->name('Caja.destroy');
+        //-------------------------Movimientos de Caja -------------------------
+        Route::get('index/movimiento','Pos\CajaController@indexMovimiento')->name('Caja.Movimiento.index');
         Route::get('getMovimientosCajas','Pos\CajaController@getMovimientosCajas')->name('Caja.get_movimientos_cajas');
         Route::post('aperturaCaja','Pos\Cajacontroller@aperturaCaja')->name('Caja.apertura');
         Route::post('cerrarCaja','Pos\Cajacontroller@cerrarCaja')->name('Caja.cerrar');
@@ -383,7 +389,9 @@ function(){
         Route::post('store','Egresocontroller@store')->name('Egreso.store');
         Route::post('update/{id}','Egresocontroller@update')->name('Egreso.update');
         Route::get('destroy/{id}','Egresocontroller@destroy')->name('Egreso.destroy');
+        Route::get('recibo/{size}','Egresocontroller@recibo')->name('Egreso.recibo');
     });
+
 });
 
 Route::get('ruta', function () {

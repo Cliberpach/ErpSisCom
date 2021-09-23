@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mantenimiento\Colaborador\Colaborador;
 use App\Pos\Caja;
 use App\Pos\MovimientoCaja;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -15,10 +16,52 @@ use Yajra\DataTables\DataTables;
 
 class CajaController extends Controller
 {
+
     public function index()
     {
+        return view('pos.Cajas.index');
+    }
+    public function getCajas()
+    {
+        $datos = array();
+        $cajas = Caja::where('estado', 'ACTIVO')->get();
+        foreach ($cajas as $key => $value) {
+            array_push(
+                $datos,
+                array(
+                    "id" => $value->id,
+                    "nombre" => $value->nombre,
+                    "created_at" => Carbon::createFromFormat('Y-m-d H:i:s', $value->created_at)->format('Y-m-d h:i:s')
+                )
+            );
+        }
+        return DataTables::of($datos)->toJson();
+    }
+    public function store(Request $request)
+    {
+        $caja = new Caja();
+        $caja->nombre = $request->nombre;
+        $caja->save();
+        return redirect()->route('Caja.index');
+    }
+    public function update(Request $request, $id)
+    {
+        $caja = Caja::findOrFail($id);
+        $caja->nombre = $request->nombre_editar;
+        $caja->save();
+        return redirect()->route('Caja.index');
+    }
+    public function destroy($id)
+    {
+        $caja = Caja::findOrFail($id);
+        $caja->estado="ANULADO";
+        $caja->save();
+        return redirect()->route('Caja.index');
+    }
+    public function indexMovimiento()
+    {
         $colaboradores = Colaborador::where('estado', 'ACTIVO')->get();
-        return view('pos.caja.index', compact('colaboradores'));
+        return view('pos.MovimientoCaja.indexMovimiento', compact('colaboradores'));
     }
     public function getMovimientosCajas()
     {
@@ -36,49 +79,50 @@ class CajaController extends Controller
         }
         return DataTables::of($datos)->toJson();
     }
-    public function estadoCaja()
+    public function estadoCaja(Request $request)
     {
-        $mensaje = "Sin Aperturar";
-        $consulta = MovimientoCaja::orderBy('id', 'desc');
-        if ($consulta->count() !== 0) {
-            $movimientofinal = $consulta->first();
-            $mensaje = $movimientofinal->estado_movimiento == "APERTURA" ? "Aperturado" : $mensaje;
-        }
-        return $mensaje;
+        $caja=Caja::findOrFail($request->id);
+        return $caja->estado_caja=="ABIERTA"? 'true':'false';
     }
     public function aperturaCaja(Request $request)
     {
         $movimiento = new MovimientoCaja();
-        $movimiento->caja_id = 1; //como solo hay una caja siempre será 1
+        $movimiento->caja_id = $request->caja;
         $movimiento->colaborador_id = $request->colaborador_id;
         $movimiento->monto_inicial = $request->saldo_inicial;
         $movimiento->estado_movimiento = "APERTURA";
         $movimiento->fecha_apertura = date('Y-m-d h:i:s');
         $movimiento->save();
-        return redirect()->route('Caja.index');
+        $caja=Caja::findOrFail($request->caja);
+        $caja->estado_caja="ABIERTA";
+        $caja->save();
+        return redirect()->route('Caja.Movimiento.index');
     }
     public function cerrarCaja(Request $request)
     {
-        $ultimoMovimiento = MovimientoCaja::orderBy('id', 'desc')->first();
-        $movimiento =MovimientoCaja::findOrFail($ultimoMovimiento->id);
+        $movimiento = MovimientoCaja::findOrFail($request->movimiento_id);
         $movimiento->estado_movimiento = "CIERRE";
-        $movimiento->fecha_cierre= date('Y-m-d h:i:s');
-        $movimiento->monto_final= $request->saldo;
+        $movimiento->fecha_cierre = date('Y-m-d h:i:s');
+        $movimiento->monto_final = $request->saldo;
         $movimiento->save();
-        return redirect()->route('Caja.index');
+        $caja=$movimiento->caja;
+        $caja->estado_caja="CERRADA";
+        $caja->save();
+        return redirect()->route('Caja.Movimiento.index');
     }
-    public function cajaDatosCierre()
+    public function cajaDatosCierre(Request $request)
     {
-        $ultimoMovimiento = MovimientoCaja::orderBy('id', 'desc')->first();
-        $colaborador = $ultimoMovimiento->colaborador;
-        $ingresos = $ultimoMovimiento->totalIngresos($ultimoMovimiento->detalleMovimientoVentas);
-        $egresos = $ultimoMovimiento->totalEgresos($ultimoMovimiento->detalleMoviemientoEgresos);
+        $movimiento = MovimientoCaja::findOrFail($request->id);
+        $colaborador = $movimiento->colaborador;
+        $ingresos = $movimiento->totalIngresos($movimiento->detalleMovimientoVentas);
+        $egresos = $movimiento->totalEgresos($movimiento->detalleMoviemientoEgresos);
         return array(
-            "monto_inicial" => $ultimoMovimiento->monto_inicial,
+            "caja"=>$movimiento->caja->nombre,
+            "monto_inicial" => $movimiento->monto_inicial,
             "colaborador" => $colaborador->persona->apellido_paterno . " " . $colaborador->persona->apellido_paterno . " " . $colaborador->persona->nombre,
             "egresos" => $egresos,
             "ingresos" => $ingresos,
-            "saldo" => ($ultimoMovimiento->monto_inicial + $ingresos) - $egresos
+            "saldo" => ($movimiento->monto_inicial + $ingresos) - $egresos
         );
     }
 }

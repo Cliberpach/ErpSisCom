@@ -196,6 +196,19 @@ class TablaSeeder extends Seeder
        $tabla = new General();
        $tabla->descripcion = 'FORMAS DE PAGO';
        $tabla->sigla = 'FP';
+
+       //31
+       $tabla = new General();
        $tabla->save();
+       $tabla->descripcion = 'TURNOS';
+       $tabla->sigla = 'TURNO';
+       $tabla->save();
+
+       //32
+       $tabla = new General();
+       $tabla->descripcion = 'CUENTAS';
+       $tabla->sigla = 'CUENTAS';
+       $tabla->save();
+
     }
 }

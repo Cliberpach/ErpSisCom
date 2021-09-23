@@ -1,4 +1,4 @@
-<div class="modal inmodal" id="modal_crear_caja" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal inmodal" id="modal_cerrar_caja" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content animated bounceInRight">
             <div class="modal-header">
@@ -8,30 +8,42 @@
                 </button>
                 <i class="fa fa-cogs modal-icon"></i>
                 <h4 class="modal-title">Caja</h4>
-                <small class="font-bold">Apertura de Cajaa</small>
+                <small class="font-bold">Cerrar de Caja</small>
             </div>
             <div class="modal-body">
-                <form role="form" action="{{ route('Caja.apertura') }}" method="POST" id="crear_caja_chica">
+                <form role="form" action="{{ route('Caja.cerrar') }}" method="POST" >
                     {{ csrf_field() }} {{ method_field('POST') }}
+                    <input type="hidden" name="movimiento_id" id="movimiento_id" >
+                    <div class="form-group">
+                        <label class="required">Caja:</label>
+                        <input type="text" name="caja" id="caja" disabled class="form-control" placeholder="">
+                    </div>
                     <div class="form-group">
                         <label class="required">Colaborador:</label>
-                        <select class="form-control select2_form"
-                            style="text-transform: uppercase; width:100%"
-                            name="colaborador_id" id="colaborador_id" required>
-                            <option></option>
-                            @foreach ($colaboradores as $colaborador )
-                            <option value="{{$colaborador->id}}">{{$colaborador->persona->apellido_paterno." ".$colaborador->persona->apellido_paterno." ".$colaborador->persona->nombre}}</option>
-                            @endforeach
-
-                        </select>
+                        <input type="text" name="colaborador" id="colaborador" disabled class="form-control" placeholder="">
                     </div>
                     <div class="form-group row">
-                        <div class="col-md-6">
-                            <label class="required">Saldo Inicial:</label>
-                            <input type="text"
-                                class="form-control {{ $errors->has('saldo_inicial') ? ' is-invalid' : '' }}"
-                                id="saldo_inicial" name="saldo_inicial" value="{{ old('saldo_inicial') }}"
-                                 required>
+                        <div class="col-md-12">
+                            <label class="required">Monto Inicial:</label>
+                            <input type="text" name="monto_inicial" id="monto_inicial" disabled class="form-control" placeholder="">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label class="required">Ingresos:</label>
+                            <input type="text" name="ingreso" id="ingreso" class="form-control" >
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label class="required">Egresos:</label>
+                            <input type="text" name="egreso" id="egreso" class="form-control" >
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label class="required">Saldo:</label>
+                            <input type="text" name="saldo" id="saldo" class="form-control" >
                         </div>
                     </div>
             </div>

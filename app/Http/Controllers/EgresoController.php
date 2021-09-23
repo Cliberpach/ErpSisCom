@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Pos\Caja;
 use App\Pos\DetalleMovimientoEgresosCaja;
 use App\Pos\Egreso;
 use App\Pos\MovimientoCaja;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class EgresoController extends Controller
 {
@@ -25,7 +27,9 @@ class EgresoController extends Controller
                 'descripcion' => $value->descripcion,
                 'importe' => $value->importe,
                 'estado' => $value->estado,
-                'created_at' => Carbon::createFromFormat('Y-m-d H:i:s', $value->created_at)->format('Y-m-d h:i:s')
+                'created_at' => Carbon::createFromFormat('Y-m-d H:i:s', $value->created_at)->format('Y-m-d h:i:s'),
+                'tipoDocumento' => $value->tipoDocumento->descripcion,
+                'documento' => $value->documento == null ? "-" : $value->documento
             ));
         }
         return DataTables::of($data)->toJson();
@@ -33,20 +37,27 @@ class EgresoController extends Controller
     public function store(Request $request)
     {
         $egreso = new Egreso();
+        $egreso->tipodocumento_id = $request->tipo_documento;
+        $egreso->cuenta_id = $request->cuenta;
+        $egreso->documento = $request->documento;
         $egreso->descripcion = $request->descripcion;
         $egreso->importe = $request->importe;
         $egreso->save();
-        $ultimoMovimiento = MovimientoCaja::orderBy('id', 'desc')->first();
+        $ultimoMovimiento = Caja::findOrFail(1)->movimientos()->first();
         $detalleMovimientoEgreso = new DetalleMovimientoEgresosCaja();
         $detalleMovimientoEgreso->mcaja_id = $ultimoMovimiento->id;
         $detalleMovimientoEgreso->egreso_id = $egreso->id;
         $detalleMovimientoEgreso->save();
+
 
         return redirect()->route('Egreso.index');
     }
     public function update(Request $request, $id)
     {
         $egreso = Egreso::findOrFail($id);
+        $egreso->tipodocumento_id = $request->tipo_documento_editar;
+        $egreso->cuenta_id = $request->cuenta_editar;
+        $egreso->documento = $request->documento_editar;
         $egreso->descripcion = $request->descripcion_editar;
         $egreso->importe = $request->importe_editar;
         $egreso->save();
@@ -62,5 +73,18 @@ class EgresoController extends Controller
         $egreso->estado = "ANULADO";
         $egreso->save();
         return redirect()->route('Egreso.index');
+    }
+    public function recibo(Request $request, $size)
+    {
+        $egreso = Egreso::findOrFail($request->egreso_id);
+
+        if ($size == 80) {
+            $pdf = PDF::loadView('Egreso.Imprimir.ticket', compact('egreso'));
+            $pdf->setpaper([0, 0, 226.772, 651.95]);
+        }
+        else{
+            $pdf = PDF::loadView('Egreso.Imprimir.normal', compact('egreso'));
+        }
+        return $pdf->stream('recibo.pdf');
     }
 }

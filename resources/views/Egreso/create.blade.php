@@ -13,13 +13,28 @@
             <div class="modal-body">
                 <form role="form" action="{{ route('Egreso.store') }}" method="POST">
                     {{ csrf_field() }} {{ method_field('POST') }}
-
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label for="" class="required">Cuentas</label>
+                            <select name="cuenta" id="cuenta" class="select2_form form-control" required>
+                                    <option value=""></option>
+                                @foreach (cuentas() as $cuenta)
+                                    <option value="{{$cuenta->id}}">{{$cuenta->descripcion}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="required">Importe:</label>
+                            <input type="text" class="form-control" id="importe" name="importe" required>
+                        </div>
+                    </div>
                     <div class="form-group row">
                         <div class="col-md-6">
                             <label class="required">Tipo Documento:</label>
                             {{-- <input type="text" name="tipo_documento" id="tipo_documento" class="form-control"> --}}
-                            <select name="tipo_documento" id="tipo_documento" class="form-control">
-                                @foreach (tipos_documento() as $documento)
+                            <select name="tipo_documento" id="tipo_documento" class="form-control select2_form" required>
+                                <option value=""></option>
+                                @foreach (tipo_compra() as $documento)
                                         <option value="{{$documento->id}}">{{$documento->descripcion}}</option>
                                 @endforeach
                             </select>
@@ -33,12 +48,9 @@
                         <div class="col-md-6">
                             <label class="required">Descripcion:</label>
                             <textarea name="descripcion" id="descripcion" cols="30" rows="2"
-                                class="form-control"></textarea>
+                                class="form-control" required></textarea>
                         </div>
-                        <div class="col-md-6">
-                            <label class="required">Importe:</label>
-                            <input type="text" class="form-control" id="importe" name="importe" required>
-                        </div>
+
                     </div>
             </div>
             <div class="modal-footer">
@@ -56,3 +68,30 @@
         </div>
     </div>
 </div>
+@push('styles')
+    <link href="{{ asset('Inspinia/css/plugins/select2/select2.min.css') }}" rel="stylesheet">
+@endpush
+@push('scripts')
+    <!-- Select2 -->
+    <script src="{{ asset('Inspinia/js/plugins/select2/select2.full.min.js') }}"></script>
+    <script>
+        //Select2
+        $(".select2_form").select2({
+            placeholder: "SELECCIONAR",
+            allowClear: true,
+            height: '200px',
+            width: '100%',
+        });
+        $("#tipo_documento").on('change', function (e) {
+            var tipoDocumento=$("#tipo_documento option:selected").text()
+           if(tipoDocumento=="RECIBO")
+           {
+            $("#documento").attr('disabled',true)
+           }
+           else
+           {
+            $("#documento").attr('disabled',false)
+           }
+        });
+    </script>
+@endpush
