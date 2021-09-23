@@ -287,8 +287,8 @@ class DocumentoController extends Controller
         ini_set("max_execution_time", 60000);
         try{
             DB::beginTransaction();
-            $data = $request->all(); 
-            
+            $data = $request->all();
+
             $rules = [
                 'fecha_documento_campo'=> 'required',
                 'fecha_atencion_campo'=> 'required',
@@ -410,11 +410,11 @@ class DocumentoController extends Controller
             $descripcion = "SE AGREGÓ EL DOCUMENTO DE VENTA CON LA FECHA: ". Carbon::parse($documento->fecha_documento)->format('d/m/y');
             $gestion = "DOCUMENTO DE VENTA";
             crearRegistro($documento , $descripcion , $gestion);
-            
-            $ultimoMovimiento = MovimientoCaja::orderBy('id', 'desc')->first();
+
+
             $detalle=new DetalleMovimientoVentaCaja();
             $detalle->cdocumento_id = $documento->id;
-            $detalle->mcaja_id = $ultimoMovimiento->id;
+            $detalle->mcaja_id = 1;
             $detalle->save();
 
             DB::commit();
@@ -600,7 +600,7 @@ class DocumentoController extends Controller
     //             "cantidad" => (float)$detalles[$i]->cantidad,
     //             "mtoValorUnitario" => (float)($detalles[$i]->precio_nuevo / 1.18),
     //             "mtoValorVenta" => (float)($detalles[$i]->valor_venta / 1.18),
-    //             "mtoBaseIgv" => (float)($detalles[$i]->valor_venta / 1.18), 
+    //             "mtoBaseIgv" => (float)($detalles[$i]->valor_venta / 1.18),
     //             "porcentajeIgv" => 18,
     //             "igv" => (float)($detalles[$i]->valor_venta - ($detalles[$i]->valor_venta / 1.18)),
     //             "tipAfeIgv" => 10,
@@ -657,7 +657,7 @@ class DocumentoController extends Controller
                     "mtoOperGravadas" => $documento->sub_total,
                     "mtoOperExoneradas" => 0,
                     "mtoIGV" => $documento->total_igv,
-    
+
                     "valorVenta" => $documento->sub_total,
                     "totalImpuestos" => $documento->total_igv,
                     "mtoImpVenta" => $documento->total ,
@@ -665,7 +665,7 @@ class DocumentoController extends Controller
                     "details" => self::obtenerProductos($documento->id),
                     "legends" =>  self::obtenerLeyenda($documento),
                 );
-    
+
                 $comprobante= json_encode($arreglo_comprobante);
                 $data = generarComprobanteapi($comprobante, $documento->empresa_id);
                 $name = $documento->id.'.pdf';
@@ -675,19 +675,19 @@ class DocumentoController extends Controller
                 }
                 file_put_contents($pathToFile, $data);
                 //return response()->file($pathToFile);
-                $empresa = Empresa::first();            
-    
+                $empresa = Empresa::first();
+
                 $legends = self::obtenerLeyenda($documento);
                 $legends = json_encode($legends,true);
                 $legends = json_decode($legends,true);
-    
+
                 if($size === 80)
                 {
                     $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_ticket',[
                         'documento' => $documento,
                         'detalles' => $documento->detalles,
                         'moneda' => $documento->simboloMoneda(),
-                        'empresa' => $empresa,                
+                        'empresa' => $empresa,
                         "legends" =>  $legends,
                         ])->setPaper([0, 0, 226.772, 651.95]);
                     return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
@@ -698,14 +698,14 @@ class DocumentoController extends Controller
                         'documento' => $documento,
                         'detalles' => $documento->detalles,
                         'moneda' => $documento->simboloMoneda(),
-                        'empresa' => $empresa,                
+                        'empresa' => $empresa,
                         "legends" =>  $legends,
                         ])->setPaper('a4')->setWarnings(false);
-        
+
                     return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
                 }
             }else{
-    
+
                 //OBTENER CORRELATIVO DEL COMPROBANTE ELECTRONICO
                 $comprobante = event(new ComprobanteRegistrado($documento,$documento->serie));
                 //ENVIAR COMPROBANTE PARA LUEGO GENERAR PDF
@@ -716,20 +716,20 @@ class DocumentoController extends Controller
                     mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'));
                 }
                 file_put_contents($pathToFile, $data);
-    
+
                 $empresa = Empresa::first();
-    
-                $legends = self::obtenerLeyenda($documento);            
+
+                $legends = self::obtenerLeyenda($documento);
                 $legends = json_encode($legends,true);
                 $legends = json_decode($legends,true);
-    
+
                 if($size === 80)
                 {
                     $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_ticket',[
                         'documento' => $documento,
                         'detalles' => $documento->detalles,
                         'moneda' => $documento->simboloMoneda(),
-                        'empresa' => $empresa,                
+                        'empresa' => $empresa,
                         "legends" =>  $legends,
                         ])->setPaper([0, 0, 226.772, 651.95]);
                     return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
@@ -740,24 +740,24 @@ class DocumentoController extends Controller
                         'documento' => $documento,
                         'detalles' => $documento->detalles,
                         'moneda' => $documento->simboloMoneda(),
-                        'empresa' => $empresa,                
+                        'empresa' => $empresa,
                         "legends" =>  $legends,
                         ])->setPaper('a4')->setWarnings(false);
-        
+
                     return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
                 }
             }
         }
         else
         {
-            
+
             if(empty($documento->correlativo))
             {
                 event(new DocumentoNumeracion($documento));
             }
             $empresa = Empresa::first();
-    
-            $legends = self::obtenerLeyenda($documento);            
+
+            $legends = self::obtenerLeyenda($documento);
             $legends = json_encode($legends,true);
             $legends = json_decode($legends,true);
 
@@ -767,7 +767,7 @@ class DocumentoController extends Controller
                     'documento' => $documento,
                     'detalles' => $documento->detalles,
                     'moneda' => $documento->simboloMoneda(),
-                    'empresa' => $empresa,                
+                    'empresa' => $empresa,
                     "legends" =>  $legends,
                     ])->setPaper([0, 0, 226.772, 651.95]);
                 return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
@@ -778,10 +778,10 @@ class DocumentoController extends Controller
                     'documento' => $documento,
                     'detalles' => $documento->detalles,
                     'moneda' => $documento->simboloMoneda(),
-                    'empresa' => $empresa,                
+                    'empresa' => $empresa,
                     "legends" =>  $legends,
                     ])->setPaper('a4')->setWarnings(false);
-    
+
                 return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
             }
         }
@@ -819,7 +819,7 @@ class DocumentoController extends Controller
                     "mtoOperGravadas" => $documento->sub_total,
                     "mtoOperExoneradas" => 0,
                     "mtoIGV" => $documento->total_igv,
-    
+
                     "valorVenta" => $documento->sub_total,
                     "totalImpuestos" => $documento->total_igv,
                     "mtoImpVenta" => $documento->total ,
@@ -827,7 +827,7 @@ class DocumentoController extends Controller
                     "details" => self::obtenerProductos($documento->id),
                     "legends" =>  self::obtenerLeyenda($documento),
                 );
-    
+
                 $comprobante= json_encode($arreglo_comprobante);
                 $data = generarXmlapi($comprobante, $documento->empresa_id);
                 return $data;
@@ -838,9 +838,9 @@ class DocumentoController extends Controller
                 }
                 file_put_contents($pathToFile, $data);
                 return response()->file($pathToFile);
-    
+
             }else{
-    
+
                 //OBTENER CORRELATIVO DEL COMPROBANTE ELECTRONICO
                 $comprobante = event(new ComprobanteRegistrado($documento,$documento->serie));
                 //ENVIAR COMPROBANTE PARA LUEGO GENERAR XML
@@ -859,7 +859,7 @@ class DocumentoController extends Controller
             Session::flash('error', 'Este documento no retorna este formato.');
             return back();
         }
-        
+
     }
 
     public function obtenerLeyenda($documento)
@@ -869,7 +869,7 @@ class DocumentoController extends Controller
 
         //CREAR LEYENDA DEL COMPROBANTE
         $arrayLeyenda = Array();
-        $arrayLeyenda[] = array(  
+        $arrayLeyenda[] = array(
             "code" => "1000",
             "value" => $convertir
         );
@@ -889,7 +889,7 @@ class DocumentoController extends Controller
                 "cantidad" => (float)$detalles[$i]->cantidad,
                 "mtoValorUnitario" => (float)($detalles[$i]->precio_nuevo / 1.18),
                 "mtoValorVenta" => (float)($detalles[$i]->valor_venta / 1.18),
-                "mtoBaseIgv" => (float)($detalles[$i]->valor_venta / 1.18), 
+                "mtoBaseIgv" => (float)($detalles[$i]->valor_venta / 1.18),
                 "porcentajeIgv" => 18,
                 "igv" => (float)($detalles[$i]->valor_venta - ($detalles[$i]->valor_venta / 1.18)),
                 "tipAfeIgv" => 10,
@@ -905,8 +905,8 @@ class DocumentoController extends Controller
     public function obtenerFechaEmision($documento)
     {
         $date = strtotime($documento->fecha_documento);
-        $fecha_emision = date('Y-m-d', $date); 
-        $hora_emision = date('H:i:s', $date); 
+        $fecha_emision = date('Y-m-d', $date);
+        $hora_emision = date('H:i:s', $date);
         $fecha = $fecha_emision.'T'.$hora_emision.'-05:00';
 
         return $fecha;
@@ -915,8 +915,8 @@ class DocumentoController extends Controller
     public function obtenerFechaVencimiento($documento)
     {
         $date = strtotime($documento->fecha_vencimiento);
-        $fecha_emision = date('Y-m-d', $date); 
-        $hora_emision = date('H:i:s', $date); 
+        $fecha_emision = date('Y-m-d', $date);
+        $hora_emision = date('H:i:s', $date);
         $fecha = $fecha_emision.'T'.$hora_emision.'-05:00';
 
         return $fecha;
@@ -924,7 +924,7 @@ class DocumentoController extends Controller
 
 
     public function sunat($id)
-    {       
+    {
         $documento = Documento::findOrFail($id);
         //OBTENER CORRELATIVO DEL COMPROBANTE ELECTRONICO
         $existe = event(new DocumentoNumeracion($documento));
@@ -961,7 +961,7 @@ class DocumentoController extends Controller
                         "mtoOperGravadas" => (float)$documento->sub_total,
                         "mtoOperExoneradas" => 0,
                         "mtoIGV" => (float)$documento->total_igv,
-                        
+
                         "valorVenta" => (float)$documento->sub_total,
                         "totalImpuestos" => (float)$documento->total_igv,
                         "subTotal" => (float)$documento->total,
@@ -978,15 +978,15 @@ class DocumentoController extends Controller
                     //RESPUESTA DE LA SUNAT EN JSON
                     $json_sunat = json_decode($data);
                     if ($json_sunat->sunatResponse->success == true) {
-        
+
                         $documento->sunat = '1';
-        
+
                         $data_comprobante = generarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
 
                         $name = $existe[0]->get('numeracion')->serie."-".$documento->correlativo.'.pdf';
-                        
+
                         $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'.DIRECTORY_SEPARATOR.$name);
-        
+
                         if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'))) {
                             mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'));
                         }
@@ -1008,9 +1008,9 @@ class DocumentoController extends Controller
                         $data_qr = generarQrApi(json_encode($arreglo_qr), $documento->empresa_id);
 
                         $name_qr = $existe[0]->get('numeracion')->serie."-".$documento->correlativo.'.svg';
-                        
+
                         $pathToFile_qr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'.DIRECTORY_SEPARATOR.$name_qr);
-        
+
                         if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'))) {
                             mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'));
                         }
@@ -1021,51 +1021,51 @@ class DocumentoController extends Controller
                         $documento->hash = $json_sunat->hash;
                         $documento->ruta_comprobante_archivo = 'public/sunat/'.$name;
                         $documento->ruta_qr = 'public/qrs/'.$name_qr;
-                        $documento->update(); 
-        
-        
+                        $documento->update();
+
+
                         //Registro de actividad
                         $descripcion = "SE AGREGÓ EL COMPROBANTE ELECTRONICO: ". $existe[0]->get('numeracion')->serie."-".$documento->correlativo;
                         $gestion = "COMPROBANTES ELECTRONICOS";
                         crearRegistro($documento , $descripcion , $gestion);
-                        
+
                         // Session::flash('success','Documento de Venta enviada a Sunat con exito.');
                         // return view('ventas.documentos.index',[
-                            
+
                         //     'id_sunat' => $json_sunat->sunatResponse->cdrResponse->id,
                         //     'descripcion_sunat' => $json_sunat->sunatResponse->cdrResponse->description,
                         //     'notas_sunat' => $json_sunat->sunatResponse->cdrResponse->notes,
                         //     'sunat_exito' => true
-        
+
                         // ])->with('sunat_exito', 'success');
                         return array('success' => true,'mensaje' => 'Documento de Venta enviada a Sunat con exito.');
-        
+
                     }else{
 
-                        //COMO SUNAT NO LO ADMITE VUELVE A SER 0 
+                        //COMO SUNAT NO LO ADMITE VUELVE A SER 0
                         $documento->correlativo = null;
                         $documento->serie = null;
                         $documento->sunat = '2';
-                        $documento->update(); 
-                        
+                        $documento->update();
+
                         if ($json_sunat->sunatResponse->error) {
                             $id_sunat = $json_sunat->sunatResponse->error->code;
                             $descripcion_sunat = $json_sunat->sunatResponse->error->message;
-        
-                        
+
+
                         }else {
                             $id_sunat = $json_sunat->sunatResponse->cdrResponse->id;
                             $descripcion_sunat = $json_sunat->sunatResponse->cdrResponse->description;
-                            
+
                         };
-        
-        
+
+
                         // Session::flash('error','Documento de Venta sin exito en el envio a sunat.');
                         // return view('ventas.documentos.index',[
                         //     'id_sunat' =>  $id_sunat,
                         //     'descripcion_sunat' =>  $descripcion_sunat,
                         //     'sunat_error' => true,
-        
+
                         // ])->with('sunat_error', 'error');
                         return array('success' => false, 'mensaje' => $descripcion_sunat);
                     }
@@ -1074,7 +1074,7 @@ class DocumentoController extends Controller
                     $documento->update();
                     // Session::flash('error','Documento de venta fue enviado a Sunat.');
                     // return redirect()->route('ventas.documento.index')->with('sunat_existe', 'error');
-                    
+
                     return array('success' => false, 'mensaje' => 'Documento de venta fue enviado a Sunat.');
                 }
             }else{
@@ -1087,7 +1087,7 @@ class DocumentoController extends Controller
             // return redirect()->route('ventas.documento.index');
             return array('success' => false, 'mensaje' => 'Empresa sin parametros para emitir comprobantes electronicos.');
         }
-        
+
     }
 
     public function qr($id)
