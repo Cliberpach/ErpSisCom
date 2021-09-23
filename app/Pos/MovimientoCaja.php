@@ -36,7 +36,14 @@ class MovimientoCaja extends Model
     {
         $total = 0;
         foreach ($DetalleMovimientoVentaCaja as $key => $venta) {
-            $total = $total + $venta->documento->total;
+            if($venta->documento->tipo_pago_id==1)
+            {
+                $total = $total + $venta->documento->importe;
+            }
+            else{
+                $total = $total + $venta->documento->efectivo;
+            }
+
         }
         return $total;
     }
