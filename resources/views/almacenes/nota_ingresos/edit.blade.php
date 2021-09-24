@@ -53,9 +53,9 @@
                                             <span class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </span>
-                                            <input type="text" id="fecha" name="fecha"
+                                            <input type="date" id="fecha" name="fecha"
                                                 class="form-control {{ $errors->has('fecha') ? ' is-invalid' : '' }}"
-                                                value="{{old('fecha',getFechaFormato($notaingreso->fecha, 'Y-m-d'))}}"
+                                                value="{{old('fecha',$notaingreso->fecha)}}"
                                                 autocomplete="off" readonly required>
                                             @if ($errors->has('fecha'))
                                             <span class="invalid-feedback" role="alert">
@@ -100,45 +100,47 @@
                                         <h4 class=""><b>Detalle de la Nota de Ingreso</b></h4>
                                     </div>
                                     <div class="panel-body">
-                                        <div class="row">
+                                        <div class="row align-items-end">
                                         	<div class="col-md-2">
-                                                <label class="col-form-label">Cantidad </label>
-                                                <input type="number" id="cantidad" class="form-control">
-                                                <div class="invalid-feedback"><b><span id="error-cantidad"></span></b>
+                                                <div class="form-group">
+                                                    <label class="col-form-label">Cantidad </label>
+                                                    <input type="number" id="cantidad" class="form-control" min="1" onkeypress="return isNumber(event)">
+                                                    <div class="invalid-feedback"><b><span id="error-cantidad"></span></b></div>
                                                 </div>
-                                            </div>
-                                             <div class="col-md-5">
-                                                <label class="col-form-label">Producto</label>
+                                            </div> 
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="col-form-label">Producto</label>
                                                 <select name="producto" id="producto" class="form-control select2_form">
                                                     <option value=""></option>
                                                     @foreach ($productos as $producto)
                                                         <option  value="{{$producto->id}}" id="{{$producto->id}}">{{$producto->nombre}}</option>
                                                     @endforeach
                                                 </select>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label class="col-form-label">lote</label>
-                                                <input type="text" name="lote" id="lote" class="form-control">
-                                            </div>
-
-                                            <div class="col-md-3">
-                                                <label class="col-form-label">Fecha Vencimiento</label>
-                                                <div class="input-group date">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-calendar"></i>
-                                                    </span>
-                                                    <input type="text" id="fechavencimiento" name="fechavencimiento"
-                                                        class="form-control"
-                                                         >
                                                 </div>
                                             </div>
-
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-group">
-                                                <label class="col-form-label" for="amount">&nbsp;</label>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label class="col-form-label">lote</label>
+                                                    <input type="text" name="lote" id="lote" class="form-control">
+                                                </div>
+                                            </div>                                           
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label class="col-form-label">Fecha Vencimiento</label>
+                                                    <div class="input-group date">
+                                                        <span class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </span>
+                                                        <input type="date" id="fechavencimiento" name="fechavencimiento" class="form-control" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                               <div class="form-group">
                                                 <a class="btn btn-block btn-warning enviar_detalle"
-                                                    style='color:white;'> <i class="fa fa-plus"></i> AGREGAR</a>
+                                                style='color:white;'> <i class="fa fa-plus"></i></a>
+                                               </div>
                                             </div>
                                         </div>
                                         <hr>
@@ -236,32 +238,10 @@ $(".select2_form").select2({
     width: '100%',
 });
 
-$('#fecha .input-group.date').datepicker({
-    todayBtn: "linked",
-    keyboardNavigation: false,
-    forceParse: false,
-    autoclose: true,
-    language: 'es',
-    format: "dd/mm/yyyy",
-});
-$('.input-group.date #fechavencimiento').datepicker({
-    todayBtn: "linked",
-    keyboardNavigation: false,
-    forceParse: false,
-    autoclose: true,
-    language: 'es',
-    format: "yyyy-mm-dd",
-});
-$('.modal_editar_detalle #fechavencimiento').datepicker({
-    todayBtn: "linked",
-    keyboardNavigation: false,
-    forceParse: false,
-    autoclose: true,
-    language: 'es',
-    format: "yyyy-mm-dd",
-});
 
 $(document).ready(function() {
+    $('#lote').val('LT-{{ $fecha_actual }}');
+    $('#fechavencimiento').val('{{$fecha_5}}');
 
     // DataTables
     $('.dataTables-ingreso').DataTable({
@@ -418,7 +398,7 @@ $(".enviar_detalle").click(function() {
             if (result.isConfirmed) {
 
                 var detalle = {
-                	cantidad: $('#cantidad').val(),
+                	cantidad:  convertFloat($('#cantidad').val()).toFixed(2),
                     lote:$('#lote').val(),
                     producto:$( "#producto option:selected" ).text(),
                     fechavencimiento: $('#fechavencimiento').val(),
@@ -426,6 +406,7 @@ $(".enviar_detalle").click(function() {
 
                 }
                 agregarTabla(detalle);
+                limpiarDetalle();
 
             } else if (
                 /* Read more about handling dismissals below */
@@ -441,6 +422,15 @@ $(".enviar_detalle").click(function() {
 
     }
 })
+
+
+function limpiarDetalle()
+{
+    $('#cantidad').val('');
+    $('#lote').val('LT-{{ $fecha_actual }}');
+    $('#fechavencimiento').val('{{$fecha_5}}');    
+    $('#producto').val($('#producto option:first-child').val()).trigger('change');
+}
 
 $(document).on('click', '.btn-edit', function(event) {
             var table = $('.dataTables-ingreso').DataTable();

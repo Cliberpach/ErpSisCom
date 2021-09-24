@@ -4,6 +4,9 @@ namespace App\Ventas\Documento;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\Mantenimiento\Tabla\Detalle as TablaDetalle;
+use App\Ventas\CuentaCliente;
+
 class Documento extends Model
 {
     protected $table = 'cotizacion_documento';
@@ -141,5 +144,51 @@ class Documento extends Model
             return "-";
         else
             return $documento->parametro;
+    }
+
+    public function cuenta()
+    {
+        return $this->hasOne('App\Ventas\CuentaCliente','cotizacion_documento_id');
+    } 
+
+    protected static function booted()
+    {
+        static::created(function(Documento $documento){
+            //CREAR LOTE PRODUCTO
+            $modo = TablaDetalle::find($documento->forma_pago);
+            if($modo->simbolo === 'CREDITO' || $modo->simbolo === 'credito' || $modo->simbolo === 'CRÉDITO' || $modo->simbolo === 'crédito')
+            {
+                $cuenta_cliente = new CuentaCliente();
+                $cuenta_cliente->cotizacion_documento_id = $documento->id;
+                $cuenta_cliente->numero_doc = $documento->numero_doc;
+                $cuenta_cliente->fecha_doc = $documento->fecha_documento;
+                $cuenta_cliente->monto = $documento->total;
+                $cuenta_cliente->acta = 'DOCUMENTO VENTA';
+                $cuenta_cliente->saldo = $documento->total;
+                $cuenta_cliente->save();
+            }
+        });
+
+        static::updated(function(Documento $documento){
+            //ANULAR LOTE producto
+            if($documento->cuenta)
+            {
+                $cuenta_cliente = CuentaCliente::find($documento->cuenta->id);
+                $cuenta_cliente->numero_doc = $documento->numero_doc;
+                $cuenta_cliente->update();
+            }
+
+        });
+
+        static::deleted(function(Documento $documento){
+            //ANULAR LOTE producto
+            if($documento->cuenta)
+            {
+                $cuenta_cliente = CuentaCliente::find($documento->cuenta->id);
+                $cuenta_cliente->delete();
+            }
+
+        });
+
     }
 }

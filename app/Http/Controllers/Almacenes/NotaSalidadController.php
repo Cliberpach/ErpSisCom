@@ -248,9 +248,16 @@ class NotaSalidadController extends Controller
      */
     public function destroy($id)
     {
-        $notasalidad=NotaSalidad::findOrFail($id);
+        $notasalidad = NotaSalidad::findOrFail($id);
         $notasalidad->estado="ANULADO";
         $notasalidad->save();
+        foreach($notasalidad->detalles as $detalle)
+        {
+            $lote = LoteProducto::find($detalle->lote_id);
+            $lote->cantidad = $lote->cantidad + $detalle->cantidad;
+            $lote->cantidad_logica = $lote->cantidad + $detalle->cantidad;
+            $lote->update();
+        }
         Session::flash('success','NOTA DE SALIDAD');
         return redirect()->route('almacenes.nota_salidad.index')->with('guardar', 'success');
     }
@@ -266,9 +273,9 @@ class NotaSalidadController extends Controller
             ->select('lote_productos.*','productos.nombre','productos_clientes.cliente','productos_clientes.moneda','tabladetalles.simbolo as unidad_producto',
                     'productos_clientes.monto as precio_venta','categorias.descripcion', DB::raw('DATE_FORMAT(lote_productos.fecha_vencimiento, "%d/%m/%Y") as fecha_venci'))
             ->where('lote_productos.cantidad_logica','>',0)
-            ->where('lote_productos.estado','1')
-            ->where('productos_clientes.cliente','28')
-            ->where('productos_clientes.moneda','4')
+            //->where('lote_productos.estado','1')
+            ->where('productos_clientes.cliente','121')
+            ->where('productos_clientes.moneda','1')
             ->orderBy('lote_productos.id','ASC')
             ->where('productos_clientes.estado','ACTIVO')
         )->toJson();

@@ -142,7 +142,7 @@
                     <td>{{ $documento->clienteEntidad->nombre }}</td>
                 </tr>
                 <tr>
-                    <td>DNI</td>
+                    <td class="text-uppercase">{{ $documento->tipo_documento_cliente}}</td>
                     <td>:</td>
                     <td>{{ $documento->clienteEntidad->documento }}</td>
                 </tr>

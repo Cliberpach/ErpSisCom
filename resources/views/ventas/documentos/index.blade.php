@@ -543,7 +543,7 @@ function xmlElectronico(id) {
             cancelButton: 'btn btn-danger',
         },
         buttonsStyling: false
-    })
+    });
 
     Swal.fire({
         title: "Opción XML",
@@ -562,15 +562,15 @@ function xmlElectronico(id) {
 
             window.location.href = url
 
-            Swal.fire({
-                title: '¡Cargando!',
-                type: 'info',
-                text: 'Generando XML',
-                showConfirmButton: false,
-                onBeforeOpen: () => {
-                    Swal.showLoading()
-                }
-            })
+            // Swal.fire({
+            //     title: '¡Cargando!',
+            //     type: 'info',
+            //     text: 'Generando XML',
+            //     showConfirmButton: false,
+            //     onBeforeOpen: () => {
+            //         Swal.showLoading()
+            //     }
+            // })
 
         } else if (
             /* Read more about handling dismissals below */

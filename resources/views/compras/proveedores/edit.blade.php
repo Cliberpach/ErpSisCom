@@ -1144,29 +1144,33 @@ function camposRuctransporte(objeto) {
 
 
 function camposRuc(objeto) {
-    var razonsocial = objeto.value.razonSocial;
-    var direccion = objeto.value.direccion;
-    var departamento = objeto.value.departamento;
-    var provincia = objeto.value.provincia;
-    var distrito = objeto.value.distrito;
-    var estado = objeto.value.estado;
+    if (objeto.value === undefined)
+                return;
 
-    if (razonsocial != '-' && razonsocial != "NULL") {
+    if(objeto.value.success)
+    {
+        var razonsocial = objeto.value.data.nombre_o_razon_social;
+        var direccion = objeto.value.data.direccion;
+        var departamento = objeto.value.data.ubigeo[0];
+        var provincia = objeto.value.data.ubigeo[1];
+        var distrito = objeto.value.data.ubigeo[2];
+        var estado = objeto.value.data.estado;
+
         $('#descripcion').val(razonsocial)
-    }
 
-    if (direccion != '-' && direccion != "NULL") {
-        $('#direccion').val(direccion + " - " + departamento + " - " + provincia + " - " + distrito)
+        if (estado == "ACTIVO") {
+            $('#estado').val(estado)
+        } else {
+            $('#estado').val('INACTIVO')
+            toastr.error('Proveedor no se encuentra "Activo"', 'Error');
+        }
+        $('#direccion').val(direccion)
+    }    
+    else
+    {
+        toastr.error('No se encontraron datos.')
     }
-    if (estado == "ACTIVO") {
-        $('#estado').val(estado)
-    } else {
-        $('#estado').val('INACTIVO')
-        toastr.error('Proveedor no se encuentra "Activo"', 'Error');
-    }
-
 }
-
 // Consulta Dni
 function consultarDni(dni) {
     var dni = $('#dni').val()
@@ -1194,7 +1198,6 @@ function consultarDni(dni) {
                         return response.json()
                     })
                     .catch(error => {
-                        console.log(error)
                         $('#estado').val('SIN VERIFICAR')
                         Swal.showValidationMessage(
                             `Dni Inválido`
@@ -1216,26 +1219,22 @@ function consultarDni(dni) {
 
 function camposDni(objeto) {
 
-    var nombres = objeto.value.nombres;
-    var apellidopa = objeto.value.apellidoPaterno;
-    var apellidoma = objeto.value.apellidoMaterno;
+    if (objeto.value === undefined)
+                return;
 
-    var nombre_completo = []
+    if(objeto.value.success)
+    {
+        var nombres = objeto.value.data.nombres;
+        var apellido_paterno = objeto.value.data.apellido_paterno;
+        var apellido_materno = objeto.value.data.apellido_materno;
+        var codigo_verificacion = objeto.value.data.codigo_verificacion;
 
-    if (nombres != "-" && nombres != null) {
-        nombre_completo.push(nombres)
+        $('#estado').val('ACTIVO')
+        $('#descripcion').val(nombres + ' ' + apellido_paterno + ' ' + apellido_materno)
     }
-
-    if (apellidopa != "-" && apellidopa != null) {
-        nombre_completo.push(apellidopa)
+    else{
+        toastr.error('No se encontraron datos.')
     }
-
-    if (apellidoma != "-" && apellidoma != null) {
-        nombre_completo.push(apellidoma)
-    }
-
-    $('#estado').val('ACTIVO')
-    $('#descripcion').val(nombre_completo.join(' '))
 
 }
 

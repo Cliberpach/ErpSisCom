@@ -34,15 +34,15 @@
                             </div>
                             <div class="col-lg-12 col-xs-12 d-none">
                                 <div class="form-group row">
-                                    <div class="col-lg-6 col-xs-12" id="fecha_documento">
+                                    <div class="col-lg-6 col-xs-12">
                                         <label class="required">Fecha de Documento</label>
                                         <div class="input-group date">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </span>
-                                            <input type="text" id="fecha_documento" name="fecha_documento"
+                                            <input type="date" id="fecha_documento" name="fecha_documento"
                                                 class="form-control {{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
-                                                value="{{ old('fecha_documento', getFechaFormato($cotizacion->fecha_documento, 'd/m/Y')) }}"
+                                                value="{{ old('fecha_documento', $cotizacion->fecha_documento) }}"
                                                 autocomplete="off" required readonly>
                                             @if ($errors->has('fecha_documento'))
                                                 <span class="invalid-feedback" role="alert">
@@ -100,15 +100,15 @@
                                             </span>
                                         @endif
                                     </div>                                    
-                                    <div class="col-lg-2 col-xs-12" id="fecha_atencion">
+                                    <div class="col-lg-3 col-xs-12">
                                         <label class="required">Fecha de Atención</label>
                                         <div class="input-group date">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </span>
-                                            <input type="text" id="fecha_atencion" name="fecha_atencion"
+                                            <input type="date" id="fecha_atencion" name="fecha_atencion"
                                                 class="form-control {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
-                                                value="{{ old('fecha_atencion', getFechaFormato($cotizacion->fecha_atencion, 'd/m/Y')) }}"
+                                                value="{{ old('fecha_atencion', $cotizacion->fecha_atencion) }}"
                                                 autocomplete="off" required readonly>
                                             @if ($errors->has('fecha_atencion'))
                                                 <span class="invalid-feedback" role="alert">
@@ -135,7 +135,7 @@
                                             @endif
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 col-xs-12">
+                                    <div class="col-lg-3 col-xs-12">
                                         <label class="___class_+?40___">Vendedor</label>
                                         <select id="vendedor" name="vendedor" class="select2_form form-control">
                                             <option value=""></option>
@@ -409,24 +409,6 @@
         allowClear: true,
         height: '200px',
         width: '100%',
-    });
-
-    $('#fecha_documento .input-group.date').datepicker({
-        todayBtn: "linked",
-        keyboardNavigation: false,
-        forceParse: false,
-        autoclose: true,
-        language: 'es',
-        format: "dd/mm/yyyy"
-    });
-
-    $('#fecha_atencion .input-group.date').datepicker({
-        todayBtn: "linked",
-        keyboardNavigation: false,
-        forceParse: false,
-        autoclose: true,
-        language: 'es',
-        format: "dd/mm/yyyy"
     });
 
 
@@ -913,15 +895,15 @@
     function validarFecha() {
         var enviar = false
         var productos = registrosProductos()
-        if ($('#fecha_documento_campo').val() == '') {
+        if ($('#fecha_documento').val() == '') {
             toastr.error('Ingrese Fecha de Documento.', 'Error');
-            $("#fecha_documento_campo").focus();
+            $("#fecha_documento").focus();
             enviar = true;
         }
 
-        if ($('#fecha_atencion_campo').val() == '') {
+        if ($('#fecha_atencion').val() == '') {
             toastr.error('Ingrese Fecha de Atención.', 'Error');
-            $("#fecha_atencion_campo").focus();
+            $("#fecha_atencion").focus();
             enviar = true;
         }
 

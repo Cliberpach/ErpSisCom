@@ -24,7 +24,7 @@
                 <div class="form-group row">
                     <div class="col-lg-6 col-xs-12">
                         <label class="required">Cantidad</label>
-                        <input type="text" id="cantidad" name="cantidad" class="form-control"  required>
+                        <input type="text" id="cantidad" name="cantidad" class="form-control" onkeypress="return isNumber(event)"  required>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -41,7 +41,7 @@
                             <span class="input-group-addon">
                                 <i class="fa fa-calendar"></i>
                             </span>
-                            <input type="text" id="fechavencimiento" name="fechavencimiento"
+                            <input type="date" id="fechavencimiento" name="fechavencimiento"
                                 class="form-control"
                                  required>
                         </div>
@@ -101,9 +101,6 @@ $("#btn_editar").click(function() {
     // limpiarErrores()
     var enviar = false;
 
-    console.log($('#modal_editar_detalle #lote').val());
-    console.log($('#modal_editar_detalle #cantidad').val());
-    console.log($('#modal_editar_detalle #fechavencimiento').val());
     if ($('#modal_editar_detalle #cantidad').val() == '' || $('#modal_editar_detalle #lote').val() ===null  || $('#modal_editar_detalle #fechavencimiento').val() == '') {
         toastr.error('Ingrese los valores.', 'Error');
         enviar = true;
@@ -149,7 +146,7 @@ function actualizarTabla(i) {
     table.row(i).remove().draw();
     var detalle = {
         
-        cantidad:  $('#modal_editar_detalle #cantidad').val(),
+        cantidad:   convertFloat($('#modal_editar_detalle #cantidad').val()).toFixed(2),
         lote: $('#modal_editar_detalle #lote').val(),
         producto: $( "#modal_editar_detalle #producto option:selected" ).text(),
         fechavencimiento: $('#modal_editar_detalle #fechavencimiento').val(),

@@ -61,7 +61,7 @@
                                             @if (!empty($cotizacion))
                                             <input type="date" id="fecha_documento_campo" name="fecha_documento_campo"
                                                 class="form-control {{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
-                                                value="{{old('fecha_documento',getFechaFormato($cotizacion->fecha_documento, 'd/m/Y'))}}"
+                                                value="{{old('fecha_documento', $cotizacion->fecha_documento)}}"
                                                 autocomplete="off" required readonly>
                                             @else
                                             <input type="date" id="fecha_documento_campo" name="fecha_documento_campo"
@@ -88,7 +88,7 @@
                                             @if (!empty($cotizacion))
                                             <input type="date" id="fecha_atencion_campo" name="fecha_atencion_campo"
                                                 class="form-control {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
-                                                value="{{old('fecha_atencion',getFechaFormato( $cotizacion->fecha_atencion ,'d/m/Y'))}}"
+                                                value="{{old('fecha_atencion', $cotizacion->fecha_atencion)}}"
                                                 autocomplete="off" readonly disabled>
                                             @else
 

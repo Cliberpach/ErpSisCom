@@ -3,8 +3,10 @@
 use App\Almacenes\LoteProducto;
 use App\Http\Controllers\Almacenes\NotaSalidadController;
 use App\Mantenimiento\Empresa\Empresa;
+use App\Ventas\Documento\Documento;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -395,22 +397,7 @@ function(){
 });
 
 Route::get('ruta', function () {
-    return tipos_venta();
-    $lote = LoteProducto::find(2);
-    return $lote->nota;
-    $empresa = new Empresa();
-    $empresa->ruc = '12345678912';
-    $empresa->razon_social = 'SISTEMAS XY S.R.L.';
-    $empresa->razon_social_abreviada = 'SISTEMAS XY S.R.L.';
-    $empresa->direccion_fiscal = 'AV. JUAN PABLO #9854 - LA LIBERTAD - TRUJILLO - TRUJILLO';
-    $empresa->direccion_llegada = 'TRUJILLO';
-    $empresa->dni_representante = '70004110';
-    $empresa->nombre_representante = 'NOMBRE APELLIDOPAT APELLIDOMAT';
-    $empresa->num_asiento = 'A00001';
-    $empresa->num_partida = '11036086';
-    $empresa->estado_ruc = 'ACTIVO';
-    $empresa->estado_dni_representante= 'ACTIVO';
-    $empresa->save();
+   $documento = Documento::find(2);
 
-    return $empresa;
+    return $documento->formaPago();
 });

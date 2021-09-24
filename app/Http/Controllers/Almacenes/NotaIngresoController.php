@@ -56,6 +56,9 @@ class NotaIngresoController extends Controller
         $fecha = str_replace("-", "", $fecha);
         $fecha = str_replace(" ", "", $fecha);
         $fecha = str_replace(":", "", $fecha);
+        $fecha_actual = Carbon::now();
+        $fecha_actual = date("d/m/Y",strtotime($fecha_actual));
+        $fecha_5 = date("Y-m-d",strtotime($fecha_hoy."+ 5 years"));
         $origenes =  General::find(28)->detalles;
         $destinos =  General::find(29)->detalles;
         $lotes = DB::table('lote_productos')->get();
@@ -64,6 +67,8 @@ class NotaIngresoController extends Controller
         $productos = Producto::where('estado', 'ACTIVO')->get();
         return view('almacenes.nota_ingresos.create', [
             "fecha_hoy" => $fecha_hoy,
+            "fecha_actual" => $fecha_actual,
+            "fecha_5" => $fecha_5,
             "origenes" => $origenes, 'destinos' => $destinos,
             'ngenerado' => $ngenerado, 'usuarios' => $usuarios,
             'productos' => $productos, 'lotes' => $lotes
@@ -165,7 +170,14 @@ class NotaIngresoController extends Controller
      */
     public function edit($id)
     {
-        
+        $fecha_hoy = Carbon::now()->toDateString();
+        $fecha = Carbon::createFromFormat('Y-m-d', $fecha_hoy);
+        $fecha = str_replace("-", "", $fecha);
+        $fecha = str_replace(" ", "", $fecha);
+        $fecha = str_replace(":", "", $fecha);
+        $fecha_actual = Carbon::now();
+        $fecha_actual = date("d/m/Y",strtotime($fecha_actual));
+        $fecha_5 = date("Y-m-d",strtotime($fecha_hoy."+ 5 years"));
         $notaingreso = NotaIngreso::findOrFail($id);
         $data = array();
         $detallenotaingreso = DB::table('detalle_nota_ingreso')->where('nota_ingreso_id', $notaingreso->id)->get();
@@ -186,9 +198,16 @@ class NotaIngresoController extends Controller
         $usuarios = User::get();
         $productos = Producto::where('estado', 'ACTIVO')->get();
         return view('almacenes.nota_ingresos.edit', [
-            "origenes" => $origenes, 'destinos' => $destinos,
+            "fecha_hoy" => $fecha_hoy,
+            "fecha_actual" => $fecha_actual,
+            "fecha_5" => $fecha_5,
+            "origenes" => $origenes, 
+            'destinos' => $destinos,
             'usuarios' => $usuarios,
-            'productos' => $productos, 'lotes' => $lotes, 'notaingreso' => $notaingreso, 'detalle' => json_encode($data)
+            'productos' => $productos, 
+            'lotes' => $lotes, 
+            'notaingreso' => $notaingreso, 
+            'detalle' => json_encode($data)
         ]);
     }
 

@@ -19,7 +19,7 @@ class CreateEmpresasTable extends Migration
             $table->BigInteger('ruc');
             $table->string('razon_social');
             $table->string('razon_social_abreviada')->nullable();
-            $table->string('ruta_logo')->nullable();
+            $table->longText('ruta_logo')->nullable();
             $table->string('nombre_logo')->nullable();
             $table->longText('base64_logo')->nullable();
 

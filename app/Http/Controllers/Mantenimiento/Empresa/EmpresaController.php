@@ -138,7 +138,7 @@ class EmpresaController extends Controller
             $name = $file->getClientOriginalName();
             $empresa->nombre_logo = $name;
             $empresa->ruta_logo = $request->file('logo')->store('public/empresas/logos');
-            $empresa->base64_logo = base64_encode( file_get_contents($request->file('logo')));
+            $empresa->base64_logo = '-';//base64_encode( file_get_contents($request->file('logo')));
         }
         
         $empresa->dni_representante = $request->get('dni_representante');
@@ -317,6 +317,9 @@ class EmpresaController extends Controller
     }
 
     public function update(Request $request, $id){
+        // ini_set("upload_max_filesize", 1000000);
+        // ini_set("net_buffer_length", 1000000);
+        // ini_set("max_allowed_packet", 1000000000);
         $data = $request->all();
         $rules = [
             'ruc' => ['required','numeric','min:11', Rule::unique('empresas','ruc')->where(function ($query) {
@@ -386,7 +389,7 @@ class EmpresaController extends Controller
             $name = $file->getClientOriginalName();
             $empresa->nombre_logo = $name;
             $empresa->ruta_logo = $request->file('logo')->store('public/empresas/logos');
-            $empresa->base64_logo = base64_encode( file_get_contents($request->file('logo')));
+            $empresa->base64_logo = '-';//base64_encode( file_get_contents($request->file('logo')));
         }else{
             if ($request->get('ruta_logo') == null ) {
                 $empresa->nombre_logo = "";

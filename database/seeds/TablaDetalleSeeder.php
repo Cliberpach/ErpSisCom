@@ -1219,16 +1219,18 @@ class TablaDetalleSeeder extends Seeder
         //Formas de Pago
         $detalle = new Detalle();
         $detalle->descripcion = "CONTADO";
-        $detalle->simbolo = 'Contado';
+        $detalle->simbolo = 'contado';
         $detalle->estado = 'ACTIVO';
         $detalle->tabla_id = 30;
+        $detalle->editable = 1;
         $detalle->save();
 
         $detalle = new Detalle();
         $detalle->descripcion = "CRÉDITO";
-        $detalle->simbolo = 'Credito';
+        $detalle->simbolo = 'credito';
         $detalle->estado = 'ACTIVO';
         $detalle->tabla_id = 30;
+        $detalle->editable = 1;
         $detalle->save();
 
         //Tipos de pago

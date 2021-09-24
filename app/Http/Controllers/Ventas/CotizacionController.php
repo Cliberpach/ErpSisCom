@@ -60,8 +60,8 @@ class CotizacionController extends Controller
         $rules = [
             'empresa' => 'required',
             'cliente' => 'required',
-            'fecha_documento' => 'required|date_format:d/m/Y',
-            'fecha_atencion_campo' => 'nullable|date_format:d/m/Y',
+            'fecha_documento' => 'required',
+            'fecha_atencion' => 'nullable',
             'igv' => 'required_if:igv_check,==,on|numeric|digits_between:1,3',
         ];
 
@@ -70,8 +70,6 @@ class CotizacionController extends Controller
             'cliente.required' => 'El campo Cliente es obligatorio',
             'moneda' => 'El campo Moneda es obligatorio',
             'fecha_documento.required' => 'El campo Fecha de Documento es obligatorio',
-            'fecha_documento.date_format:d/m/Y' => 'El formato de la Fecha de Documento es incorrecto',
-            'fecha_atencion_campo.date_format:d/m/Y' => 'El formato de la Fecha de Atención es incorrecto',
             'igv.required_if' => 'El campo Igv es obligatorio.',
             'igv.digits' => 'El campo Igv puede contener hasta 3 dígitos.',
             'igv.numeric' => 'El campo Igv debe se numérico.',
@@ -89,8 +87,8 @@ class CotizacionController extends Controller
         $cotizacion->cliente_id = $request->get('cliente');
         $cotizacion->vendedor_id = $request->get('vendedor');
         $cotizacion->moneda = 4;
-        $cotizacion->fecha_documento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_documento'))->format('Y-m-d');
-        $cotizacion->fecha_atencion = Carbon::createFromFormat('d/m/Y', $request->get('fecha_atencion_campo'))->format('Y-m-d');
+        $cotizacion->fecha_documento = $request->get('fecha_documento');
+        $cotizacion->fecha_atencion = $request->get('fecha_atencion');
 
         $cotizacion->sub_total = $sub_total;
         $cotizacion->total_igv = $total_igv;
@@ -156,8 +154,8 @@ class CotizacionController extends Controller
         $rules = [
             'empresa' => 'required',
             'cliente' => 'required',
-            'fecha_documento' => 'required|date_format:d/m/Y',
-            'fecha_atencion_campo' => 'nullable|date_format:d/m/Y',
+            'fecha_documento' => 'required',
+            'fecha_atencion' => 'nullable',
             'igv' => 'required_if:igv_check,==,on|numeric|digits_between:1,3',
         ];
 
@@ -166,8 +164,6 @@ class CotizacionController extends Controller
             'cliente.required' => 'El campo Cliente es obligatorio',
             'moneda' => 'El campo Moneda es obligatorio',
             'fecha_documento.required' => 'El campo Fecha de Documento es obligatorio',
-            'fecha_documento.date_format:d/m/Y' => 'El formato de la Fecha de Documento es incorrecto',
-            'fecha_atencion_campo.date_format:d/m/Y' => 'El formato de la Fecha de Atención es incorrecto',
             'igv.required_if' => 'El campo Igv es obligatorio.',
             'igv.digits' => 'El campo Igv puede contener hasta 3 dígitos.',
             'igv.numeric' => 'El campo Igv debe se numérico.',
@@ -183,8 +179,8 @@ class CotizacionController extends Controller
         $cotizacion->empresa_id = $request->get('empresa');
         $cotizacion->cliente_id = $request->get('cliente');
         $cotizacion->vendedor_id = $request->get('vendedor');
-        $cotizacion->fecha_documento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_documento'))->format('Y-m-d');
-        $cotizacion->fecha_atencion = Carbon::createFromFormat('d/m/Y', $request->get('fecha_atencion'))->format('Y-m-d');
+        $cotizacion->fecha_documento = $request->get('fecha_documento');
+        $cotizacion->fecha_atencion = $request->get('fecha_atencion');
 
         $cotizacion->sub_total = $sub_total;
         $cotizacion->total_igv = $total_igv;

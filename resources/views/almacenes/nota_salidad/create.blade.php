@@ -54,9 +54,9 @@
                                             <span class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </span>
-                                            <input type="text" id="fecha" name="fecha"
+                                            <input type="date" id="fecha" name="fecha"
                                                 class="form-control {{ $errors->has('fecha') ? ' is-invalid' : '' }}"
-                                                value="{{old('fecha',getFechaFormato($fecha_hoy, 'Y-m-d'))}}"
+                                                value="{{old('fecha',$fecha_hoy)}}"
                                                 autocomplete="off" readonly required>
                                             @if ($errors->has('fecha'))
                                             <span class="invalid-feedback" role="alert">
@@ -225,15 +225,6 @@ $(".select2_form").select2({
     placeholder: "SELECCIONAR",
     allowClear: true,
     width: '100%',
-});
-
-$('#fecha .input-group.date').datepicker({
-    todayBtn: "linked",
-    keyboardNavigation: false,
-    forceParse: false,
-    autoclose: true,
-    language: 'es',
-    format: "dd/mm/yyyy",
 });
 
 

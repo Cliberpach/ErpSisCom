@@ -22,8 +22,8 @@ class CreateCotizacionesTable extends Migration
             
             $table->unsignedInteger('vendedor_id')->nullable();
             
-            $table->dateTime('fecha_documento');
-            $table->dateTime('fecha_atencion')->nullable();
+            $table->date('fecha_documento');
+            $table->date('fecha_atencion')->nullable();
 
             $table->unsignedDecimal('sub_total', 15, 2);
             $table->unsignedDecimal('total_igv', 15, 2);

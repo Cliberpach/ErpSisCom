@@ -27,9 +27,9 @@ class CreateCotizacionDocumentoTable extends Migration
             $table->string('cliente');
             $table->unsignedInteger('cliente_id'); //OBTENER TIENDAS DEL CLIENTE 
             
-            $table->dateTime('fecha_documento');
-            $table->dateTime('fecha_vencimiento');
-            $table->dateTime('fecha_atencion')->nullable();
+            $table->date('fecha_documento');
+            $table->date('fecha_vencimiento');
+            $table->date('fecha_atencion')->nullable();
 
             $table->string('tipo_venta');
             $table->unsignedDecimal('sub_total', 15, 2);
