@@ -11,6 +11,7 @@ use App\Compras\Documento\Detalle as Detalle_Documento;
 use App\Compras\Detalle;
 use App\Compras\Orden;
 use App\Compras\Documento\Documento;
+use App\Compras\Proveedor;
 use App\Mantenimiento\Colaborador\Colaborador;
 //Bitacora de actividades
 use Spatie\Activitylog\Contracts\Activity;
@@ -963,7 +964,12 @@ if(!function_exists('cuentas'))
         return General::find(32)->detalles;
     }
 }
-
+if(!function_exists('proveedores'))
+{
+    function proveedores(){
+        return Proveedor::get();
+    }
+}
 
 
 

@@ -30,15 +30,14 @@
     <a href="#"><i class="fa fa-archive"></i> <span class="nav-label">Caja Chica</span><span
             class="fa arrow"></span></a>
     <ul class="nav nav-second-level collapse">
-        <li class="@yield('caja-active')"><a href="{{ route('Caja.index') }}"><i
-                    class="fa fa-archive"></i>Cajas</a></li>
+        <li class="@yield('caja-active')"><a href="{{ route('Caja.index') }}"><i class="fa fa-archive"></i>Cajas</a>
+        </li>
         <li class="@yield('caja-movimiento-active')"><a href="{{ route('Caja.Movimiento.index') }}"><i
                     class="fa fa-registered"></i> Apertura y Cierre Caja</a></li>
         <li class="@yield('egreso-active')"> <a href="{{ route('Egreso.index') }}"><i class="fa fa-arrow-right"></i>
                 <span class="nav-label">Egreso</span></a></li>
     </ul>
 </li>
-
 
 <li class="@yield('compras-active')">
     <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Compras</span><span
@@ -47,8 +46,9 @@
         <li class="@yield('proveedor-active')"><a href="{{ route('compras.proveedor.index') }}">Proveedores</a></li>
         <li class="@yield('orden-compra-active')"><a href="{{ route('compras.orden.index') }}">Orden Compra</a></li>
         <li class="@yield('documento-active')"><a href="{{ route('compras.documento.index') }}">Doc. Compra</a>
-        </li>
-    </ul>
+
+</li>
+</ul>
 </li>
 
 <li class="@yield('ventas-active')">
@@ -84,7 +84,10 @@
     <a href="#"><i class="fa fa-money"></i> <span class="nav-label">Cuentas </span><span
             class="fa arrow"></span></a>
     <ul class="nav nav-second-level collapse">
-        <li class="@yield('proveedor_cuentas-active')"><a href="#">Proveedor</a></li>
+        <li class="@yield('cuenta-proveedor-active')">
+            <a href="{{ route('cuentaProveedor.index') }}"><span
+                    class="nav-label">Proveedor</span></a>
+        </li>
         <li class="@yield('clientes_cuentas-active')"><a href="#">Clientes</a></li>
     </ul>
 </li>

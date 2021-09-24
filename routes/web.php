@@ -393,7 +393,13 @@ function(){
         Route::get('destroy/{id}','Egresocontroller@destroy')->name('Egreso.destroy');
         Route::get('recibo/{size}','Egresocontroller@recibo')->name('Egreso.recibo');
     });
-
+    Route::prefix('cuentaProveedor')->group(function () {
+        Route::get('index','Compras\CuentaProveedorController@index')->name('cuentaProveedor.index');
+        Route::get('getTable','Compras\CuentaProveedorController@getTable')->name('cuentaProveedor.getTable');
+        Route::get('getDatos','Compras\CuentaProveedorController@getDatos')->name('cuentaProveedor.getDatos');
+        Route::get('detallePago','Compras\CuentaProveedorController@detallePago')->name('cuentaProveedor.detallePago');
+        Route::get('consulta','Compras\CuentaProveedorController@consulta')->name('cuentaProveedor.consulta');
+    });
 });
 
 Route::get('ruta', function () {

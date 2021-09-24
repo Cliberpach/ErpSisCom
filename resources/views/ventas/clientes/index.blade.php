@@ -19,6 +19,9 @@
             <button id="btn_añadir_cliente" class="btn btn-block btn-w-m btn-primary m-t-md">
                 <i class="fa fa-plus-square"></i> Añadir nuevo
             </button>
+            <button id="btn_añadir_cliente" class="btn btn-block btn-w-m btn-primary m-t-md">
+                <i class="fa fa-file-excel-o"></i> Importar Excel
+            </button>
         </div>
     </div>
 

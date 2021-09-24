@@ -10,17 +10,17 @@ class CuentaProveedor extends Model
     public $timestamps = true;
     protected $fillable = [
             'compra_documento_id',
-            'numero_doc',
-            'fecha_doc',
-            'monto',
             'acta',
             'saldo',
-
             'estado',
         ];
 
     public function documento()
     {
-        return $this->belongsTo('App\Compras\Documento\Documento');
+        return $this->belongsTo('App\Compras\Documento\Documento','compra_documento_id');
     }
+    public function detallePago(){
+        return $this->hasMany(DetalleCuentaProveedor::class,'cuenta_proveedor_id');
+    }
+
 }

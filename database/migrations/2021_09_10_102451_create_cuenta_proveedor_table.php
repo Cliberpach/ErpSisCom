@@ -17,11 +17,8 @@ class CreateCuentaProveedorTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('compra_documento_id');
             $table->foreign('compra_documento_id')->references('id')->on('compra_documentos')->onDelete('cascade');
-            $table->string('numero_doc')->nullable();
-            $table->date('fecha_doc')->nullable();
-            $table->unsignedDecimal('monto', 15,2);
             $table->text('acta')->nullable();
-            $table->unsignedDecimal('saldo')->nullable()->default(0.00);            
+            $table->unsignedDecimal('saldo')->nullable()->default(0.00);
             $table->enum('estado',['PENDIENTE','PAGADO','ANULADO'])->default('PENDIENTE');
             $table->timestamps();
         });
