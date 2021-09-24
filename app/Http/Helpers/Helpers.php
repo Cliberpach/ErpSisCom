@@ -964,9 +964,17 @@ if(!function_exists('cuentas'))
         return General::find(32)->detalles;
     }
 }
+
 if(!function_exists('proveedores'))
 {
     function proveedores(){
+        return Proveedor::get();
+    }
+}
+
+if(!function_exists('clientes'))
+{
+    function clientes(){
         return Proveedor::get();
     }
 }

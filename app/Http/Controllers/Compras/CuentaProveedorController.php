@@ -15,6 +15,7 @@ class CuentaProveedorController extends Controller
     public function index() {
         return view('compras.cuentaProveedor.index');
     }
+
     public function getTable() {
         $datos=array();
         $cuentaProveedor=CuentaProveedor::get();
@@ -32,6 +33,7 @@ class CuentaProveedorController extends Controller
         }
         return DataTables::of($datos)->toJson();
     }
+    
     public function getDatos(Request $request) {
 
         $cuenta=CuentaProveedor::findOrFail($request->id);
