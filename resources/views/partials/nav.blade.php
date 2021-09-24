@@ -46,10 +46,7 @@
         <li class="@yield('proveedor-active')"><a href="{{ route('compras.proveedor.index') }}">Proveedores</a></li>
         <li class="@yield('orden-compra-active')"><a href="{{ route('compras.orden.index') }}">Orden Compra</a></li>
         <li class="@yield('documento-active')"><a href="{{ route('compras.documento.index') }}">Doc. Compra</a>
-        <li class="@yield('cuenta-proveedor-active')">
-            <a href="{{ route('cuentaProveedor.index') }}"><i class="fa fa-archive"></i> <span
-                    class="nav-label">Cuenta Proveedor</span></a>
-        </li>
+
 </li>
 </ul>
 </li>
@@ -87,7 +84,10 @@
     <a href="#"><i class="fa fa-money"></i> <span class="nav-label">Cuentas </span><span
             class="fa arrow"></span></a>
     <ul class="nav nav-second-level collapse">
-        <li class="@yield('proveedor_cuentas-active')"><a href="#">Proveedor</a></li>
+        <li class="@yield('cuenta-proveedor-active')">
+            <a href="{{ route('cuentaProveedor.index') }}"><span
+                    class="nav-label">Proveedor</span></a>
+        </li>
         <li class="@yield('clientes_cuentas-active')"><a href="#">Clientes</a></li>
     </ul>
 </li>
