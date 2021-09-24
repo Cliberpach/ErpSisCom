@@ -392,6 +392,11 @@ class DocumentoController extends Controller
                 $lote->cantidad =  $lote->cantidad - $producto->cantidad;
                 $lote->update();
             }
+            
+            $detalle = new DetalleMovimientoVentaCaja();
+            $detalle->cdocumento_id = $documento->id;
+            $detalle->mcaja_id = 1;
+            $detalle->save();
 
             if((int)$documento->tipo_venta === 127 || (int)$documento->tipo_venta === 128)
             {
@@ -424,11 +429,6 @@ class DocumentoController extends Controller
             $descripcion = "SE AGREGÓ EL DOCUMENTO DE VENTA CON LA FECHA: ". Carbon::parse($documento->fecha_documento)->format('d/m/y');
             $gestion = "DOCUMENTO DE VENTA";
             crearRegistro($documento , $descripcion , $gestion);
-
-            $detalle = new DetalleMovimientoVentaCaja();
-            $detalle->cdocumento_id = $documento->id;
-            $detalle->mcaja_id = 1;
-            $detalle->save();
 
             $legends = self::obtenerLeyenda($documento);
             $legends = json_encode($legends,true);

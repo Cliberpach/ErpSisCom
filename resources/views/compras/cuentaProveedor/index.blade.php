@@ -1,6 +1,6 @@
 @extends('layout') @section('content')
     {{-- @include('pos.caja_chica.edit') --}}
-@section('compras-active', 'active')
+@section('cuentas-active', 'active')
 @section('cuenta-proveedor-active', 'active')
 @include('compras.cuentaProveedor.modalDetalle')
 <div class="row wrapper border-bottom white-bg page-heading">

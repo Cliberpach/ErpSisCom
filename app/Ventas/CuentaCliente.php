@@ -20,6 +20,11 @@ class CuentaCliente extends Model
 
     public function documento()
     {
-        return $this->belongsTo('App\Ventas\Documento\Documento');
+        return $this->belongsTo('App\Ventas\Documento\Documento','cotizacion_documento_id','id');
+    }
+
+    public function detalles()
+    {
+        return $this->hasMany('App\Ventas\DetalleCuentaCliente');
     }
 }

@@ -25,6 +25,7 @@ use App\Mantenimiento\Empresa\Facturacion;
 use App\Mantenimiento\Vendedor\Vendedor;
 use App\Pos\Caja;
 use App\Pos\MovimientoCaja;
+use App\Ventas\Cliente;
 use App\Ventas\TipoPago;
 use Illuminate\Support\Facades\DB;
 
@@ -975,7 +976,7 @@ if(!function_exists('proveedores'))
 if(!function_exists('clientes'))
 {
     function clientes(){
-        return Proveedor::get();
+        return Cliente::get();
     }
 }
 

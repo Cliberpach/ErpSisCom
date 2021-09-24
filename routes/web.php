@@ -3,6 +3,7 @@
 use App\Almacenes\LoteProducto;
 use App\Http\Controllers\Almacenes\NotaSalidadController;
 use App\Mantenimiento\Empresa\Empresa;
+use App\Ventas\CuentaCliente;
 use App\Ventas\Documento\Documento;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -412,7 +413,7 @@ function(){
 });
 
 Route::get('ruta', function () {
-   $documento = Documento::find(2);
+   $cuenta = CuentaCliente::find(2);
 
-    return $documento->formaPago();
+    return $cuenta->detalles;
 });

@@ -1,8 +1,8 @@
 @extends('layout') @section('content')
     {{-- @include('pos.caja_chica.edit') --}}
-@section('compras-active', 'active')
-@section('cuenta-proveedor-active', 'active')
-@include('compras.cuentaProveedor.modalDetalle')
+@section('cuentas-active', 'active')
+@section('cuenta-cliente-active', 'active')
+@include('ventas.cuentaCliente.modalDetalle')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10 col-md-10">
         <h2 style="text-transform:uppercase"><b>Lista de Cuentas Clientes</b></h2>
@@ -22,27 +22,33 @@
         <div class="col-md-12">
             <div class="ibox">
                 <div class="ibox-content">
-                    <div class="row">
+                    <div class="row align-items-end">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="" class="required">Cliente</label>
+                                <select name="cliente_b" id="cliente_b" class="select2_form form-control">
+                                    <option value=""></option>
+                                    @foreach (clientes() as $cliente)
+                                        <option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="col-md-4">
-                            <label for="" class="required">Cliente</label>
-                            <select name="cliente_b" id="cliente_b" class="select2_form form-control">
-                                <option value=""></option>
-                                @foreach (clientes() as $cliente)
-                                    <option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
-                                @endforeach
-                            </select>
+                            <div class="form-group">
+                                <label for="" class="required">Estado</label>
+                                <select name="estado_b" id="estado_b" class="select2_form form-control">
+                                    <option value=""></option>
+                                    <option value="PENDIENTE">PENDIENTES</option>
+                                    <option value="PAGADO">PAGADOS</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <label for="" class="required">Estado</label>
-                            <select name="estado_b" id="estado_b" class="select2_form form-control">
-                                <option value=""></option>
-                                <option value="PENDIENTE">PENDIENTES</option>
-                                <option value="PAGADO">PAGADOS</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2 mt-4">
-                            <button class="btn btn-primary btn-sm" id="btn_buscar" type="button"><i
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <button class="btn btn-primary" id="btn_buscar" type="button"><i
                                     class="fa fa-search"></i> Buscar</button>
+                            </div>
                         </div>
                     </div>
 
@@ -155,13 +161,13 @@
         ],
     });
     //-----------------------------
-    axios.get("{{ route('cuentaProveedor.getTable') }}").then((value) => {
+    axios.get("{{ route('cuentaCliente.getTable') }}").then((value) => {
         var detalle = value.data.data;
         var table = $(".dataTables-cajas").DataTable();
         table.clear().draw();
         detalle.forEach((value, index, array) => {
             table.row.add([
-                value.proveedor,
+                value.cliente,
                 value.numero_doc,
                 value.fecha_doc,
                 value.monto,
@@ -190,13 +196,14 @@
             [0, "desc"]
         ],
     });
+
     $("#btn_buscar").on('click', function() {
-        var proveedor = $("#cliente_b").val();
+        var cliente = $("#cliente_b").val();
         var estado = $("#estado_b").val();
 
-        axios.get("{{ route('cuentaProveedor.consulta') }}", {
+        axios.get("{{ route('cuentaCliente.consulta') }}", {
             params: {
-                proveedor: proveedor,
+                cliente: cliente,
                 estado: estado
             }
         }).then((value) => {
@@ -206,7 +213,7 @@
             table.clear().draw();
             detalle.forEach((value, index, array) => {
                 table.row.add([
-                    value.proveedor,
+                    value.cliente,
                     value.numero_doc,
                     value.fecha_doc,
                     value.monto,
@@ -224,7 +231,7 @@
     });
     $(document).on('click', '.btn-detalle', function(e) {
         var id = $(this).data('id');
-        axios.get("{{ route('cuentaProveedor.getDatos') }}", {
+        axios.get("{{ route('cuentaCliente.getDatos') }}", {
             params: {
                 id: id
             }
@@ -232,8 +239,8 @@
 
             var datos = value.data;
             var detalle = datos.detalle;
-            $("#modal_detalle #cuenta_proveedor_id").val(id)
-            $("#modal_detalle #proveedor").val(datos.proveedor)
+            $("#modal_detalle #cuenta_cliente_id").val(id)
+            $("#modal_detalle #cliente").val(datos.cliente)
             $("#modal_detalle #numero").val(datos.numero)
             $("#modal_detalle #monto").val(datos.monto)
             $("#modal_detalle #saldo").val(datos.saldo)

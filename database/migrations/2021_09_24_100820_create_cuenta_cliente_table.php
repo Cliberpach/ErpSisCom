@@ -14,7 +14,7 @@ class CreateCuentaClienteTable extends Migration
     public function up()
     {
         Schema::create('cuenta_cliente', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->unsignedInteger('cotizacion_documento_id');
             $table->foreign('cotizacion_documento_id')->references('id')->on('cotizacion_documento')->onDelete('cascade');
             $table->string('numero_doc')->nullable();

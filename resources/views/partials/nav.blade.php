@@ -88,7 +88,10 @@
             <a href="{{ route('cuentaProveedor.index') }}"><span
                     class="nav-label">Proveedor</span></a>
         </li>
-        <li class="@yield('clientes_cuentas-active')"><a href="#">Clientes</a></li>
+        <li class="@yield('cuenta-cliente-active')">
+            <a href="{{ route('cuentaCliente.index') }}"><span
+                    class="nav-label">Cliente</span></a>
+        </li>
     </ul>
 </li>
 
