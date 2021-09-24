@@ -8,11 +8,8 @@
                 </button>
                 <i class="fa fa-cogs modal-icon"></i>
                 <h4 class="modal-title">Subir el Excel</h4>
-                            <form action="{{route('almacenes.nota_ingreso.downloadexcel')}}" method="get" style="display: inline-block;">
+                            <form action="{{route('ModeloExcel.cliente')}}" method="get" style="display: inline-block;">
                                 <input type="submit" class="btn btn-primary" value="Descargar el modelo de excel" />
-                            </form>
-                            <form action="{{route('almacenes.nota_ingreso.downloadproductosexcel')}}" method="get" style="display: inline-block;">
-                                <input type="submit" class="btn btn-primary" value="Descargar Productos terminados" />
                             </form>
             </div>
             <div class="modal-body">

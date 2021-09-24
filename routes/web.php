@@ -400,6 +400,9 @@ function(){
         Route::get('detallePago','Compras\CuentaProveedorController@detallePago')->name('cuentaProveedor.detallePago');
         Route::get('consulta','Compras\CuentaProveedorController@consulta')->name('cuentaProveedor.consulta');
     });
+    Route::prefix('modeloExcel')->group(function(){
+        Route::get('cliente','ModeloExcelController@cliente')->name('ModeloExcel.cliente');
+    });
 });
 
 Route::get('ruta', function () {

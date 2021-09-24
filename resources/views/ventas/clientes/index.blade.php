@@ -2,7 +2,7 @@
 
 @section('ventas-active', 'active')
 @section('clientes-active', 'active')
-
+@include('ventas.clientes.modalfile')
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-lg-10 col-md-10">
             <h2 style="text-transform:uppercase"><b>Listado de Clientes</b></h2>
@@ -19,7 +19,7 @@
             <button id="btn_añadir_cliente" class="btn btn-block btn-w-m btn-primary m-t-md">
                 <i class="fa fa-plus-square"></i> Añadir nuevo
             </button>
-            <button id="btn_añadir_cliente" class="btn btn-block btn-w-m btn-primary m-t-md">
+            <button id="btn_file_cliente" class="btn btn-block btn-w-m btn-primary m-t-md">
                 <i class="fa fa-file-excel-o"></i> Importar Excel
             </button>
         </div>
@@ -248,6 +248,9 @@
                 }
             })
         }
+        $("#btn_file_cliente").on('click', function () {
+            $("#modal_file").modal('show');
+        });
 
     </script>
 @endpush
