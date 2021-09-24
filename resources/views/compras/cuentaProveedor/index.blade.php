@@ -25,7 +25,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label for="" class="required">Proveedor</label>
-                            <select name="proveedor" id="proveedor" class="select2_form form-control">
+                            <select name="proveedor_b" id="proveedor_b" class="select2_form form-control">
                                 <option value=""></option>
                                 @foreach (proveedores() as $proveedor)
                                     <option value="{{ $proveedor->id }}">{{ $proveedor->descripcion }}</option>
@@ -34,7 +34,7 @@
                         </div>
                         <div class="col-md-3">
                             <label for="" class="required">Estado</label>
-                            <select name="estado" id="estado" class="select2_form form-control">
+                            <select name="estado_b" id="estado_b" class="select2_form form-control">
                                 <option value=""></option>
                                 <option value="PENDIENTE">PENDIENTES</option>
                                 <option value="PAGADO">CANCELADOS</option>
@@ -137,41 +137,11 @@
         "bInfo": true,
         "bAutoWidth": false,
         "processing": true,
-        "serverSide": true,
-        "ajax": '{{ route('cuentaProveedor.getTable') }}',
-        "columns": [{
-                data: 'proveedor',
-                className: "text-center"
-            },
-            {
-                data: 'numero_doc',
-                className: "text-center"
-            },
-            {
-                data: 'fecha_doc',
-                className: "text-center"
-            },
-            {
-                data: 'monto',
-                className: "text-center"
-            },
-            {
-                data: 'acta',
-                className: "text-center"
-            },
-            {
-                data: 'saldo',
-                className: "text-center"
-            },
-            {
-                data: 'estado',
-                className: "text-center"
-            },
-            {
-                data: null,
+        "columnDefs": [{
+                targets: 7,
                 className: "text-center",
                 render: function(data, type, row) {
-                    return "<button data-id='" + data.id +
+                    return "<button data-id='" + row[8] +
                         "' class='btn btn-primary btn-sm btn-detalle' ><i class='fa fa-list'></i> detalles</button>"
                 }
             }
@@ -184,6 +154,28 @@
             [0, "desc"]
         ],
     });
+    //-----------------------------
+    axios.get("{{ route('cuentaProveedor.getTable') }}").then((value) => {
+        var detalle = value.data.data;
+        var table = $(".dataTables-cajas").DataTable();
+        table.clear().draw();
+        detalle.forEach((value, index, array) => {
+            table.row.add([
+                value.proveedor,
+                value.numero_doc,
+                value.fecha_doc,
+                value.monto,
+                value.acta,
+                value.saldo,
+                value.estado,
+                '',
+                value.id
+            ]).draw(false);
+        })
+    }).catch((value) => {
+
+    })
+    //------------------------------
     $('.dataTables-detalle').DataTable({
         "bPaginate": false,
         "bLengthChange": true,
@@ -199,8 +191,35 @@
         ],
     });
     $("#btn_buscar").on('click', function() {
-        var proveedor = $("#proveedor").val();
-        var estado = $("#estado").val();
+        var proveedor = $("#proveedor_b").val();
+        var estado = $("#estado_b").val();
+
+        axios.get("{{ route('cuentaProveedor.consulta') }}", {
+            params: {
+                proveedor: proveedor,
+                estado: estado
+            }
+        }).then((value) => {
+            var detalle = value.data;
+
+            var table = $(".dataTables-cajas").DataTable();
+            table.clear().draw();
+            detalle.forEach((value, index, array) => {
+                table.row.add([
+                    value.proveedor,
+                    value.numero_doc,
+                    value.fecha_doc,
+                    value.monto,
+                    value.acta,
+                    value.saldo,
+                    value.estado,
+                    '',
+                    value.id
+                ]).draw(false);
+            })
+        }).catch((value) => {
+
+        })
 
     });
     $(document).on('click', '.btn-detalle', function(e) {
@@ -212,7 +231,7 @@
         }).then((value) => {
 
             var datos = value.data;
-            var detalle=datos.detalle;
+            var detalle = datos.detalle;
             $("#modal_detalle #cuenta_proveedor_id").val(id)
             $("#modal_detalle #proveedor").val(datos.proveedor)
             $("#modal_detalle #numero").val(datos.numero)
@@ -220,13 +239,13 @@
             $("#modal_detalle #saldo").val(datos.saldo)
             $("#modal_detalle #estado").val(datos.estado)
             $("#modal_detalle").modal("show");
-            var table=$(".dataTables-detalle").DataTable();
+            var table = $(".dataTables-detalle").DataTable();
             table.clear().draw();
             detalle.forEach((value, index, array) => {
                 table.row.add([
-                value.fecha,
-                value.observacion,
-                value.monto
+                    value.fecha,
+                    value.observacion,
+                    value.monto
                 ]).draw(false);
             })
         }).catch((value) => {

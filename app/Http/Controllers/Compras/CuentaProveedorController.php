@@ -6,6 +6,7 @@ use App\Compras\CuentaProveedor;
 use App\Compras\DetalleCuentaProveedor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -45,6 +46,26 @@ class CuentaProveedorController extends Controller
             "estado"=>$cuenta->estado,
             "detalle"=>CuentaProveedor::findOrFail($request->id)->detallePago
         );
+    }
+    public function consulta(Request $request)
+    {
+        $cuentas = DB::table('cuenta_proveedor')
+        ->join('compra_documentos', 'compra_documentos.id', '=', 'cuenta_proveedor.compra_documento_id')
+        ->join('proveedores', 'proveedores.id', '=', 'compra_documentos.proveedor_id')
+        ->when($request->get('proveedor'), function ($query, $request) {
+            return $query->where('proveedores.id', $request);
+        })
+        ->when($request->get('estado'), function ($query, $request) {
+            return $query->where('cuenta_proveedor.estado',$request);
+        })
+        ->select(
+            'cuenta_proveedor.*',
+            'proveedores.descripcion as proveedor',
+            'compra_documentos.numero_doc as numero_doc',
+            'compra_documentos.created_at as fecha_doc',
+            'compra_documentos.total as monto'
+        )->get();
+            return $cuentas;
     }
     public function detallePago(Request $request)
     {

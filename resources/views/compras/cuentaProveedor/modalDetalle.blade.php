@@ -146,27 +146,6 @@
                             }
                         }).then((value) => {
                             window.location.href="{{ route('cuentaProveedor.index') }}"
-                            // $("#modal_detalle").modal("hide");
-                            // axios.get("{{ route('cuentaProveedor.getTable') }}").then((value) => {
-                            //     var detalle = value.data.data;
-                            //     var table = $(".dataTables-cajas").DataTable();
-                            //     table.clear().draw();
-                            //     detalle.forEach((value, index, array) => {
-                            //         table.row.add([
-                            //             value.proveedor,
-                            //             value.numero_doc,
-                            //             value.fecha_doc,
-                            //             value.monto,
-                            //             value.acta,
-                            //             value.saldo,
-                            //             value.estado,
-                            //             ''
-                            //         ]).draw(false);
-                            //     })
-                            // }).catch((value) => {
-
-                            // })
-
                         }).catch((value) => {
 
                         })

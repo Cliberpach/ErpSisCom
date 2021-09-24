@@ -394,8 +394,9 @@ function(){
     Route::prefix('cuentaProveedor')->group(function () {
         Route::get('index','Compras\CuentaProveedorController@index')->name('cuentaProveedor.index');
         Route::get('getTable','Compras\CuentaProveedorController@getTable')->name('cuentaProveedor.getTable');
-        Route::get('getDatoss','Compras\CuentaProveedorController@getDatos')->name('cuentaProveedor.getDatos');
+        Route::get('getDatos','Compras\CuentaProveedorController@getDatos')->name('cuentaProveedor.getDatos');
         Route::get('detallePago','Compras\CuentaProveedorController@detallePago')->name('cuentaProveedor.detallePago');
+        Route::get('consulta','Compras\CuentaProveedorController@consulta')->name('cuentaProveedor.consulta');
     });
 });
 
