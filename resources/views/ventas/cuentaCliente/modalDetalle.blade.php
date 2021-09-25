@@ -50,7 +50,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row align-items-end">
                                     <div class="col-md-6">
                                        <div class="form-group">
                                             <label for="" class="required">Estado</label>
@@ -58,6 +58,11 @@
                                                 class="form-control form-control-sm" disabled>
                                        </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                             <button class="btn btn-danger" onclick="reportePagos()"><i class="fa fa-file-pdf-o"></i></button>
+                                        </div>
+                                     </div>
                                 </div>
                             </div>
                         </div>
@@ -172,5 +177,26 @@
             }
 
         });
+
+        reportePagos()
+        {
+            let id = $('#cuenta_cliente_id').val();
+            if(id != '' || id)
+            axios.get("{{ route('cuentaCliente.detallePago') }}", {
+                params: {
+                    id: id_cuenta_cliente,
+                    pago: pago,
+                    fecha: fecha,
+                    cantidad: cantidad,
+                    observacion: observacion,
+
+                }
+            }).then((value) => {
+                //window.location.href="{{ route('cuentaCliente.index') }}"
+            }).catch((value) => {
+
+            })
+        }
+
     </script>
 @endpush

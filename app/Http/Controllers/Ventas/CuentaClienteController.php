@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Ventas;
 
 use App\Http\Controllers\Controller;
+use App\Ventas\Cliente;
 use App\Ventas\CuentaCliente;
 use App\Ventas\DetalleCuentaCliente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class CuentaClienteController extends Controller
 {
@@ -69,6 +71,7 @@ class CuentaClienteController extends Controller
         )->get();
             return $cuentas;
     }
+
     public function detallePago(Request $request)
     {
         $CuentaCliente = CuentaCliente::findOrFail($request->id);
@@ -76,12 +79,17 @@ class CuentaClienteController extends Controller
         {
             $detallepago = new DetalleCuentaCliente();
             $detallepago->cuenta_cliente_id = $CuentaCliente->id;
-            $detallepago->monto=$request->cantidad;
-            $detallepago->observacion=$request->observacion;
-            $detallepago->fecha=$request->fecha;
+            $detallepago->monto = $request->cantidad;
+            $detallepago->observacion = $request->observacion;
+            $detallepago->fecha = $request->fecha;
             $detallepago->save();
-            $CuentaCliente->saldo=$CuentaCliente->saldo-$request->cantidad;
-            $CuentaCliente->save();
+
+            $CuentaCliente->saldo = $CuentaCliente->saldo-$request->cantidad;
+            $CuentaCliente->update();
+
+            $detallepago->saldo = $CuentaCliente->saldo;
+            $detallepago->update();
+
             if($CuentaCliente->saldo == 0)
             {
                 $CuentaCliente->estado='PAGADO';
@@ -89,39 +97,52 @@ class CuentaClienteController extends Controller
             }
         }
         else{
-            $cliente=$CuentaCliente->documento->cliente;
-            $cuentasFaltantes=CuentaCliente::where('estado','PENDIENTE')->get();
-            $cantidadRecibida=$request->cantidad;
+            $cliente = $CuentaCliente->documento->cliente;
+            $cuentasFaltantes = CuentaCliente::where('estado','PENDIENTE')->get();
+            $cantidadRecibida = $request->cantidad;
             foreach ($cuentasFaltantes as $key => $cuenta) {
-                    if($cuenta->documento->cliente->id==$cliente->id && $cantidadRecibida!=0)
+                    if($cuenta->documento->cliente->id == $cliente->id && $cantidadRecibida != 0)
                     {
-                        $detallepago=new DetalleCuentaCliente();
-                        $detallepago->cuenta_cliente_id=$cuenta->id;
-                        $detallepago->monto=0;
+                        $detallepago = new DetalleCuentaCliente();
+                        $detallepago->cuenta_cliente_id = $cuenta->id;
+                        $detallepago->monto = 0;
                         $detallepago->observacion=$request->observacion;
-                        $detallepago->fecha=$request->fecha;
+                        $detallepago->fecha = $request->fecha;
                         $detallepago->save();
-                        if($cuenta->saldo>$cuenta)
+                        if($cuenta->saldo > $cantidadRecibida)
                         {
-                            $detallepago->monto=$cantidadRecibida;
-                            $cuenta->saldo=$cuenta->saldo-$cantidadRecibida;
-                            $cantidadRecibida=0;
+                            $detallepago->monto = $cantidadRecibida;
+                            $cuenta->saldo = $cuenta->saldo - $cantidadRecibida;
+                            $cantidadRecibida = 0;
                         }
                         else{
-                            $detallepago->monto=$cuenta->saldo;
-                            $cantidadRecibida=$cantidadRecibida-$cuenta->saldo;
-                            $cuenta->saldo=0;
+                            $detallepago->monto = $cuenta->saldo;
+                            $cantidadRecibida = $cantidadRecibida - $cuenta->saldo;
+                            $cuenta->saldo = 0;
                         }
+
                         $detallepago->save();
-                        $cuenta->save();
-                        if($cuenta->saldo==0)
+                        $cuenta->update();
+                        if($cuenta->saldo == 0)
                         {
                             $cuenta->estado='PAGADO';
-                            $cuenta->save();
+                            $cuenta->update();
                         }
                     }
             }
 
         }
+    }
+
+    public function detalleReporte($id)
+    {
+        $cuenta = CuentaCliente::findOrFail($id);
+        $cliente = Cliente::find($cuenta->documento->cliente_id);
+        $pdf = PDF::loadview('ventas.documentos.impresion.detalle_cuenta',[
+            'cuenta' => $cuenta,
+            'detalles' => $cuenta->detalles,
+            'cliente' => $cliente
+            ])->setPaper([0, 0, 226.772, 651.95]);
+        return $pdf->stream('CUENTA-'.$cuenta->id.'.pdf');
     }
 }

@@ -19,7 +19,8 @@ class CreateDetalleCuentaClienteTable extends Migration
             $table->foreign('cuenta_cliente_id')->references('id')->on('cuenta_cliente')->onDelete('cascade');
             $table->date('fecha');
             $table->text('observacion');
-            $table->decimal('monto');
+            $table->unsignedDecimal('monto');
+            $table->unsignedDecimal('saldo');
             $table->timestamps();
         });
     }
