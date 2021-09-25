@@ -55,6 +55,15 @@ class ClienteListaExport implements WithEvents,ShouldAutoSize,WithTitle,HasRefer
                     $i++;
                 }
 
+                //------------------------
+                $tiposDocumentos= tipos_documento();
+                $event->sheet->setCellValue('E1','TipoDocumentos');
+                $i=2;
+                foreach ($tiposDocumentos as $key => $tipo) {
+                    $event->sheet->setCellValue('E' . $i, $tipo->simbolo);
+                    $i++;
+                }
+
             }
         ];
     }

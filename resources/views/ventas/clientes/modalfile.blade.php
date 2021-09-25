@@ -51,7 +51,7 @@
 <script src="https://releases.transloadit.com/uppy/v1.28.0/uppy.min.js"></script>
 <script src="https://releases.transloadit.com/uppy/locales/v1.19.0/es_ES.min.js"></script>
 <script>
-    var url="{{route('almacenes.nota_ingreso.uploadnotaingreso')}}";
+    var url="{{route('ImportExcel.uploadcliente')}}";
     const XHRUpload =Uppy.XHRUpload;
     var uppy = Uppy.Core({
         debug: true,
@@ -73,34 +73,34 @@
     uppy.on('upload-success', (file, response) => {
         var resultado = response.body;
         console.log(resultado);
-        if(resultado.length==0)
-        {
-            toastr.success('Exito','Success');
-            location.reload();
-        }
-        else
-        {
-            var t = $('.dataTables-errores').DataTable();
-            var dataE = [];
-            for (let i = 0; i < resultado.length - 1; i++) {
-                t.row.add([
-                    resultado[i].fila,
-                    resultado[i].atributo,
-                    resultado[i].error[0],
-                ]).draw(false);
-                let fila = {
-                        fila: resultado[i].fila,
-                        atributo: resultado[i].atributo,
-                        error: resultado[i].error[0],
-                    };
-                    dataE.push(fila);
-            }
-            let fila={excel: resultado[resultado.length - 1].excel};
-            dataE.push(fila);
-            $("#tablaerrores").css("display","block");
-            $("#imprimir").css("display","block");
-            $("#arregloerrores").val(JSON.stringify(dataE));
-        }
+        // if(resultado.length==0)
+        // {
+        //     toastr.success('Exito','Success');
+        //     location.reload();
+        // }
+        // else
+        // {
+        //     var t = $('.dataTables-errores').DataTable();
+        //     var dataE = [];
+        //     for (let i = 0; i < resultado.length - 1; i++) {
+        //         t.row.add([
+        //             resultado[i].fila,
+        //             resultado[i].atributo,
+        //             resultado[i].error[0],
+        //         ]).draw(false);
+        //         let fila = {
+        //                 fila: resultado[i].fila,
+        //                 atributo: resultado[i].atributo,
+        //                 error: resultado[i].error[0],
+        //             };
+        //             dataE.push(fila);
+        //     }
+        //     let fila={excel: resultado[resultado.length - 1].excel};
+        //     dataE.push(fila);
+        //     $("#tablaerrores").css("display","block");
+        //     $("#imprimir").css("display","block");
+        //     $("#arregloerrores").val(JSON.stringify(dataE));
+        // }
     });
     uppy.on('complete', (result) => {
       console.log('Upload complete! We’ve uploaded these files:', result)

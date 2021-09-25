@@ -16,6 +16,7 @@ class VerifyCsrfToken extends Middleware
         "almacenes/nota_ingreso_articulo/uploadnotaingreso",
         "api/posiciciones/clientes",
         'compras/articulos/uploadexcel',
-        'produccion/composicion/uploadexcel'
+        'produccion/composicion/uploadexcel',
+        'importExcel/*'
     ];
 }

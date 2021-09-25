@@ -125,6 +125,17 @@ class ClienteExport implements fromArray, WithHeadings, ShouldAutoSize, WithEven
                     $validation->setErrorTitle('Error en escritura');
                     $validation->setError('El valor no esta en la lista');
                     $validation->setFormula1('listCombobox!$D$2:$D$'.(distritos()->count()+1));
+
+                    $validation = $event->sheet->getCell('A' . $j)->getDataValidation();
+                    $validation->setType(DataValidation::TYPE_LIST);
+                    $validation->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION);
+                    $validation->setAllowBlank(true);
+                    $validation->setShowInputMessage(false);
+                    $validation->setShowErrorMessage(true);
+                    $validation->setShowDropDown(true);
+                    $validation->setErrorTitle('Error en escritura');
+                    $validation->setError('El valor no esta en la lista');
+                    $validation->setFormula1('listCombobox!$E$2:$E$'.(tipos_documento()->count()+1));
                 }
 
             },

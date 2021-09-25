@@ -403,6 +403,9 @@ function(){
     Route::prefix('modeloExcel')->group(function(){
         Route::get('cliente','ModeloExcelController@cliente')->name('ModeloExcel.cliente');
     });
+    Route::prefix('importExcel')->group(function(){
+        Route::post('cliente','ImportExcelController@uploadcliente')->name('ImportExcel.uploadcliente');
+    });
 });
 
 Route::get('ruta', function () {

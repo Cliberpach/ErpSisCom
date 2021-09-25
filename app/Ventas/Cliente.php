@@ -25,6 +25,7 @@ class Cliente extends Model
         'direccion_negocio',
         'fecha_aniversario',
         'observaciones',
+        'zona',
 
         'facebook',
         'instagram',

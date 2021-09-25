@@ -11,7 +11,7 @@ class ModeloExcelController extends Controller
 {
     public function cliente()
     {
-        ob_end_clean(); // this
+        ob_end_clean();
         ob_start();
         return  Excel::download(new ClienteMultiExport(), 'modelo_cliente.xlsx');
     }

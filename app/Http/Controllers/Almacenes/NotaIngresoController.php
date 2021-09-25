@@ -34,7 +34,7 @@ class NotaIngresoController extends Controller
      */
     public function index()
     {
-        
+
         return view('almacenes.nota_ingresos.index');
     }
     public function gettable()
@@ -50,7 +50,7 @@ class NotaIngresoController extends Controller
      */
     public function create()
     {
-        
+
         $fecha_hoy = Carbon::now()->toDateString();
         $fecha = Carbon::createFromFormat('Y-m-d', $fecha_hoy);
         $fecha = str_replace("-", "", $fecha);
@@ -201,12 +201,12 @@ class NotaIngresoController extends Controller
             "fecha_hoy" => $fecha_hoy,
             "fecha_actual" => $fecha_actual,
             "fecha_5" => $fecha_5,
-            "origenes" => $origenes, 
+            "origenes" => $origenes,
             'destinos' => $destinos,
             'usuarios' => $usuarios,
-            'productos' => $productos, 
-            'lotes' => $lotes, 
-            'notaingreso' => $notaingreso, 
+            'productos' => $productos,
+            'lotes' => $lotes,
+            'notaingreso' => $notaingreso,
             'detalle' => json_encode($data)
         ]);
     }
@@ -300,7 +300,7 @@ class NotaIngresoController extends Controller
         $notaingreso->save();
         // foreach($notaingreso->detalles as $detalle)
         // {
-            
+
         // }
         Session::flash('success', 'NOTA DE INGRESO');
         return redirect()->route('almacenes.nota_ingreso.index')->with('guardar', 'success');
@@ -334,7 +334,7 @@ class NotaIngresoController extends Controller
             Log::info($er);
         }
 
-        return json_encode($data); //return "hola";
+        return json_encode($data);
     }
 
     public function getDownload()
