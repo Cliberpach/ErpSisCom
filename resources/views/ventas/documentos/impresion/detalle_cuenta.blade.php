@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>{{ $documento->nombreDocumento() }}</title>
+        <title>DETALLE CUENTA</title>
         <link rel="icon" href="{{ base_path() . '/img/siscom.ico' }}" />
         <style>
             body {
@@ -205,9 +205,9 @@
                     <div class="numero-documento">
                         <p class="m-0 p-0 text-uppercase ruc-empresa">RUC {{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->ruc }}</p>
                         <div class="nombre-documento">
-                            <p class="m-0 p-0 text-uppercase">{{ $documento->nombreDocumento() }}</p>
+                            <p class="m-0 p-0 text-uppercase">CUENTA</p>
                         </div>
-                        <p class="m-0 p-0 text-uppercase">{{$documento->serie.'-'.$documento->correlativo}}</p>
+                        <p class="m-0 p-0 text-uppercase">C - {{ $cuenta->id}}</p>
                     </div>
                 </div>
             </div>
@@ -239,34 +239,19 @@
             <table class="tbl-informacion">
                 <tbody style="padding-top: 5px; padding-bottom: 5px;">
                     <tr>
-                        <td style="padding-left: 5px;">FECHA DE EMISIÓN</td>
-                        <td>:</td>
-                        <td>{{ getFechaFormato( $documento->fecha_documento ,'d/m/Y')}}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 5px;">FECHA DE VENCIMIENTO</td>
-                        <td>:</td>
-                        <td>{{ getFechaFormato( $documento->fecha_vencimiento ,'d/m/Y')}}</td>
-                    </tr>
-                    <tr>
                         <td style="padding-left: 5px;">CLIENTE</td>
                         <td>:</td>
-                        <td>{{ $documento->clienteEntidad->nombre }}</td>
+                        <td>{{ $cliente->nombre }}</td>
                     </tr>
                     <tr>
-                        <td style="padding-left: 5px;" class="text-uppercase">{{ $documento->tipo_documento_cliente}}</td>
+                        <td style="padding-left: 5px;" class="text-uppercase">{{ $cliente->tipo_documento }}</td>
                         <td>:</td>
-                        <td>{{ $documento->clienteEntidad->documento }}</td>
+                        <td>{{ $cliente->documento }}</td>
                     </tr>
                     <tr>
                         <td style="padding-left: 5px;">DIRECCIÓN</td>
                         <td>:</td>
-                        <td>{{ $documento->clienteEntidad->direccion }}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 5px;">MODO DE PAGO</td>
-                        <td>:</td>
-                        <td class="text-uppercase">{{ $documento->formaPago() }}</td>
+                        <td>{{ $cliente->direccion }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -275,26 +260,19 @@
             <table class="tbl-detalles text-uppercase" cellpadding="8" cellspacing="0">
                 <thead>
                     <tr >
-                        <th style="text-align: center; border-right: 2px solid #52BE80;">CANT</th>
-                        <th style="text-align: center;border-right: 2px solid #52BE80">UM</th>
-                        <th style="text-align: center; border-right: 2px solid #52BE80">DESCRIPCIÓN</th>
-                        <th style="text-align: center; border-right: 2px solid #52BE80">P. UNIT.</th>
-                        <th style="text-align: right">TOTAL</th>
+                        <th style="text-align: center; border-right: 2px solid #52BE80;">FECHA</th>
+                        <th style="text-align: center;border-right: 2px solid #52BE80">MONTO</th>
+                        <th style="text-align: right">SALDO</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($detalles as $item)
                     <tr>
-                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->cantidad }}</td>
-                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->unidad }}</td>
-                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->nombre_producto }}</td>
-                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->precio_nuevo }}</td>
-                        <td style="text-align: right">{{ $item->valor_venta }}</td>
+                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->fecha }}</td>
+                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->monto }}</td>
+                        <td style="text-align: right">{{ $item->saldo }}</td>
                     </tr>
                     @endforeach
-                    <tr>
-                        <td colspan="5" style="border-top: 2px solid #52BE80"><p class="p-0 m-0 text-uppercase text-cuerpo">SON: <b>{{ $legends[0]['value'] }}</b></p></td>
-                    </tr>
                 </tbody>
             </table>
         </div><br>
@@ -305,15 +283,6 @@
                         <table class="tbl-qr">
                             <tr>
                                 <td>
-                                    @if($documento->ruta_qr)
-                                    <img src="{{ base_path() . '/storage/app/'.$documento->ruta_qr }}" class="qr-img">
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($documento->hash)
-                                    <p class="m-0 p-0" style="font-size: 9px;">{{ $documento->hash }}</p>
-                                    <br>
-                                    @endif
                                     <p class="m-0 p-0" style="color: #229954;"><em>¡¡Gracias por su confianza y preferencia!!</em></p>
                                     <div style="width: 90%; text-align: right;">
                                         <img src="{{ public_path() . '/img/gota.png' }}" style="width: 50px;height: 45px;">
@@ -325,16 +294,12 @@
                     <td style="width: 40%;">
                         <table class="tbl-total text-uppercase">
                             <tr>
-                                <td style="text-align:left; padding: 5px;"><p class="m-0 p-0">Sub Total: S/.</p></td>
-                                <td style="text-align:right; padding: 5px;"><p class="p-0 m-0">{{ number_format($documento->sub_total, 2) }}</p></td>
+                                <td style="text-align:left; padding: 5px;"><p class="m-0 p-0">Saldo: S/.</p></td>
+                                <td style="text-align:right; padding: 5px;"><p class="p-0 m-0">{{ number_format($cuenta->saldo, 2) }}</p></td>
                             </tr>
                             <tr>
-                                <td style="text-align:left; padding: 5px;"><p class="p-0 m-0">IGV {{$documento->igv}}%: S/.</p></td>
-                                <td style="text-align:right; padding: 5px;"><p class="p-0 m-0">{{ number_format($documento->total_igv, 2) }}</p></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align:left; padding: 5px;"><p class="p-0 m-0">Total a pagar: S/.</p></td>
-                                <td style="text-align:right; padding: 5px;"><p class="p-0 m-0">{{ number_format($documento->total, 2) }}</p></td>
+                                <td style="text-align:left; padding: 5px;"><p class="p-0 m-0">Total cuenta: S/.</p></td>
+                                <td style="text-align:right; padding: 5px;"><p class="p-0 m-0">{{ number_format($cuenta->monto, 2) }}</p></td>
                             </tr>
                         </table>
                     </td>

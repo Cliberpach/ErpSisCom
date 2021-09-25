@@ -409,7 +409,9 @@ function(){
         Route::get('getDatos','Ventas\CuentaClienteController@getDatos')->name('cuentaCliente.getDatos');
         Route::get('detallePago','Ventas\CuentaClienteController@detallePago')->name('cuentaCliente.detallePago');
         Route::get('consulta','Ventas\CuentaClienteController@consulta')->name('cuentaCliente.consulta');
+        Route::get('reporte/{id}','Ventas\CuentaClienteController@reporte')->name('cuentaCliente.reporte');
     });
+
     Route::prefix('modeloExcel')->group(function(){
         Route::get('cliente','ModeloExcelController@cliente')->name('ModeloExcel.cliente');
     });

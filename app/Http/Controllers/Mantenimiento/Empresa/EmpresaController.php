@@ -379,6 +379,7 @@ class EmpresaController extends Controller
         $empresa->direccion_llegada = $request->get('direccion_llegada');
         $empresa->telefono = $request->get('telefono');
         $empresa->celular = $request->get('celular');
+        $empresa->correo = $request->get('correo');
 
        
         if($request->hasFile('logo')){

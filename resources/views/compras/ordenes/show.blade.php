@@ -219,7 +219,7 @@
                         <thead>
                             <tr>
                                 <th class="text-center">CANTIDAD</th>
-                                <th class="text-center">PRESENTACIÓN</th>
+                                <th class="text-center">UNIDAD</th>
                                 <th class="text-center">PRODUCTO</th>
                                 <th class="text-center">PRECIO</th>
                                 <th class="text-center">TOTAL</th>
@@ -230,14 +230,10 @@
                             <tr>
                                 <td class="text-center">{{$detalle->cantidad}}</td>
                                 <td class="text-center">
-                                    @foreach($presentaciones as $presentacion)
-                                    @if($presentacion->descripcion == $detalle->articulo->presentacion)
-                                    {{$presentacion->simbolo}}
-                                    @endif
-                                    @endforeach
+                                    {{ $detalle->producto->getMedida() }}
                                 </td>
                                 <td class="text-left">
-                                    <div><strong>{{$detalle->articulo->descripcion}}</strong></div>
+                                    {{$detalle->producto->nombre}}
                                 </td>
 
                                 
