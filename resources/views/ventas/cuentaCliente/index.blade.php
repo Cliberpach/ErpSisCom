@@ -246,6 +246,7 @@
             $("#modal_detalle #saldo").val(datos.saldo)
             $("#modal_detalle #estado").val(datos.estado)
             $("#modal_detalle").modal("show");
+            $("#btn-detalle").attr('href','/cuentaCliente/reporte/'+id)
             var table = $(".dataTables-detalle").DataTable();
             table.clear().draw();
             detalle.forEach((value, index, array) => {

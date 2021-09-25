@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Ventas;
 
 use App\Http\Controllers\Controller;
+use App\Mantenimiento\Empresa\Empresa;
 use App\Ventas\Cliente;
 use App\Ventas\CuentaCliente;
 use App\Ventas\DetalleCuentaCliente;
@@ -10,11 +11,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Barryvdh\DomPDF\Facade as PDF;
+use Carbon\Carbon;
 
 class CuentaClienteController extends Controller
 {
     public function index() {
-        return view('ventas.cuentaCliente.index');
+        $fecha_hoy = Carbon::now()->toDateString();
+        return view('ventas.cuentaCliente.index',compact('fecha_hoy'));
     }
 
     public function getTable() {
@@ -134,15 +137,17 @@ class CuentaClienteController extends Controller
         }
     }
 
-    public function detalleReporte($id)
+    public function reporte($id)
     {
         $cuenta = CuentaCliente::findOrFail($id);
         $cliente = Cliente::find($cuenta->documento->cliente_id);
+        $empresa = Empresa::first();
         $pdf = PDF::loadview('ventas.documentos.impresion.detalle_cuenta',[
             'cuenta' => $cuenta,
             'detalles' => $cuenta->detalles,
-            'cliente' => $cliente
-            ])->setPaper([0, 0, 226.772, 651.95]);
+            'cliente' => $cliente,
+            'empresa' => $empresa
+            ])->setPaper('a4');
         return $pdf->stream('CUENTA-'.$cuenta->id.'.pdf');
     }
 }
