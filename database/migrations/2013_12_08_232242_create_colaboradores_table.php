@@ -14,8 +14,10 @@ class CreateColaboradoresTable extends Migration
     public function up()
     {
         Schema::create('colaboradores', function (Blueprint $table) {
+            $table->Increments('id');
             $table->unsignedInteger('persona_trabajador_id');
             $table->foreign('persona_trabajador_id')->references('id')->on('persona_trabajador')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

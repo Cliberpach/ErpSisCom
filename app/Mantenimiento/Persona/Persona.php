@@ -4,6 +4,8 @@ namespace App\Mantenimiento\Persona;
 
 use App\Mantenimiento\Colaborador\Colaborador;
 use App\Mantenimiento\Vendedor\Vendedor;
+use App\PersonaTrabajador;
+use App\UserPersona;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,6 +39,14 @@ class Persona extends Model
     public function vendedor()
     {
         return $this->hasOne(Vendedor::class,'persona_id');
+    }
+    public function user_persona()
+    {
+        return $this->hasOne(UserPersona::class,'persona_id');
+    }
+    public function persona_trabajador()
+    {
+        return $this->hasOne(PersonaTrabajador::class,'persona_id');
     }
 
     public function getDocumento(): string

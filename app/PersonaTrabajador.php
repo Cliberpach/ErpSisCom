@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Mantenimiento\Persona\Persona;
 use Illuminate\Database\Eloquent\Model;
 
 class PersonaTrabajador extends Model
@@ -34,7 +35,10 @@ class PersonaTrabajador extends Model
         'moneda_comision',
         'estado'
     ];
-
+    public function persona()
+    {
+        return $this->belongsTo(Persona::class,'persona_id');
+    }
 
     public function getBanco(): string
     {

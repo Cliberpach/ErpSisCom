@@ -37,8 +37,8 @@ class CreatePersonaTrabajadorTable extends Migration
             $table->date('fecha_fin_planilla')->nullable();
             $table->string('ruta_imagen')->nullable();
             $table->string('nombre_imagen')->nullable();
-            $table->string('comision');
-            $table->string('moneda_comision');
+            $table->string('comision')->nullable();
+            $table->string('moneda_comision')->nullable();
             $table->enum('estado',['ACTIVO','ANULADO'])->default('ACTIVO');
             $table->timestamps();
         });

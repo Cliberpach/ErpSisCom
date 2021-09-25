@@ -15,12 +15,8 @@ class CreateVendedoresTable extends Migration
     {
         Schema::create('vendedores', function (Blueprint $table) {
             $table->Increments('id');
-            $table->unsignedInteger('colaborador_id');
-            $table->foreign('colaborador_id')->references('id')->on('colaboradores')->onDelete('cascade');
-            $table->string('zona');
-            $table->unsignedDecimal('comision', 15,2);
-            $table->string('moneda_comision');
-            $table->enum('estado',['ACTIVO','ANULADO'])->default('ACTIVO');
+            $table->unsignedInteger('persona_trabajador_id');
+            $table->foreign('persona_trabajador_id')->references('id')->on('persona_trabajador')->onDelete('cascade');
             $table->timestamps();
         });
     }
