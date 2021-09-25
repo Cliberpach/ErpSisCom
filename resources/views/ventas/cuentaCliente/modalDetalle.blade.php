@@ -60,7 +60,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                             <button class="btn btn-danger" onclick="reportePagos()"><i class="fa fa-file-pdf-o"></i></button>
+                                             <a class="btn btn-danger" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                         </div>
                                      </div>
                                 </div>
