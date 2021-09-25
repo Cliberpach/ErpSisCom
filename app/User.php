@@ -23,14 +23,4 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    public function cotizaciones()
-    {
-        return $this->hasMany('App\Ventas\Cotizacion');
-    }
-
-    public function empleado()
-    {
-        return $this->belongsTo('App\Mantenimiento\Colaborador\Colaborador','colaborador_id');
-    }
 }

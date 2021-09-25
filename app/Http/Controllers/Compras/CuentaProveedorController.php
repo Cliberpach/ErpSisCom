@@ -99,7 +99,7 @@ class CuentaProveedorController extends Controller
                         $detallepago->observacion=$request->observacion;
                         $detallepago->fecha=$request->fecha;
                         $detallepago->save();
-                        if($cuenta->saldo>$cuenta)
+                        if($cuenta->saldo > $cuenta)
                         {
                             $detallepago->monto=$cantidadRecibida;
                             $cuenta->saldo=$cuenta->saldo-$cantidadRecibida;
