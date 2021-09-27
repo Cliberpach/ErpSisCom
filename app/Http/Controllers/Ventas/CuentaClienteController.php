@@ -77,10 +77,11 @@ class CuentaClienteController extends Controller
             return $cuentas;
     }
 
-    public function detallePago(Request $request)
+    public function detallePago(Request $request, $id)
     {
         try{
-            $CuentaCliente = CuentaCliente::findOrFail($request->id);
+            DB::beginTransaction();
+            $CuentaCliente = CuentaCliente::findOrFail($id);
             if($request->pago == "A CUENTA")
             {
                 $detallepago = new DetalleCuentaCliente();
@@ -95,6 +96,11 @@ class CuentaClienteController extends Controller
 
                 $detallepago->saldo = $CuentaCliente->saldo;
                 $detallepago->update();
+
+                if($request->hasFile('imagen')){
+                    $detallepago->ruta_imagen = $request->file('imagen')->store('public/cuenta/cobrar');
+                    $detallepago->update();
+                }
 
                 if($CuentaCliente->saldo == 0)
                 {
@@ -127,7 +133,11 @@ class CuentaClienteController extends Controller
                                 $cuenta->saldo = 0;
                             }
 
-                            $detallepago->save();
+                            $detallepago->update();
+                            if($request->hasFile('imagen')){
+                                $detallepago->ruta_imagen = $request->file('imagen')->store('public/cuenta/cobrar');
+                                $detallepago->update();
+                            }
                             $cuenta->update();
                             if($cuenta->saldo == 0)
                             {
@@ -138,10 +148,16 @@ class CuentaClienteController extends Controller
                 }
 
             }
+
+            DB::commit();
+            Session::flash('success', 'Pago agregado correctamene');
+            return redirect()->route('cuentaCliente.index');
         }
         catch(Exception $e)
         {
-            Session::flash('error', $e->getMessage());
+            DB::rollBack();
+            Session::flash('error', $e->getMessage());            
+            return redirect()->route('cuentaCliente.index');
         }
     }
 
@@ -157,5 +173,12 @@ class CuentaClienteController extends Controller
             'empresa' => $empresa
             ])->setPaper('a4');
         return $pdf->stream('CUENTA-'.$cuenta->id.'.pdf');
+    }
+
+    public function imagen($id)
+    {
+        $detalle = DetalleCuentaCliente::find($id);
+        $ruta = storage_path().'/app/'.$detalle->ruta_imagen;
+        return response()->download($ruta);
     }
 }

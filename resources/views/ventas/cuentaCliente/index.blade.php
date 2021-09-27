@@ -195,6 +195,20 @@
         "order": [
             [0, "desc"]
         ],
+        'aoColumns': [
+                {
+                    sClass: 'text-center'
+                },
+                {
+                    sClass: 'text-center'
+                },
+                {
+                    sClass: 'text-center'
+                },
+                {
+                    sClass: 'text-center'
+                }
+            ],
     });
 
     $("#btn_buscar").on('click', function() {
@@ -247,14 +261,28 @@
             $("#modal_detalle #estado").val(datos.estado)
             $("#modal_detalle").modal("show");
             $("#btn-detalle").attr('href','/cuentaCliente/reporte/'+id)
+            $("#frmDetalle").attr('action','/cuentaCliente/detallePago/'+id)
             var table = $(".dataTables-detalle").DataTable();
             table.clear().draw();
             detalle.forEach((value, index, array) => {
-                table.row.add([
-                    value.fecha,
-                    value.observacion,
-                    value.monto
-                ]).draw(false);
+                if(value.ruta_imagen)
+                {
+                    table.row.add([
+                        value.fecha,
+                        value.observacion,
+                        value.monto,
+                        '<a class="btn btn-primary btn-xs" href="/cuentaCliente/imagen/'+value.id+'"><i class="fa fa-download"></i></a>'
+                    ]).draw(false);
+                }
+                else
+                {
+                    table.row.add([
+                        value.fecha,
+                        value.observacion,
+                        value.monto,
+                        '-'
+                    ]).draw(false);
+                }
             })
         }).catch((value) => {
 

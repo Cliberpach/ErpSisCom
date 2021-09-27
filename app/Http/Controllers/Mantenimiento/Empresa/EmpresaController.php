@@ -74,6 +74,7 @@ class EmpresaController extends Controller
     public function store(Request $request){
         $data = $request->all();
 
+        return $data;
         $rules = [
             'ruc' => ['required','numeric','min:11', Rule::unique('empresas','ruc')->where(function ($query) {
                         $query->whereIn('estado',["ACTIVO"]);
