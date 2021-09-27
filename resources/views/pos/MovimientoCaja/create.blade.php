@@ -29,7 +29,7 @@
                             <option></option>
                             @foreach (colaboradoresDisponibles() as $colaborador)
                                 <option value="{{ $colaborador->id }}">
-                                    {{ $colaborador->persona->apellido_paterno . ' ' . $colaborador->persona->apellido_paterno . ' ' . $colaborador->persona->nombre }}
+                                    {{ $colaborador->persona_trabajador->persona->apellido_paterno . ' ' . $colaborador->persona_trabajador->persona->apellido_paterno . ' ' . $colaborador->persona_trabajador->persona->nombre }}
                                 </option>
                             @endforeach
 

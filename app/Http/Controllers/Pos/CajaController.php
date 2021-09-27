@@ -60,8 +60,7 @@ class CajaController extends Controller
     }
     public function indexMovimiento()
     {
-        $colaboradores = Colaborador::where('estado', 'ACTIVO')->get();
-        return view('pos.MovimientoCaja.indexMovimiento', compact('colaboradores'));
+        return view('pos.MovimientoCaja.indexMovimiento');
     }
     public function getMovimientosCajas()
     {
@@ -119,7 +118,7 @@ class CajaController extends Controller
         return array(
             "caja"=>$movimiento->caja->nombre,
             "monto_inicial" => $movimiento->monto_inicial,
-            "colaborador" => $colaborador->persona->apellido_paterno . " " . $colaborador->persona->apellido_paterno . " " . $colaborador->persona->nombre,
+            "colaborador" => $colaborador->persona_trabajador->persona->apellido_paterno . " " . $colaborador->persona_trabajador->persona->apellido_paterno . " " . $colaborador->persona_trabajador->persona->nombre,
             "egresos" => $egresos,
             "ingresos" => $ingresos,
             "saldo" => ($movimiento->monto_inicial + $ingresos) - $egresos

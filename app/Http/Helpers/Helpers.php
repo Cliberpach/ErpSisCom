@@ -28,6 +28,7 @@ use App\Pos\MovimientoCaja;
 use App\Ventas\Cliente;
 use App\Ventas\TipoPago;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 // TABLAS-DETALLES
 
@@ -946,16 +947,28 @@ if(!function_exists('colaboradoresDisponibles'))
 {
     function colaboradoresDisponibles()
     {
-        $colaboradores=Colaborador::where('estado', 'ACTIVO')->get();
-        $datos=array();
-        foreach ($colaboradores as $key => $value) {
-            $consulta=MovimientoCaja::where('colaborador_id',$value->id)->where('estado_movimiento','APERTURA');
-            if($consulta->count()==0)
-            {
-                array_push($datos,$value);
-            }
-        }
-       return $datos;
+        $colaboradores=Colaborador::join('persona_trabajador as pt','pt.id','=','colaboradores.persona_trabajador_id')
+                                    ->join('personas as p','p.id','=','pt.id')
+                                    //->join('movimiento_caja as mc','mc.colaborador_id','!=','colaboradores.id')
+                                   // ->select('colaboradores.id','p.nombres','p.apellido_paterno','p.apellido_materno')
+                                    ->where('p.estado','ACTIVO')
+                                   // ->where('mc.estado_movimiento','CIERRE')
+                                    ->get();
+        // $datos=array();
+        // foreach ($colaboradores as $key => $value) {
+        //
+        //     if($consulta->count()==0)
+        //     {
+        //         array_push($datos,$value);
+        //     }
+        // }
+        //   return $datos;
+        $colaboradores=Colaborador::cursor()->filter(function ($colaborador)
+        {
+            $consulta=MovimientoCaja::where('colaborador_id',$colaborador->id)->where('estado_movimiento','APERTURA');
+            return $consulta->count()==0 ? true : false ;
+        });
+        return $colaboradores;
     }
 
 }

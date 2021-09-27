@@ -84,7 +84,7 @@
                                             <span class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </span>
-                                            
+
                                             @if (!empty($cotizacion))
                                             <input type="date" id="fecha_atencion_campo" name="fecha_atencion_campo"
                                                 class="form-control {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
@@ -146,7 +146,7 @@
                                             style="text-transform: uppercase; width:100%" value="{{old('tipo_venta')}}"
                                             name="tipo_venta" id="tipo_venta" required  @if (!empty($cotizacion)) '' @else onchange="consultarSeguntipo()" @endif >
                                             <option></option>
-                                            
+
                                                 @if(!empty($cotizacion))
                                                     @foreach (tipos_venta() as $tipo)
                                                         @if( $tipo->tipo == 'VENTA' || $tipo->tipo == 'AMBOS')
@@ -171,7 +171,7 @@
                                                     <strong>{{ $errors->first('tipo_venta') }}</strong>
                                                 </span>
                                                 @endif
-                                            
+
 
 
                                         </select>
@@ -217,7 +217,7 @@
                                         @endif
 
 
-                                    
+
                                 </div>
 
 
@@ -247,12 +247,12 @@
 
                                 <div class="form-group">
                                     <label>Observación:</label>
-                               
+
                                     <textarea type="text" placeholder=""
                                         class="form-control {{ $errors->has('observacion') ? ' is-invalid' : '' }}"
                                         name="observacion" id="observacion"  onkeyup="return mayus(this)"
                                         value="{{old('observacion')}}">{{old('observacion')}}</textarea>
-                                
+
 
                                     @if ($errors->has('observacion'))
                                     <span class="invalid-feedback" role="alert">
@@ -298,8 +298,8 @@
                                             <div class="col-lg-6 col-xs-12">
                                                 <label class="col-form-label required">Producto:</label>
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="producto_lote" readonly> 
-                                                    <span class="input-group-append"> 
+                                                    <input type="text" class="form-control" id="producto_lote" readonly>
+                                                    <span class="input-group-append">
                                                         <button type="button" class="btn btn-primary" disabled id="buscarLotes" data-toggle="modal" data-target="#modal_lote"><i class='fa fa-search'></i> Buscar
                                                         </button>
                                                     </span>
@@ -327,7 +327,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
 
 
                                             <div class="col-lg-2 col-xs-12">
@@ -512,7 +512,7 @@
                 }
                 else{
                     toastr.warning('Ocurrió un error porfavor recargar la pagina.')
-                } 
+                }
             });
 
         })
@@ -521,7 +521,7 @@
         function obtenerMax(id) {
             $.get('/almacenes/productos/obtenerProducto/'+ id, function (data) {
                 //AGREGAR LIMITE A LA CANTIDAD
-                $("#cantidad_editar").attr({ 
+                $("#cantidad_editar").attr({
                     "max" : data.producto.stock,
                     "min" : 1,
                 });
@@ -632,11 +632,11 @@
                             @else
                                 return  "<div class='btn-group'>" +
                                         "<a class='btn btn-sm btn-warning btn-edit' style='color:white'>"+ "<i class='fa fa-pencil'></i>"+"</a>" +
-                                        "<a class='btn btn-sm btn-danger btn-delete' style='color:white'>"+"<i class='fa fa-trash'></i>"+"</a>"+ 
+                                        "<a class='btn btn-sm btn-danger btn-delete' style='color:white'>"+"<i class='fa fa-trash'></i>"+"</a>"+
                                         "</div>";
                             @endif
                         }
-                        
+
                     },
                     {
                         "targets": [2],
@@ -648,7 +648,7 @@
                         "targets": [4],
                     },
                     {
-                        "targets": [5],                        
+                        "targets": [5],
                         'visible': false
                     },
                     {
@@ -690,7 +690,7 @@
 
             @if (!empty($cotizacion))
 
-                @if ($cotizacion->igv_check == '1') 
+                @if ($cotizacion->igv_check == '1')
                     $('#igv').prop('disabled', false)
                     $("#igv_check").prop('checked',true)
 
@@ -709,7 +709,7 @@
                     }
                 @endif
 
-                @if ($lotes) 
+                @if ($lotes)
                     obtenerTabla()
                 @endif
             @endif
@@ -784,7 +784,7 @@
                     buttonsStyling: false
                 })
 
-               
+
                 Swal.fire({
                     title: 'Opción Agregar',
                     text: "¿Seguro que desea agregar Producto?",
@@ -841,7 +841,7 @@
             let cantidad = convertFloat($('#cantidad').val());
 
             precio_unitario = precio_inicial;
-            valor_unitario = precio_unitario / (1 + igv_calculado);                
+            valor_unitario = precio_unitario / (1 + igv_calculado);
             dinero = precio_unitario * (pdescuento / 100);
             precio_nuevo = precio_unitario - dinero;
             valor_venta = precio_nuevo * cantidad;
@@ -871,7 +871,7 @@
                 '',
                 Number($detalle.cantidad),
                 $detalle.unidad,
-                $detalle.producto,                
+                $detalle.producto,
                 Number($detalle.valor_unitario).toFixed(2),
                 Number($detalle.precio_unitario).toFixed(2),
                 Number($detalle.dinero).toFixed(2),
@@ -932,7 +932,7 @@
         //DEVOLVER CANTIDADES A LOS LOTES
         function devolverCantidades() {
             //CARGAR PRODUCTOS PARA DEVOLVER LOTE
-            cargarProductos() 
+            cargarProductos()
             $.ajax({
                 dataType : 'json',
                 type : 'post',
@@ -1002,7 +1002,7 @@
                         let pdescuento = convertFloat(el[11]);
                         let precio_inicial = convertFloat(el[10]);
                         let precio_unitario = precio_inicial / 1.18;
-                        let valor_unitario = precio_unitario / 1.18;              
+                        let valor_unitario = precio_unitario / 1.18;
                         let dinero = precio_unitario * (pdescuento / 100);
                         let precio_nuevo = precio_unitario - dinero;
                         let valor_venta = precio_nuevo * el[2];
@@ -1089,7 +1089,7 @@
 
                 conIgv(convertFloat(total),convertFloat(18))
             @endif
-            
+
 
         }
 
@@ -1186,7 +1186,7 @@
                             this.submit();
                         }
 
-                        
+
                     } else if (
                         result.dismiss === Swal.DismissReason.cancel
                     ) {
@@ -1225,7 +1225,7 @@
             let importe = convertFloat($('#importe_venta').val());
             let efectivo = convertFloat($('#efectivo_venta').val());
             let suma = importe + efectivo;
-            
+
             $('#importe_form').val(importe);
             $('#efectivo_form').val(efectivo);
 
@@ -1254,7 +1254,7 @@
                 correcto = false;
                 toastr.error('La suma del importe y el efectivo debe ser igual al monto de la venta.');
             }
-            
+
             if (correcto) {
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
@@ -1297,7 +1297,7 @@
                             $('#enviar_documento').submit();
                         }
 
-                        
+
                     } else if (
                         /* Read more about handling dismissals below */
                         result.dismiss === Swal.DismissReason.cancel
@@ -1324,7 +1324,7 @@
             let cliente_id = $('#cliente_id').val();
             let tipo_venta = $('#tipo_venta').val();
 
-            
+
             let detalles = $('#productos_tabla').val();
             let detalles_convertido = JSON.parse(detalles);
             if(detalles_convertido.length < 1)
@@ -1407,17 +1407,17 @@
                         "{{$lote->valor_venta}}",
                         "{{$lote->precio_inicial}}",
                         "{{$lote->descuento}}",
-                    ])                    
+                    ])
                 @endforeach
                 //SUMATORIA TOTAL
                 sumaTotal()
             @endif
         }
 
-        //OBTENER TIPOS DE COMPROBANTES 
+        //OBTENER TIPOS DE COMPROBANTES
         function obtenerTiposComprobantes() {
 
-            if ($('#empresa_id').val() != '') {            
+            if ($('#empresa_id').val() != '') {
                 $.ajax({
                     dataType : 'json',
                     url: '{{ route("ventas.vouchersAvaible")}}',
@@ -1429,17 +1429,17 @@
                     },
                     success : function(response){
                         if (response.existe == false) {
-                            toastr.error('La empresa '+response.empresa+' no tiene registrado el comprobante '+response.comprobante, 'Error');    
+                            toastr.error('La empresa '+response.empresa+' no tiene registrado el comprobante '+response.comprobante, 'Error');
                         }else{
                             toastr.success('La empresa '+response.empresa+' tiene registrado el comprobante '+response.comprobante, 'Accion Correcta');
                         }
-                        
-                    },            
+
+                    },
                 })
             }
 
         }
-        
+
         function consultarSeguntipo() {
             $('#empresa_id').prop("disabled", false);
             obtenerTiposComprobantes()
@@ -1447,7 +1447,7 @@
         }
 
         function obtenerClientes() {
-            if ($('#tipo_id').val() != '') {            
+            if ($('#tipo_id').val() != '') {
                 $.ajax({
                     dataType : 'json',
                     url: '{{ route("ventas.customers")}}',
@@ -1472,7 +1472,7 @@
 
                         $("#cliente_id").html(clientes);
                         $('#tipo_cliente_documento').val(data.tipo);
-                    },            
+                    },
                 })
             }
         }
@@ -1490,7 +1490,7 @@
                     success : function(cliente){
                         $('#buscarLotes').prop("disabled", false)
                         obtenerLotesproductos(cliente.tabladetalles_id)
-                    },            
+                    },
                 })
             }
         }
@@ -1507,10 +1507,10 @@
 </script>
 
 <script>
-    window.onbeforeunload = function () { 
-        //DEVOLVER CANTIDADES 
+    window.onbeforeunload = function () {
+        //DEVOLVER CANTIDADES
         if($('#asegurarCierre').val() == 1 ) {devolverCantidades()}
-    
+
     };
 </script>
 @endpush
