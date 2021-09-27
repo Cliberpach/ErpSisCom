@@ -82,8 +82,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-12 col-xs-12">                                
-                                <div class="row">                                                                   
+                            <div class="col-lg-12 col-xs-12">
+                                <div class="row">
                                     <div class="col-lg-4 col-xs-12">
                                         <label class="required">Cliente</label>
                                         <select id="cliente" name="cliente"
@@ -102,7 +102,7 @@
                                                 <strong>{{ $errors->first('cliente') }}</strong>
                                             </span>
                                         @endif
-                                    </div>                                  
+                                    </div>
                                     <div class="col-lg-3 col-xs-12">
                                         <label class="required">Fecha de Atención</label>
                                         <div class="input-group date">
@@ -119,7 +119,7 @@
                                                 </span>
                                             @endif
                                         </div>
-                                    </div>                                   
+                                    </div>
                                     <div class="col-lg-2 col-xs-12">
                                         <div class="form-group">
                                             <label id="igv_requerido">IGV (%):</label>
@@ -143,12 +143,12 @@
                                     </div>
                                     <div class="col-lg-3 col-xs-12">
                                         <div class="form-group">
-                                            <label class="___class_+?40___">Vendedor</label>
+                                            <label class="">Vendedor</label>
                                             <select id="vendedor" name="vendedor" class="select2_form form-control">
                                                 <option value=""></option>
                                                 @foreach (vendedores() as $vendedor)
                                                     <option value="{{ $vendedor->id }}">
-                                                        {{ $vendedor->persona->apellido_paterno . ' ' . $vendedor->persona->apellido_materno . ' ' . $vendedor->persona->nombres }}
+                                                        {{ $vendedor->persona_trabajador->persona->apellido_paterno . ' ' . $vendedor->persona_trabajador->persona->apellido_materno . ' ' . $vendedor->persona_trabajador->persona->nombres }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -549,11 +549,11 @@
                             var monto = Number(data.cliente_producto[i].monto * 0.18) + Number(data
                                 .cliente_producto[i].monto)
                             $('#precio').val(Number(monto).toFixed(2))
-                            
+
                         } else {
                             var monto = data.cliente_producto[i].monto
                             $('#precio').val(Number(monto).toFixed(2))
-                            
+
                         }
                     }
                 }
@@ -719,8 +719,8 @@
             '',
             $detalle.cantidad.toFixed(2),
             $detalle.producto,
-            $detalle.valor_unitario.toFixed(2),               
-            $detalle.precio_unitario.toFixed(2),         
+            $detalle.valor_unitario.toFixed(2),
+            $detalle.precio_unitario.toFixed(2),
             $detalle.dinero.toFixed(2),
             $detalle.precio_nuevo.toFixed(2),
             $detalle.valor_venta.toFixed(2),
@@ -755,13 +755,13 @@
         let cantidad = convertFloat($('#cantidad').val())
         if ($("#igv_check").prop('checked')) {
             precio_unitario = precio_inicial;
-            valor_unitario = precio_unitario / (1 + igv_calculado);                
+            valor_unitario = precio_unitario / (1 + igv_calculado);
             dinero = precio_unitario * (pdescuento / 100);
             precio_nuevo = precio_unitario - dinero;
             valor_venta = precio_nuevo * cantidad;
         } else {
             precio_unitario = precio_inicial / 1.18;
-            valor_unitario = precio_unitario / 1.18;              
+            valor_unitario = precio_unitario / 1.18;
             dinero = precio_unitario * (pdescuento / 100);
             precio_nuevo = precio_unitario - dinero;
             valor_venta = precio_nuevo * cantidad;
@@ -877,7 +877,7 @@
         table.rows().data().each(function(el, index) {
             total = Number(el[8]) + total
         });
-        
+
         $('#total').text((Math.round(total * 10) / 10).toFixed(2))
         //conIgv(total,igv)
     }

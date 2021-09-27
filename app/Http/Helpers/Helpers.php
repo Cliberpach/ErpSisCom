@@ -176,7 +176,10 @@ if(!function_exists('vendedores'))
 {
     function vendedores()
     {
-        return Vendedor::where('estado','ACTIVO')->get();
+        return Vendedor::cursor()->filter(function($vendedor)
+        {
+            return $vendedor->persona_trabajador->persona->estado=="ACTIVO"? true : false;
+        });
     }
 }
 

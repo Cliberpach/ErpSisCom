@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mantenimiento\Vendedor;
 
 use App\Http\Controllers\Controller;
+use App\Mantenimiento\Persona\Persona;
 use App\Mantenimiento\Persona\PersonaVendedor;
 use App\Mantenimiento\Vendedor\Vendedor;
 use Carbon\Carbon;
@@ -21,17 +22,19 @@ class VendedorController extends Controller
 
     public function getTable()
     {
-        $vendedores = Vendedor::where('estado','ACTIVO')->get();
+        $vendedores = Vendedor::get();
         $coleccion = collect([]);
-        foreach($vendedores as $vendedor){
-            $coleccion->push([
-                'id' => $vendedor->id,
-                'documento' => $vendedor->persona->getDocumento(),
-                'apellidos_nombres' => $vendedor->persona->getApellidosYNombres(),
-                'telefono_movil' => $vendedor->persona->telefono_movil,
-                'area' => $vendedor->area,
-                'zona' => $vendedor->zona
-            ]);
+        foreach ($vendedores as $vendedor) {
+            if ($vendedor->persona_trabajador->persona->estado == "ACTIVO") {
+                $coleccion->push([
+                    'id' => $vendedor->id,
+                    'documento' => $vendedor->persona_trabajador->persona->getDocumento(),
+                    'apellidos_nombres' => $vendedor->persona_trabajador->persona->getApellidosYNombres(),
+                    'telefono_movil' => $vendedor->persona_trabajador->persona->telefono_movil,
+                    'area' => $vendedor->persona_trabajador->area,
+                    'zona' => $vendedor->persona_trabajador->zona
+                ]);
+            }
         }
         return DataTables::of($coleccion)->toJson();
     }
@@ -46,14 +49,14 @@ class VendedorController extends Controller
         $data = $request->all();
         DB::transaction(function () use ($request) {
 
-            $persona = new PersonaVendedor();
+            $persona = new Persona();
             $persona->tipo_documento = $request->get('tipo_documento');
             $persona->documento = $request->get('documento');
             $persona->codigo_verificacion = $request->get('codigo_verificacion');
             $persona->nombres = $request->get('nombres');
             $persona->apellido_paterno = $request->get('apellido_paterno');
             $persona->apellido_materno = $request->get('apellido_materno');
-            $persona->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_nacimiento'))->format('Y-m-d') ;
+            $persona->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_nacimiento'))->format('Y-m-d');
             $persona->sexo = $request->get('sexo');
             $persona->estado_civil = $request->get('estado_civil');
             $persona->departamento_id = str_pad($request->get('departamento'), 2, "0", STR_PAD_LEFT);
@@ -83,22 +86,22 @@ class VendedorController extends Controller
             $vendedor->tipo_banco = $request->get('tipo_banco');
             $vendedor->numero_cuenta = $request->get('numero_cuenta');
 
-            if($request->hasFile('imagen')){
+            if ($request->hasFile('imagen')) {
                 $file = $request->file('imagen');
                 $name = $file->getClientOriginalName();
                 $vendedor->nombre_imagen = $name;
                 $vendedor->ruta_imagen = $request->file('imagen')->store('public/vendedores/imagenes');
             }
 
-            $vendedor->fecha_inicio_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_actividad'))->format('Y-m-d') ;
+            $vendedor->fecha_inicio_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_actividad'))->format('Y-m-d');
             if (!is_null($request->get('fecha_fin_actividad'))) {
-                $vendedor->fecha_fin_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_actividad'))->format('Y-m-d') ;
+                $vendedor->fecha_fin_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_actividad'))->format('Y-m-d');
             }
             if (!is_null($request->get('fecha_inicio_planilla'))) {
-                $vendedor->fecha_inicio_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_planilla'))->format('Y-m-d') ;
+                $vendedor->fecha_inicio_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_planilla'))->format('Y-m-d');
             }
             if (!is_null($request->get('fecha_fin_planilla'))) {
-                $vendedor->fecha_fin_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_planilla'))->format('Y-m-d') ;
+                $vendedor->fecha_fin_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_planilla'))->format('Y-m-d');
             }
             $vendedor->zona = $request->get('zona');
             $vendedor->comision = $request->get('comision');
@@ -106,15 +109,14 @@ class VendedorController extends Controller
             $vendedor->save();
 
             //Registro de actividad
-            $descripcion = "SE AGREGÓ EL VENDEDOR CON EL NOMBRE: ". $vendedor->persona->nombres.' '.$vendedor->persona->apellido_paterno.' '.$vendedor->persona->apellido_materno;
+            $descripcion = "SE AGREGÓ EL VENDEDOR CON EL NOMBRE: " . $vendedor->persona->nombres . ' ' . $vendedor->persona->apellido_paterno . ' ' . $vendedor->persona->apellido_materno;
             $gestion = "VENDEDORES";
-            crearRegistro($vendedor, $descripcion , $gestion);
-
+            crearRegistro($vendedor, $descripcion, $gestion);
         });
 
 
 
-        Session::flash('success','Vendedor creado.');
+        Session::flash('success', 'Vendedor creado.');
         return redirect()->route('mantenimiento.vendedor.index')->with('guardar', 'success');
     }
 
@@ -140,7 +142,7 @@ class VendedorController extends Controller
             $persona->nombres = $request->get('nombres');
             $persona->apellido_paterno = $request->get('apellido_paterno');
             $persona->apellido_materno = $request->get('apellido_materno');
-            $persona->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_nacimiento'))->format('Y-m-d') ;
+            $persona->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_nacimiento'))->format('Y-m-d');
             $persona->sexo = $request->get('sexo');
             $persona->estado_civil = $request->get('estado_civil');
             $persona->departamento_id = str_pad($request->get('departamento'), 2, "0", STR_PAD_LEFT);
@@ -170,7 +172,7 @@ class VendedorController extends Controller
             $vendedor->tipo_banco = $request->get('tipo_banco');
             $vendedor->numero_cuenta = $request->get('numero_cuenta');
 
-            if($request->hasFile('imagen')){
+            if ($request->hasFile('imagen')) {
                 //Eliminar Archivo anterior
                 Storage::delete($vendedor->ruta_imagen);
                 //Agregar nuevo archivo
@@ -178,7 +180,7 @@ class VendedorController extends Controller
                 $name = $file->getClientOriginalName();
                 $vendedor->nombre_imagen = $name;
                 $vendedor->ruta_imagen = $request->file('imagen')->store('public/vendedores/imagenes');
-            }else{
+            } else {
                 if ($vendedor->ruta_imagen) {
                     //Eliminar Archivo anterior
                     Storage::delete($vendedor->ruta_imagen);
@@ -187,15 +189,15 @@ class VendedorController extends Controller
                 }
             }
 
-            $vendedor->fecha_inicio_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_actividad'))->format('Y-m-d') ;
+            $vendedor->fecha_inicio_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_actividad'))->format('Y-m-d');
             if (!is_null($request->get('fecha_fin_actividad'))) {
-                $vendedor->fecha_fin_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_actividad'))->format('Y-m-d') ;
+                $vendedor->fecha_fin_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_actividad'))->format('Y-m-d');
             }
             if (!is_null($request->get('fecha_inicio_planilla'))) {
-                $vendedor->fecha_inicio_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_planilla'))->format('Y-m-d') ;
+                $vendedor->fecha_inicio_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_planilla'))->format('Y-m-d');
             }
             if (!is_null($request->get('fecha_fin_planilla'))) {
-                $vendedor->fecha_fin_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_planilla'))->format('Y-m-d') ;
+                $vendedor->fecha_fin_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_planilla'))->format('Y-m-d');
             }
 
             $vendedor->zona = $request->get('zona');
@@ -204,15 +206,14 @@ class VendedorController extends Controller
             $vendedor->update();
 
             //Registro de actividad
-            $descripcion = "SE MODIFICÓ EL VENDEDOR CON EL NOMBRE: ".$vendedor->persona->nombres.' '.$vendedor->persona->apellido_paterno.' '.$vendedor->persona->apellido_materno;
+            $descripcion = "SE MODIFICÓ EL VENDEDOR CON EL NOMBRE: " . $vendedor->persona->nombres . ' ' . $vendedor->persona->apellido_paterno . ' ' . $vendedor->persona->apellido_materno;
             $gestion = "VENDEDORES";
-            modificarRegistro($vendedor, $descripcion , $gestion);
-
+            modificarRegistro($vendedor, $descripcion, $gestion);
         });
 
 
 
-        Session::flash('success','Vendedor modificado.');
+        Session::flash('success', 'Vendedor modificado.');
         return redirect()->route('mantenimiento.vendedor.index')->with('modificar', 'success');
     }
 
@@ -226,7 +227,7 @@ class VendedorController extends Controller
 
     public function destroy($id)
     {
-        DB::transaction(function() use ($id) {
+        DB::transaction(function () use ($id) {
 
             $vendedor = Vendedor::findOrFail($id);
             $vendedor->estado = 'ANULADO';
@@ -238,16 +239,15 @@ class VendedorController extends Controller
             $persona->update();
 
             //Registro de actividad
-            $descripcion = "SE ELIMINÓ EL VENDEDOR CON EL NOMBRE: ". $vendedor->persona->nombres.' '.$vendedor->persona->apellido_paterno.' '.$vendedor->persona->apellido_materno;
+            $descripcion = "SE ELIMINÓ EL VENDEDOR CON EL NOMBRE: " . $vendedor->persona->nombres . ' ' . $vendedor->persona->apellido_paterno . ' ' . $vendedor->persona->apellido_materno;
             $gestion = "VENDEDORES";
-            eliminarRegistro($vendedor, $descripcion , $gestion);
-
+            eliminarRegistro($vendedor, $descripcion, $gestion);
         });
 
 
 
 
-        Session::flash('success','Vendedor eliminado.');
+        Session::flash('success', 'Vendedor eliminado.');
         return redirect()->route('mantenimiento.vendedor.index')->with('eliminar', 'success');
     }
 
@@ -289,4 +289,3 @@ class VendedorController extends Controller
         return response()->json($result);
     }
 }
-
