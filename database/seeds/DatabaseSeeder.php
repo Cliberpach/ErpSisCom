@@ -27,5 +27,6 @@ class DatabaseSeeder extends Seeder
         $caja = new Caja();
         $caja->nombre="Caja Principal";
         $caja->save();
+        $this->call(AlmacenSeeder::class);
     }
 }
