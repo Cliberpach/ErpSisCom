@@ -15,7 +15,7 @@
     <link href="{{asset('Inspinia/css/animate.css')}}" rel="stylesheet">
     <link href="{{asset('Inspinia/css/style.css')}}" rel="stylesheet">
     <link href="{{asset('css/style.css')}}" rel="stylesheet">
-    
+
     <!-- Toastr style -->
     <link href="{{asset('Inspinia/css/plugins/toastr/toastr.min.css')}}" rel="stylesheet">
     <style>
@@ -32,7 +32,7 @@
             }
         }
 
-    
+
     </style>
 
 </head>
@@ -60,21 +60,21 @@
         <div class="container-fluid">
 
             <div class="row" style="height:100vh;">
-            
+
                 <div class="col-lg-6 col-md-6 d-none d-md-block image-container" style="height:100vh;">
                 </div>
 
-                        
+
                 <div class="col-lg-6 col-md-6 form-container">
-                
-                        
+
+
                     <div class="login">
                         <div class="text-center">
 
-                            <img src="{{asset('img/logo_2.png')}}" class="img-responsive m-b">
+                            <img src="{{asset('img/erp_logo_short.jpeg')}} " width="250" class="img-responsive m-b">
 
                         </div>
-                        <h3>Sistema de Producción</h3>
+                        <h3>Sistema de Comercializacion</h3>
                         <p>
                             Ingresa tus datos para Iniciar Sesión.
                         </p>
@@ -106,13 +106,13 @@
                         </form>
                     </div>
 
-                
+
                 </div>
-            
-            
-            
+
+
+
             </div>
-    
+
 
 
 
@@ -131,16 +131,16 @@
             // toastr.error("{{ Session::get('usuario_anulado') }}")
             dd("sasas");
         @endif
-       
+
 
         window.addEventListener("load",function(){
             $('.loader-spinner').hide();
             $("#content-system").css("display", "");
         })
-        
+
 
     </script>
-    
+
     <!-- Propio scripts -->
     <script src="{{ asset('Inspinia/js/scripts.js') }}"></script>
 

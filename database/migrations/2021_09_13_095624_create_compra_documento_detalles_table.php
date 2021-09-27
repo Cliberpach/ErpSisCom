@@ -21,18 +21,18 @@ class CreateCompraDocumentoDetallesTable extends Migration
                   ->onDelete('cascade');
 
             $table->unsignedInteger('producto_id')->unsigned();
-            $table->string('codigo_producto');
+            $table->string('codigo_producto')->nullable();
             $table->string('descripcion_producto');
             $table->string('presentacion_producto')->nullable();
             $table->string('medida_producto');
-        
+
             $table->BigInteger('cantidad');
             $table->date('fecha_vencimiento');
-            
+
             $table->string('lote');
             $table->unsignedInteger('lote_id')->unsigned()->nullable();
             $table->foreign('lote_id')->references('id')->on('lote_productos')->onDelete('cascade');
-           
+
             $table->unsignedDecimal('precio', 15,2);
             $table->unsignedDecimal('costo_flete', 15,2);
             $table->timestamps();

@@ -52,9 +52,9 @@ class ProductoController extends Controller
     {
         $data = $request->all();
         $rules = [
-            'codigo' => ['string', 'max:50', Rule::unique('productos','codigo')->where(function ($query) {
-                $query->whereIn('estado',["ACTIVO"]);
-            })],
+            // 'codigo' => ['string', 'max:50', Rule::unique('productos','codigo')->where(function ($query) {
+            //     $query->whereIn('estado',["ACTIVO"]);
+            // })],
             'codigo_barra' => ['nullable',Rule::unique('productos','codigo_barra')->where(function ($query) {
                 $query->whereIn('estado',["ACTIVO"]);
             })],
@@ -72,8 +72,8 @@ class ProductoController extends Controller
         $message = [
             'codigo_barra.unique' => 'El campo Código de Barra debe de ser único.',
             'linea_comercial.required' => 'El campo Linea Comercial es obligatorio',
-            'codigo.unique' => 'El campo Código debe ser único',
-            'codigo.max:50' => 'El campo Código debe tener como máximo 50 caracteres',
+            // 'codigo.unique' => 'El campo Código debe ser único',
+            // 'codigo.max:50' => 'El campo Código debe tener como máximo 50 caracteres',
             'nombre.required' => 'El campo Descripción del Producto es obligatorio',
             'marca.required' => 'El campo Marca es obligatorio',
             'categoria.required' => 'El campo Categoria es obligatorio',
@@ -159,9 +159,9 @@ class ProductoController extends Controller
 
         $data = $request->all();
         $rules = [
-            'codigo' => ['required','string', 'max:50', Rule::unique('productos','codigo')->where(function ($query) {
-                $query->whereIn('estado',["ACTIVO"]);
-            })->ignore($id)],
+            // 'codigo' => ['required','string', 'max:50', Rule::unique('productos','codigo')->where(function ($query) {
+            //     $query->whereIn('estado',["ACTIVO"]);
+            // })->ignore($id)],
             'codigo_barra' => ['nullable',Rule::unique('productos','codigo_barra')->where(function ($query) {
                 $query->whereIn('estado',["ACTIVO"]);
             })->ignore($id)],
@@ -177,9 +177,9 @@ class ProductoController extends Controller
         ];
 
         $message = [
-            'codigo.required' => 'El campo Código es obligatorio',
-            'codigo.unique' => 'El campo Código debe ser único',
-            'codigo.max:50' => 'El campo Código debe tener como máximo 50 caracteres',
+            // 'codigo.required' => 'El campo Código es obligatorio',
+            // 'codigo.unique' => 'El campo Código debe ser único',
+            // 'codigo.max:50' => 'El campo Código debe tener como máximo 50 caracteres',
             'nombre.required' => 'El campo Descripción del Producto es obligatorio',
             'almacen.required' => 'El campo Almacén es obligatorio',
             'marca.required' => 'El campo Marca es obligatorio',

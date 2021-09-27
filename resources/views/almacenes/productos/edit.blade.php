@@ -32,7 +32,7 @@
                                 <div class="form-group row">
                                     <div class="col-lg-6 col-xs-12">
                                         <label class="required">Código ISO</label>
-                                        <input type="text" id="codigo" name="codigo" class="form-control {{ $errors->has('codigo') ? ' is-invalid' : '' }}" value="{{ old('codigo', $producto->codigo) }}" maxlength="50" onkeyup="return mayus(this)" required>
+                                        <input type="text" id="codigo" name="codigo" class="form-control {{ $errors->has('codigo') ? ' is-invalid' : '' }}" value="{{ old('codigo', $producto->codigo) }}" maxlength="50" onkeyup="return mayus(this)">
                                         @if ($errors->has('codigo'))
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $errors->first('codigo') }}</strong>
@@ -46,7 +46,7 @@
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $errors->first('codigo_barra') }}</strong>
                                             </span>
-                                        @endif 
+                                        @endif
 
                                     </div>
                                 </div>
@@ -77,13 +77,13 @@
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $errors->first('peso_producto') }}</strong>
                                             </span>
-                                        @endif 
+                                        @endif
                                     </div>
 
                                 </div>
 
                                 <div class="form-group">
-                                
+
                                         <label class="required">Descripción del Producto</label>
                                         <input type="text" id="nombre" name="nombre" class="form-control {{ $errors->has('nombre') ? ' is-invalid' : '' }}" value="{{ old('nombre', $producto->nombre) }}" maxlength="191" onkeyup="return mayus(this)" required>
                                         @if ($errors->has('nombre'))
@@ -91,12 +91,12 @@
                                                 <strong>{{ $errors->first('nombre') }}</strong>
                                             </span>
                                         @endif
-                                
-                                
+
+
                                 </div>
 
                                 <div class="form-group">
-                                    
+
                                     <label class="required">Marca</label>
                                     <select id="marca" name="marca" class="select2_form form-control {{ $errors->has('marca') ? ' is-invalid' : '' }}" required value="{{old('marca',$producto->marca_id)}}">
                                         <option></option>
@@ -110,7 +110,7 @@
                                         </span>
                                     @endif
 
-                                
+
                                 </div>
 
 
@@ -266,7 +266,7 @@
 
                                         </div>
                                         <input type="hidden" id="clientes_tabla" name="clientes_tabla[]">
-                                        
+
                                         <hr>
 
                                         <div class="table-responsive">
@@ -275,7 +275,7 @@
                                                 style="text-transform:uppercase">
                                                 <thead>
                                                     <tr>
-                                                        
+
                                                         <th class="text-center">ACCIONES</th>
                                                         <th class="text-center">CLIENTE</th>
                                                         <th class="text-center">MONEDA</th>
@@ -381,12 +381,12 @@
                     cancelButtonText: "No, Cancelar",
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        var existe = buscarConsumidor() 
+                        var existe = buscarConsumidor()
                         if (existe == true) {
                             cargarClientes();
                             this.submit();
                         }else{
-                            toastr.error('Es obligatorio el ingreso del Consumidor Normal y la moneda Soles.', 'Error');      
+                            toastr.error('Es obligatorio el ingreso del Consumidor Normal y la moneda Soles.', 'Error');
                         }
                     } else if (result.dismiss === Swal.DismissReason.cancel) {
                         swalWithBootstrapButtons.fire(
@@ -400,12 +400,12 @@
 
             //OBTENER DATA DE EDITAR
             // var id = "{{$producto->familia_id}}"
-           
+
             // $.get('/almacenes/subcategoria/pt/getBySubFamilia/'+ id, function (data) {
 
-                
+
             //     if(data.length > 0){
-                    
+
             //         var select = '<option value="" selected disabled >SELECCIONAR</option>'
             //         for (var i = 0; i < data.length; i++)
             //             if (data[i].id == "{{$producto->sub_familia_id}}") {
@@ -413,20 +413,20 @@
             //             }else{
             //                 select += '<option value="' + data[i].id + '">' + data[i].descripcion+ '</option>';
             //             }
-        
-        
+
+
             //     }else{
             //         toastr.error('Sub Familias no registrados.','Error');
             //     }
-        
+
             //     $("#sub_familia").html(select);
             //     $("#sub_familia").val("{{$producto->sub_familia_id}}").trigger("change");
-        
+
             // });
 
-           
 
-            
+
+
 
         });
 
@@ -453,7 +453,7 @@
     </script>
 
     <script>
-        
+
         $('#monto').keyup(function() {
             var val = $(this).val();
             if (isNaN(val)) {
@@ -732,7 +732,7 @@
 
             $('#cliente').removeClass("is-invalid")
             $('#error-cliente').text('')
-            
+
             $('#moneda_cliente').removeClass("is-invalid")
             $('#error-moneda').text('')
         }

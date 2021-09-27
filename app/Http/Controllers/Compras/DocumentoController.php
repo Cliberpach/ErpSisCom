@@ -63,7 +63,7 @@ class DocumentoController extends Controller
                 $decimal_total = number_format($subtotal, 2, '.', '');
             }
             //TIPO DE PAGO (OTROS)
-            $otros = calcularMontosAcuentaDocumentos($documento->id);
+            //$otros = calcularMontosAcuentaDocumentos($documento->id);
             //Pagos a cuenta
             $pagos = DB::table('compra_documento_transferencia')
             ->join('compra_documentos','compra_documento_transferencia.documento_id','=','compra_documentos.id')
@@ -86,7 +86,7 @@ class DocumentoController extends Controller
             if ($documento->tipo_pago == '1') {
                 $saldo = $decimal_total - $acuenta;
             }else{
-                 $saldo = $decimal_total - $otros;
+                 $saldo = $decimal_total;
             }
             //CALCULAR SALDO
             // $saldo = $decimal_total - $acuenta;
@@ -110,7 +110,8 @@ class DocumentoController extends Controller
                 'subtotal' => $tipo_moneda.' '.number_format($subtotal, 2, '.', ''),
                 // 'fecha_entrega' =>  Carbon::parse($documento->fecha_entrega)->format( 'd/m/Y'),
                 'estado' => $documento->estado,
-                'otros' => $tipo_moneda.' '.number_format($otros, 2, '.', ''),
+               // 'otros' => $tipo_moneda.' '.number_format($otros, 2, '.', ''),
+                'otros' => $tipo_moneda,
                 'saldo' => $tipo_moneda.' '.number_format($saldo, 2, '.', ''),
                 'transferencia' => $tipo_moneda.' '.number_format($acuenta, 2, '.', ''),
                 'total' => $tipo_moneda.' '.number_format($decimal_total, 2, '.', ''),
@@ -194,7 +195,7 @@ class DocumentoController extends Controller
             'igv.numeric' => 'El campo Igv debe se numérico.',
             'tipo_cambio.numeric' => 'El campo Tipo de Cambio debe se numérico.',
         ];
-        
+
         Validator::make($data, $rules, $message)->validate();
         $documento = new Documento();
         $documento->fecha_emision = Carbon::createFromFormat('d/m/Y', $request->get('fecha_emision'))->format('Y-m-d');

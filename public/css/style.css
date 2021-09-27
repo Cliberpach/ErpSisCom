@@ -14,7 +14,7 @@
     background-color: #fff;
     border: 1px solid #e5e6e7;
     border-radius: 0px;
-    
+
 }
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: inherit;
@@ -56,7 +56,7 @@ select.form-control:not([size]):not([multiple]) {
 }
 
 .select2-container--open{
-    z-index:9999999         
+    z-index:9999999
 }
 
 
@@ -86,11 +86,11 @@ select.form-control:not([size]):not([multiple]) {
     align-items: center;
     background: #fff;
   }
-  
+
   .hidden{
     overflow: hidden;
   }
-  
+
   @keyframes ldio-6fqlsp2qlpd {
   0% { background: #1ab394 }
   12.5% { background: #1ab394 }
@@ -126,8 +126,8 @@ select.form-control:not([size]):not([multiple]) {
   /*Login*/
 
 .image-container{
-    background: url('/img/banner_ecovalle.jpeg');
-    background-size: cover;
+    background: url('/img/erp_logo_long.jpeg') repeat;
+    background-size: contain;
 }
 
 .form-container{
@@ -158,13 +158,13 @@ select.form-control:not([size]):not([multiple]) {
       margin-top: 30px;
 
     }
-  
+
 }
 
 
 
 
-  
+
 
 
 
