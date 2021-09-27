@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mantenimiento\Colaborador;
 use App\Http\Controllers\Controller;
 use App\Mantenimiento\Colaborador\Colaborador;
 use App\Mantenimiento\Persona\Persona;
+use App\PersonaTrabajador;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,20 +22,22 @@ class ColaboradorController extends Controller
 
     public function getTable()
     {
-        $colaboradores = Colaborador::where('estado','ACTIVO')->orderBy('id','DESC')->get();
+        $colaboradores =Colaborador::get();
         //dd($colaboradores);
         $coleccion = collect([]);
         foreach($colaboradores as $colaborador) {
-            if ($colaborador->vendedor)
-                continue;
-            $coleccion->push([
+            if($colaborador->persona_trabajador->persona->estado=="ACTIVO")
+            {
+                $coleccion->push([
                 'id' => $colaborador->id,
-                'documento' => $colaborador->persona->getDocumento(),
-                'apellidos_nombres' => $colaborador->persona->getApellidosYNombres(),
-                'telefono_movil' => $colaborador->persona->telefono_movil,
-                'area' => $colaborador->getArea(),
-                'cargo' => $colaborador->getCargo(),
-            ]);
+                'documento' => $colaborador->persona_trabajador->persona->getDocumento(),
+                'apellidos_nombres' => $colaborador->persona_trabajador->persona->getApellidosYNombres(),
+                'telefono_movil' => $colaborador->persona_trabajador->persona->telefono_movil,
+                'area' => $colaborador->persona_trabajador->getArea(),
+                'cargo' =>$colaborador->persona_trabajador->getCargo(),
+             ]);
+            }
+
         }
         return DataTables::of($coleccion)->toJson();
     }
@@ -71,44 +74,46 @@ class ColaboradorController extends Controller
             $persona->estado_documento = $request->get('estado_documento');
             $persona->save();
 
-            $colaborador = new Colaborador();
-            $colaborador->persona_id = $persona->id;
-            $colaborador->area = $request->get('area');
-            $colaborador->profesion = $request->get('profesion');
-            $colaborador->cargo = $request->get('cargo');
-            $colaborador->telefono_referencia = $request->get('telefono_referencia');
-            $colaborador->contacto_referencia = $request->get('contacto_referencia');
-            $colaborador->grupo_sanguineo = $request->get('grupo_sanguineo');
-            $colaborador->alergias = $request->get('alergias');
-            $colaborador->numero_hijos = $request->get('numero_hijos');
-            $colaborador->sueldo = $request->get('sueldo');
-            $colaborador->sueldo_bruto = $request->get('sueldo_bruto');
-            $colaborador->sueldo_neto = $request->get('sueldo_neto');
-            $colaborador->moneda_sueldo = $request->get('moneda_sueldo');
-            $colaborador->tipo_banco = $request->get('tipo_banco');
-            $colaborador->numero_cuenta = $request->get('numero_cuenta');
+            $personaTrabajador = new PersonaTrabajador();
+            $personaTrabajador->persona_id = $persona->id;
+            $personaTrabajador->area = $request->get('area');
+            $personaTrabajador->profesion = $request->get('profesion');
+            $personaTrabajador->cargo = $request->get('cargo');
+            $personaTrabajador->telefono_referencia = $request->get('telefono_referencia');
+            $personaTrabajador->contacto_referencia = $request->get('contacto_referencia');
+            $personaTrabajador->grupo_sanguineo = $request->get('grupo_sanguineo');
+            $personaTrabajador->alergias = $request->get('alergias');
+            $personaTrabajador->numero_hijos = $request->get('numero_hijos');
+            $personaTrabajador->sueldo = $request->get('sueldo');
+            $personaTrabajador->sueldo_bruto = $request->get('sueldo_bruto');
+            $personaTrabajador->sueldo_neto = $request->get('sueldo_neto');
+            $personaTrabajador->moneda_sueldo = $request->get('moneda_sueldo');
+            $personaTrabajador->tipo_banco = $request->get('tipo_banco');
+            $personaTrabajador->numero_cuenta = $request->get('numero_cuenta');
 
             if($request->hasFile('imagen')){
                 $file = $request->file('imagen');
                 $name = $file->getClientOriginalName();
-                $colaborador->nombre_imagen = $name;
-                $colaborador->ruta_imagen = $request->file('imagen')->store('public/colaboradores/imagenes');
+                $personaTrabajador->nombre_imagen = $name;
+                $personaTrabajador->ruta_imagen = $request->file('imagen')->store('public/colaboradores/imagenes');
             }
 
-            $colaborador->fecha_inicio_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_actividad'))->format('Y-m-d') ;
+            $personaTrabajador->fecha_inicio_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_actividad'))->format('Y-m-d') ;
             if (!is_null($request->get('fecha_fin_actividad'))) {
-                $colaborador->fecha_fin_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_actividad'))->format('Y-m-d') ;
+                $personaTrabajador->fecha_fin_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_actividad'))->format('Y-m-d') ;
             }
             if (!is_null($request->get('fecha_inicio_planilla'))) {
-                $colaborador->fecha_inicio_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_planilla'))->format('Y-m-d') ;
+                $personaTrabajador->fecha_inicio_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_planilla'))->format('Y-m-d') ;
             }
             if (!is_null($request->get('fecha_fin_planilla'))) {
-                $colaborador->fecha_fin_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_planilla'))->format('Y-m-d') ;
+                $personaTrabajador->fecha_fin_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_planilla'))->format('Y-m-d') ;
             }
+            $personaTrabajador->save();
+            $colaborador=new Colaborador();
+            $colaborador->persona_trabajador_id = $personaTrabajador->id;
             $colaborador->save();
-
             //Registro de actividad
-            $descripcion = "SE AGREGÓ EL COLABORADOR CON EL NOMBRE: ". $colaborador->persona->nombres.' '.$colaborador->persona->apellido_paterno.' '.$colaborador->persona->apellido_materno;
+            $descripcion = "SE AGREGÓ EL COLABORADOR CON EL NOMBRE: ". $personaTrabajador->persona->nombres.' '.$personaTrabajador->persona->apellido_paterno.' '.$personaTrabajador->persona->apellido_materno;
             $gestion = "colaboradores";
             crearRegistro($colaborador, $descripcion , $gestion);
 
@@ -122,9 +127,9 @@ class ColaboradorController extends Controller
 
     public function edit($id)
     {
-        $empleado = Colaborador::findOrFail($id);
+        $colaborador = Colaborador::findOrFail($id);
         return view('mantenimiento.colaboradores.edit', [
-            'empleado' => $empleado
+            'colaborador' => $colaborador
         ]);
     }
 
@@ -132,10 +137,9 @@ class ColaboradorController extends Controller
     {
         $data = $request->all();
         $colaborador = Colaborador::findOrFail($id);
-
         DB::transaction(function () use ($request, $colaborador) {
 
-            $persona =  $colaborador->persona;
+            $persona =  $colaborador->persona_trabajador->persona;
             $persona->tipo_documento = $request->get('tipo_documento');
             $persona->documento = $request->get('documento');
             $persona->codigo_verificacion = $request->get('codigo_verificacion');
@@ -157,52 +161,52 @@ class ColaboradorController extends Controller
             $persona->estado_documento = $request->get('estado_documento');
             $persona->update();
 
-            $colaborador->persona_id = $persona->id;
-            $colaborador->area = $request->get('area');
-            $colaborador->profesion = $request->get('profesion');
-            $colaborador->cargo = $request->get('cargo');
-            $colaborador->telefono_referencia = $request->get('telefono_referencia');
-            $colaborador->contacto_referencia = $request->get('contacto_referencia');
-            $colaborador->grupo_sanguineo = $request->get('grupo_sanguineo');
-            $colaborador->alergias = $request->get('alergias');
-            $colaborador->numero_hijos = $request->get('numero_hijos');
-            $colaborador->sueldo = $request->get('sueldo');
-            $colaborador->sueldo_bruto = $request->get('sueldo_bruto');
-            $colaborador->sueldo_neto = $request->get('sueldo_neto');
-            $colaborador->moneda_sueldo = $request->get('moneda_sueldo');
-            $colaborador->tipo_banco = $request->get('tipo_banco');
-            $colaborador->numero_cuenta = $request->get('numero_cuenta');
+
+            $colaborador->persona_trabajador->area = $request->get('area');
+            $colaborador->persona_trabajador->profesion = $request->get('profesion');
+            $colaborador->persona_trabajador->cargo = $request->get('cargo');
+            $colaborador->persona_trabajador->telefono_referencia = $request->get('telefono_referencia');
+            $colaborador->persona_trabajador->contacto_referencia = $request->get('contacto_referencia');
+            $colaborador->persona_trabajador->grupo_sanguineo = $request->get('grupo_sanguineo');
+            $colaborador->persona_trabajador->alergias = $request->get('alergias');
+            $colaborador->persona_trabajador->numero_hijos = $request->get('numero_hijos');
+            $colaborador->persona_trabajador->sueldo = $request->get('sueldo');
+            $colaborador->persona_trabajador->sueldo_bruto = $request->get('sueldo_bruto');
+            $colaborador->persona_trabajador->sueldo_neto = $request->get('sueldo_neto');
+            $colaborador->persona_trabajador->moneda_sueldo = $request->get('moneda_sueldo');
+            $colaborador->persona_trabajador->tipo_banco = $request->get('tipo_banco');
+            $colaborador->persona_trabajador->numero_cuenta = $request->get('numero_cuenta');
 
             if($request->hasFile('imagen')){
                 //Eliminar Archivo anterior
-                Storage::delete($colaborador->ruta_imagen);
+                Storage::delete($colaborador->persona_trabajador->ruta_imagen);
                 //Agregar nuevo archivo
                 $file = $request->file('imagen');
                 $name = $file->getClientOriginalName();
-                $colaborador->nombre_imagen = $name;
-                $colaborador->ruta_imagen = $request->file('imagen')->store('public/colaboradores/imagenes');
+                $colaborador->persona_trabajador->nombre_imagen = $name;
+                $colaborador->persona_trabajador->ruta_imagen = $request->file('imagen')->store('public/colaboradores/imagenes');
             }else{
-                if ($colaborador->ruta_imagen) {
+                if ($colaborador->persona_trabajador->ruta_imagen) {
                     //Eliminar Archivo anterior
-                    Storage::delete($colaborador->ruta_imagen);
-                    $colaborador->nombre_imagen = '';
-                    $colaborador->ruta_imagen = '';
+                    Storage::delete($colaborador->persona_trabajador->ruta_imagen);
+                    $colaborador->persona_trabajador->nombre_imagen = '';
+                    $colaborador->persona_trabajador->ruta_imagen = '';
                 }
             }
 
-            $colaborador->fecha_inicio_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_actividad'))->format('Y-m-d') ;
+            $colaborador->persona_trabajador->fecha_inicio_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_actividad'))->format('Y-m-d') ;
             if (!is_null($request->get('fecha_fin_actividad'))) {
-                $colaborador->fecha_fin_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_actividad'))->format('Y-m-d') ;
+                $colaborador->persona_trabajador->fecha_fin_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_actividad'))->format('Y-m-d') ;
             }
             if (!is_null($request->get('fecha_inicio_planilla'))) {
-                $colaborador->fecha_inicio_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_planilla'))->format('Y-m-d') ;
+                $colaborador->persona_trabajador->fecha_inicio_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_planilla'))->format('Y-m-d') ;
             }
             if (!is_null($request->get('fecha_fin_planilla'))) {
-                $colaborador->fecha_fin_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_planilla'))->format('Y-m-d') ;
+                $colaborador->persona_trabajador->fecha_fin_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_planilla'))->format('Y-m-d') ;
             }
-            $colaborador->update();
+            $colaborador->persona_trabajador->update();
             //Registro de actividad
-            $descripcion = "SE MODIFICÓ EL COLABORADOR CON EL NOMBRE: ". $colaborador->persona->nombres.' '.$colaborador->persona->apellido_paterno.' '.$colaborador->persona->apellido_materno;
+            $descripcion = "SE MODIFICÓ EL COLABORADOR CON EL NOMBRE: ". $colaborador->persona_trabajador->persona->nombres.' '.$colaborador->persona_trabajador->persona->apellido_paterno.' '.$colaborador->persona_trabajador->persona->apellido_materno;
             $gestion = "colaboradores";
             modificarRegistro($colaborador, $descripcion , $gestion);
         });
@@ -215,9 +219,9 @@ class ColaboradorController extends Controller
 
     public function show($id)
     {
-        $empleado = Colaborador::findOrFail($id);
+        $colaborador = Colaborador::findOrFail($id);
         return view('mantenimiento.colaboradores.show', [
-            'empleado' => $empleado
+            'colaborador' => $colaborador
         ]);
     }
 
@@ -225,18 +229,15 @@ class ColaboradorController extends Controller
     {
         DB::transaction(function() use ($id) {
 
-            $empleado = Colaborador::findOrFail($id);
-            $empleado->estado = 'ANULADO';
-            $empleado->update();
-
-            $persona = $empleado->persona;
+            $colaborador= Colaborador::findOrFail($id);
+            $persona=$colaborador->persona_trabajador->persona;
             $persona->estado = 'ANULADO';
             $persona->update();
 
             //Registro de actividad
-            $descripcion = "SE ELIMINÓ EL COLABORADOR CON EL NOMBRE: ". $empleado->persona->nombres.' '.$empleado->persona->apellido_paterno.' '.$empleado->persona->apellido_materno;
+            $descripcion = "SE ELIMINÓ EL COLABORADOR CON EL NOMBRE: ". $colaborador->persona_trabajador->persona->nombres.' '.$colaborador->persona_trabajador->persona->apellido_paterno.' '.$colaborador->persona_trabajador->persona->apellido_materno;
             $gestion = "colaboradores";
-            eliminarRegistro($empleado, $descripcion , $gestion);
+            eliminarRegistro($colaborador, $descripcion , $gestion);
 
         });
 

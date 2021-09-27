@@ -39,7 +39,13 @@ class PersonaTrabajador extends Model
     {
         return $this->belongsTo(Persona::class,'persona_id');
     }
-
+    public function colaborador() {
+        return $this->hasOne(Colaborador::class,'persona_trabajador_id');
+    }
+    public function vendedor()
+    {
+        return $this->hasOne(Vendedor::class,'persona_trabajador_id');
+    }
     public function getBanco(): string
     {
         $banco = bancos()->where('simbolo', $this->tipo_banco)->first();
