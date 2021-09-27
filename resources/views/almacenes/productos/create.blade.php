@@ -32,7 +32,7 @@
                                 <div class="form-group row">
                                     <div class="col-lg-6 col-xs-12">
                                         <label class="required">Código ISO</label>
-                                        <input type="text" id="codigo" name="codigo" class="form-control {{ $errors->has('codigo') ? ' is-invalid' : '' }}" value="{{old('codigo')}}" maxlength="50" onkeyup="return mayus(this)" required>
+                                        <input type="text" id="codigo" name="codigo" class="form-control {{ $errors->has('codigo') ? ' is-invalid' : '' }}" value="{{old('codigo')}}" maxlength="50" onkeyup="return mayus(this)">
                                         @if ($errors->has('codigo'))
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $errors->first('codigo') }}</strong>
@@ -46,7 +46,7 @@
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $errors->first('codigo_barra') }}</strong>
                                             </span>
-                                        @endif 
+                                        @endif
                                     </div>
                                 </div>
 
@@ -69,12 +69,12 @@
 
                                     <div class="col-lg-6 col-xs-12">
                                         <label>Peso (KG)</label>
-                                        <input type="number" id="peso_producto" placeholder="0.00" step="0.001" min="0" onkeypress="return filterFloat(event, this);"  class="form-control {{ $errors->has('peso_producto') ? ' is-invalid' : '' }}" name="peso_producto" value="{{ old('peso_producto', 0.00)}}">
+                                        <input type="number" id="peso_producto" placeholder="0.00" step="0.001" min="0" onkeypress="return filterFloat(event, this);"  class="form-control {{ $errors->has('peso_producto') ? ' is-invalid' : '' }}" name="peso_producto" value="{{ old('peso_producto', 0.001)}}">
                                         @if ($errors->has('peso_producto'))
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $errors->first('peso_producto') }}</strong>
                                             </span>
-                                        @endif 
+                                        @endif
                                     </div>
 
                                 </div>
@@ -82,7 +82,7 @@
 
 
                                 <div class="form-group">
- 
+
                                     <label class="required">Descripción del Producto</label>
                                     <input type="text" id="nombre" name="nombre" class="form-control {{ $errors->has('nombre') ? ' is-invalid' : '' }}" value="{{old('nombre')}}" maxlength="191" onkeyup="return mayus(this)" required>
                                     @if ($errors->has('nombre'))
@@ -90,12 +90,12 @@
                                             <strong>{{ $errors->first('nombre') }}</strong>
                                         </span>
                                     @endif
-                                
+
                                 </div>
 
 
                                 <div class="form-group">
-                                    
+
                                         <label class="required">Marca</label>
                                         <select id="marca" name="marca" class="select2_form form-control {{ $errors->has('marca') ? ' is-invalid' : '' }}" required value="{{old('marca')}}">
                                             <option></option>
@@ -109,7 +109,7 @@
                                             </span>
                                         @endif
 
-                                    
+
                                 </div>
 
                                 <div class="form-group row">
@@ -273,7 +273,7 @@
                                                     <tr>
                                                         <th class="text-center">ACCIONES</th>
                                                         <th class="text-center">CLIENTE</th>
-                                                        <th class="text-center">MONEDA</th> 
+                                                        <th class="text-center">MONEDA</th>
                                                         <th class="text-center">MONTO</th>
 
                                                     </tr>
@@ -290,7 +290,7 @@
                             </div>
 
                         </div>
-                        
+
                         <div class="hr-line-dashed"></div>
                         <div class="row">
                             <div class="col-lg-12">
@@ -369,12 +369,12 @@
                     cancelButtonText: "No, Cancelar",
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        var existe = buscarConsumidor() 
+                        var existe = buscarConsumidor()
                         if (existe == true) {
                             cargarClientes();
                             this.submit();
                         }else{
-                            toastr.error('Es obligatorio el ingreso del Cliente Consumidor Normal y la moneda Soles.', 'Error');      
+                            toastr.error('Es obligatorio el ingreso del Cliente Consumidor Normal y la moneda Soles.', 'Error');
                         }
                     } else if (result.dismiss === Swal.DismissReason.cancel) {
                         swalWithBootstrapButtons.fire(
@@ -430,8 +430,8 @@
             }
             $(this).val(val);
         });
-        
-        
+
+
         $(document).ready(function() {
 
             // DataTables
@@ -595,7 +595,7 @@
                             moneda: $('#moneda_cliente').val(),
                             id_moneda: $('#moneda_cliente').val(),
                         }
-                     
+
                         limpiarDetalle()
                         agregarTabla(detalle);
 
@@ -626,7 +626,7 @@
             return existe
         }
 
-        
+
         function agregarTabla(detalle) {
             var t = $('.dataTables-clientes').DataTable();
             t.row.add([
@@ -645,7 +645,7 @@
         function cargarMoneda(id) {
 
             var moneda = ""
-            
+
             @foreach (tipos_moneda() as $tipo_moneda)
                 if ("{{$tipo_moneda->id}}" == id ) {
                     moneda = "{{$tipo_moneda->descripcion}}"
@@ -665,7 +665,7 @@
 
                 var url = '{{ route("mantenimiento.tabla.detalle.getDetail", ":descripcion")}}';
                 url = url.replace(':descripcion', value[1]);
-                
+
                 $.ajax({
                     url: url,
                     type:'get',
@@ -678,7 +678,7 @@
                         };
                         clientes.push(fila);
                         $('#clientes_tabla').val(JSON.stringify(clientes));
-                    },            
+                    },
                 })
 
             });
@@ -714,6 +714,6 @@
             });
             return existe
         }
-        
+
     </script>
 @endpush

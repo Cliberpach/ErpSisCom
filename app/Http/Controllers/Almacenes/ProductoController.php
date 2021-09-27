@@ -20,7 +20,7 @@ class ProductoController extends Controller
 {
     public function index()
     {
-        
+
         return view('almacenes.productos.index');
     }
 
@@ -52,7 +52,7 @@ class ProductoController extends Controller
     {
         $data = $request->all();
         $rules = [
-            'codigo' => ['required','string', 'max:50', Rule::unique('productos','codigo')->where(function ($query) {
+            'codigo' => ['string', 'max:50', Rule::unique('productos','codigo')->where(function ($query) {
                 $query->whereIn('estado',["ACTIVO"]);
             })],
             'codigo_barra' => ['nullable',Rule::unique('productos','codigo_barra')->where(function ($query) {
@@ -70,7 +70,6 @@ class ProductoController extends Controller
         ];
 
         $message = [
-            'codigo.required' => 'El campo Código es obligatorio',
             'codigo_barra.unique' => 'El campo Código de Barra debe de ser único.',
             'linea_comercial.required' => 'El campo Linea Comercial es obligatorio',
             'codigo.unique' => 'El campo Código debe ser único',
@@ -129,19 +128,19 @@ class ProductoController extends Controller
             $descripcion = "SE AGREGÓ EL PRODUCTO CON LA DESCRIPCION: ". $producto->nombre;
             $gestion = "PRODUCTO";
             crearRegistro($producto, $descripcion , $gestion);
-        
+
 
         });
 
-  
-        
+
+
         Session::flash('success','Producto creado.');
         return redirect()->route('almacenes.producto.index')->with('guardar', 'success');
     }
 
     public function edit($id)
     {
-        $producto = Producto::findOrFail($id);   
+        $producto = Producto::findOrFail($id);
         $marcas = Marca::where('estado', 'ACTIVO')->get();
         $clientes = TipoCliente::where('estado','ACTIVO')->where('producto_id',$id)->get();
         $categorias = Categoria::where('estado', 'ACTIVO')->get();
@@ -157,7 +156,7 @@ class ProductoController extends Controller
 
     public function update(Request $request, $id)
     {
-       
+
         $data = $request->all();
         $rules = [
             'codigo' => ['required','string', 'max:50', Rule::unique('productos','codigo')->where(function ($query) {
@@ -218,7 +217,7 @@ class ProductoController extends Controller
         $clientesJSON = $request->get('clientes_tabla');
         $clientetabla = json_decode($clientesJSON[0]);
 
-        
+
         if ($clientetabla) {
             $clientes = TipoCliente::where('producto_id', $id)->get();
             foreach ($clientes as $cliente) {
@@ -251,7 +250,7 @@ class ProductoController extends Controller
         $descripcion = "SE MODIFICÓ EL PRODUCTO CON LA DESCRIPCION: ". $producto->nombre;
         $gestion = "PRODUCTO";
         modificarRegistro($producto, $descripcion , $gestion);
-        
+
         Session::flash('success','Producto modificado.');
         return redirect()->route('almacenes.producto.index')->with('guardar', 'success');
     }
@@ -328,7 +327,7 @@ class ProductoController extends Controller
                     ->get();
 
         $producto = Producto::where('id',$id)->where('estado','ACTIVO')->first();
-        
+
         $resultado = [
                 'cliente_producto' => $cliente_producto,
                 'producto' => $producto,
@@ -338,7 +337,7 @@ class ProductoController extends Controller
 
     public function productoDescripcion($id)
     {
-        $producto = Producto::findOrFail($id);        
+        $producto = Producto::findOrFail($id);
         return $producto;
     }
 
@@ -348,7 +347,7 @@ class ProductoController extends Controller
         return $producto;
     }
 
-    
+
     public function getProductos(){
         return datatables()->query(
             DB::table('productos')
