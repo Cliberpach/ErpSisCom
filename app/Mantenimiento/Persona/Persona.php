@@ -27,19 +27,21 @@ class Persona extends Model
         'distrito_id',
         'direccion',
         'correo_electronico',
+        'correo_corporativo',
         'telefono_movil',
         'telefono_fijo',
+        'telefono_trabajo',
         'estado_documento',
         'estado'
     ];
-    public function colaborador() {
-        return $this->hasOne(Colaborador::class,'persona_id');
-    }
+    // public function colaborador() {
+    //     return $this->hasOne(Colaborador::class,'persona_id');
+    // }
 
-    public function vendedor()
-    {
-        return $this->hasOne(Vendedor::class,'persona_id');
-    }
+    // public function vendedor()
+    // {
+    //     return $this->hasOne(Vendedor::class,'persona_id');
+    // }
     public function user_persona()
     {
         return $this->hasOne(UserPersona::class,'persona_id');
