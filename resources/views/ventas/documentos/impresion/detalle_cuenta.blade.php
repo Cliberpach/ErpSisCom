@@ -239,6 +239,16 @@
             <table class="tbl-informacion">
                 <tbody style="padding-top: 5px; padding-bottom: 5px;">
                     <tr>
+                        <td style="padding-left: 5px;">FECHA DOCUMENTO</td>
+                        <td>:</td>
+                        <td>{{ getFechaFormato($cuenta->documento->fecha_documento ,'d/m/Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 5px;">DOCUMENTO</td>
+                        <td>:</td>
+                        <td>{{ $cuenta->documento->serie . ' - ' . $cuenta->documento->correlativo }}</td>
+                    </tr>
+                    <tr>
                         <td style="padding-left: 5px;">CLIENTE</td>
                         <td>:</td>
                         <td>{{ $cliente->nombre }}</td>
@@ -268,7 +278,7 @@
                 <tbody>
                     @foreach($detalles as $item)
                     <tr>
-                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->fecha }}</td>
+                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ getFechaFormato($item->fecha ,'d/m/Y') }}</td>
                         <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->monto }}</td>
                         <td style="text-align: right">{{ $item->saldo }}</td>
                     </tr>

@@ -393,10 +393,10 @@ class DocumentoController extends Controller
                 $lote->update();
             }
             
-            $detalle = new DetalleMovimientoVentaCaja();
-            $detalle->cdocumento_id = $documento->id;
-            $detalle->mcaja_id = 1;
-            $detalle->save();
+            // $detalle = new DetalleMovimientoVentaCaja();
+            // $detalle->cdocumento_id = $documento->id;
+            // $detalle->mcaja_id = 1;
+            // $detalle->save();
 
             if((int)$documento->tipo_venta === 127 || (int)$documento->tipo_venta === 128)
             {
@@ -632,7 +632,6 @@ class DocumentoController extends Controller
     // {
     //     $formatter = new NumeroALetras();
     //     $convertir = $formatter->toInvoice($documento->total, 2, 'SOLES');
-
     //     //CREAR LEYENDA DEL COMPROBANTE
     //     $arrayLeyenda = Array();
     //     $arrayLeyenda[] = array(
@@ -661,10 +660,8 @@ class DocumentoController extends Controller
     //             "tipAfeIgv" => 10,
     //             "totalImpuestos" =>  (float)($detalles[$i]->valor_venta - ($detalles[$i]->valor_venta / 1.18)),
     //             "mtoPrecioUnitario" => (float)$detalles[$i]->precio_nuevo
-
     //         );
     //     }
-
     //     return $arrayProductos;
     // }
 
@@ -982,7 +979,6 @@ class DocumentoController extends Controller
 
         return $fecha;
     }
-
 
     public function sunat($id)
     {
