@@ -117,15 +117,15 @@
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label id="imagen_label">Imagen:</label>
-    
+
                                         <div class="custom-file">
                                             <input id="imagen" type="file" name="imagen" class="custom-file-input"   accept="image/*">
-    
+
                                             <label for="imagen" id="imagen_txt"
                                                 class="custom-file-label selected">Seleccionar</label>
-    
+
                                             <div class="invalid-feedback"><b><span id="error-imagen"></span></b></div>
-    
+
                                         </div>
                                     </div>
                                     <div class="form-group row justify-content-center">

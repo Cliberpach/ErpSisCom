@@ -399,8 +399,10 @@ function(){
         Route::get('index','Compras\CuentaProveedorController@index')->name('cuentaProveedor.index');
         Route::get('getTable','Compras\CuentaProveedorController@getTable')->name('cuentaProveedor.getTable');
         Route::get('getDatos','Compras\CuentaProveedorController@getDatos')->name('cuentaProveedor.getDatos');
-        Route::get('detallePago','Compras\CuentaProveedorController@detallePago')->name('cuentaProveedor.detallePago');
+        Route::post('detallePago','Compras\CuentaProveedorController@detallePago')->name('cuentaProveedor.detallePago');
         Route::get('consulta','Compras\CuentaProveedorController@consulta')->name('cuentaProveedor.consulta');
+        Route::get('reporte/{id}','Compras\CuentaProveedorController@reporte')->name('cuentaProveedor.reporte');
+        Route::get('imagen/{id}','Compras\CuentaProveedorController@imagen')->name('cuentaProveedor.imagen');
     });
 
     Route::prefix('cuentaCliente')->group(function () {

@@ -11,7 +11,7 @@
             <div class="modal-body">
                 <input type="hidden" name="cuenta_proveedor_id" id="cuenta_proveedor_id">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                         <div class="form-group row">
                             <div class="col-md-6">
                                 <div class="row">
@@ -42,11 +42,19 @@
                                             disabled>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row align-items-end">
                                     <div class="col-md-6">
-                                        <label for="" class="required">Estado</label>
-                                        <input type="text" name="estado" id="estado"
-                                            class="form-control form-control-sm" disabled>
+                                        <div class="form-group">
+                                            <label for="" class="required">Estado</label>
+                                            <input type="text" name="estado" id="estado"
+                                                class="form-control form-control-sm" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <a class="btn btn-danger" style="color:white" id="btn-detalle"
+                                                target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -57,38 +65,105 @@
                                     style="text-transform:uppercase">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Fecha</th>
-                                            <th class="text-center">Observacion</th>
-                                            <th class="text-center">Monto</th>
+                                            <th class="text-center pletra">Fecha</th>
+                                            <th class="text-center pletra">Observacion</th>
+                                            <th class="text-center pletra">Monto</th>
+                                            <th class="text-center pletra">Im&aacute;gen</th>
                                         </tr>
                                     </thead>
                                 </table>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="row">
-                            <div class="col-md-12">
-                                <label for="" class="required">Pago</label>
-                                <select name="pago" id="pago" class="form-control select2_form" required>
-                                    <option value="A CUENTA">A CUENTA</option>
-                                    <option value="TODO">TODO</option>
-                                </select>
+                            <div class="col-md-7">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="" class="col-form-label required">Pago</label>
+                                            <select name="pago" id="pago" class="form-control select2_form" required>
+                                                <option value="A CUENTA">A CUENTA</option>
+                                                <option value="TODO">TODO</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                        <label for="" class="col-form-label required">Observacion</label>
+                                        <textarea name="observacion" id="observacion" cols="30" rows="2"
+                                            class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label for="" class="col-form-label required">Fecha</label>
+                                            <input type="date" name="fecha" id="fecha" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label id="imagen_label">Imagen:</label>
+
+                                            <div class="custom-file">
+                                                <input id="imagen" type="file" name="imagen" class="custom-file-input"
+                                                    accept="image/*">
+
+                                                <label for="imagen" id="imagen_txt"
+                                                    class="custom-file-label selected">Seleccionar</label>
+
+                                                <div class="invalid-feedback"><b><span id="error-imagen"></span></b>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group row justify-content-center">
+                                            <div class="col-6 align-content-center">
+                                                <div class="row justify-content-end">
+                                                    <a href="javascript:void(0);" id="limpiar_imagen">
+                                                        <span class="badge badge-danger">x</span>
+                                                    </a>
+                                                </div>
+                                                <div class="row justify-content-center">
+                                                    <p>
+                                                        <img class="imagen"
+                                                            src="{{ asset('img/default.png') }}" alt="">
+                                                        <input id="url_imagen" name="url_imagen" type="hidden" value="">
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="" class="required">Fecha</label>
-                                <input type="date" name="fecha" id="fecha" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="" class="required">Cantidad</label>
-                                <input type="number" name="cantidad" id="cantidad" class="form-control">
-                            </div>
-                            <div class="col-md-12">
-                                <label for="" class="required">Observacion</label>
-                                <textarea name="observacion" id="observacion" cols="30" rows="3"
-                                    class="form-control"></textarea>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label class="col-form-label required">Efectivo</label>
+                                    <input type="text" value="0.00" class="form-control" id="efectivo_venta"
+                                        {{-- onkeypress="return filterFloat(event, this);" onkeyup="changeEfectivo(this)" --}}
+                                        name="efectivo_venta">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label required">Modo de pago</label>
+                                    <select name="modo_pago" id="modo_pago" class="select2_form form-control"
+                                        onchange="changeModoPago(this)">
+                                        <option></option>
+                                        @foreach (modos_pago() as $modo)
+                                            <option value="{{ $modo->id }}">
+                                                {{ $modo->descripcion }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label required">Importe</label>
+                                    <input type="text" class="form-control" id="importe_venta"
+                                        {{-- onkeypress="return filterFloat(event, this);" onkeyup="changeImporte(this)" --}}
+                                        name="importe_venta">
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
@@ -104,8 +179,22 @@
         </div>
     </div>
 </div>
+@push('styles')
+    <style>
+        .imagen {
+            width: 200px;
+            height: 200px;
+            border-radius: 10%;
+        }
+        .pletra{
+            font-size: 0.9em;
+        }
+
+    </style>
+@endpush
 @push('scripts')
     <script>
+        var fileImagen = null;
         $("#btn_guardar_detalle").click(function(e) {
             e.preventDefault();
             var pago = $("#modal_detalle #pago").val();
@@ -135,17 +224,21 @@
                         }
                     }
                     if (enviar) {
-                        axios.get("{{ route('cuentaProveedor.detallePago') }}", {
-                            params: {
-                                id: id_cuenta_proveedor,
-                                pago: pago,
-                                fecha: fecha,
-                                cantidad: cantidad,
-                                observacion: observacion,
-
+                        const config = {
+                            headers: {
+                                "content-type": "multipart/form-data"
                             }
-                        }).then((value) => {
-                            window.location.href="{{ route('cuentaProveedor.index') }}"
+                        };
+                        let data = new FormData();
+                        data.append("id", id_cuenta_proveedor);
+                        data.append("pago", pago);
+                        data.append("fecha", fecha);
+                        data.append("cantidad", cantidad);
+                        data.append("observacion", observacion);
+                        data.append("file", fileImagen);
+                        data.append
+                        axios.post("{{ route('cuentaProveedor.detallePago') }}", data, config).then((value) => {
+                            window.location.href = "{{ route('cuentaProveedor.index') }}"
                         }).catch((value) => {
 
                         })
@@ -154,5 +247,44 @@
             }
 
         });
+        $('#limpiar_imagen').click(function() {
+            $('.imagen').attr("src", "{{ asset('img/default.png') }}")
+            var fileName = "Seleccionar"
+            $('.custom-file-label').addClass("selected").html(fileName);
+            $('#imagen').val('')
+        })
+
+        $('#imagen').on('change', function() {
+            var fileInput = document.getElementById('imagen');
+            var filePath = fileInput.value;
+            var allowedExtensions = /(.jpg|.jpeg|.png)$/i;
+            $imagenPrevisualizacion = document.querySelector(".imagen");
+
+            if (allowedExtensions.exec(filePath)) {
+                var userFile = document.getElementById('imagen');
+                userFile.src = URL.createObjectURL(event.target.files[0]);
+                fileImagen = event.target.files[0];
+                var data = userFile.src;
+                $imagenPrevisualizacion.src = data
+                let fileName = $(this).val().split('\\').pop();
+                $(this).next('.custom-file-label').addClass("selected").html(fileName);
+            } else {
+                toastr.error('Extensión inválida, formatos admitidos (.jpg . jpeg . png)', 'Error');
+                $('.imagen').attr("src", "{{ asset('img/default.png') }}")
+            }
+        });
+        function changeModoPago(b)
+        {
+            if(b.value==1) {
+                    $("#efectivo_venta").attr('readonly',false)
+                    $("#importe_venta").attr('readonly',true)
+            }
+            else{
+                $("#efectivo_venta").attr('readonly',false)
+                $("#importe_venta").attr('readonly',false)
+            }
+        }
+
+
     </script>
 @endpush

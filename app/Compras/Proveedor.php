@@ -10,7 +10,7 @@ class Proveedor extends Model
     public $timestamps = true;
     protected $fillable =[
         'ruc',
-        'dni', 
+        'dni',
         'descripcion',
         'tipo_documento',
         'tipo_persona',
@@ -33,7 +33,7 @@ class Proveedor extends Model
 
         'facebook',
         'instagram',
-        
+
         'calidad',
         'celular_calidad',
         'telefono_calidad',
@@ -50,5 +50,11 @@ class Proveedor extends Model
     public function ordenes()
     {
         return $this->hasMany('App\Compras\Orden');
+    }
+    public function documento(){
+        return $this->dni==null ? $this->ruc : $this->dni;
+    }
+    public function tipodocumento(){
+        return $this->dni==null ? 'DNI' : 'RUC';
     }
 }

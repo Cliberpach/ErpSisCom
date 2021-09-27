@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Compras;
 
 use App\Compras\CuentaProveedor;
 use App\Compras\DetalleCuentaProveedor;
+use App\Compras\Proveedor;
 use App\Http\Controllers\Controller;
+use App\Mantenimiento\Empresa\Empresa;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -80,6 +83,13 @@ class CuentaProveedorController extends Controller
             $detallepago->save();
             $cuentaProveedor->saldo=$cuentaProveedor->saldo-$request->cantidad;
             $cuentaProveedor->save();
+            $detallepago->saldo =$cuentaProveedor->saldo;
+            $detallepago->update();
+
+            if($request->hasFile('file')){
+                $detallepago->ruta_imagen = $request->file('file')->store('public/cuenta/proveedor');
+                $detallepago->update();
+            }
             if($cuentaProveedor->saldo==0)
             {
                 $cuentaProveedor->estado='PAGADO';
@@ -112,6 +122,10 @@ class CuentaProveedorController extends Controller
                         }
                         $detallepago->save();
                         $cuenta->save();
+                        if($request->hasFile('file')){
+                            $detallepago->ruta_imagen = $request->file('file')->store('public/cuenta/proveedor');
+                            $detallepago->update();
+                        }
                         if($cuenta->saldo==0)
                         {
                             $cuenta->estado='PAGADO';
@@ -121,5 +135,25 @@ class CuentaProveedorController extends Controller
             }
 
         }
+    }
+
+    public function reporte($id)
+    {
+        $cuenta = CuentaProveedor::findOrFail($id);
+        $proveedor = $cuenta->documento->proveedor;
+        $empresa = Empresa::first();
+        $pdf = PDF::loadview('ventas.documentos.impresion.detalle_cuenta_proveedor',[
+            'cuenta' => $cuenta,
+            'detalles' => $cuenta->detallePago,
+            'proveedor' => $proveedor,
+            'empresa' => $empresa
+            ])->setPaper('a4');
+        return $pdf->stream('CUENTA-'.$cuenta->id.'.pdf');
+    }
+    public function imagen($id)
+    {
+        $detalle = DetalleCuentaProveedor::find($id);
+        $ruta = storage_path().'/app/'.$detalle->ruta_imagen;
+        return response()->download($ruta);
     }
 }

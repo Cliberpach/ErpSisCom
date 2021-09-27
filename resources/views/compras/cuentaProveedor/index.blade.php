@@ -102,6 +102,7 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="{{ asset('Inspinia/js/plugins/select2/select2.full.min.js') }}"></script>
 <script>
+
     $(".select2_form").select2({
         placeholder: "SELECCIONAR",
         allowClear: true,
@@ -239,13 +240,16 @@
             $("#modal_detalle #saldo").val(datos.saldo)
             $("#modal_detalle #estado").val(datos.estado)
             $("#modal_detalle").modal("show");
+            fileImagen=null;
+            $("#btn-detalle").attr('href','/cuentaProveedor/reporte/'+id)
             var table = $(".dataTables-detalle").DataTable();
             table.clear().draw();
             detalle.forEach((value, index, array) => {
                 table.row.add([
                     value.fecha,
                     value.observacion,
-                    value.monto
+                    value.monto,
+                    '<a class="btn btn-primary btn-xs" href="/cuentaCliente/imagen/'+value.id+'"><i class="fa fa-download"></i></a>'
                 ]).draw(false);
             })
         }).catch((value) => {
