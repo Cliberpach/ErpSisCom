@@ -31,13 +31,13 @@
                     <div class="form-group row">
                         <div class="col-md-6">
                             <label class="required">Tipo Documento:</label>
-                            {{-- <input type="text" name="tipo_documento" id="tipo_documento" class="form-control"> --}}
-                            <select name="tipo_documento_editar" id="tipo_documento_editar" class="form-control select2_form" required>
+                            <input type="text" name="tipo_documento" id="tipo_documento" class="form-control" value="RECIBO" disabled>
+                            {{-- <select name="tipo_documento_editar" id="tipo_documento_editar" class="form-control select2_form" required>
                                 <option value=""></option>
                                 @foreach (tipo_compra() as $documento)
                                         <option value="{{$documento->id}}">{{$documento->descripcion}}</option>
                                 @endforeach
-                            </select>
+                            </select> --}}
                         </div>
                         <div class="col-md-6">
                             <label class="required">Documento:</label>

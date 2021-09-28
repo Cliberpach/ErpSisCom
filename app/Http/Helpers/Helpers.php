@@ -995,6 +995,24 @@ if(!function_exists('clientes'))
         return Cliente::get();
     }
 }
+if(!function_exists('movimientoUser'))
+{
+    function movimientoUser(){
+        if(Auth::user()->usuario=="ADMINISTRADOR"){
+
+            $consulta=MovimientoCaja::where('caja_id',1)->where('estado_movimiento','APERTURA');
+            if($consulta->count()!==0){
+                return $consulta->first();
+            }
+            else{
+                $consulta=MovimientoCaja::where('estado_movimiento','APERTURA')->first();
+            }
+        }
+        else{
+          return MovimientoCaja::where('colaborador_id',Auth::user()->user->persona->persona->persona_trabajador->colaborador->id)->first();
+        }
+    }
+}
 
 
 

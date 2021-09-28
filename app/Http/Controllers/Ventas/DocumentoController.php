@@ -392,10 +392,10 @@ class DocumentoController extends Controller
                 $lote->cantidad =  $lote->cantidad - $producto->cantidad;
                 $lote->update();
             }
-            
+
             $detalle = new DetalleMovimientoVentaCaja();
             $detalle->cdocumento_id = $documento->id;
-            $detalle->mcaja_id = 1;
+            $detalle->mcaja_id = movimientoUser()->id;
             $detalle->save();
 
             if((int)$documento->tipo_venta === 127 || (int)$documento->tipo_venta === 128)
@@ -420,7 +420,7 @@ class DocumentoController extends Controller
                     event(new DocumentoNumeracion($documento));
                 }
             }
-            
+
             $documento = Documento::find($documento->id);
             $documento->nombre_comprobante_archivo = $documento->serie.'-'.$documento->correlativo.'.pdf';
             $documento->update();
@@ -477,7 +477,7 @@ class DocumentoController extends Controller
                     });
                 }
             }
-            
+
             DB::commit();
 
             Session::flash('success','Documento de Venta creada.');
@@ -894,9 +894,9 @@ class DocumentoController extends Controller
                     mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'xml'));
                 }
                 file_put_contents($pathToFile, $data);
-                
+
                 $ruta = public_path().'/storage/xml/'.$name;
-        
+
                 return response()->download($ruta);
                 // return response()->file($pathToFile);
 
@@ -913,7 +913,7 @@ class DocumentoController extends Controller
                 }
                 file_put_contents($pathToFile, $data);
                 $ruta = public_path().'/storage/xml/'.$name;
-        
+
                 return response()->download($ruta);
                 //return response()->file($pathToFile);
             }

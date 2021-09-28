@@ -11,7 +11,7 @@
                 <small class="font-bold">Nuevo Egreso</small>
             </div>
             <div class="modal-body">
-                <form role="form" action="{{ route('Egreso.store') }}" method="POST">
+                <form role="form" action="{{ route('Egreso.store') }}" method="POST" id="frm_egreso_create">
                     {{ csrf_field() }} {{ method_field('POST') }}
                     <div class="form-group row">
                         <div class="col-md-6">
@@ -31,13 +31,13 @@
                     <div class="form-group row">
                         <div class="col-md-6">
                             <label class="required">Tipo Documento:</label>
-                            {{-- <input type="text" name="tipo_documento" id="tipo_documento" class="form-control"> --}}
-                            <select name="tipo_documento" id="tipo_documento" class="form-control select2_form" required>
+                            <input type="text" name="tipo_documento" id="tipo_documento" class="form-control" value="RECIBO" disabled>
+                            {{-- <select name="tipo_documento" id="tipo_documento" class="form-control select2_form" required>
                                 <option value=""></option>
                                 @foreach (tipo_compra() as $documento)
                                         <option value="{{$documento->id}}">{{$documento->descripcion}}</option>
                                 @endforeach
-                            </select>
+                            </select> --}}
                         </div>
                         <div class="col-md-6">
                             <label class="required">Documento:</label>
@@ -59,7 +59,7 @@
                             class="required"></label>) son obligatorios.</small>
                 </div>
                 <div class="col-md-6 text-right">
-                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> Guardar</button>
+                    <button type="button" class="btn btn-primary btn-sm btn-submit-egreso"><i class="fa fa-save"></i> Guardar</button>
                     <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
                             class="fa fa-times"></i> Cancelar</button>
                 </div>
@@ -93,5 +93,16 @@
             $("#documento").attr('disabled',false)
            }
         });
+        $(".btn-submit-egreso").on('click', function(e) {
+            axios.get("{{route('Caja.movimiento.verificarestado')}}").then((value) => {
+                if(value.data=="")
+                {
+                    toastr.error("No hay ninguna apertura de caja");
+                }
+                else{
+                    $("#frm_egreso_create").submit();
+                }
+            })
+        })
     </script>
 @endpush

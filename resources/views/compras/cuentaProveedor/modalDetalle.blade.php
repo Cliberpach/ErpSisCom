@@ -90,9 +90,9 @@
                                     </div>
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                        <label for="" class="col-form-label required">Observacion</label>
-                                        <textarea name="observacion" id="observacion" cols="30" rows="2"
-                                            class="form-control"></textarea>
+                                            <label for="" class="col-form-label required">Observacion</label>
+                                            <textarea name="observacion" id="observacion" cols="30" rows="2"
+                                                class="form-control"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-8">
@@ -141,8 +141,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label required">Efectivo</label>
                                     <input type="text" value="0.00" class="form-control" id="efectivo_venta"
-                                        {{-- onkeypress="return filterFloat(event, this);" onkeyup="changeEfectivo(this)" --}}
-                                        name="efectivo_venta">
+                                        {{-- onkeypress="return filterFloat(event, this);" onkeyup="changeEfectivo(this)" --}} name="efectivo_venta">
                                 </div>
                                 <div class="form-group">
                                     <label class="col-form-label required">Modo de pago</label>
@@ -158,8 +157,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label required">Importe</label>
                                     <input type="text" class="form-control" id="importe_venta" value="0.00"
-                                        {{-- onkeypress="return filterFloat(event, this);" onkeyup="changeImporte(this)" --}}
-                                        name="importe_venta">
+                                        {{-- onkeypress="return filterFloat(event, this);" onkeyup="changeImporte(this)" --}} name="importe_venta">
                                 </div>
                             </div>
                         </div>
@@ -186,7 +184,8 @@
             height: 200px;
             border-radius: 10%;
         }
-        .pletra{
+
+        .pletra {
             font-size: 0.9em;
         }
 
@@ -199,9 +198,9 @@
             e.preventDefault();
             var pago = $("#modal_detalle #pago").val();
             var fecha = $("#modal_detalle #fecha").val();
-            var efectivo_venta=$("#efectivo_venta").val();
-            var importe_venta=$("#importe_venta").val();
-            var cantidad = parseFloat(efectivo_venta)+parseFloat(importe_venta);
+            var efectivo_venta = $("#efectivo_venta").val();
+            var importe_venta = $("#importe_venta").val();
+            var cantidad = parseFloat(efectivo_venta) + parseFloat(importe_venta);
             var observacion = $("#modal_detalle #observacion").val();
             var saldo = parseFloat($("#modal_detalle #saldo").val());
             var modo_pago = $("#modo_pago").val();
@@ -226,28 +225,36 @@
                             enviar = false
                         }
                     }
-                    if (enviar) {
-                        const config = {
-                            headers: {
-                                "content-type": "multipart/form-data"
-                            }
-                        };
-                        let data = new FormData();
-                        data.append("id", id_cuenta_proveedor);
-                        data.append("pago", pago);
-                        data.append("fecha", fecha);
-                        data.append("cantidad", cantidad);
-                        data.append("observacion", observacion);
-                        data.append("efectivo_venta",efectivo_venta)
-                        data.append("importe_venta",efectivo_venta)
-                        data.append("modo_pago",modo_pago)
-                        data.append("file", fileImagen);
-                        axios.post("{{ route('cuentaProveedor.detallePago') }}", data, config).then((value) => {
-                            // window.location.href = "{{ route('cuentaProveedor.index') }}"
-                        }).catch((value) => {
+                    axios.get("{{ route('Caja.movimiento.verificarestado') }}").then((value) => {
+                        if (value.data == "") {
+                            toastr.error("No hay ninguna apertura de caja");
+                        } else {
+                            if (enviar) {
+                                const config = {
+                                    headers: {
+                                        "content-type": "multipart/form-data"
+                                    }
+                                };
+                                let data = new FormData();
+                                data.append("id", id_cuenta_proveedor);
+                                data.append("pago", pago);
+                                data.append("fecha", fecha);
+                                data.append("cantidad", cantidad);
+                                data.append("observacion", observacion);
+                                data.append("efectivo_venta", efectivo_venta)
+                                data.append("importe_venta", efectivo_venta)
+                                data.append("modo_pago", modo_pago)
+                                data.append("file", fileImagen);
+                                axios.post("{{ route('cuentaProveedor.detallePago') }}", data, config)
+                                    .then((value) => {
+                                        // window.location.href = "{{ route('cuentaProveedor.index') }}"
+                                    }).catch((value) => {
 
-                        })
-                    }
+                                    })
+                            }
+                        }
+                    })
+
                 }
             }
 
@@ -278,18 +285,15 @@
                 $('.imagen').attr("src", "{{ asset('img/default.png') }}")
             }
         });
-        function changeModoPago(b)
-        {
-            if(b.value==1) {
-                    $("#efectivo_venta").attr('readonly',false)
-                    $("#importe_venta").attr('readonly',true)
-            }
-            else{
-                $("#efectivo_venta").attr('readonly',false)
-                $("#importe_venta").attr('readonly',false)
+
+        function changeModoPago(b) {
+            if (b.value == 1) {
+                $("#efectivo_venta").attr('readonly', false)
+                $("#importe_venta").attr('readonly', true)
+            } else {
+                $("#efectivo_venta").attr('readonly', false)
+                $("#importe_venta").attr('readonly', false)
             }
         }
-
-
     </script>
 @endpush
