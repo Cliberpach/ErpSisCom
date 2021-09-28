@@ -17,6 +17,7 @@ class CreateMarcasTable extends Migration
             $table->engine = 'InnoDB';
             $table->Increments('id');
             $table->string('marca');
+            $table->string('procedencia')->nullable();
             $table->enum('estado',['ACTIVO','ANULADO'])->default('ACTIVO');
             $table->timestamps();
         });

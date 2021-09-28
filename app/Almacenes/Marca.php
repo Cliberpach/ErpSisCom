@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Marca extends Model
 {
     protected $table = 'marcas';
-    protected $fillable = ['marca','estado'];
+    protected $fillable = ['marca','procedencia','estado'];
     public $timestamps = true;
 
     public function productos()

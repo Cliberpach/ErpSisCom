@@ -25,6 +25,7 @@ class MarcaController extends Controller
                 $coleccion->push([
                     'id' => $marca->id,
                     'marca' => $marca->marca,
+                    'procedencia' => $marca->procedencia,
                     'fecha_creacion' =>  Carbon::parse($marca->created_at)->format( 'd/m/Y'),
                     'fecha_actualizacion' =>  Carbon::parse($marca->updated_at)->format( 'd/m/Y'),
                     'estado' => $marca->estado,
@@ -34,23 +35,24 @@ class MarcaController extends Controller
     }
 
     public function store(Request $request){
-        
+
         $data = $request->all();
 
         $rules = [
             'marca_guardar' => 'required',
-            
+
         ];
-        
+
         $message = [
             'marca_guardar.required' => 'El campo Marca es obligatorio.',
-            
+
         ];
 
         Validator::make($data, $rules, $message)->validate();
 
         $marca = new Marca();
         $marca->marca = $request->get('marca_guardar');
+        $marca->procedencia = $request->get('procedencia_guardar');
         $marca->save();
 
         //Registro de actividad
@@ -63,24 +65,25 @@ class MarcaController extends Controller
     }
 
     public function update(Request $request){
-       
+
         $data = $request->all();
 
         $rules = [
             'tabla_id' => 'required',
             'marca' => 'required',
-            
+
         ];
-        
+
         $message = [
             'marca.required' => 'El campo Marca es obligatorio.',
-            
+
         ];
 
         Validator::make($data, $rules, $message)->validate();
-        
+
         $marca = Marca::findOrFail($request->get('tabla_id'));
         $marca->marca = $request->get('marca');
+        $marca->procedencia = $request->get('procedencia');
         $marca->update();
 
         //Registro de actividad
@@ -91,10 +94,10 @@ class MarcaController extends Controller
         Session::flash('success','Marca modificada.');
         return redirect()->route('almacenes.marcas.index')->with('modificar', 'success');
     }
-    
+
     public function destroy($id)
     {
-        
+
         $marca = Marca::findOrFail($id);
         $marca->estado = 'ANULADO';
         $marca->update();
@@ -111,7 +114,7 @@ class MarcaController extends Controller
 
     public function exist(Request $request)
     {
-        
+
         $data = $request->all();
         $marca = $data['marca'];
         $id = $data['id'];

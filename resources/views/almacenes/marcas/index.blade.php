@@ -1,6 +1,7 @@
 @extends('layout') @section('content')
 @include('almacenes.marcas.create')
 @include('almacenes.marcas.edit')
+@include('almacenes.marcas.modalfile')
 @section('almacenes-active', 'active')
 @section('marca-active', 'active')
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -20,6 +21,9 @@
         <a data-toggle="modal" data-target="#modal_crear_marca"  class="btn btn-block btn-w-m btn-primary m-t-md" href="#">
             <i class="fa fa-plus-square"></i> Añadir nuevo
         </a>
+        <a class="btn btn-block btn-w-m btn-primary m-t-md btn-modal-file" href="#">
+            <i class="fa fa-plus-square"></i> Importar Excel
+        </a>
     </div>
 
 </div>
@@ -38,6 +42,7 @@
                         <tr>
                             <th class="text-center"></th>
                             <th class="text-center">DESCRIPCION</th>
+                            <th class="text-center">PROCEDENCIA</th>
                             <th class="text-center">CREADO</th>
                             <th class="text-center">ACTUALIZADO</th>
                             <th class="text-center">ACCIONES</th>
@@ -114,6 +119,7 @@
                 //Tabla General
                 {data: 'id', className:"text-center", "visible":false},
                 {data: 'marca', className:"text-center"},
+                {data: 'procedencia', className:"text-center"},
                 {data: 'fecha_creacion', className:"text-center"},
                 {data: 'fecha_actualizacion', className:"text-center"},
                 {
@@ -148,6 +154,7 @@
             if (value.id == $id) {
                 $('#tabla_id_editar').val(value.id);
                 $('#marca_editar').val(value.marca);
+                $('#procedencia_editar').val(value.procedencia);
             }
         });
 
@@ -223,12 +230,8 @@
         })
 
     }
-
-
-
-
-
-
-
+    $(".btn-modal-file").on('click', function () {
+        $("#modal_file").modal("show");
+    });
 </script>
 @endpush

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Imports\Categoria\CategoriaImport;
 use App\Imports\Cliente\ClienteImport;
+use App\Imports\Marca\MarcaImport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -22,5 +23,12 @@ class ImportExcelController extends Controller
         $file = $request->file();
         $archivo = $file['files'][0];
         Excel::import(new CategoriaImport, $archivo);
+    }
+    public function uploadmarca(Request $request)
+    {
+        //$data = array();
+        $file = $request->file();
+        $archivo = $file['files'][0];
+        Excel::import(new MarcaImport, $archivo);
     }
 }
