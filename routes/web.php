@@ -421,12 +421,14 @@ function(){
         Route::get('categoria','ModeloExcelController@categoria')->name('ModeloExcel.categoria');
         Route::get('marca','ModeloExcelController@marca')->name('ModeloExcel.marca');
         Route::get('producto','ModeloExcelController@producto')->name('ModeloExcel.producto');
+        Route::get('proveedor','ModeloExcelController@proveedor')->name('ModeloExcel.proveedor');
     });
     Route::prefix('importExcel')->group(function(){
         Route::post('cliente','ImportExcelController@uploadcliente')->name('ImportExcel.uploadcliente');
         Route::post('categoria','ImportExcelController@uploadcategoria')->name('ImportExcel.uploadcategoria');
         Route::post('marca','ImportExcelController@uploadmarca')->name('ImportExcel.uploadmarca');
         Route::post('producto','ImportExcelController@uploadproducto')->name('ImportExcel.uploadproducto');
+        Route::post('proveedor','ImportExcelController@uploadproveedor')->name('ImportExcel.uploadproveedor');
     });
 });
 
