@@ -425,7 +425,7 @@ function(){
 });
 
 Route::get('ruta', function () {
-    return tipos_venta();
+    return vendedores();
    $cuenta = CuentaCliente::find(2);
 
     return $cuenta->detalles;

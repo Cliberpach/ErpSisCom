@@ -64,7 +64,7 @@ class DatabaseSeeder extends Seeder
         $persona->save();
 
         $personaTrabajador = new PersonaTrabajador();
-        $personaTrabajador->persona_id = 1;
+        $personaTrabajador->persona_id = $persona->id;
         $personaTrabajador->area = 'COMERCIAL';
         $personaTrabajador->profesion = 'INGENIERO(A) DE SISTEMAS';
         $personaTrabajador->cargo = 'ASISTENTE DE CONTABILIDAD';

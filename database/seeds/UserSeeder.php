@@ -57,7 +57,7 @@ class UserSeeder extends Seeder
         $personaTrabajador->estado = 'ACTIVO';
         $personaTrabajador->save();
 
-        $colaborador=new Colaborador();
+        $colaborador = new Colaborador();
         $colaborador->persona_trabajador_id = $personaTrabajador->id;
         $colaborador->save();
 
