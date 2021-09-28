@@ -141,7 +141,7 @@
                                             <option value=""></option>
                                             @foreach (vendedores() as $vendedor)
                                                 <option value="{{ $vendedor->id }}" {{$cotizacion->vendedor_id==null? '' :($cotizacion->vendedor_id==$vendedor->id ? 'selected' : '')}}>
-                                                    {{ $vendedor->persona->apellido_paterno . ' ' . $vendedor->persona->apellido_materno . ' ' . $vendedor->persona->nombres }}
+                                                    {{ $vendedor->persona_trabajador->persona->apellido_paterno . ' ' . $vendedor->persona_trabajador->persona->apellido_materno . ' ' . $vendedor->persona_trabajador->persona->nombres }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -174,9 +174,9 @@
                                                             onchange="obtenerMonto(this)">
                                                             <option></option>
                                                             @foreach ($lotes as $lote)
-                                                                <option value="{{ $lote->producto_id }}"
-                                                                    {{ old('producto') == $lote->producto_id ? 'selected' : '' }}>
-                                                                    {{ $lote->producto->nombre }}</option>
+                                                                <option value="{{ $lote->id }}"
+                                                                    {{ old('producto') == $lote->id ? 'selected' : '' }}>
+                                                                    {{ $lote->nombre }}</option>
                                                             @endforeach
                                                         </select>
                                                         <div class="invalid-feedback"><b><span
@@ -664,20 +664,19 @@
         if (producto.value.length > 0) {
             var tipo = $('#tipo_cliente').val()
             $.get('/almacenes/productos/obtenerProducto/' + producto.value, function(data) {
-                console.log(data);
                 for (var i = 0; i < data.cliente_producto.length; i++)
                 {
                     //SOLO SOLES LOS MONTOS
-                    if (data.cliente_producto[i].cliente == tipo && data.cliente_producto[i].moneda == '4') {
+                    if (data.cliente_producto[i].cliente == tipo && data.cliente_producto[i].moneda == '1') {
                         if (data.cliente_producto[i].igv == '0') {
                             var monto = Number(data.cliente_producto[i].monto * 0.18) + Number(data
                                 .cliente_producto[i].monto)
                             $('#precio').val(Number(monto).toFixed(2))
-                            
+
                         } else {
                             var monto = data.cliente_producto[i].monto
                             $('#precio').val(Number(monto).toFixed(2))
-                            
+
                         }
                     }
                 }

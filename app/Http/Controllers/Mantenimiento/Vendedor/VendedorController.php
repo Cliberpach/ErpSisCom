@@ -137,17 +137,16 @@ class VendedorController extends Controller
     {
         $data = $request->all();
         $vendedor = Vendedor::findOrFail($id);
-
         DB::transaction(function () use ($request, $vendedor) {
 
-            $persona =  $vendedor->persona;
+            $persona =  $vendedor->persona_trabajador->persona;
             $persona->tipo_documento = $request->get('tipo_documento');
             $persona->documento = $request->get('documento');
             $persona->codigo_verificacion = $request->get('codigo_verificacion');
             $persona->nombres = $request->get('nombres');
             $persona->apellido_paterno = $request->get('apellido_paterno');
             $persona->apellido_materno = $request->get('apellido_materno');
-            $persona->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_nacimiento'))->format('Y-m-d');
+            $persona->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_nacimiento'))->format('Y-m-d') ;
             $persona->sexo = $request->get('sexo');
             $persona->estado_civil = $request->get('estado_civil');
             $persona->departamento_id = str_pad($request->get('departamento'), 2, "0", STR_PAD_LEFT);
@@ -157,63 +156,59 @@ class VendedorController extends Controller
             $persona->correo_electronico = $request->get('correo_electronico');
             $persona->telefono_movil = $request->get('telefono_movil');
             $persona->telefono_fijo = $request->get('telefono_fijo');
+            $persona->correo_corporativo= $request->get('correo_corporativo');
+            $persona->telefono_trabajo= $request->get('telefono_trabajo');
             $persona->estado_documento = $request->get('estado_documento');
             $persona->update();
 
-            $vendedor = $persona->empleado;
-            $vendedor->persona_id = $persona->id;
-            $vendedor->area = $request->get('area');
-            $vendedor->profesion = $request->get('profesion');
-            $vendedor->cargo = $request->get('cargo');
-            $vendedor->telefono_referencia = $request->get('telefono_referencia');
-            $vendedor->contacto_referencia = $request->get('contacto_referencia');
-            $vendedor->grupo_sanguineo = $request->get('grupo_sanguineo');
-            $vendedor->alergias = $request->get('alergias');
-            $vendedor->numero_hijos = $request->get('numero_hijos');
-            $vendedor->sueldo = $request->get('sueldo');
-            $vendedor->sueldo_bruto = $request->get('sueldo_bruto');
-            $vendedor->sueldo_neto = $request->get('sueldo_neto');
-            $vendedor->moneda_sueldo = $request->get('moneda_sueldo');
-            $vendedor->tipo_banco = $request->get('tipo_banco');
-            $vendedor->numero_cuenta = $request->get('numero_cuenta');
 
-            if ($request->hasFile('imagen')) {
+            $vendedor->persona_trabajador->area = $request->get('area');
+            $vendedor->persona_trabajador->profesion = $request->get('profesion');
+            $vendedor->persona_trabajador->cargo = $request->get('cargo');
+            $vendedor->persona_trabajador->telefono_referencia = $request->get('telefono_referencia');
+            $vendedor->persona_trabajador->contacto_referencia = $request->get('contacto_referencia');
+            $vendedor->persona_trabajador->grupo_sanguineo = $request->get('grupo_sanguineo');
+            $vendedor->persona_trabajador->alergias = $request->get('alergias');
+            $vendedor->persona_trabajador->numero_hijos = $request->get('numero_hijos');
+            $vendedor->persona_trabajador->sueldo = $request->get('sueldo');
+            $vendedor->persona_trabajador->sueldo_bruto = $request->get('sueldo_bruto');
+            $vendedor->persona_trabajador->sueldo_neto = $request->get('sueldo_neto');
+            $vendedor->persona_trabajador->moneda_sueldo = $request->get('moneda_sueldo');
+            $vendedor->persona_trabajador->tipo_banco = $request->get('tipo_banco');
+            $vendedor->persona_trabajador->numero_cuenta = $request->get('numero_cuenta');
+
+            if($request->hasFile('imagen')){
                 //Eliminar Archivo anterior
-                Storage::delete($vendedor->ruta_imagen);
+                Storage::delete($vendedor->persona_trabajador->ruta_imagen);
                 //Agregar nuevo archivo
                 $file = $request->file('imagen');
                 $name = $file->getClientOriginalName();
-                $vendedor->nombre_imagen = $name;
-                $vendedor->ruta_imagen = $request->file('imagen')->store('public/vendedores/imagenes');
-            } else {
-                if ($vendedor->ruta_imagen) {
+                $vendedor->persona_trabajador->nombre_imagen = $name;
+                $vendedor->persona_trabajador->ruta_imagen = $request->file('imagen')->store('public/vendedores/imagenes');
+            }else{
+                if ($vendedor->persona_trabajador->ruta_imagen) {
                     //Eliminar Archivo anterior
-                    Storage::delete($vendedor->ruta_imagen);
-                    $vendedor->nombre_imagen = '';
-                    $vendedor->ruta_imagen = '';
+                    Storage::delete($vendedor->persona_trabajador->ruta_imagen);
+                    $vendedor->persona_trabajador->nombre_imagen = '';
+                    $vendedor->persona_trabajador->ruta_imagen = '';
                 }
             }
 
-            $vendedor->fecha_inicio_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_actividad'))->format('Y-m-d');
+            $vendedor->persona_trabajador->fecha_inicio_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_actividad'))->format('Y-m-d') ;
             if (!is_null($request->get('fecha_fin_actividad'))) {
-                $vendedor->fecha_fin_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_actividad'))->format('Y-m-d');
+                $vendedor->persona_trabajador->fecha_fin_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_actividad'))->format('Y-m-d') ;
             }
             if (!is_null($request->get('fecha_inicio_planilla'))) {
-                $vendedor->fecha_inicio_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_planilla'))->format('Y-m-d');
+                $vendedor->persona_trabajador->fecha_inicio_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_planilla'))->format('Y-m-d') ;
             }
             if (!is_null($request->get('fecha_fin_planilla'))) {
-                $vendedor->fecha_fin_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_planilla'))->format('Y-m-d');
+                $vendedor->persona_trabajador->fecha_fin_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_planilla'))->format('Y-m-d') ;
             }
-
-            $vendedor->zona = $request->get('zona');
-            $vendedor->comision = $request->get('comision');
-            $vendedor->moneda_comision = $request->get('moneda_comision');
-            $vendedor->update();
-
+            $vendedor->persona_trabajador->update();
             //Registro de actividad
-            $descripcion = "SE MODIFICÓ EL VENDEDOR CON EL NOMBRE: " . $vendedor->persona->nombres . ' ' . $vendedor->persona->apellido_paterno . ' ' . $vendedor->persona->apellido_materno;
-            $gestion = "VENDEDORES";
-            modificarRegistro($vendedor, $descripcion, $gestion);
+            $descripcion = "SE MODIFICÓ EL VENDEDOR CON EL NOMBRE: ". $vendedor->persona_trabajador->persona->nombres.' '.$vendedor->persona_trabajador->persona->apellido_paterno.' '.$vendedor->persona_trabajador->persona->apellido_materno;
+            $gestion = "vendedores";
+            modificarRegistro($vendedor, $descripcion , $gestion);
         });
 
 
@@ -235,18 +230,14 @@ class VendedorController extends Controller
         DB::transaction(function () use ($id) {
 
             $vendedor = Vendedor::findOrFail($id);
-            $vendedor->estado = 'ANULADO';
-            $vendedor->update();
-
-
-            $persona = $vendedor->persona;
+            $persona = $vendedor->persona_trabajador->persona;
             $persona->estado = 'ANULADO';
             $persona->update();
 
             //Registro de actividad
-            $descripcion = "SE ELIMINÓ EL VENDEDOR CON EL NOMBRE: " . $vendedor->persona->nombres . ' ' . $vendedor->persona->apellido_paterno . ' ' . $vendedor->persona->apellido_materno;
-            $gestion = "VENDEDORES";
-            eliminarRegistro($vendedor, $descripcion, $gestion);
+            $descripcion = "SE ELIMINÓ EL VENDEDOR CON EL NOMBRE: ". $vendedor->persona_trabajador->persona->nombres.' '.$vendedor->persona_trabajador->persona->apellido_paterno.' '.$vendedor->persona_trabajador->persona->apellido_materno;
+            $gestion = "vendedores";
+            eliminarRegistro($vendedor, $descripcion , $gestion);
         });
 
 
@@ -261,30 +252,30 @@ class VendedorController extends Controller
         $data = $request->all();
         $existe = false;
         $igualPersona = false;
-        // if (!is_null($data['tipo_documento']) && !is_null($data['documento'])) {
-        //     if (!is_null($data['id'])) {
-        //         $persona = Persona::findOrFail($data['id']);
-        //         if ($persona->tipo_documento == $data['tipo_documento'] && $persona->documento == $data['documento']) {
-        //             $igualPersona = true;
-        //         } else {
-        //             $persona = Persona::where([
-        //                 ['tipo_documento', '=', $data['tipo_documento']],
-        //                 ['documento', $data['documento']],
-        //                 ['estado', 'ACTIVO']
-        //             ])->first();
-        //         }
-        //     } else {
-        //         $persona = Persona::where([
-        //             ['tipo_documento', '=', $data['tipo_documento']],
-        //             ['documento', $data['documento']],
-        //             ['estado', 'ACTIVO']
-        //         ])->first();
-        //     }
+        /*if (!is_null($data['tipo_documento']) && !is_null($data['documento'])) {
+            if (!is_null($data['id'])) {
+                $persona = Persona::findOrFail($data['id']);
+                if ($persona->tipo_documento == $data['tipo_documento'] && $persona->documento == $data['documento']) {
+                    $igualPersona = true;
+                } else {
+                    $persona = Persona::where([
+                        ['tipo_documento', '=', $data['tipo_documento']],
+                        ['documento', $data['documento']],
+                        ['estado', 'ACTIVO']
+                    ])->first();
+                }
+            } else {
+                $persona = Persona::where([
+                    ['tipo_documento', '=', $data['tipo_documento']],
+                    ['documento', $data['documento']],
+                    ['estado', 'ACTIVO']
+                ])->first();
+            }
 
-        //     if (!is_null($persona) && !is_null($persona->empleado->vendedor)) {
-        //         $existe = true;
-        //     }
-        // }
+            if (!is_null($persona) && !is_null($persona->empleado->vendedor)) {
+                $existe = true;
+            }
+        }*/
 
         $result = [
             'existe' => $existe,

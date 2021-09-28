@@ -21,7 +21,7 @@
                     <select id="producto_editar" name="producto_editar" class="select2_form form-control" disabled>
                         <option></option>
                         @foreach($lotes as $lote)
-                            <option value="{{ $lote->producto_id }}">{{ $lote->producto->nombre}}</option>
+                            <option value="{{ $lote->id }}">{{ $lote->nombre}}</option>
                         @endforeach
                     </select>
                 </div>

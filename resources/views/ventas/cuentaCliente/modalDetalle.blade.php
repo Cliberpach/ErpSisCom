@@ -11,82 +11,72 @@
             <div class="modal-body">
                 <input type="hidden" name="cuenta_cliente_id" id="cuenta_cliente_id">
                 <div class="row">
-                    <div class="col-md-8">
-                        <div class="form-group row">
-                            <div class="col-md-6">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="" class="required">Cliente</label>
-                                            <input type="text" name="cliente" id="cliente"
-                                                class="form-control form-control-sm" disabled>
-                                        </div>
-                                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="" class="required">Cliente</label>
+                                    <input type="text" name="cliente" id="cliente"
+                                        class="form-control form-control-sm" disabled>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="" class="required">Numero</label>
-                                            <input type="text" name="numero" id="numero"
-                                                class="form-control form-control-sm" disabled>
-                                        </div>
-                                    </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="" class="required">Numero</label>
+                                    <input type="text" name="numero" id="numero"
+                                        class="form-control form-control-sm" disabled>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="" class="required">Monto</label>
-                                            <input type="text" name="monto" id="monto" class="form-control form-control-sm"
-                                                disabled>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="" class="required">Saldo</label>
-                                            <input type="text" name="saldo" id="saldo" class="form-control form-control-sm"
-                                                disabled>
-                                        </div>
-                                    </div>
+                                <div class="form-group">
+                                    <label for="" class="required">Monto</label>
+                                    <input type="text" name="monto" id="monto" class="form-control form-control-sm"
+                                        disabled>
                                 </div>
-                                <div class="row align-items-end">
-                                    <div class="col-md-6">
-                                       <div class="form-group">
-                                            <label for="" class="required">Estado</label>
-                                            <input type="text" name="estado" id="estado"
-                                                class="form-control form-control-sm" disabled>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                             <a class="btn btn-danger" id="btn-detalle" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
-                                        </div>
-                                     </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="" class="required">Saldo</label>
+                                    <input type="text" name="saldo" id="saldo" class="form-control form-control-sm"
+                                        disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                     <label for="" class="required">Estado</label>
+                                     <input type="text" name="estado" id="estado"
+                                         class="form-control form-control-sm" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <a class="btn btn-danger" id="btn-detalle" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="table-responsive">
-                                <table class="table dataTables-detalle table-striped table-bordered table-hover"
-                                    style="text-transform:uppercase">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-center">Fecha</th>
-                                            <th class="text-center">Observacion</th>
-                                            <th class="text-center">Monto</th>
-                                            <th class="text-center">Im&aacute;gen</th>
-                                        </tr>
-                                    </thead>
-                                </table>
+                        <div class="row justify-content-center">
+                            <div class="col-12" style="zoom: 85%;">
+                                <div class="table-responsive">
+                                    <table class="table dataTables-detalle table-striped table-bordered table-hover"
+                                        style="text-transform:uppercase">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Fecha</th>
+                                                <th class="text-center">Observacion</th>
+                                                <th class="text-center">Monto</th>
+                                                <th class="text-center">Im&aacute;gen</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <form id="frmDetalle" method="POST" enctype="multipart/form-data">
                             {{csrf_field()}}
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-12 col-md-6">
                                     <div class="form-group">
                                         <label for="" class="required">Pago</label>
                                         <select name="pago" id="pago" class="form-control select2_form" required>
@@ -94,24 +84,43 @@
                                             <option value="TODO">TODO</option>
                                         </select>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="" class="required">Fecha</label>
                                         <input type="date" name="fecha" id="fecha" class="form-control" value="{{$fecha_hoy}}">
                                     </div>
-                                </div>
-                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="" class="required">Cantidad</label>
                                         <input type="number" name="cantidad" id="cantidad" class="form-control">
                                     </div>
-                                </div>
-                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="" class="required">Observacion</label>
                                         <textarea name="observacion" id="observacion" cols="30" rows="3"
                                         class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-form-label required">Efectivo</label>
+                                        <input type="text" value="0.00" class="form-control" id="efectivo_venta"
+                                            {{-- onkeypress="return filterFloat(event, this);" onkeyup="changeEfectivo(this)" --}}
+                                            name="efectivo_venta">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label required">Modo de pago</label>
+                                        <select name="modo_pago" id="modo_pago" class="select2_form form-control"
+                                            onchange="changeModoPago(this)">
+                                            <option></option>
+                                            @foreach (modos_pago() as $modo)
+                                                <option value="{{ $modo->id }}">
+                                                    {{ $modo->descripcion }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label required">Importe</label>
+                                        <input type="text" class="form-control" id="importe_venta" value="0.00"
+                                            {{-- onkeypress="return filterFloat(event, this);" onkeyup="changeImporte(this)" --}}
+                                            name="importe_venta">
                                     </div>
                                 </div>
                                 <div class="col-12">

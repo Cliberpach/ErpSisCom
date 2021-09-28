@@ -37,7 +37,6 @@ class ColaboradorController extends Controller
                 'cargo' =>$colaborador->persona_trabajador->getCargo(),
              ]);
             }
-
         }
         return DataTables::of($coleccion)->toJson();
     }

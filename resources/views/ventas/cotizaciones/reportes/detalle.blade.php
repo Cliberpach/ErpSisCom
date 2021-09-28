@@ -385,9 +385,9 @@
             <div id="client">
                 <div class="to">CONTACTO:</div>
                 <h2 class="name">{{ $nombre_completo }}</h2>
-                <div class="address">{{ $cotizacion->user->empleado->persona->telefono_movil }}</div>
+                <div class="address">{{ $cotizacion->user->user->persona->telefono_movil }}</div>
                 <div class="email"><a
-                        href="mailto:{{ $cotizacion->user->empleado->persona->correo_electronico }}">{{ $cotizacion->user->empleado->persona->correo_electronico }}</a>
+                        href="mailto:{{ $cotizacion->user->user->persona->correo_electronico }}">{{ $cotizacion->user->user->persona->correo_electronico }}</a>
                 </div>
             </div>
         </div>

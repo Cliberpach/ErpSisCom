@@ -183,9 +183,9 @@
                                                             onchange="obtenerMonto(this)" disabled>
                                                             <option></option>
                                                             @foreach ($lotes as $lote)
-                                                                <option value="{{ $lote->producto_id }}"
-                                                                    {{ old('producto') == $lote->producto_id ? 'selected' : '' }}>
-                                                                    {{ $lote->producto->nombre }}</option>
+                                                                <option value="{{ $lote->id }}"
+                                                                    {{ old('producto') == $lote->id ? 'selected' : '' }}>
+                                                                    {{ $lote->nombre }}</option>
                                                             @endforeach
                                                         </select>
                                                         <div class="invalid-feedback"><b><span

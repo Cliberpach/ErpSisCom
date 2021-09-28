@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Ventas;
 
 use App\Almacenes\LoteProducto;
+use App\Almacenes\Producto;
 use App\Http\Controllers\Controller;
 use App\Mantenimiento\Empresa\Empresa;
 use App\Ventas\Cliente;
@@ -49,8 +50,8 @@ class CotizacionController extends Controller
         $empresas = Empresa::where('estado', 'ACTIVO')->get();
         $clientes = Cliente::where('estado', 'ACTIVO')->get();
         $fecha_hoy = Carbon::now()->toDateString();
-        $lotes = LoteProducto::where('estado', '1')->distinct()->get(['producto_id']);
-
+        //$lotes = LoteProducto::where('estado', '1')->distinct()->get(['producto_id']);
+        $lotes = Producto::where('estado','ACTIVO')->get();
         return view('ventas.cotizaciones.create', compact('empresas', 'clientes', 'fecha_hoy', 'lotes'));
     }
 
@@ -134,8 +135,8 @@ class CotizacionController extends Controller
         $empresas = Empresa::where('estado', 'ACTIVO')->get();
         $clientes = Cliente::where('estado', 'ACTIVO')->get();
         $fecha_hoy = Carbon::now()->toDateString();
-        $lotes = LoteProducto::where('estado', '1')->distinct()->get(['producto_id']);
-
+        //$lotes = LoteProducto::where('estado', '1')->distinct()->get(['producto_id']);
+        $lotes = Producto::where('estado','ACTIVO')->get();
         $detalles = CotizacionDetalle::where('cotizacion_id',$id)->where('estado', 'ACTIVO')->get();
 
         return view('ventas.cotizaciones.edit', [
@@ -322,19 +323,19 @@ class CotizacionController extends Controller
     public function report($id)
     {
         $cotizacion = Cotizacion::findOrFail($id);
-        $nombre_completo = $cotizacion->user->empleado->persona->apellido_paterno.' '.$cotizacion->user->empleado->persona->apellido_materno.' '.$cotizacion->user->empleado->persona->nombres;
-
+        $nombre_completo = $cotizacion->user->user->persona->apellido_paterno.' '.$cotizacion->user->user->persona->apellido_materno.' '.$cotizacion->user->user->persona->nombres;
         $igv = '';
         $tipo_moneda = '';
         $detalles = $cotizacion->detalles->where('estado', 'ACTIVO');
-
+        $empresa = Empresa::first();
         $paper_size = array(0,0,360,360);
-        $pdf = PDF::loadview('ventas.cotizaciones.reportes.detalle',[
+        $pdf = PDF::loadview('ventas.cotizaciones.reportes.detalle_nuevo',[
             'cotizacion' => $cotizacion,
             'nombre_completo' => $nombre_completo,
             'detalles' => $detalles,
+            'empresa' => $empresa,
             ])->setPaper('a4')->setWarnings(false);
-        return $pdf->stream();
+        return $pdf->stream('CO-'.$cotizacion->id.'.pdf');
 
     }
 

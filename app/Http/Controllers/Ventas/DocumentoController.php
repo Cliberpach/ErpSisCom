@@ -449,27 +449,33 @@ class DocumentoController extends Controller
 
             if((int)$documento->tipo_venta === 127 || (int)$documento->tipo_venta === 128)
             {
-                Mail::send('ventas.documentos.mail.cliente_mail',compact("documento"), function ($mail) use ($documento) {
-                    $mail->to($documento->clienteEntidad->correo_electronico);
-                    $mail->subject('SISCOM '. $documento->nombreDocumento());
-                    $mail->attach(storage_path('app/public/comprobantessiscom/' . $documento->nombre_comprobante_archivo), [
-                        'foto' => ''.$documento->nombre_comprobante_archivo,
-                    ]);
-                    $mail->attach(storage_path('app/public/xml/' . $documento->xml), [
-                        'foto' => ''.$documento->xml,
-                    ]);
-                    $mail->from('developer.limpiecito@gmail.com','SISCOM');
-                });
+                if($documento->clienteEntidad->correo_electronico)
+                {
+                    Mail::send('ventas.documentos.mail.cliente_mail',compact("documento"), function ($mail) use ($documento) {
+                        $mail->to($documento->clienteEntidad->correo_electronico);
+                        $mail->subject('SISCOM '. $documento->nombreDocumento());
+                        $mail->attach(storage_path('app/public/comprobantessiscom/' . $documento->nombre_comprobante_archivo), [
+                            'foto' => ''.$documento->nombre_comprobante_archivo,
+                        ]);
+                        $mail->attach(storage_path('app/public/xml/' . $documento->xml), [
+                            'foto' => ''.$documento->xml,
+                        ]);
+                        $mail->from('developer.limpiecito@gmail.com','SISCOM');
+                    });
+                }
             }
             else{
-                Mail::send('ventas.documentos.mail.cliente_mail',compact("documento"), function ($mail) use ($documento) {
-                    $mail->to($documento->clienteEntidad->correo_electronico);
-                    $mail->subject('SISCOM '. $documento->nombreDocumento());
-                    $mail->attach(storage_path('app/public/comprobantessiscom/' . $documento->nombre_comprobante_archivo), [
-                        'foto' => ''.$documento->nombre_comprobante_archivo,
-                    ]);
-                    $mail->from('developer.limpiecito@gmail.com','SISCOM');
-                });
+                if($documento->clienteEntidad->correo_electronico)
+                {
+                    Mail::send('ventas.documentos.mail.cliente_mail',compact("documento"), function ($mail) use ($documento) {
+                        $mail->to($documento->clienteEntidad->correo_electronico);
+                        $mail->subject('SISCOM '. $documento->nombreDocumento());
+                        $mail->attach(storage_path('app/public/comprobantessiscom/' . $documento->nombre_comprobante_archivo), [
+                            'foto' => ''.$documento->nombre_comprobante_archivo,
+                        ]);
+                        $mail->from('developer.limpiecito@gmail.com','SISCOM');
+                    });
+                }
             }
             
             DB::commit();

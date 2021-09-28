@@ -34,7 +34,7 @@
                         <option></option>
                         @foreach(tipos_documento() as $tipo_documento)
                             @if ($tipo_documento->simbolo != 'RUC')
-                                <option value="{{ $tipo_documento->simbolo }}" {{ (old('tipo_documento', $vendedor->persona->tipo_documento) == $tipo_documento->simbolo ? "selected" : "") }} >{{ $tipo_documento->descripcion }}</option>
+                                <option value="{{ $tipo_documento->simbolo }}" {{ (old('tipo_documento', $vendedor->persona_trabajador->persona->tipo_documento) == $tipo_documento->simbolo ? "selected" : "") }} >{{ $tipo_documento->descripcion }}</option>
                             @endif
                         @endforeach
                     </select>
@@ -42,7 +42,7 @@
                 <div class="form-group col-lg-4 col-xs-12" id="documento_requerido">
                     <label class="required">Nro. Documento</label>
                     <div class="input-group">
-                        <input type="text" id="documento" name="documento" class="form-control {{ $errors->has('documento') ? ' is-invalid' : '' }}" value="{{old('documento', $vendedor->persona->documento)}}" maxlength="8" onkeypress="return isNumber(event)" required onchange="cambiaDocumento();">
+                        <input type="text" id="documento" name="documento" class="form-control {{ $errors->has('documento') ? ' is-invalid' : '' }}" value="{{old('documento', $vendedor->persona_trabajador->persona->documento)}}" maxlength="8" onkeypress="return isNumber(event)" required onchange="cambiaDocumento();">
                         <span class="input-group-append"><a style="color:white" onclick="consultarDocumento()" class="btn btn-primary"><i class="fa fa-search"></i> Reniec</a></span>
                         @if ($errors->has('documento'))
                             <span class="invalid-feedback" role="alert">
@@ -57,7 +57,7 @@
                     <label class="">Estado: </label>
                     <input type="text" id="estado_documento"
                         class="form-control text-center {{ $errors->has('estado_documento') ? ' is-invalid' : '' }}"
-                        name="estado_documento" value="{{$vendedor->persona->estado_documento}}"
+                        name="estado_documento" value="{{$vendedor->persona_trabajador->persona->estado_documento}}"
                         onkeyup="return mayus(this)" disabled>
                     @if ($errors->has('estado_documento'))
                         <span class="invalid-feedback" role="alert">
@@ -69,15 +69,15 @@
             <div class="row">
                 <div class="form-group col-lg-4 col-xs-12">
                     <label class="required">Nombre(s)</label>
-                    <input type="text" id="nombres" name="nombres" class="form-control {{ $errors->has('nombres') ? ' is-invalid' : '' }}" value="{{old('nombres', $vendedor->persona->nombres)}}" maxlength="100" onkeyup="return mayus(this)" required>
+                    <input type="text" id="nombres" name="nombres" class="form-control {{ $errors->has('nombres') ? ' is-invalid' : '' }}" value="{{old('nombres', $vendedor->persona_trabajador->persona->nombres)}}" maxlength="100" onkeyup="return mayus(this)" required>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12">
                     <label class="required">Apellido paterno</label>
-                    <input type="text" id="apellido_paterno" name="apellido_paterno" class="form-control {{ $errors->has('apellido_paterno') ? ' is-invalid' : '' }}" value="{{old('apellido_paterno', $vendedor->persona->apellido_paterno)}}" onkeyup="return mayus(this)" maxlength="100" required>
+                    <input type="text" id="apellido_paterno" name="apellido_paterno" class="form-control {{ $errors->has('apellido_paterno') ? ' is-invalid' : '' }}" value="{{old('apellido_paterno', $vendedor->persona_trabajador->persona->apellido_paterno)}}" onkeyup="return mayus(this)" maxlength="100" required>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12">
                     <label class="required">Apellido materno</label>
-                    <input type="text" id="apellido_materno" name="apellido_materno" class="form-control {{ $errors->has('apellido_materno') ? ' is-invalid' : '' }}" value="{{old('apellido_materno', $vendedor->persona->apellido_materno)}}" onkeyup="return mayus(this)" maxlength="100" required>
+                    <input type="text" id="apellido_materno" name="apellido_materno" class="form-control {{ $errors->has('apellido_materno') ? ' is-invalid' : '' }}" value="{{old('apellido_materno', $vendedor->persona_trabajador->persona->apellido_materno)}}" onkeyup="return mayus(this)" maxlength="100" required>
                 </div>
             </div>
             <div class="row">
@@ -87,7 +87,7 @@
                         <span class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </span>
-                        <input type="text" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control {{ $errors->has('fecha_nacimiento') ? ' is-invalid' : '' }}" value="{{old('fecha_nacimiento', getFechaFormato($vendedor->persona->fecha_nacimiento, 'd/m/Y'))}}" readonly required >
+                        <input type="text" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control {{ $errors->has('fecha_nacimiento') ? ' is-invalid' : '' }}" value="{{old('fecha_nacimiento', getFechaFormato($vendedor->persona_trabajador->persona->fecha_nacimiento, 'd/m/Y'))}}" readonly required >
                     </div>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12">
@@ -95,7 +95,7 @@
                     <div class="row">
                         <div class="col-sm-6 col-xs-6">
                             <div class="radio">
-                                <input type="radio" name="sexo" id="sexo_hombre" value="H" {{ ($vendedor->persona->sexo == 'H') ? "checked" : "" }}>
+                                <input type="radio" name="sexo" id="sexo_hombre" value="H" {{ ($vendedor->persona_trabajador->persona->sexo == 'H') ? "checked" : "" }}>
                                 <label for="sexo_hombre">
                                     Hombre
                                 </label>
@@ -103,7 +103,7 @@
                         </div>
                         <div class="col-sm-6 col-xs-6">
                             <div class="radio">
-                                <input type="radio" name="sexo" id="sexo_mujer" value="M" {{ ($vendedor->persona->sexo == 'M') ? "checked" : "" }}>
+                                <input type="radio" name="sexo" id="sexo_mujer" value="M" {{ ($vendedor->persona_trabajador->persona->sexo == 'M') ? "checked" : "" }}>
                                 <label for="sexo_mujer">
                                     Mujer
                                 </label>
@@ -116,7 +116,7 @@
                     <select id="estado_civil" name="estado_civil" class="select2_form form-control {{ $errors->has('estado_civil') ? ' is-invalid' : '' }}">
                         <option></option>
                         @foreach(estados_civiles() as $estado_civil)
-                            <option value="{{ $estado_civil->simbolo }}" {{ (old('estado_civil', $vendedor->persona->estado_civil) == $estado_civil->simbolo ? "selected" : "") }}>{{ $estado_civil->descripcion }}</option>
+                            <option value="{{ $estado_civil->simbolo }}" {{ (old('estado_civil', $vendedor->persona_trabajador->persona->estado_civil) == $estado_civil->simbolo ? "selected" : "") }}>{{ $estado_civil->descripcion }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -135,7 +135,7 @@
                     <select id="departamento" name="departamento" class="select2_form form-control {{ $errors->has('departamento') ? ' is-invalid' : '' }}" style="width: 100%">
                         <option></option>
                         @foreach(departamentos() as $departamento)
-                            <option value="{{ $departamento->id }}" {{ (old('departamento', $vendedor->persona->departamento_id) == $departamento->id ? "selected" : "") }} >{{ $departamento->nombre }}</option>
+                            <option value="{{ $departamento->id }}" {{ (old('departamento', $vendedor->persona_trabajador->persona->departamento_id) == $departamento->id ? "selected" : "") }} >{{ $departamento->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -143,8 +143,8 @@
                     <label class="required">Provincia</label>
                     <select id="provincia" name="provincia" class="select2_form form-control {{ $errors->has('provincia') ? ' is-invalid' : '' }}" style="width: 100%">
                         <option></option>
-                        @foreach(getProvinciasByDepartamento($vendedor->persona->departamento_id) as $provincia)
-                            <option value="{{ $provincia->id }}" {{ (old('provincia', $vendedor->persona->provincia_id) == $provincia->id ? "selected" : "") }} >{{ $provincia->nombre }}</option>
+                        @foreach(getProvinciasByDepartamento($vendedor->persona_trabajador->persona->departamento_id) as $provincia)
+                            <option value="{{ $provincia->id }}" {{ (old('provincia', $vendedor->persona_trabajador->persona->provincia_id) == $provincia->id ? "selected" : "") }} >{{ $provincia->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -152,8 +152,8 @@
                     <label class="required">Distrito</label>
                     <select id="distrito" name="distrito" class="select2_form form-control {{ $errors->has('distrito') ? ' is-invalid' : '' }}" style="width: 100%">
                         <option></option>
-                        @foreach(getDistritosByProvincia($vendedor->persona->provincia_id) as $distrito)
-                            <option value="{{ $distrito->id }}" {{ (old('distrito', $vendedor->persona->distrito_id) == $distrito->id ? "selected" : "") }} >{{ $distrito->nombre }}</option>
+                        @foreach(getDistritosByProvincia($vendedor->persona_trabajador->persona->provincia_id) as $distrito)
+                            <option value="{{ $distrito->id }}" {{ (old('distrito', $vendedor->persona_trabajador->persona->distrito_id) == $distrito->id ? "selected" : "") }} >{{ $distrito->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -161,21 +161,21 @@
             <div class="row">
                 <div class="form-group col-lg-12 col-xs-12">
                     <label class="required">Dirección completa</label>
-                    <input type="text" id="direccion" name="direccion" class="form-control {{ $errors->has('direccion') ? ' is-invalid' : '' }}" value="{{old('direccion', $vendedor->persona->direccion)}}" maxlength="191" onkeyup="return mayus(this)" required>
+                    <input type="text" id="direccion" name="direccion" class="form-control {{ $errors->has('direccion') ? ' is-invalid' : '' }}" value="{{old('direccion', $vendedor->persona_trabajador->persona->direccion)}}" maxlength="191" onkeyup="return mayus(this)" required>
                 </div>
             </div>
             <div class="row">
                 <div class="form-group col-lg-4 col-xs-12">
                     <label class="required">Correo electrónico</label>
-                    <input type="correo_electronico" id="correo_electronico" name="correo_electronico" class="form-control {{ $errors->has('correo_electronico') ? ' is-invalid' : '' }}" value="{{old('correo_electronico', $vendedor->persona->correo_electronico)}}" maxlength="100" onkeyup="return mayus(this)" required>
+                    <input type="correo_electronico" id="correo_electronico" name="correo_electronico" class="form-control {{ $errors->has('correo_electronico') ? ' is-invalid' : '' }}" value="{{old('correo_electronico', $vendedor->persona_trabajador->persona->correo_electronico)}}" maxlength="100" onkeyup="return mayus(this)" required>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12">
                     <label class="required">Teléfono móvil</label>
-                    <input type="text" id="telefono_movil" name="telefono_movil" class="form-control {{ $errors->has('telefono_movil') ? ' is-invalid' : '' }}" value="{{old('telefono_movil', $vendedor->persona->telefono_movil)}}" onkeypress="return isNumber(event)" maxlength="9" required>
+                    <input type="text" id="telefono_movil" name="telefono_movil" class="form-control {{ $errors->has('telefono_movil') ? ' is-invalid' : '' }}" value="{{old('telefono_movil', $vendedor->persona_trabajador->persona->telefono_movil)}}" onkeypress="return isNumber(event)" maxlength="9" required>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12">
                     <label>Teléfono fijo</label>
-                    <input type="text" id="telefono_fijo" name="telefono_fijo" class="form-control {{ $errors->has('telefono_fijo') ? ' is-invalid' : '' }}" value="{{old('telefono_fijo', $vendedor->persona->telefono_fijo)}}" onkeypress="return isNumber(event)" maxlength="10">
+                    <input type="text" id="telefono_fijo" name="telefono_fijo" class="form-control {{ $errors->has('telefono_fijo') ? ' is-invalid' : '' }}" value="{{old('telefono_fijo', $vendedor->persona_trabajador->persona->telefono_fijo)}}" onkeypress="return isNumber(event)" maxlength="10">
                 </div>
             </div>
             <div class="row">

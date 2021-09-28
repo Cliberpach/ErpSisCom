@@ -69,7 +69,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="required">Origen</label>
-                                        <select name="origen" id="origen" class="form-control {{ $errors->has('origen') ? ' is-invalid' : '' }}">
+                                        <select name="origen" id="origen" class="form-control {{ $errors->has('origen') ? ' is-invalid' : '' }}" required>
                                             <option value="">Seleccionar Origen</option>
                                             @foreach ($origenes as  $tabla)
                                                 <option {{ old('origen') == $tabla->id ? 'selected' : '' }} value="{{$tabla->id}}">{{$tabla->descripcion}}</option>
