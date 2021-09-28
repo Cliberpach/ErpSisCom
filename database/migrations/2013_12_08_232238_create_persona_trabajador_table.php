@@ -31,7 +31,7 @@ class CreatePersonaTrabajadorTable extends Migration
             $table->string('moneda_sueldo');
             $table->string('tipo_banco')->nullable();
             $table->string('numero_cuenta', 20)->nullable();
-            $table->date('fecha_inicio_actividad');
+            $table->date('fecha_inicio_actividad')->nullable();
             $table->date('fecha_fin_actividad')->nullable();
             $table->date('fecha_inicio_planilla')->nullable();
             $table->date('fecha_fin_planilla')->nullable();

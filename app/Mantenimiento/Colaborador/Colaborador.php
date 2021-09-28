@@ -15,6 +15,6 @@ class Colaborador extends Model
     public $timestamps=true;
     public function persona_trabajador()
     {
-        return $this->belongsTo(PersonaTrabajador::class,'persona_trabajador_id');
+        return $this->belongsTo('App\PersonaTrabajador','persona_trabajador_id');
     }
 }

@@ -116,7 +116,7 @@
                                             style="text-transform: uppercase; width:100%" value="{{old('forma_pago')}}" required>
                                             <option value=""></option>
                                             @foreach(forma_pago() as $pago)
-                                                <option value="{{ $pago->id }}">{{ $pago->descripcion }}</option>
+                                                <option value="{{ $pago->id }}" {{ $pago->descripcion === 'CONTADO' ?  'selected' : '' }}>{{ $pago->descripcion }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -201,8 +201,8 @@
                                             name="empresa_id" id="empresa_id" disabled>
                                             <option></option>
                                             @foreach ($empresas as $empresa)
-                                            <option value="{{$empresa->id}}" @if(old('empresa_id',$cotizacion->empresa_id)==$empresa->id )
-                                                {{'selected'}} @endif >{{$empresa->razon_social}}</option>
+                                            <option value="{{$empresa->id}}" @if(old('empresa_id', $cotizacion->empresa_id) == $empresa->id)
+                                                {{'selected'}} @endif {{ $empresa->id === 1 ? 'selected' : '' }}>{{$empresa->razon_social}}</option>
                                             @endforeach
                                         </select>
                                         @else
@@ -210,8 +210,8 @@
                                             name="empresa_id" id="empresa_id" required onchange="obtenerTiposComprobantes(this)" disabled >
                                             <option></option>
                                             @foreach ($empresas as $empresa)
-                                            <option value="{{$empresa->id}}" @if(old('empresa_id')==$empresa->id )
-                                                {{'selected'}} @endif >{{$empresa->razon_social}}</option>
+                                            <option value="{{$empresa->id}}" @if(old('empresa_id') == $empresa->id )
+                                                {{'selected'}} @endif {{ $empresa->id === 1 ? 'selected' : '' }}>{{$empresa->razon_social}}</option>
                                             @endforeach
                                             </select>
                                         @endif
@@ -222,7 +222,7 @@
 
 
                                 <div class="form-group">
-                                    <label class="required">Cliente: </label>
+                                    <label class="required">Cliente: @if(empty($cotizacion))<button type="button" class="btn btn-outline btn-primary" onclick="modalCliente()">Registrar</button>@endif</label>
                                     <input type="hidden" name="tipo_cliente_documento" id="tipo_cliente_documento">
                                     <input type="hidden" name="tipo_cliente_2" id="tipo_cliente_2" value='1'>
                                     @if (!empty($cotizacion))
@@ -237,7 +237,7 @@
                                         @endforeach
                                         </select>
                                     @else
-                                        <select class="select2_form form-control {{ $errors->has('proveedor_id') ? ' is-invalid' : '' }}"
+                                        <select class="select2_form form-control {{ $errors->has('cliente_id') ? ' is-invalid' : '' }}"
                                         style="text-transform: uppercase; width:100%" value="{{old('cliente_id')}}"
                                         name="cliente_id" id="cliente_id" required disabled onchange="obtenerTipocliente(this.value)" >
                                         <option></option>
@@ -432,6 +432,7 @@
 @include('ventas.documentos.modal')
 @include('ventas.documentos.modalLote')
 @include('ventas.documentos.modalPago')
+@include('ventas.documentos.modalCliente')
 @stop
 
 @push('styles')
@@ -464,9 +465,19 @@
 <!-- DataTable -->
 <script src="{{asset('Inspinia/js/plugins/dataTables/datatables.min.js')}}"></script>
 <script src="{{asset('Inspinia/js/plugins/dataTables/dataTables.bootstrap4.min.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
 
 
 <script>
+
+        const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger',
+                    container: 'my-swal',
+                },
+                buttonsStyling: false
+        })
 
         $('#cantidad').on('input', function() {
             this.value = this.value.replace(/[^0-9]/g, '');
@@ -531,13 +542,7 @@
 
         //Borrar registro de Producto
         $(document).on('click', '.btn-delete', function(event) {
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger',
-                },
-                buttonsStyling: false
-            })
+
 
             Swal.fire({
                 title: 'Opción Eliminar',
@@ -776,14 +781,6 @@
             }
 
             if (enviar != true) {
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger',
-                    },
-                    buttonsStyling: false
-                })
-
 
                 Swal.fire({
                     title: 'Opción Agregar',
@@ -1148,13 +1145,6 @@
             var correcto = validarFecha()
 
             if (correcto == false) {
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger',
-                    },
-                    buttonsStyling: false
-                })
 
                 Swal.fire({
                     title: 'Opción Guardar',
@@ -1256,13 +1246,6 @@
             }
 
             if (correcto) {
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger',
-                    },
-                    buttonsStyling: false
-                })
 
                 Swal.fire({
                     title: 'Opción Guardar',
@@ -1417,7 +1400,7 @@
         //OBTENER TIPOS DE COMPROBANTES
         function obtenerTiposComprobantes() {
 
-            if ($('#empresa_id').val() != '') {
+            if ($('#empresa_id').val() != '' && $('#tipo_venta').val() != '') {
                 $.ajax({
                     dataType : 'json',
                     url: '{{ route("ventas.vouchersAvaible")}}',
@@ -1447,7 +1430,7 @@
         }
 
         function obtenerClientes() {
-            if ($('#tipo_id').val() != '') {
+            if ($('#tipo_venta_id').val() != '') {
                 $.ajax({
                     dataType : 'json',
                     url: '{{ route("ventas.customers")}}',
@@ -1503,6 +1486,13 @@
             @endforeach
         @endif
 
+        function modalCliente()
+        {          
+            document.getElementById('frmCliente').reset();  
+            $('#departamento').val("13").trigger("change");
+            $('#tipo_documento').val("").trigger("change");
+            $('#modal_cliente').modal('show');
+        }
 
 </script>
 

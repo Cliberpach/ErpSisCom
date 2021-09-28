@@ -393,10 +393,10 @@ class DocumentoController extends Controller
                 $lote->update();
             }
             
-            // $detalle = new DetalleMovimientoVentaCaja();
-            // $detalle->cdocumento_id = $documento->id;
-            // $detalle->mcaja_id = 1;
-            // $detalle->save();
+            $detalle = new DetalleMovimientoVentaCaja();
+            $detalle->cdocumento_id = $documento->id;
+            $detalle->mcaja_id = 1;
+            $detalle->save();
 
             if((int)$documento->tipo_venta === 127 || (int)$documento->tipo_venta === 128)
             {

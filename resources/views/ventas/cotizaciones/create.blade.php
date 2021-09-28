@@ -147,7 +147,7 @@
                                             <select id="vendedor" name="vendedor" class="select2_form form-control">
                                                 <option value=""></option>
                                                 @foreach (vendedores() as $vendedor)
-                                                    <option value="{{ $vendedor->id }}">
+                                                    <option value="{{ $vendedor->id }}" {{ $vendedor->id === 1 ? 'selected' : '' }}>
                                                         {{ $vendedor->persona_trabajador->persona->apellido_paterno . ' ' . $vendedor->persona_trabajador->persona->apellido_materno . ' ' . $vendedor->persona_trabajador->persona->nombres }}
                                                     </option>
                                                 @endforeach

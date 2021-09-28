@@ -272,6 +272,7 @@ function(){
         Route::get('/getTable', 'Ventas\ClienteController@getTable')->name('ventas.cliente.getTable');
         Route::get('/registrar', 'Ventas\ClienteController@create')->name('ventas.cliente.create');
         Route::post('/registrar', 'Ventas\ClienteController@store')->name('ventas.cliente.store');
+        Route::post('/registrarFast', 'Ventas\ClienteController@storeFast')->name('ventas.cliente.storeFast');
         Route::get('/actualizar/{id}', 'Ventas\ClienteController@edit')->name('ventas.cliente.edit');
         Route::put('/actualizar/{id}', 'Ventas\ClienteController@update')->name('ventas.cliente.update');
         Route::get('/datos/{id}', 'Ventas\ClienteController@show')->name('ventas.cliente.show');
@@ -424,6 +425,7 @@ function(){
 });
 
 Route::get('ruta', function () {
+    return tipos_venta();
    $cuenta = CuentaCliente::find(2);
 
     return $cuenta->detalles;

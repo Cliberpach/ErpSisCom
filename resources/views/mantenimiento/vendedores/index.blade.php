@@ -101,7 +101,7 @@
                     {data: 'apellidos_nombres', className:"text-left"},
                     {data: 'telefono_movil', className:"text-center"},
                     {data: 'area', className:"text-center"},
-                    {data: 'zona', className:"text-center"},
+                    {data: 'cargo', className:"text-center"},
                     {
                         data: null,
                         className:"text-center",
