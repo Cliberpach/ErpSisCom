@@ -89,8 +89,8 @@
                                                             <div class="col-md-6">
                                                                 <label class="required">Ruc: </label>
                                                                 <div class="input-group">
-                                                                    <input type="text" class="form-control {{ $errors->has('ruc') ? ' is-invalid' : '' }}"  name="ruc" id="ruc" maxlength="11"  @if($empresa->estado_fe) readonly @else '' @endif value="{{old('ruc',$empresa->ruc)}}" required> 
-                                                                    <span class="input-group-append"><a style="color:white"  @if($empresa->estado_fe) '' @else onclick="consultarRuc()" @endif class="btn btn-primary"><i class="fa fa-search"></i> Sunat</a></span>
+                                                                    <input type="text" class="form-control {{ $errors->has('ruc') ? ' is-invalid' : '' }}"  name="ruc" id="ruc" maxlength="11"  @if($empresa->estado_fe) @else '' @endif value="{{old('ruc',$empresa->ruc)}}" required>
+                                                                    <span class="input-group-append"><a style="color:white"  onclick="consultarRuc()" class="btn btn-primary"><i class="fa fa-search"></i> Sunat</a></span>
                                                                     @if ($errors->has('ruc'))
                                                                     <span class="invalid-feedback" role="alert">
                                                                         <strong>{{ $errors->first('ruc') }}</strong>
@@ -130,7 +130,7 @@
                                                             <input type="text"
                                                                 class="form-control {{ $errors->has('razon_social') ? ' is-invalid' : '' }}"
                                                                 name="razon_social" value="{{ old('razon_social', $empresa->razon_social)}}"
-                                                                id="razon_social"  onkeyup="return mayus(this)"  @if($empresa->estado_fe) readonly @else '' @endif >
+                                                                id="razon_social"  onkeyup="return mayus(this)" >
 
                                                             @if ($errors->has('razon_social'))
                                                             <span class="invalid-feedback" role="alert">
@@ -142,11 +142,11 @@
 
                                                         <div class="form-group row">
                                                             <div class="col-lg-8 col-xs-12">
-                                                            
+
                                                                 <label>Razón Social Abreviada: </label>
                                                                 <input type="text" id="razon_social_abreviada"
                                                                     class="form-control {{ $errors->has('razon_social_abreviada') ? ' is-invalid' : '' }}"
-                                                                    name="razon_social_abreviada"  @if($empresa->estado_fe) readonly @else '' @endif 
+                                                                    name="razon_social_abreviada"
                                                                     value="{{ old('razon_social_abreviada',$empresa->razon_social_abreviada)}}"
                                                                     onkeyup="return mayus(this)">
 
@@ -159,7 +159,7 @@
                                                             </div>
                                                             <div class="col-lg-4 col-xs-12">
                                                                 <label id="ubigeo_texto">Ubigeo: </label>
-                                                                <input type="text" id="ubigeo_empresa" class="form-control {{ $errors->has('ubigeo_empresa') ? ' is-invalid' : '' }}"  @if($empresa->estado_fe) readonly @else '' @endif  name="ubigeo_empresa" value="{{ old('ubigeo_empresa',$empresa->ubigeo)}}">
+                                                                <input type="text" id="ubigeo_empresa" class="form-control {{ $errors->has('ubigeo_empresa') ? ' is-invalid' : '' }}"   name="ubigeo_empresa" value="{{ old('ubigeo_empresa',$empresa->ubigeo)}}">
                                                                 <div class="invalid-feedback"><b><span id="error-empresa_ubigeo"></span></b></div>
                                                             </div>
                                                         </div>
@@ -169,7 +169,7 @@
                                                                 <label class="required">Dirección Fiscal:</label>
                                                                 <textarea type="text" id="direccion_fiscal" name="direccion_fiscal"
                                                                     class="form-control {{ $errors->has('direccion_fiscal') ? ' is-invalid' : '' }}"
-                                                                    value="{{old('direccion_fiscal',$empresa->direccion_fiscal)}}"  @if($empresa->estado_fe) readonly @else '' @endif 
+                                                                    value="{{old('direccion_fiscal',$empresa->direccion_fiscal)}}"
                                                                     onkeyup="return mayus(this)">{{old('direccion_fiscal',$empresa->direccion_fiscal)}}</textarea>
                                                                 @if ($errors->has('direccion_fiscal'))
                                                                 <span class="invalid-feedback" role="alert">
@@ -187,7 +187,7 @@
                                                                 <label class="required">Dirección de Planta:</label>
                                                                 <textarea type="text" id="direccion_llegada" name="direccion_llegada"
                                                                     class="form-control {{ $errors->has('direccion_llegada') ? ' is-invalid' : '' }}"
-                                                                    value="{{old('direccion_llegada', $empresa->direccion_llegada)}}"  @if($empresa->estado_fe) readonly @else '' @endif 
+                                                                    value="{{old('direccion_llegada', $empresa->direccion_llegada)}}"
                                                                     onkeyup="return mayus(this)">{{old('direccion_llegada',$empresa->direccion_llegada)}}</textarea>
                                                                 @if ($errors->has('direccion_llegada'))
                                                                 <span class="invalid-feedback" role="alert">
@@ -297,7 +297,7 @@
                                                         </div>
 
                                                         <div class="form-group">
-                                                                
+
                                                                 <label class="">Facebook:</label>
                                                                     <div class="input-group">
                                                                         <span class="input-group-addon">
@@ -313,7 +313,7 @@
                                                                             @endif
                                                                     </div>
 
-                                                            
+
                                                         </div>
 
                                                         <div class="form-group">
@@ -332,7 +332,7 @@
                                                                         </span>
                                                                         @endif
                                                                 </div>
-                                                            
+
                                                         </div>
 
                                                         <div class="form-group">
@@ -351,7 +351,7 @@
                                                                         </span>
                                                                         @endif
                                                                 </div>
-                                                            
+
                                                         </div>
 
 
@@ -362,7 +362,7 @@
                                                 </div>
                                                 <hr>
                                                 <div class="row">
-                                                
+
 
                                                     <div class="col-md-6 b-r">
                                                         <div class="col-sm-12">
@@ -373,7 +373,7 @@
                                                                 <div class="col-md-6">
                                                                     <label class="required">Dni:</label>
                                                                     <div class="input-group">
-                                                                        <input type="text" class="form-control {{ $errors->has('dni_representante') ? ' is-invalid' : '' }}"  name="dni_representante" id="dni_representante" maxlength="8" value="{{old('dni_representante',$empresa->dni_representante)}}" required> 
+                                                                        <input type="text" class="form-control {{ $errors->has('dni_representante') ? ' is-invalid' : '' }}"  name="dni_representante" id="dni_representante" maxlength="8" value="{{old('dni_representante',$empresa->dni_representante)}}" required>
                                                                         <span class="input-group-append"><a style="color:white" onclick="consultarDni()" class="btn btn-primary"><i class="fa fa-search"></i> Reniec</a></span>
 
                                                                         @if ($errors->has('dni_representante'))
@@ -449,7 +449,7 @@
                                                                         <strong>{{ $errors->first('num_asiento') }}</strong>
                                                                     </span>
                                                                     @endif
-                                                                    
+
                                                                     <div class="invalid-feedback"><b><span id="error-num_asiento"></span></b></div>
 
                                                                 </div>
@@ -466,7 +466,7 @@
                                                                         <strong>{{ $errors->first('num_partida') }}</strong>
                                                                     </span>
                                                                     @endif
-                                                                    
+
                                                                     <div class="invalid-feedback"><b><span id="error-num_partida"></span></b></div>
 
 
@@ -478,7 +478,7 @@
                                                         </div>
                                                     </div>
 
-                                                
+
                                                 </div>
 
                                             </div>
@@ -556,7 +556,7 @@
                                                                 <label for="">Estado</label>
                                                                 <input type="text" id="estado_certificado" class="form-control text-center" name="estado_certificado" value="{{old('estado_certificado', $empresa->estado_fe == '1' ? 'VERIFICADO' : 'SIN VERIFICAR' )}}" readonly>
                                                             </div>
-                                                            
+
                                                         </div>
 
 
@@ -579,7 +579,7 @@
                                                             </div>
 
                                                         </div>
-                                                    
+
                                                     </div>
                                                 </div>
 
@@ -729,7 +729,7 @@
         $('#ubigeo_texto').addClass("required")
         $('#ubigeo_empresa').prop("required",true)
 
-            
+
     });
 
     $('#estado_fe').on('ifUnchecked', function(event) {
@@ -798,10 +798,10 @@
         }).then((result) => {
 
             if (result.isConfirmed) {
-                
+
                 var existe = entidadFinanciera()
                 if (existe == false) {
-                    
+
                     Swal.fire({
                         title: 'Entidad Financiera',
                         text: "¿Seguro que desea modificar Empresa sin ninguna entidad financiera?",
@@ -811,7 +811,7 @@
                         confirmButtonText: 'Si, Confirmar',
                         cancelButtonText: "No, Cancelar",
                     }).then((result) => {
-                        
+
                         if (result.isConfirmed) {
                             if (validarCertificado() == true) {
 
@@ -838,7 +838,7 @@
                                     toastr.error('Ingrese una empresa activa o sin verificar', 'Error');
                                 }
                             }
-                            
+
                         } else if (
                             /* Read more about handling dismissals below */
                             result.dismiss === Swal.DismissReason.cancel
@@ -872,8 +872,8 @@
                         }
                     }
                 }
-        
-        
+
+
 
             } else if (
                 /* Read more about handling dismissals below */
@@ -927,14 +927,14 @@
 
 
     function camposRuc(objeto) {
-        var razonsocial = objeto.value.razonSocial;
-        var nombrecorto = objeto.value.nombreComercial;
-        var direccion = objeto.value.direccion;
-        var departamento = objeto.value.departamento;
-        var provincia = objeto.value.provincia;
-        var distrito = objeto.value.distrito;
-        var estado = objeto.value.estado;
-        var ubigeo = objeto.value.ubigeo;
+        var razonsocial = objeto.value.data.nombre_o_razon_social;
+        var nombrecorto = objeto.value.data.nombre_o_razon_social;
+        var direccion = objeto.value.data.direccion;
+        var departamento ="-";
+        var provincia = "-";
+        var distrito = "-";
+        var estado = objeto.value.data.estado;
+        var ubigeo = objeto.value.data.ubigeo[0];
 
         if (razonsocial != '-' && razonsocial != "NULL") {
             $('#razon_social').val(razonsocial)
@@ -1058,7 +1058,7 @@
 
             $('#ubigeo_texto').addClass("required")
             $('#ubigeo_empresa').prop("required",true)
-            
+
         @else
             document.getElementById("facturacion_tab").style.display = "none";
             $('#logo').prop("required",false)
@@ -1097,12 +1097,12 @@
                 },
                 {
                     "targets": [1],
-                    "width": "20%" 
+                    "width": "20%"
                 },
                 {
                     "targets": [2],
                     className: "text-center",
-                    "width": "10%" 
+                    "width": "10%"
                 },
                 {
                     "targets": [3],
@@ -1164,20 +1164,20 @@
                     "targets": [2],
                     data: 'serie',
                     className: "text-center",
-                
+
                 },
                 {
                     "targets": [3],
                     data: 'numero_iniciar',
                     className: "text-center",
-                
+
                 },
                 {
                     "targets": [4],
                     data: null,
                     className: "text-center",
                     render: function(data) {
-                        
+
                         if (data.emision == '1') {
                             return  'SI';
                         }else{
@@ -1185,13 +1185,13 @@
                         }
 
                     }
-                
+
                 },
                 {
                     "targets": [5],
                     visible: false,
                     data: 'tipo_id',
-                
+
                 },
 
             ],
@@ -1298,7 +1298,7 @@
             $('#error-direccion_fiscal').text("El campo Dirección Fiscal es obligatorio.")
         }
 
-        
+
         if ($('#direccion_llegada').val() == '') {
             enviar = false
             $('#direccion_llegada').addClass("is-invalid")
@@ -1363,7 +1363,7 @@
 
         $('#num_partida').removeClass("is-invalid")
         $('#error-num_partida').text("")
-        
+
         $('#logo').removeClass("is-invalid")
         $('#error-logo_empresa').text("")
 
@@ -1405,6 +1405,7 @@
                 allowOutsideClick: () => !Swal.isLoading()
             }).then((result) => {
                 // $('#ruc').removeClass('is-invalid')
+                console.log(result)
                 camposRuc(result)
                 consultaExitosa()
             })
@@ -1427,7 +1428,7 @@
         } else {
             toastr.error('Extensión inválida, formatos admitidos (.pfx)', 'Error');
         }
-        
+
     });
 
     function validarCertificado() {
@@ -1462,7 +1463,7 @@
                     $('#soap_password').addClass("is-invalid")
                     toastr.error("Ingrese Soap Contraseña Sunat.", 'Error');
                     $('#error-soap_password').text("El campo Soap Contraseña es obligatorio.")
-                    
+
                     $('#facturacion_link').click();
                 }
             }
