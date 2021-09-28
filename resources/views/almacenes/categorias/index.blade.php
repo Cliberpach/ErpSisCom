@@ -1,6 +1,7 @@
 @extends('layout') @section('content')
 @include('almacenes.categorias.create')
 @include('almacenes.categorias.edit')
+@include('almacenes.categorias.modalfile')
 @section('almacenes-active', 'active')
 @section('categoria-active', 'active')
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -20,8 +21,11 @@
         <a data-toggle="modal" data-target="#modal_crear_categoria"  class="btn btn-block btn-w-m btn-primary m-t-md" href="#">
             <i class="fa fa-plus-square"></i> Añadir nuevo
         </a>
+        <a class="btn btn-block btn-w-m btn-primary m-t-md btn-modal-file" href="#">
+            <i class="fa fa-plus-square"></i> Importar Excel
+        </a>
     </div>
-    
+
 </div>
 
 <div class="wrapper wrapper-content animated fadeInRight">
@@ -44,7 +48,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                    
+
                     </tbody>
 
                     </table>
@@ -67,7 +71,7 @@
         z-index: 3000 !important;
     }
 </style>
-@endpush 
+@endpush
 
 @push('scripts')
 <!-- DataTable -->
@@ -77,7 +81,7 @@
 <script>
 
     $(document).ready(function() {
-        
+
 
         $('.dataTables-articulo').DataTable({
             "dom": '<"html5buttons"B>lTfgitp',
@@ -89,7 +93,7 @@
                     title: 'Tablas Generales'
                 },
 
-                {   
+                {
                     titleAttr: 'Imprimir',
                     extend: 'print',
                     text:      '<i class="fa fa-print"></i> Imprimir',
@@ -120,7 +124,7 @@
                     data: null,
                     className:"text-center",
                     render: function (data) {
-                        
+
                         return "<div class='btn-group'><button class='btn btn-warning btn-sm modificarDetalle' onclick='obtenerData("+data.id+")' type='button' title='Modificar'><i class='fa fa-edit'></i></button><a class='btn btn-danger btn-sm' href='#' onclick='eliminar("+data.id+")' title='Eliminar'><i class='fa fa-trash'></i></a></div>"
                     }
                 }
@@ -131,7 +135,7 @@
             },
             "order": [[ 0, "desc" ]],
 
-           
+
 
         });
 
@@ -148,12 +152,12 @@
             if (value.id == $id) {
                 $('#tabla_id_editar').val(value.id);
                 $('#descripcion_editar').val(value.descripcion);
-            }  
+            }
         });
 
         $('#modal_editar_categoria').modal('show');
 
-        
+
     }
 
     //Old Modal Editar
@@ -166,8 +170,8 @@
         $('#error-descripcion').text('')
     }
 
-    $('#modal_editar_categoria').on('hidden.bs.modal', function(e) { 
-        limpiarError() 
+    $('#modal_editar_categoria').on('hidden.bs.modal', function(e) {
+        limpiarError()
     });
 
     //Old Modal Crear
@@ -180,7 +184,7 @@
         $('#error-descripcion-guardar').text('')
     }
 
-    $('#modal_crear_categoria').on('hidden.bs.modal', function(e) { 
+    $('#modal_crear_categoria').on('hidden.bs.modal', function(e) {
         guardarError()
         $('#descripcion_guardar').val('')
 
@@ -197,7 +201,7 @@
 
 
     function eliminar(id) {
-        
+
         Swal.fire({
             title: 'Opción Eliminar',
             text: "¿Seguro que desea eliminar registro?",
@@ -225,7 +229,7 @@
 
             }
         })
-        
+
     }
 
     $('#editar_categoria').submit(function(e){
@@ -237,7 +241,7 @@
                 cancelButton: 'btn btn-danger',
             },
             buttonsStyling: false
-            
+
         })
 
         Swal.fire({
@@ -263,7 +267,7 @@
                 'La Solicitud se ha cancelado.',
                 'error'
                 )
-                
+
             }
             })
     })
@@ -306,7 +310,9 @@
             })
     })
 
-
+    $(".btn-modal-file").on('click', function () {
+        $("#modal_file").modal("show");
+    });
 
 </script>
 @endpush

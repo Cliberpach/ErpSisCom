@@ -23,7 +23,6 @@ class ClienteImport implements ToCollection,WithHeadingRow,WithValidation
     public function collection(Collection $collection)
     {
 
-        Log::info($collection->count());
         foreach($collection as $row)
         {
             Log::info($row);

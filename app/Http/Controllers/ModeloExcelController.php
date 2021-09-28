@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\Categoria\CategoriaExport;
 use App\Exports\Cliente\ClienteExport;
 use App\Exports\Cliente\ClienteMultiExport;
 use Illuminate\Http\Request;
@@ -14,5 +15,10 @@ class ModeloExcelController extends Controller
         ob_end_clean();
         ob_start();
         return  Excel::download(new ClienteMultiExport(), 'modelo_cliente.xlsx');
+    }
+    public function categoria(){
+        ob_end_clean();
+        ob_start();
+        return  Excel::download(new CategoriaExport(), 'modelo_categoria.xlsx');
     }
 }
