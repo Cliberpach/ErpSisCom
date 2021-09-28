@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mantenimiento\Persona\Persona;
 use App\Mantenimiento\Persona\PersonaVendedor;
 use App\Mantenimiento\Vendedor\Vendedor;
+use App\PersonaTrabajador;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,19 +23,21 @@ class VendedorController extends Controller
 
     public function getTable()
     {
-        $vendedores = Vendedor::get();
+        $vendedores = Vendedor::all();
         $coleccion = collect([]);
-        foreach ($vendedores as $vendedor) {
-            if ($vendedor->persona_trabajador->persona->estado == "ACTIVO") {
+        foreach($vendedores as $vendedor) {
+            if($vendedor->persona_trabajador->persona->estado == "ACTIVO")
+            {
                 $coleccion->push([
                     'id' => $vendedor->id,
                     'documento' => $vendedor->persona_trabajador->persona->getDocumento(),
                     'apellidos_nombres' => $vendedor->persona_trabajador->persona->getApellidosYNombres(),
                     'telefono_movil' => $vendedor->persona_trabajador->persona->telefono_movil,
-                    'area' => $vendedor->persona_trabajador->area,
-                    'zona' => $vendedor->persona_trabajador->zona
+                    'area' => $vendedor->persona_trabajador->getArea(),
+                    'cargo' =>$vendedor->persona_trabajador->getCargo(),
                 ]);
             }
+
         }
         return DataTables::of($coleccion)->toJson();
     }
@@ -56,7 +59,7 @@ class VendedorController extends Controller
             $persona->nombres = $request->get('nombres');
             $persona->apellido_paterno = $request->get('apellido_paterno');
             $persona->apellido_materno = $request->get('apellido_materno');
-            $persona->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_nacimiento'))->format('Y-m-d');
+            $persona->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->get('fecha_nacimiento'))->format('Y-m-d') ;
             $persona->sexo = $request->get('sexo');
             $persona->estado_civil = $request->get('estado_civil');
             $persona->departamento_id = str_pad($request->get('departamento'), 2, "0", STR_PAD_LEFT);
@@ -66,52 +69,54 @@ class VendedorController extends Controller
             $persona->correo_electronico = $request->get('correo_electronico');
             $persona->telefono_movil = $request->get('telefono_movil');
             $persona->telefono_fijo = $request->get('telefono_fijo');
+            $persona->correo_corporativo= $request->get('correo_corporativo');
+            $persona->telefono_trabajo= $request->get('telefono_trabajo');
             $persona->estado_documento = $request->get('estado_documento');
             $persona->save();
 
-            $vendedor = new Vendedor();
-            $vendedor->persona_id = $persona->id;
-            $vendedor->area = $request->get('area');
-            $vendedor->profesion = $request->get('profesion');
-            $vendedor->cargo = $request->get('cargo');
-            $vendedor->telefono_referencia = $request->get('telefono_referencia');
-            $vendedor->contacto_referencia = $request->get('contacto_referencia');
-            $vendedor->grupo_sanguineo = $request->get('grupo_sanguineo');
-            $vendedor->alergias = $request->get('alergias');
-            $vendedor->numero_hijos = $request->get('numero_hijos');
-            $vendedor->sueldo = $request->get('sueldo');
-            $vendedor->sueldo_bruto = $request->get('sueldo_bruto');
-            $vendedor->sueldo_neto = $request->get('sueldo_neto');
-            $vendedor->moneda_sueldo = $request->get('moneda_sueldo');
-            $vendedor->tipo_banco = $request->get('tipo_banco');
-            $vendedor->numero_cuenta = $request->get('numero_cuenta');
+            $personaTrabajador = new PersonaTrabajador();
+            $personaTrabajador->persona_id = $persona->id;
+            $personaTrabajador->area = $request->get('area');
+            $personaTrabajador->profesion = $request->get('profesion');
+            $personaTrabajador->cargo = $request->get('cargo');
+            $personaTrabajador->telefono_referencia = $request->get('telefono_referencia');
+            $personaTrabajador->contacto_referencia = $request->get('contacto_referencia');
+            $personaTrabajador->grupo_sanguineo = $request->get('grupo_sanguineo');
+            $personaTrabajador->alergias = $request->get('alergias');
+            $personaTrabajador->numero_hijos = $request->get('numero_hijos');
+            $personaTrabajador->sueldo = $request->get('sueldo');
+            $personaTrabajador->sueldo_bruto = $request->get('sueldo_bruto');
+            $personaTrabajador->sueldo_neto = $request->get('sueldo_neto');
+            $personaTrabajador->moneda_sueldo = $request->get('moneda_sueldo');
+            $personaTrabajador->tipo_banco = $request->get('tipo_banco');
+            $personaTrabajador->numero_cuenta = $request->get('numero_cuenta');
 
-            if ($request->hasFile('imagen')) {
+            if($request->hasFile('imagen')){
                 $file = $request->file('imagen');
                 $name = $file->getClientOriginalName();
-                $vendedor->nombre_imagen = $name;
-                $vendedor->ruta_imagen = $request->file('imagen')->store('public/vendedores/imagenes');
+                $personaTrabajador->nombre_imagen = $name;
+                $personaTrabajador->ruta_imagen = $request->file('imagen')->store('public/colaboradores/imagenes');
             }
 
-            $vendedor->fecha_inicio_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_actividad'))->format('Y-m-d');
+            $personaTrabajador->fecha_inicio_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_actividad'))->format('Y-m-d') ;
             if (!is_null($request->get('fecha_fin_actividad'))) {
-                $vendedor->fecha_fin_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_actividad'))->format('Y-m-d');
+                $personaTrabajador->fecha_fin_actividad = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_actividad'))->format('Y-m-d') ;
             }
             if (!is_null($request->get('fecha_inicio_planilla'))) {
-                $vendedor->fecha_inicio_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_planilla'))->format('Y-m-d');
+                $personaTrabajador->fecha_inicio_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_inicio_planilla'))->format('Y-m-d') ;
             }
             if (!is_null($request->get('fecha_fin_planilla'))) {
-                $vendedor->fecha_fin_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_planilla'))->format('Y-m-d');
+                $personaTrabajador->fecha_fin_planilla = Carbon::createFromFormat('d/m/Y', $request->get('fecha_fin_planilla'))->format('Y-m-d') ;
             }
-            $vendedor->zona = $request->get('zona');
-            $vendedor->comision = $request->get('comision');
-            $vendedor->moneda_comision = $request->get('moneda_comision');
-            $vendedor->save();
-
+            $personaTrabajador->save();
+            $colaborador=new Vendedor();
+            $colaborador->persona_trabajador_id = $personaTrabajador->id;
+            $colaborador->save();
             //Registro de actividad
-            $descripcion = "SE AGREGÓ EL VENDEDOR CON EL NOMBRE: " . $vendedor->persona->nombres . ' ' . $vendedor->persona->apellido_paterno . ' ' . $vendedor->persona->apellido_materno;
-            $gestion = "VENDEDORES";
-            crearRegistro($vendedor, $descripcion, $gestion);
+            $descripcion = "SE AGREGÓ EL VENDEDOR CON EL NOMBRE: ". $personaTrabajador->persona->nombres.' '.$personaTrabajador->persona->apellido_paterno.' '.$personaTrabajador->persona->apellido_materno;
+            $gestion = "vendedores";
+            crearRegistro($colaborador, $descripcion , $gestion);
+
         });
 
 
@@ -256,30 +261,30 @@ class VendedorController extends Controller
         $data = $request->all();
         $existe = false;
         $igualPersona = false;
-        if (!is_null($data['tipo_documento']) && !is_null($data['documento'])) {
-            if (!is_null($data['id'])) {
-                $persona = PersonaVendedor::findOrFail($data['id']);
-                if ($persona->tipo_documento == $data['tipo_documento'] && $persona->documento == $data['documento']) {
-                    $igualPersona = true;
-                } else {
-                    $persona = PersonaVendedor::where([
-                        ['tipo_documento', '=', $data['tipo_documento']],
-                        ['documento', $data['documento']],
-                        ['estado', 'ACTIVO']
-                    ])->first();
-                }
-            } else {
-                $persona = PersonaVendedor::where([
-                    ['tipo_documento', '=', $data['tipo_documento']],
-                    ['documento', $data['documento']],
-                    ['estado', 'ACTIVO']
-                ])->first();
-            }
+        // if (!is_null($data['tipo_documento']) && !is_null($data['documento'])) {
+        //     if (!is_null($data['id'])) {
+        //         $persona = Persona::findOrFail($data['id']);
+        //         if ($persona->tipo_documento == $data['tipo_documento'] && $persona->documento == $data['documento']) {
+        //             $igualPersona = true;
+        //         } else {
+        //             $persona = Persona::where([
+        //                 ['tipo_documento', '=', $data['tipo_documento']],
+        //                 ['documento', $data['documento']],
+        //                 ['estado', 'ACTIVO']
+        //             ])->first();
+        //         }
+        //     } else {
+        //         $persona = Persona::where([
+        //             ['tipo_documento', '=', $data['tipo_documento']],
+        //             ['documento', $data['documento']],
+        //             ['estado', 'ACTIVO']
+        //         ])->first();
+        //     }
 
-            if (!is_null($persona) && !is_null($persona->empleado->vendedor)) {
-                $existe = true;
-            }
-        }
+        //     if (!is_null($persona) && !is_null($persona->empleado->vendedor)) {
+        //         $existe = true;
+        //     }
+        // }
 
         $result = [
             'existe' => $existe,

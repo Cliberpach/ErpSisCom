@@ -19,9 +19,9 @@ class CreatePersonasTable extends Migration
             $table->string('documento', 25);
             $table->char('codigo_verificacion', 1)->nullable();
             $table->string('nombres', 100);
-            $table->string('apellido_paterno', 100);
-            $table->string('apellido_materno', 100);
-            $table->date('fecha_nacimiento');
+            $table->string('apellido_paterno', 100)->nullable();
+            $table->string('apellido_materno', 100)->nullable();
+            $table->date('fecha_nacimiento')->nullable();
             $table->string('sexo');
             $table->string('estado_civil')->nullable();
             $table->char('departamento_id', 2)->nullable();

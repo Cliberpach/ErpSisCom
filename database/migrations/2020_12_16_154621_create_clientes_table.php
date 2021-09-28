@@ -28,10 +28,10 @@ class CreateClientesTable extends Migration
             $table->foreign('provincia_id')->references('id')->on('provincias')->onDelete('cascade');
             $table->char('distrito_id', 6)->nullable();
             $table->foreign('distrito_id')->references('id')->on('distritos')->onDelete('cascade');
-            $table->string('direccion');
-            $table->string('zona');
-            $table->string('correo_electronico');
-            $table->string('telefono_movil');
+            $table->string('direccion')->nullable();
+            $table->string('zona')->nullable();
+            $table->string('correo_electronico')->nullable();
+            $table->string('telefono_movil')->nullable();
             $table->string('telefono_fijo')->nullable();
             $table->string('moneda_credito')->nullable();
             $table->unsignedDecimal('limite_credito', 15,2)->nullable();

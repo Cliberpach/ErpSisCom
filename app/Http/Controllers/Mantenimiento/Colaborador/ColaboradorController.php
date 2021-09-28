@@ -51,7 +51,6 @@ class ColaboradorController extends Controller
     {
         $data = $request->all();
         DB::transaction(function () use ($request) {
-
             $persona = new Persona();
             $persona->tipo_documento = $request->get('tipo_documento');
             $persona->documento = $request->get('documento');

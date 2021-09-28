@@ -795,25 +795,25 @@
         if (objeto.value === undefined)
             return;
 
-        var nombres = objeto.value.nombres;
-        var apellido_paterno = objeto.value.apellidoPaterno;
-        var apellido_materno = objeto.value.apellidoMaterno;
-        var codigo_verificacion = objeto.value.codVerifica;
+        var nombres = objeto.value.data.nombres;
+        var apellido_paterno = objeto.value.data.apellido_paterno;
+        var apellido_materno = objeto.value.data.apellido_materno;
+        // var codigo_verificacion = objeto.value.data.codVerifica;
 
-        if (nombres !== '-' && nombres !== "NULL") {
+        if (nombres !== '-' && nombres !== "NULL" ) {
             $('#nombres').val(nombres);
         }
-        if (apellido_paterno !== '-' && apellido_paterno !== "NULL") {
+        if (apellido_paterno !== '-' && apellido_paterno !== "NULL" ) {
             $('#apellido_paterno').val(apellido_paterno);
         }
-        if (apellido_materno !== '-' && apellido_materno !== "NULL") {
+        if (apellido_materno !== '-' && apellido_materno !== "NULL" ) {
             $('#apellido_materno').val(apellido_materno);
         }
-        if (codigo_verificacion !== '-' && codigo_verificacion !== "NULL") {
-            $('#codigo_verificacion').val(codigo_verificacion);
-        }
+        // if (codigo_verificacion !== '-' && codigo_verificacion !== "NULL" ) {
+        //     $('#codigo_verificacion').val(codigo_verificacion);
+        // }
         $('#estado_documento').val('ACTIVO')
-    }
+        }
 
     function clearDatosPersona() {
         $('#documento').val("");

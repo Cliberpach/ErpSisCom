@@ -69,6 +69,14 @@ function convertFloat(number)
     return numero;
 }
 
+let sHtmlErrores = function (lstErrores) {
+    let sHtmlMensaje = '';
+    Object.values(lstErrores).forEach(lstError => {
+        lstError.forEach(sError => sHtmlMensaje += (sError.charAt(0).toUpperCase() + sError.slice(1) + '<br>'));
+    });
+    return sHtmlMensaje;
+};
+
 $.ajaxSetup({
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
