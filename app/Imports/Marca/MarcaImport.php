@@ -18,12 +18,11 @@ class MarcaImport implements ToCollection,WithHeadingRow
     */
     public function collection(Collection $collection)
     {
-        Log::info($collection);
         foreach ($collection as  $row) {
             if($row['marca']!=null && $row['procedencia'] && Marca::where('marca',$row['marca'])->count()==0) {
                 $marca=new Marca();
-                $marca->marca=$row['marca'];
-                $marca->procedencia=$row['procedencia'];
+                $marca->marca=trim($row['marca']);
+                $marca->procedencia=trim($row['procedencia']);
                 $marca->save();
             }
         }

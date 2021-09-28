@@ -8,20 +8,12 @@
                 </button>
                 <i class="fa fa-cogs modal-icon"></i>
                 <h4 class="modal-title">Subir el Excel</h4>
-
                             <form action="{{route('almacenes.nota_ingreso.downloadexcel')}}" method="get" style="display: inline-block;">
                                 <input type="submit" class="btn btn-primary" value="Descargar el modelo de excel" />
                             </form>
-
-
                             <form action="{{route('almacenes.nota_ingreso.downloadproductosexcel')}}" method="get" style="display: inline-block;">
                                 <input type="submit" class="btn btn-primary" value="Descargar Productos terminados" />
                             </form>
-
-
-
-
-
             </div>
             <div class="modal-body">
                 <div id="drag-drop-area"  name="fotografije[]"></div>
@@ -36,7 +28,6 @@
                         </tr>
                     </thead>
                     <tbody>
-
                     </tbody>
                 </table>
                 </div>
@@ -47,7 +38,6 @@
                         <input type="submit" class="btn btn-primary" value="Imprimir Excel con correciones" />
                     </form>
                 </div>
-
             </div>
             <div class="modal-footer">
                 <div class="col-md-6 text-right">
@@ -94,35 +84,27 @@
         else
         {
             var t = $('.dataTables-errores').DataTable();
-
             var dataE = [];
             for (let i = 0; i < resultado.length - 1; i++) {
                 t.row.add([
                     resultado[i].fila,
                     resultado[i].atributo,
                     resultado[i].error[0],
-
                 ]).draw(false);
-
                 let fila = {
                         fila: resultado[i].fila,
                         atributo: resultado[i].atributo,
                         error: resultado[i].error[0],
-
                     };
-
                     dataE.push(fila);
-
             }
             let fila={excel: resultado[resultado.length - 1].excel};
             dataE.push(fila);
             $("#tablaerrores").css("display","block");
             $("#imprimir").css("display","block");
             $("#arregloerrores").val(JSON.stringify(dataE));
-
         }
     });
-
     uppy.on('complete', (result) => {
       console.log('Upload complete! We’ve uploaded these files:', result)
     });

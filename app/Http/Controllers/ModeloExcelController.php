@@ -6,6 +6,7 @@ use App\Exports\Categoria\CategoriaExport;
 use App\Exports\Cliente\ClienteExport;
 use App\Exports\Cliente\ClienteMultiExport;
 use App\Exports\Marca\MarcaExport;
+use App\Exports\Producto\ProductoMultiExport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -26,5 +27,10 @@ class ModeloExcelController extends Controller
         ob_end_clean();
         ob_start();
         return Excel::download(new MarcaExport(), 'modelo_marca.xlsx');
+    }
+    public function producto() {
+        ob_end_clean();
+        ob_start();
+        return Excel::download(new ProductoMultiExport(), 'modelo_producto.xlsx');
     }
 }
