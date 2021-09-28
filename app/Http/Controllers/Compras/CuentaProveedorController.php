@@ -72,16 +72,23 @@ class CuentaProveedorController extends Controller
     }
     public function detallePago(Request $request)
     {
+        Log::info($request);
+        return $request;
         $cuentaProveedor=CuentaProveedor::findOrFail($request->id);
         if($request->pago=="A CUENTA")
         {
             $detallepago=new DetalleCuentaProveedor();
             $detallepago->cuenta_proveedor_id=$cuentaProveedor->id;
-            $detallepago->monto=$request->cantidad;
+            $detallepago->mcaja_id=1;// hasta implementar por usuario ,movimiento caja
             $detallepago->observacion=$request->observacion;
             $detallepago->fecha=$request->fecha;
+            $detallepago->importe=$request->importe_venta;
+            $detallepago->efectivo=$request->efectivo_venta;
+            $detallepago->tipo_pago_id=$request->modo_pago;
             $detallepago->save();
-            $cuentaProveedor->saldo=$cuentaProveedor->saldo-$request->cantidad;
+            $cant=$request->efectivo_venta+$request->importe_venta;
+
+            $cuentaProveedor->saldo=$cuentaProveedor->saldo-$cant;
             $cuentaProveedor->save();
             $detallepago->saldo =$cuentaProveedor->saldo;
             $detallepago->update();
@@ -99,25 +106,62 @@ class CuentaProveedorController extends Controller
         else{
             $proveedor=$cuentaProveedor->documento->proveedor;
             $cuentasFaltantes=CuentaProveedor::where('estado','PENDIENTE')->get();
-            $cantidadRecibida=$request->cantidad;
+            $cantidadRecibidaEfectivo=$request->efectivo_venta;
+            $cantidadRecibidaImporte=$request->importe_venta;
             foreach ($cuentasFaltantes as $key => $cuenta) {
-                    if($cuenta->documento->proveedor->id==$proveedor->id && $cantidadRecibida!=0)
+                    if($cuenta->documento->proveedor->id==$proveedor->id && ($cantidadRecibidaEfectivo!=0 || $cantidadRecibidaImporte!=0))
                     {
+                        $cantidadTotal=$cantidadRecibidaEfectivo+$cantidadRecibidaImporte;
                         $detallepago=new DetalleCuentaProveedor();
                         $detallepago->cuenta_proveedor_id=$cuenta->id;
                         $detallepago->monto=0;
                         $detallepago->observacion=$request->observacion;
                         $detallepago->fecha=$request->fecha;
-                        $detallepago->save();
-                        if($cuenta->saldo > $cuenta)
+
+                        $detallepago->tipo_pago_id=$request->modo_pago;
+                        if($cuenta->saldo > $cantidadTotal)
                         {
-                            $detallepago->monto=$cantidadRecibida;
-                            $cuenta->saldo=$cuenta->saldo-$cantidadRecibida;
-                            $cantidadRecibida=0;
+                            if($cantidadRecibidaEfectivo==0)
+                            {
+                                $detallepago->efectivo=0;
+                                $detallepago->importe=$cantidadRecibidaImporte;
+                                $cuenta->saldo=$cuenta->saldo-$cantidadRecibidaImporte;
+                                $cantidadRecibidaImporte=0;
+                            }
+                            else
+                            {
+                                $cuenta->saldo=$cuenta->saldo-$cantidadRecibidaEfectivo;
+                                $detallepago->efectivo=$cantidadRecibidaEfectivo;
+                                $cuenta->saldo=$cuenta->saldo-$cantidadRecibidaImporte;
+                                $detallepago->importe=$cantidadRecibidaImporte;
+                                $cantidadRecibidaEfectivo=0;
+                                $cantidadRecibidaImporte=0;
+                            }
                         }
-                        else{
-                            $detallepago->monto=$cuenta->saldo;
-                            $cantidadRecibida=$cantidadRecibida-$cuenta->saldo;
+                        else
+                        {
+                            if($cantidadRecibidaEfectivo==0)
+                            {   $detallepago->efectivo=0;
+                                $detallepago->importe=$cuenta->saldo;
+                                $cantidadRecibidaImporte=$cantidadRecibidaImporte-$cuenta->saldo;
+
+                            }
+                            else
+                            {
+                                if($cuenta->saldo>$cantidadRecibidaEfectivo)
+                                {
+
+                                    $detallepago->efectivo=$cantidadRecibidaEfectivo;
+                                    $detallepago->importe=$cuenta->saldo-$detallepago->efectivo;
+                                    $cantidadRecibidaEfectivo=0;
+                                    $cantidadRecibidaImporte=$cantidadRecibidaImporte- $detallepago->importe;
+                                }
+                                else{
+                                    $detallepago->efectivo=$cantidadRecibidaEfectivo;
+                                    $detallepago->importe=0;
+                                    $cantidadRecibidaEfectivo=$cantidadRecibidaEfectivo-$cuenta->saldo;
+                                }
+                            }
                             $cuenta->saldo=0;
                         }
                         $detallepago->save();

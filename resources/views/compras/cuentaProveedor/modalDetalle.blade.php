@@ -157,7 +157,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="col-form-label required">Importe</label>
-                                    <input type="text" class="form-control" id="importe_venta"
+                                    <input type="text" class="form-control" id="importe_venta" value="0.00"
                                         {{-- onkeypress="return filterFloat(event, this);" onkeyup="changeImporte(this)" --}}
                                         name="importe_venta">
                                 </div>
@@ -199,9 +199,12 @@
             e.preventDefault();
             var pago = $("#modal_detalle #pago").val();
             var fecha = $("#modal_detalle #fecha").val();
-            var cantidad = parseFloat($("#modal_detalle #cantidad").val());
+            var efectivo_venta=$("#efectivo_venta").val();
+            var importe_venta=$("#importe_venta").val();
+            var cantidad = parseFloat(efectivo_venta)+parseFloat(importe_venta);
             var observacion = $("#modal_detalle #observacion").val();
             var saldo = parseFloat($("#modal_detalle #saldo").val());
+            var modo_pago = $("#modo_pago").val();
             var id_cuenta_proveedor = $("#modal_detalle #cuenta_proveedor_id").val()
             if (pago.length == 0 || fecha.length == 0 || fecha.length == 0 || cantidad.length == 0 || observacion
                 .length == 0) {
@@ -235,10 +238,12 @@
                         data.append("fecha", fecha);
                         data.append("cantidad", cantidad);
                         data.append("observacion", observacion);
+                        data.append("efectivo_venta",efectivo_venta)
+                        data.append("importe_venta",efectivo_venta)
+                        data.append("modo_pago",modo_pago)
                         data.append("file", fileImagen);
-                        data.append
                         axios.post("{{ route('cuentaProveedor.detallePago') }}", data, config).then((value) => {
-                            window.location.href = "{{ route('cuentaProveedor.index') }}"
+                            // window.location.href = "{{ route('cuentaProveedor.index') }}"
                         }).catch((value) => {
 
                         })
