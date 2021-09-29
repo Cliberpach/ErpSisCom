@@ -28,6 +28,6 @@ class CreateColaboradoresTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('colaborados');
+        Schema::dropIfExists('colaboradores');
     }
 }

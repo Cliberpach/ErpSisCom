@@ -245,11 +245,15 @@
             var table = $(".dataTables-detalle").DataTable();
             table.clear().draw();
             detalle.forEach((value, index, array) => {
+                var html=   '<a class="btn btn-primary btn-xs" href="/cuentaCliente/imagen/'+value.id+'"><i class="fa fa-download"></i></a>';
+              if(value.ruta_imagen==null) {
+                html="-"
+              }
                 table.row.add([
                     value.fecha,
                     value.observacion,
-                    value.monto,
-                    '<a class="btn btn-primary btn-xs" href="/cuentaCliente/imagen/'+value.id+'"><i class="fa fa-download"></i></a>'
+                    parseFloat(value.efectivo)+parseFloat(value.importe),
+                    html
                 ]).draw(false);
             })
         }).catch((value) => {

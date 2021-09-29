@@ -55,7 +55,7 @@ class CajaController extends Controller
     public function destroy($id)
     {
         $caja = Caja::findOrFail($id);
-        $caja->estado="ANULADO";
+        $caja->estado = "ANULADO";
         $caja->save();
         return redirect()->route('Caja.index');
     }
@@ -81,8 +81,8 @@ class CajaController extends Controller
     }
     public function estadoCaja(Request $request)
     {
-        $caja=Caja::findOrFail($request->id);
-        return $caja->estado_caja=="ABIERTA"? 'true':'false';
+        $caja = Caja::findOrFail($request->id);
+        return $caja->estado_caja == "ABIERTA" ? 'true' : 'false';
     }
     public function aperturaCaja(Request $request)
     {
@@ -93,8 +93,8 @@ class CajaController extends Controller
         $movimiento->estado_movimiento = "APERTURA";
         $movimiento->fecha_apertura = date('Y-m-d h:i:s');
         $movimiento->save();
-        $caja=Caja::findOrFail($request->caja);
-        $caja->estado_caja="ABIERTA";
+        $caja = Caja::findOrFail($request->caja);
+        $caja->estado_caja = "ABIERTA";
         $caja->save();
         return redirect()->route('Caja.Movimiento.index');
     }
@@ -105,8 +105,8 @@ class CajaController extends Controller
         $movimiento->fecha_cierre = date('Y-m-d h:i:s');
         $movimiento->monto_final = $request->saldo;
         $movimiento->save();
-        $caja=$movimiento->caja;
-        $caja->estado_caja="CERRADA";
+        $caja = $movimiento->caja;
+        $caja->estado_caja = "CERRADA";
         $caja->save();
         return redirect()->route('Caja.Movimiento.index');
     }
@@ -114,10 +114,13 @@ class CajaController extends Controller
     {
         $movimiento = MovimientoCaja::findOrFail($request->id);
         $colaborador = $movimiento->colaborador;
-        $ingresos = $movimiento->totalIngresos($movimiento->detalleMovimientoVentas);
-        $egresos = $movimiento->totalEgresos($movimiento->detalleMoviemientoEgresos);
+        $ingresos = cuadreMovimientoCajaIngresos($movimiento);
+        $egresos = cuadreMovimientoCajaEgresos($movimiento);
+
+        Log::info($egresos);
+        Log::info($ingresos);
         return array(
-            "caja"=>$movimiento->caja->nombre,
+            "caja" => $movimiento->caja->nombre,
             "monto_inicial" => $movimiento->monto_inicial,
             "colaborador" => $colaborador->persona_trabajador->persona->apellido_paterno . " " . $colaborador->persona_trabajador->persona->apellido_paterno . " " . $colaborador->persona_trabajador->persona->nombre,
             "egresos" => $egresos,
@@ -127,19 +130,14 @@ class CajaController extends Controller
     }
     public function verificarEstadoUser(Request $request)
     {
-        $mensaje=false;
-        $user=Auth::user();
-        if(MovimientoCaja::where('estado_movimiento','APERTURA')->count()!=0)
-        {
-            if($user->usuario=='ADMINISTRADOR')
-            {
-                $mensaje=true;
-            }
-            else
-            {
-                if(MovimientoCaja::where('colaborador_id',$user->user->persona->persona->persona_trabajador->colaborador->id)->count()!=0)
-                {
-                    $mensaje=true;
+        $mensaje = false;
+        $user = Auth::user();
+        if (MovimientoCaja::where('estado_movimiento', 'APERTURA')->count() != 0) {
+            if ($user->usuario == 'ADMINISTRADOR') {
+                $mensaje = true;
+            } else {
+                if (MovimientoCaja::where('colaborador_id', $user->user->persona->persona->persona_trabajador->colaborador->id)->count() != 0) {
+                    $mensaje = true;
                 }
             }
         }

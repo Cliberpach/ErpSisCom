@@ -86,7 +86,7 @@ class CuentaClienteController extends Controller
             {
                 $detallepago = new DetalleCuentaCliente();
                 $detallepago->cuenta_cliente_id = $CuentaCliente->id;
-                $detallepago->mcaja_id = 1;
+                $detallepago->mcaja_id = movimientoUser()->id;
                 $detallepago->monto = $request->cantidad;
                 $detallepago->importe=$request->importe_venta;
                 $detallepago->efectivo=$request->efectivo_venta;
@@ -122,7 +122,7 @@ class CuentaClienteController extends Controller
                     if($cuenta->documento->cliente->id == $cliente->id && $cantidadRecibida != 0)
                     {
                         $detallepago = new DetalleCuentaCliente();
-                        $detallepago->mcaja_id = 1;
+                        $detallepago->mcaja_id = movimientoUser()->id;
                         $detallepago->cuenta_cliente_id = $cuenta->id;
                         $detallepago->monto = 0;
                         $detallepago->observacion=$request->observacion;
@@ -144,7 +144,7 @@ class CuentaClienteController extends Controller
                             else
                             {
                                 $detallepago->efectivo = $cantidadRecibidaEfectivo;
-                                $detallepago->importe = $cantidadRecibidaImporte;                                    
+                                $detallepago->importe = $cantidadRecibidaImporte;
                                 $cuenta->sald = $cuenta->saldo - $cantidadRecibida;
                                 $cantidadRecibidaEfectivo = 0;
                                 $cantidadRecibidaImporte = 0;
@@ -203,7 +203,7 @@ class CuentaClienteController extends Controller
         catch(Exception $e)
         {
             DB::rollBack();
-            Session::flash('error', $e->getMessage());            
+            Session::flash('error', $e->getMessage());
             return redirect()->route('cuentaCliente.index');
         }
     }

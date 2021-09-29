@@ -168,17 +168,15 @@ if (!function_exists('forma_pago')) {
 if (!function_exists('modos_pago')) {
     function modos_pago()
     {
-        return TipoPago::where('estado','ACTIVO')->get();
+        return TipoPago::where('estado', 'ACTIVO')->get();
     }
 }
 
-if(!function_exists('vendedores'))
-{
+if (!function_exists('vendedores')) {
     function vendedores()
     {
-        return Vendedor::cursor()->filter(function($vendedor)
-        {
-            return $vendedor->persona_trabajador->persona->estado=="ACTIVO"? true : false;
+        return Vendedor::cursor()->filter(function ($vendedor) {
+            return $vendedor->persona_trabajador->persona->estado == "ACTIVO" ? true : false;
         });
     }
 }
@@ -330,12 +328,12 @@ if (!function_exists('calcularMonto')) {
     function calcularMonto($id)
     {
 
-        $detalles = Detalle::where('orden_id',$id)->get();
+        $detalles = Detalle::where('orden_id', $id)->get();
         $orden = Orden::findOrFail($id);
         $subtotal = 0;
         $igv = '';
         $tipo_moneda = '';
-        foreach($detalles as $detalle){
+        foreach ($detalles as $detalle) {
             $subtotal = ($detalle->cantidad * $detalle->precio) + $subtotal;
         }
 
@@ -345,8 +343,8 @@ if (!function_exists('calcularMonto')) {
             $decimal_subtotal = number_format($subtotal, 2, '.', '');
             $decimal_total = number_format($total, 2, '.', '');
             $decimal_igv = number_format($igv, 2, '.', '');
-        }else{
-            $calcularIgv = $orden->igv/100;
+        } else {
+            $calcularIgv = $orden->igv / 100;
             $base = $subtotal / (1 + $calcularIgv);
             $nuevo_igv = $subtotal - $base;
             $decimal_subtotal = number_format($base, 2, '.', '');
@@ -355,17 +353,16 @@ if (!function_exists('calcularMonto')) {
         }
         return $decimal_total;
     }
-
 }
 
 //Obtner Simbbolo de la moneda
 if (!function_exists('simbolo_monedas')) {
     function simbolo_monedas($moneda_descripcion)
     {
-        $simbolo= '';
-        foreach(tipos_moneda() as $moneda){
+        $simbolo = '';
+        foreach (tipos_moneda() as $moneda) {
             if ($moneda->descripcion == $moneda_descripcion) {
-                $simbolo= $moneda->simbolo;
+                $simbolo = $moneda->simbolo;
             }
         }
         return $simbolo;
@@ -377,12 +374,12 @@ if (!function_exists('calcularMontoDocumento')) {
     function calcularMontoDocumento($id)
     {
 
-        $detalles = Detalle_Documento::where('documento_id',$id)->get();
+        $detalles = Detalle_Documento::where('documento_id', $id)->get();
         $documento = Documento::findOrFail($id);
         $subtotal = 0;
         $igv = '';
         $tipo_moneda = '';
-        foreach($detalles as $detalle){
+        foreach ($detalles as $detalle) {
             $subtotal = ($detalle->cantidad * $detalle->precio) + $subtotal;
         }
 
@@ -392,8 +389,8 @@ if (!function_exists('calcularMontoDocumento')) {
             $decimal_subtotal = number_format($subtotal, 2, '.', '');
             $decimal_total = number_format($total, 2, '.', '');
             $decimal_igv = number_format($igv, 2, '.', '');
-        }else{
-            $calcularIgv = $documento->igv/100;
+        } else {
+            $calcularIgv = $documento->igv / 100;
             $base = $subtotal / (1 + $calcularIgv);
             $nuevo_igv = $subtotal - $base;
             $decimal_subtotal = number_format($base, 2, '.', '');
@@ -402,7 +399,6 @@ if (!function_exists('calcularMontoDocumento')) {
         }
         return $decimal_total;
     }
-
 }
 
 
@@ -412,17 +408,16 @@ if (!function_exists('calcularMontosAcuentaDocumentos')) {
     {
 
         $suma_detalle_pago = DB::table('documento_pago_detalle')
-        ->join('compra_documento_pagos','compra_documento_pagos.id','=','documento_pago_detalle.pago_id')
-        ->join('compra_documento_pago_detalle','compra_documento_pago_detalle.id','=','documento_pago_detalle.detalle_id')
-        ->join('compra_documentos','compra_documentos.id','=','compra_documento_pagos.documento_id')
-        ->select('compra_documento_pagos.*','compra_documentos.*')
-        ->where('compra_documentos.id','=',$id)
-        ->where('compra_documento_pagos.estado','ACTIVO')
-        ->sum('compra_documento_pago_detalle.monto');
+            ->join('compra_documento_pagos', 'compra_documento_pagos.id', '=', 'documento_pago_detalle.pago_id')
+            ->join('compra_documento_pago_detalle', 'compra_documento_pago_detalle.id', '=', 'documento_pago_detalle.detalle_id')
+            ->join('compra_documentos', 'compra_documentos.id', '=', 'compra_documento_pagos.documento_id')
+            ->select('compra_documento_pagos.*', 'compra_documentos.*')
+            ->where('compra_documentos.id', '=', $id)
+            ->where('compra_documento_pagos.estado', 'ACTIVO')
+            ->sum('compra_documento_pago_detalle.monto');
 
         return $suma_detalle_pago;
     }
-
 }
 
 
@@ -432,20 +427,19 @@ if (!function_exists('calcularMontosAcuentaVentas')) {
     {
 
         $montos = DB::table('cotizacion_documento_pago_detalle_cajas')
-                ->join('cotizacion_documento_pagos','cotizacion_documento_pagos.id','=','cotizacion_documento_pago_detalle_cajas.pago_id')
-                ->join('cotizacion_documento','cotizacion_documento.id','=','cotizacion_documento_pagos.documento_id')
-                ->join('cotizacion_documento_pago_cajas','cotizacion_documento_pago_cajas.id','=','cotizacion_documento_pago_detalle_cajas.caja_id')
-                ->join('pos_caja_chica','pos_caja_chica.id','=','cotizacion_documento_pago_cajas.caja_id')
+            ->join('cotizacion_documento_pagos', 'cotizacion_documento_pagos.id', '=', 'cotizacion_documento_pago_detalle_cajas.pago_id')
+            ->join('cotizacion_documento', 'cotizacion_documento.id', '=', 'cotizacion_documento_pagos.documento_id')
+            ->join('cotizacion_documento_pago_cajas', 'cotizacion_documento_pago_cajas.id', '=', 'cotizacion_documento_pago_detalle_cajas.caja_id')
+            ->join('pos_caja_chica', 'pos_caja_chica.id', '=', 'cotizacion_documento_pago_cajas.caja_id')
 
-                ->select('cotizacion_documento.id as id_documento', 'cotizacion_documento_pago_detalle_cajas.id','cotizacion_documento_pago_cajas.monto as caja_monto','cotizacion_documento_pagos.tipo_pago', 'cotizacion_documento_pago_detalle_cajas.created_at' )
-                ->where('cotizacion_documento.id','=',$id)
-                //ANULAR
-                ->where('cotizacion_documento_pago_cajas.estado','!=','ANULADO')
-                ->sum('cotizacion_documento_pago_cajas.monto');
+            ->select('cotizacion_documento.id as id_documento', 'cotizacion_documento_pago_detalle_cajas.id', 'cotizacion_documento_pago_cajas.monto as caja_monto', 'cotizacion_documento_pagos.tipo_pago', 'cotizacion_documento_pago_detalle_cajas.created_at')
+            ->where('cotizacion_documento.id', '=', $id)
+            //ANULAR
+            ->where('cotizacion_documento_pago_cajas.estado', '!=', 'ANULADO')
+            ->sum('cotizacion_documento_pago_cajas.monto');
 
         return $montos;
     }
-
 }
 
 
@@ -455,18 +449,17 @@ if (!function_exists('calcularMontosAcuentaDocumentosVentas')) {
     {
 
         $suma_detalle_pago = DB::table('cotizacion_documento_pago_detalles')
-        ->join('cotizacion_documento_pagos','cotizacion_documento_pagos.id','=','cotizacion_documento_pago_detalles.pago_id')
+            ->join('cotizacion_documento_pagos', 'cotizacion_documento_pagos.id', '=', 'cotizacion_documento_pago_detalles.pago_id')
 
-        ->join('cotizacion_documento','cotizacion_documento.id','=','cotizacion_documento_pagos.documento_id')
+            ->join('cotizacion_documento', 'cotizacion_documento.id', '=', 'cotizacion_documento_pagos.documento_id')
 
-        ->select('compra_documento_pagos.*','compra_documentos.*')
-        ->where('cotizacion_documento.id','=',$id)
-        ->where('cotizacion_documento_pago_detalles.estado','ACTIVO')
-        ->sum('cotizacion_documento_pago_detalles.monto');
+            ->select('compra_documento_pagos.*', 'compra_documentos.*')
+            ->where('cotizacion_documento.id', '=', $id)
+            ->where('cotizacion_documento_pago_detalles.estado', 'ACTIVO')
+            ->sum('cotizacion_documento_pago_detalles.monto');
 
         return $suma_detalle_pago;
     }
-
 }
 
 
@@ -475,18 +468,17 @@ if (!function_exists('calcularMontoRestanteCaja')) {
     function calcularMontoRestanteCaja($id)
     {
 
-        $restante= DB::table('compra_documento_pago_detalle')
-        ->join('documento_pago_detalle','documento_pago_detalle.detalle_id','=','compra_documento_pago_detalle.id')
-        ->join('compra_documento_pagos','compra_documento_pagos.id','=','documento_pago_detalle.pago_id')
-        ->select('compra_documento_pago_detalle.*','compra_documentos.*')
-        ->where('compra_documento_pagos.estado','!=','ANULADO')
-        ->where('compra_documento_pago_detalle.caja_id',$id)
-        ->sum('compra_documento_pago_detalle.monto');
+        $restante = DB::table('compra_documento_pago_detalle')
+            ->join('documento_pago_detalle', 'documento_pago_detalle.detalle_id', '=', 'compra_documento_pago_detalle.id')
+            ->join('compra_documento_pagos', 'compra_documento_pagos.id', '=', 'documento_pago_detalle.pago_id')
+            ->select('compra_documento_pago_detalle.*', 'compra_documentos.*')
+            ->where('compra_documento_pagos.estado', '!=', 'ANULADO')
+            ->where('compra_documento_pago_detalle.caja_id', $id)
+            ->sum('compra_documento_pago_detalle.monto');
 
 
         return $restante;
     }
-
 }
 
 // Calcular monto restante caja chica
@@ -494,16 +486,15 @@ if (!function_exists('calcularSumaMontosPagosVentas')) {
     function calcularSumaMontosPagosVentas($id)
     {
 
-        $restante= DB::table('cotizacion_documento_pago_cajas')
-        ->select('cotizacion_documento_pago_cajas.*')
-        ->where('cotizacion_documento_pago_cajas.estado','!=','ANULADO')
-        ->where('cotizacion_documento_pago_cajas.caja_id',$id)
-        ->sum('cotizacion_documento_pago_cajas.monto');
+        $restante = DB::table('cotizacion_documento_pago_cajas')
+            ->select('cotizacion_documento_pago_cajas.*')
+            ->where('cotizacion_documento_pago_cajas.estado', '!=', 'ANULADO')
+            ->where('cotizacion_documento_pago_cajas.caja_id', $id)
+            ->sum('cotizacion_documento_pago_cajas.monto');
 
 
         return $restante;
     }
-
 }
 
 
@@ -512,16 +503,15 @@ if (!function_exists('calcularMontosAcuentaVentasTransferencia')) {
     function calcularMontosAcuentaVentasTransferencia($id)
     {
 
-        $restante= DB::table('cotizacion_documento_pago_transferencias')
-        ->select('cotizacion_documento_pago_transferencias.*')
-        ->where('cotizacion_documento_pago_transferencias.estado','!=','ANULADO')
-        ->where('cotizacion_documento_pago_transferencias.documento_id',$id)
-        ->sum('cotizacion_documento_pago_transferencias.monto');
+        $restante = DB::table('cotizacion_documento_pago_transferencias')
+            ->select('cotizacion_documento_pago_transferencias.*')
+            ->where('cotizacion_documento_pago_transferencias.estado', '!=', 'ANULADO')
+            ->where('cotizacion_documento_pago_transferencias.documento_id', $id)
+            ->sum('cotizacion_documento_pago_transferencias.monto');
 
 
         return $restante;
     }
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -531,14 +521,15 @@ if (!function_exists('crearRegistro')) {
     function crearRegistro($modelo, $descripcion, $gestion)
     {
         activity()
-        ->causedBy(Auth::user())
-        ->performedOn($modelo)
-        ->withProperties(
-            [
-                'operacion' => 'AGREGAR',
-                'gestion' => $gestion
-            ])
-        ->log($descripcion);
+            ->causedBy(Auth::user())
+            ->performedOn($modelo)
+            ->withProperties(
+                [
+                    'operacion' => 'AGREGAR',
+                    'gestion' => $gestion
+                ]
+            )
+            ->log($descripcion);
     }
 }
 
@@ -546,14 +537,15 @@ if (!function_exists('modificarRegistro')) {
     function modificarRegistro($modelo, $descripcion, $gestion)
     {
         activity()
-        ->causedBy(Auth::user())
-        ->performedOn($modelo)
-        ->withProperties(
-            [
-                'operacion' => 'MODIFICAR',
-                'gestion' => $gestion
-            ])
-        ->log($descripcion);
+            ->causedBy(Auth::user())
+            ->performedOn($modelo)
+            ->withProperties(
+                [
+                    'operacion' => 'MODIFICAR',
+                    'gestion' => $gestion
+                ]
+            )
+            ->log($descripcion);
     }
 }
 
@@ -561,14 +553,15 @@ if (!function_exists('eliminarRegistro')) {
     function eliminarRegistro($modelo, $descripcion, $gestion)
     {
         activity()
-        ->causedBy(Auth::user())
-        ->performedOn($modelo)
-        ->withProperties(
-            [
-                'operacion' => 'ELIMINAR',
-                'gestion' => $gestion
-            ])
-        ->log($descripcion);
+            ->causedBy(Auth::user())
+            ->performedOn($modelo)
+            ->withProperties(
+                [
+                    'operacion' => 'ELIMINAR',
+                    'gestion' => $gestion
+                ]
+            )
+            ->log($descripcion);
     }
 }
 
@@ -588,7 +581,7 @@ if (!function_exists('obtenerTokenapi')) {
         ]);
         $estado = $response->getStatusCode();
         // dd($response);
-        if ($estado=='200'){
+        if ($estado == '200') {
 
             $resultado = $response->getBody()->getContents();
             $resultado = json_decode($resultado);
@@ -609,21 +602,20 @@ if (!function_exists('agregarEmpresaapi')) {
         $token = obtenerTokenapi();
         $response = $client->post($url, [
             'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$token}"
-                    ],
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => "Bearer {$token}"
+            ],
             'body'    => $empresa
         ]);
 
         $estado = $response->getStatusCode();
 
-        if ($estado=='200'){
+        if ($estado == '200') {
 
             $resultado = $response->getBody()->getContents();
             json_decode($resultado);
             return $resultado;
-
         }
     }
 }
@@ -636,8 +628,8 @@ if (!function_exists('borrarEmpresaapi')) {
         $token = obtenerTokenapi();
         $response = $client->delete($url, [
             'headers' => [
-                        'Authorization' => "Bearer {$token}"
-                    ],
+                'Authorization' => "Bearer {$token}"
+            ],
         ]);
 
         $estado = $response->getStatusCode();
@@ -647,28 +639,27 @@ if (!function_exists('borrarEmpresaapi')) {
 }
 // MODIFICAR EMPRESA
 if (!function_exists('modificarEmpresaapi')) {
-    function modificarEmpresaapi($empresa,$id)
+    function modificarEmpresaapi($empresa, $id)
     {
         $url = "https://facturacion.apisperu.com/api/v1/companies/{$id}";
         $client = new \GuzzleHttp\Client();
         $token = obtenerTokenapi();
         $response = $client->put($url, [
             'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$token}"
-                    ],
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => "Bearer {$token}"
+            ],
             'body'    => $empresa
         ]);
 
         $estado = $response->getStatusCode();
 
-        if ($estado=='200'){
+        if ($estado == '200') {
 
             $resultado = $response->getBody()->getContents();
             // json_decode($resultado);
             return $resultado;
-
         }
     }
 }
@@ -687,17 +678,17 @@ if (!function_exists('tokenEmpresa')) {
 //ENVIAR FACTURA O BOLETA
 //GENERAR PDF
 if (!function_exists('generarComprobanteapi')) {
-    function generarComprobanteapi($comprobante,$empresa)
+    function generarComprobanteapi($comprobante, $empresa)
     {
         $url = "https://facturacion.apisperu.com/api/v1/invoice/pdf";
         $client = new \GuzzleHttp\Client();
         $token = tokenEmpresa($empresa);
         $response = $client->post($url, [
             'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$token}"
-                    ],
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => "Bearer {$token}"
+            ],
             'body'    => $comprobante
         ]);
 
@@ -705,29 +696,28 @@ if (!function_exists('generarComprobanteapi')) {
 
         return $response->getBody()->getContents();
 
-        dd( $response->getBody()->getContents());
-        if ($estado=='200'){
+        dd($response->getBody()->getContents());
+        if ($estado == '200') {
 
             $resultado = $response->getBody()->getContents();
             json_decode($resultado);
             return $resultado;
-
         }
     }
 }
 //GENERAR XML
 if (!function_exists('generarXmlapi')) {
-    function generarXmlapi($comprobante,$empresa)
+    function generarXmlapi($comprobante, $empresa)
     {
         $url = "https://facturacion.apisperu.com/api/v1/invoice/xml";
         $client = new \GuzzleHttp\Client();
         $token = tokenEmpresa($empresa);
         $response = $client->post($url, [
             'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$token}"
-                    ],
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => "Bearer {$token}"
+            ],
             'body'    => $comprobante
         ]);
 
@@ -738,7 +728,7 @@ if (!function_exists('generarXmlapi')) {
 
 
         // dd( $response->getBody()->getContents());
-        if ($estado == '200'){
+        if ($estado == '200') {
 
             $resultado = $response->getBody()->getContents();
             json_decode($resultado);
@@ -749,17 +739,17 @@ if (!function_exists('generarXmlapi')) {
 
 //GENERAR XML
 if (!function_exists('generarQrApi')) {
-    function generarQrApi($comprobante,$empresa)
+    function generarQrApi($comprobante, $empresa)
     {
         $url = "https://facturacion.apisperu.com/api/v1/sale/qr";
         $client = new \GuzzleHttp\Client();
         $token = tokenEmpresa($empresa);
         $response = $client->post($url, [
             'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$token}"
-                    ],
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => "Bearer {$token}"
+            ],
             'body'    => $comprobante
         ]);
 
@@ -768,7 +758,7 @@ if (!function_exists('generarQrApi')) {
         return $response->getBody();
 
         // dd( $response->getBody()->getContents());
-        if ($estado == '200'){
+        if ($estado == '200') {
 
             $resultado = $response->getBody()->getContents();
             json_decode($resultado);
@@ -779,28 +769,27 @@ if (!function_exists('generarQrApi')) {
 
 //ENVIAR A  SUNAT
 if (!function_exists('enviarComprobanteapi')) {
-    function enviarComprobanteapi($comprobante,$empresa)
+    function enviarComprobanteapi($comprobante, $empresa)
     {
         $url = "https://facturacion.apisperu.com/api/v1/invoice/send";
         $client = new \GuzzleHttp\Client();
         $token = tokenEmpresa($empresa);
         $response = $client->post($url, [
             'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$token}"
-                    ],
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => "Bearer {$token}"
+            ],
             'body'    => $comprobante
         ]);
 
         $estado = $response->getStatusCode();
 
-        if ($estado=='200'){
+        if ($estado == '200') {
 
             $resultado = $response->getBody()->getContents();
             json_decode($resultado);
             return $resultado;
-
         }
     }
 }
@@ -816,10 +805,10 @@ if (!function_exists('pdfGuiaapi')) {
         $token = obtenerTokenapi();
         $response = $client->post($url, [
             'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$token}"
-                    ],
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => "Bearer {$token}"
+            ],
             'body'    => $guia
         ]);
 
@@ -829,12 +818,11 @@ if (!function_exists('pdfGuiaapi')) {
 
         // return $response->getBody()->getContents();
 
-        if ($estado == '200'){
+        if ($estado == '200') {
 
             $resultado = $response->getBody()->getContents();
             json_decode($resultado);
             return $resultado;
-
         }
     }
 }
@@ -847,20 +835,19 @@ if (!function_exists('enviarGuiaapi')) {
         $token = obtenerTokenapi();
         $response = $client->post($url, [
             'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$token}"
-                    ],
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => "Bearer {$token}"
+            ],
             'body'    => $guia
         ]);
 
         $estado = $response->getStatusCode();
 
-        if ($estado=='200'){
+        if ($estado == '200') {
             $resultado = $response->getBody()->getContents();
             json_decode($resultado);
             return $resultado;
-
         }
     }
 }
@@ -876,20 +863,19 @@ if (!function_exists('pdfNotaapi')) {
         $token = obtenerTokenapi();
         $response = $client->post($url, [
             'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$token}"
-                    ],
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => "Bearer {$token}"
+            ],
             'body'    => $nota
         ]);
 
         $estado = $response->getStatusCode();
 
-        if ($estado=='200'){
+        if ($estado == '200') {
             $resultado = $response->getBody()->getContents();
             json_decode($resultado);
             return $resultado;
-
         }
     }
 }
@@ -903,20 +889,19 @@ if (!function_exists('enviarNotaapi')) {
         $token = obtenerTokenapi();
         $response = $client->post($url, [
             'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$token}"
-                    ],
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => "Bearer {$token}"
+            ],
             'body'    => $nota
         ]);
 
         $estado = $response->getStatusCode();
 
-        if ($estado=='200'){
+        if ($estado == '200') {
             $resultado = $response->getBody()->getContents();
             json_decode($resultado);
             return $resultado;
-
         }
     }
 }
@@ -930,33 +915,28 @@ if (!function_exists('actualizarStockLotes')) {
     }
 }
 
-if(!function_exists('turnos'))
-{
+if (!function_exists('turnos')) {
     function turnos()
     {
-       return General::find(31)->detalles;
+        return General::find(31)->detalles;
     }
-
 }
-if(!function_exists('cajas'))
-{
+if (!function_exists('cajas')) {
     function cajas()
     {
-       return Caja::where('estado_caja','CERRADA')->where('estado','ACTIVO')->get();
+        return Caja::where('estado_caja', 'CERRADA')->where('estado', 'ACTIVO')->get();
     }
-
 }
-if(!function_exists('colaboradoresDisponibles'))
-{
+if (!function_exists('colaboradoresDisponibles')) {
     function colaboradoresDisponibles()
     {
-        $colaboradores=Colaborador::join('persona_trabajador as pt','pt.id','=','colaboradores.persona_trabajador_id')
-                                    ->join('personas as p','p.id','=','pt.id')
-                                    //->join('movimiento_caja as mc','mc.colaborador_id','!=','colaboradores.id')
-                                   // ->select('colaboradores.id','p.nombres','p.apellido_paterno','p.apellido_materno')
-                                    ->where('p.estado','ACTIVO')
-                                   // ->where('mc.estado_movimiento','CIERRE')
-                                    ->get();
+        $colaboradores = Colaborador::join('persona_trabajador as pt', 'pt.id', '=', 'colaboradores.persona_trabajador_id')
+            ->join('personas as p', 'p.id', '=', 'pt.id')
+            //->join('movimiento_caja as mc','mc.colaborador_id','!=','colaboradores.id')
+            // ->select('colaboradores.id','p.nombres','p.apellido_paterno','p.apellido_materno')
+            ->where('p.estado', 'ACTIVO')
+            // ->where('mc.estado_movimiento','CIERRE')
+            ->get();
         // $datos=array();
         // foreach ($colaboradores as $key => $value) {
         //
@@ -966,74 +946,75 @@ if(!function_exists('colaboradoresDisponibles'))
         //     }
         // }
         //   return $datos;
-        $colaboradores=Colaborador::cursor()->filter(function ($colaborador)
-        {
-            $consulta=MovimientoCaja::where('colaborador_id',$colaborador->id)->where('estado_movimiento','APERTURA');
-            return $consulta->count()==0 ? true : false ;
+        $colaboradores = Colaborador::cursor()->filter(function ($colaborador) {
+            $consulta = MovimientoCaja::where('colaborador_id', $colaborador->id)->where('estado_movimiento', 'APERTURA');
+            return $consulta->count() == 0 ? true : false;
         });
         return $colaboradores;
     }
-
 }
-if(!function_exists('cuentas'))
-{
-    function cuentas(){
+if (!function_exists('cuentas')) {
+    function cuentas()
+    {
         return General::find(32)->detalles;
     }
 }
 
-if(!function_exists('proveedores'))
-{
-    function proveedores(){
+if (!function_exists('proveedores')) {
+    function proveedores()
+    {
         return Proveedor::get();
     }
 }
 
-if(!function_exists('clientes'))
-{
-    function clientes(){
+if (!function_exists('clientes')) {
+    function clientes()
+    {
         return Cliente::get();
     }
 }
-if(!function_exists('movimientoUser'))
-{
-    function movimientoUser(){
-        if(Auth::user()->usuario=="ADMINISTRADOR"){
+if (!function_exists('movimientoUser')) {
+    function movimientoUser()
+    {
+        if (Auth::user()->usuario == "ADMINISTRADOR") {
 
-            $consulta=MovimientoCaja::where('caja_id',1)->where('estado_movimiento','APERTURA');
-            if($consulta->count()!==0){
+            $consulta = MovimientoCaja::where('caja_id', 1)->where('estado_movimiento', 'APERTURA');
+            if ($consulta->count() !== 0) {
                 return $consulta->first();
+            } else {
+                $consulta = MovimientoCaja::where('estado_movimiento', 'APERTURA')->first();
             }
-            else{
-                $consulta=MovimientoCaja::where('estado_movimiento','APERTURA')->first();
-            }
-        }
-        else{
-          return MovimientoCaja::where('colaborador_id',Auth::user()->user->persona->persona->persona_trabajador->colaborador->id)->first();
+        } else {
+            return MovimientoCaja::where('colaborador_id', Auth::user()->user->persona->persona->persona_trabajador->colaborador->id)->first();
         }
     }
 }
-if(!function_exists('cuadreMovimientoCaja'))
-{
-    function cuadreMovimientoCaja(MovimientoCaja $movimiento){
-        $totalIngresos=0;
-        $totalEgresos=0;
-        $movimiento->detalleMovimientoVentas()->each(function($item,$key) use ($totalIngresos){
-            if($item->documento->tipo_pago_id==1)
-            {
-                $totalIngresos = $totalIngresos + $item->documento->importe;
-            }
-            else{
-                $totalIngresos = $totalIngresos + $item->documento->efectivo;
-            }
-        });
-        $movimiento->detalleMoviemientoEgresos()->each(function($item,$key) use ($totalEgresos){
+if (!function_exists('MovimientoCajaIngresos')) {
+    function cuadreMovimientoCajaIngresos(MovimientoCaja $movimiento)
+    {
+        $totalIngresos = 0;
+        foreach ($movimiento->detalleMovimientoVentas as $key => $item) {
+            $totalIngresos = $totalIngresos + $item->documento->efectivo;
+        }
+        foreach ($movimiento->detalleCuentaCliente as $item) {
+            $totalIngresos = $totalIngresos  + $item->efectivo;
+        }
+        return $totalIngresos;
+    }
+}
+if (!function_exists('MovimientoCajaEgresos')) {
+    function cuadreMovimientoCajaEgresos($movimiento)
+    {
+
+        $totalEgresos = 0;
+        foreach ($movimiento->detalleMoviemientoEgresos as $key => $item) {
             if ($item->egreso->estado == "ACTIVO") {
                 $totalEgresos = $totalEgresos + $item->egreso->importe;
             }
-        });
+        }
+        foreach ($movimiento->detalleCuentaProveedor as $key => $item) {
+            $totalEgresos = $totalEgresos + $item->efectivo;
+        }
+        return $totalEgresos;
     }
 }
-
-
-

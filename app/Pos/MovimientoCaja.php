@@ -2,7 +2,9 @@
 
 namespace App\Pos;
 
+use App\Compras\DetalleCuentaProveedor;
 use App\Mantenimiento\Colaborador\Colaborador;
+use App\Ventas\DetalleCuentaCliente;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
@@ -32,6 +34,13 @@ class MovimientoCaja extends Model
     {
         return $this->belongsTo(Colaborador::class, 'colaborador_id');
     }
+    public function detalleCuentaProveedor(){
+        return $this->hasMany(DetalleCuentaProveedor::class,'mcaja_id');
+    }
+    public function detalleCuentaCliente(){
+        return $this->hasMany(DetalleCuentaCliente::class,'mcaja_id');
+    }
+
     public function totalIngresos($DetalleMovimientoVentaCaja)
     {
         $total = 0;

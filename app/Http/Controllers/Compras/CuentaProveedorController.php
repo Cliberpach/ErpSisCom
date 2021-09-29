@@ -73,7 +73,6 @@ class CuentaProveedorController extends Controller
     public function detallePago(Request $request)
     {
         Log::info($request);
-        return $request;
         $cuentaProveedor=CuentaProveedor::findOrFail($request->id);
         if($request->pago=="A CUENTA")
         {
@@ -87,7 +86,6 @@ class CuentaProveedorController extends Controller
             $detallepago->tipo_pago_id=$request->modo_pago;
             $detallepago->save();
             $cant=$request->efectivo_venta+$request->importe_venta;
-
             $cuentaProveedor->saldo=$cuentaProveedor->saldo-$cant;
             $cuentaProveedor->save();
             $detallepago->saldo =$cuentaProveedor->saldo;

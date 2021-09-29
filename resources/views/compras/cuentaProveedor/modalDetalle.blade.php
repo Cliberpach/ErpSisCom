@@ -242,12 +242,12 @@
                                 data.append("cantidad", cantidad);
                                 data.append("observacion", observacion);
                                 data.append("efectivo_venta", efectivo_venta)
-                                data.append("importe_venta", efectivo_venta)
+                                data.append("importe_venta", importe_venta)
                                 data.append("modo_pago", modo_pago)
                                 data.append("file", fileImagen);
                                 axios.post("{{ route('cuentaProveedor.detallePago') }}", data, config)
                                     .then((value) => {
-                                        // window.location.href = "{{ route('cuentaProveedor.index') }}"
+                                     window.location.href = "{{ route('cuentaProveedor.index') }}"
                                     }).catch((value) => {
 
                                     })
