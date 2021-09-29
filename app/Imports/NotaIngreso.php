@@ -15,12 +15,12 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\Importable;
 
-class NotaIngreso implements ToCollection,WithHeadingRow,WithValidation
+class NotaIngreso implements ToCollection, WithHeadingRow, WithValidation
 {
     use Importable;
     /**
-    * @param Collection $collection
-    */
+     * @param Collection $collection
+     */
     public function collection(Collection $collection)
     {
         $fecha_hoy = Carbon::now()->toDateString();
@@ -30,8 +30,8 @@ class NotaIngreso implements ToCollection,WithHeadingRow,WithValidation
         $fecha = str_replace(":", "", $fecha);
 
         $fecha_actual = Carbon::now();
-        $fecha_actual = date("d/m/Y",strtotime($fecha_actual));
-        $fecha_5 = date("Y-m-d",strtotime($fecha_hoy."+ 5 years"));
+        $fecha_actual = date("d/m/Y", strtotime($fecha_actual));
+        $fecha_5 = date("Y-m-d", strtotime($fecha_hoy . "+ 5 years"));
 
         $numero = $fecha . (DB::table('nota_ingreso')->count() + 1);
 
@@ -43,31 +43,31 @@ class NotaIngreso implements ToCollection,WithHeadingRow,WithValidation
             'usuario' => Auth()->user()->usuario
         ]);
 
-        foreach($collection as $row)
-        {
-            $producto = DB::table('productos')->where('codigo',$row['codigo'])->first();
-            DetalleNotaIngreso::create([
-                'nota_ingreso_id' => $nota->id,
-                'lote' => $row['codigo_lote'],
-                'cantidad' => $row['cantidad'],
-                'producto_id' => $producto->id,
-                'fecha_vencimiento' => $fecha_5
-            ]);
+        foreach ($collection as $row) {
+            if ($row['codigo'] != null) {
+                $producto = DB::table('productos')->where('codigo', $row['codigo'])->first();
+                DetalleNotaIngreso::create([
+                    'nota_ingreso_id' => $nota->id,
+                    'lote' => $row['codigo_lote'],
+                    'cantidad' => $row['cantidad'],
+                    'producto_id' => $producto->id,
+                    'fecha_vencimiento' => $fecha_5
+                ]);
+            }
         }
-
     }
     public function rules(): array
     {
         return [
-                'codigo' => function($attribute, $value, $onFailure) {
+            'codigo' => function ($attribute, $value, $onFailure) {
 
-                 $valor = DB::table('productos')->where('codigo',$value)->count();
+                $valor = DB::table('productos')->where('codigo', $value)->count();
 
-                  if ($valor === 0) {
+                if ($valor === 0) {
 
-                       $onFailure('No existe este Producto');
-                  }
-              }
+                    $onFailure('No existe este Producto');
+                }
+            }
         ];
     }
 }

@@ -1013,7 +1013,27 @@ if(!function_exists('movimientoUser'))
         }
     }
 }
-
+if(!function_exists('cuadreMovimientoCaja'))
+{
+    function cuadreMovimientoCaja(MovimientoCaja $movimiento){
+        $totalIngresos=0;
+        $totalEgresos=0;
+        $movimiento->detalleMovimientoVentas()->each(function($item,$key) use ($totalIngresos){
+            if($item->documento->tipo_pago_id==1)
+            {
+                $totalIngresos = $totalIngresos + $item->documento->importe;
+            }
+            else{
+                $totalIngresos = $totalIngresos + $item->documento->efectivo;
+            }
+        });
+        $movimiento->detalleMoviemientoEgresos()->each(function($item,$key) use ($totalEgresos){
+            if ($item->egreso->estado == "ACTIVO") {
+                $totalEgresos = $totalEgresos + $item->egreso->importe;
+            }
+        });
+    }
+}
 
 
 
