@@ -386,6 +386,7 @@ function(){
         Route::get('estadoCaja','Pos\Cajacontroller@estadoCaja')->name('Caja.estado');
         Route::get('cajaDatosCierre','Pos\Cajacontroller@cajaDatosCierre')->name('Caja.datos.cierre');
         Route::get('verificarEstadoUser','Pos\Cajacontroller@verificarEstadoUser')->name('Caja.movimiento.verificarestado');
+        Route::get('repoteMovimiento/{id}','Pos\Cajacontroller@reporteMovimiento')->name('Caja.reporte.movimiento');
     });
     Route::prefix('egreso')->group(function () {
         Route::get('index','EgresoController@index')->name('Egreso.index');

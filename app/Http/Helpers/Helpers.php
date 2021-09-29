@@ -1015,11 +1015,11 @@ if (!function_exists('MovimientoCajaEgresos')) {
         $totalEgresos = 0;
         foreach ($movimiento->detalleMoviemientoEgresos as $key => $item) {
             $modo = TablaDetalle::where('descripcion', $item->modo_compra)->first();
-            if ($modo->simbolo === 'CREDITO' || $modo->simbolo === 'credito' || $modo->simbolo === 'CRÉDITO' || $modo->simbolo === 'crédito') {
+            // if ($modo->simbolo === 'CREDITO' || $modo->simbolo === 'credito' || $modo->simbolo === 'CRÉDITO' || $modo->simbolo === 'crédito') {
                 if ($item->egreso->estado == "ACTIVO") {
                     $totalEgresos = $totalEgresos + $item->egreso->importe;
                 }
-            }
+            // }
         }
         foreach ($movimiento->detalleCuentaProveedor as $key => $item) {
             $totalEgresos = $totalEgresos + $item->efectivo;

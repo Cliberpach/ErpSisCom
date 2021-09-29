@@ -130,7 +130,9 @@
                         html =
                             "<div class='btn-group'><a class='btn btn-warning btn-sm' href='#'  onclick='cerrarCaja(" +
                             data.id +
-                            ")' title='Modificar'><i class='fa fa-lock'> Cerrar Caja</i></a></div>"
+                            ")' title='Modificar'><i class='fa fa-lock'> cerrar</i></a><a class='btn btn-danger btn-sm' href='#'  onclick='reporte(" +
+                            data.id +
+                            ")' title='Modificar'><i class='fa fa-file-pdf-o'></i></a></div>"
                     }
                     return html;
                 }
@@ -143,7 +145,11 @@
             [0, "desc"]
         ],
     });
-
+    function reporte(id)
+    {
+        var url="{{route('Caja.reporte.movimiento',':id')}}"
+        window.location.href=url.replace(":id", id)
+    }
     function cerrarCaja(id) {
         axios.get("{{ route('Caja.datos.cierre') }}", {
             params: {

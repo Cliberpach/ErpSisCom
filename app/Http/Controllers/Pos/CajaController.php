@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pos;
 
 use App\Http\Controllers\Controller;
 use App\Mantenimiento\Colaborador\Colaborador;
+use App\Mantenimiento\Empresa\Empresa;
 use App\Pos\Caja;
 use App\Pos\MovimientoCaja;
 use Carbon\Carbon;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
-
+use Barryvdh\DomPDF\Facade as PDF;
 class CajaController extends Controller
 {
 
@@ -142,5 +143,15 @@ class CajaController extends Controller
             }
         }
         return $mensaje;
+    }
+    public function reporteMovimiento($id)
+    {
+        $movimiento=MovimientoCaja::findOrFail($id);
+        $empresa = Empresa::first();
+        $pdf = PDF::loadview('pos.MovimientoCaja.Reportes.movimientocaja',[
+            'movimiento' => $movimiento,
+            'empresa'=>$empresa
+            ])->setPaper('a4')->setWarnings(false);
+        return $pdf->stream();
     }
 }
