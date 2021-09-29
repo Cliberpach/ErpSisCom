@@ -11,6 +11,9 @@ class DetalleCuentaCliente extends Model
         'cuenta_cliente_id',
         'fecha',
         'observacion',
+        'tipo_pago_id',
+        'efectivo',
+        'importe',
         'monto',
     ];
     public function cuenta_cliente()

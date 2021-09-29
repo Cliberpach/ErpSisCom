@@ -86,7 +86,11 @@ class CuentaClienteController extends Controller
             {
                 $detallepago = new DetalleCuentaCliente();
                 $detallepago->cuenta_cliente_id = $CuentaCliente->id;
+                $detallepago->mcaja_id = 1;
                 $detallepago->monto = $request->cantidad;
+                $detallepago->importe=$request->importe_venta;
+                $detallepago->efectivo=$request->efectivo_venta;
+                $detallepago->tipo_pago_id=$request->modo_pago;
                 $detallepago->observacion = $request->observacion;
                 $detallepago->fecha = $request->fecha;
                 $detallepago->save();
@@ -112,39 +116,82 @@ class CuentaClienteController extends Controller
                 $cliente = $CuentaCliente->documento->cliente;
                 $cuentasFaltantes = CuentaCliente::where('estado','PENDIENTE')->get();
                 $cantidadRecibida = $request->cantidad;
+                $cantidadRecibidaEfectivo=$request->efectivo_venta;
+                $cantidadRecibidaImporte=$request->importe_venta;
                 foreach ($cuentasFaltantes as $key => $cuenta) {
-                        if($cuenta->documento->cliente->id == $cliente->id && $cantidadRecibida != 0)
+                    if($cuenta->documento->cliente->id == $cliente->id && $cantidadRecibida != 0)
+                    {
+                        $detallepago = new DetalleCuentaCliente();
+                        $detallepago->mcaja_id = 1;
+                        $detallepago->cuenta_cliente_id = $cuenta->id;
+                        $detallepago->monto = 0;
+                        $detallepago->observacion=$request->observacion;
+                        $detallepago->fecha = $request->fecha;
+                        $detallepago->tipo_pago_id=$request->modo_pago;
+                        $detallepago->save();
+                        if($cuenta->saldo > $cantidadRecibida)
                         {
-                            $detallepago = new DetalleCuentaCliente();
-                            $detallepago->cuenta_cliente_id = $cuenta->id;
-                            $detallepago->monto = 0;
-                            $detallepago->observacion=$request->observacion;
-                            $detallepago->fecha = $request->fecha;
-                            $detallepago->save();
-                            if($cuenta->saldo > $cantidadRecibida)
+                            // $detallepago->monto = $cantidadRecibida;
+                            // $cuenta->saldo = $cuenta->saldo - $cantidadRecibida;
+                            // $cantidadRecibida = 0;
+                            if($cantidadRecibidaEfectivo == 0)
                             {
-                                $detallepago->monto = $cantidadRecibida;
+                                $detallepago->efectivo = 0;
+                                $detallepago->importe = $cantidadRecibidaImporte;
                                 $cuenta->saldo = $cuenta->saldo - $cantidadRecibida;
-                                $cantidadRecibida = 0;
+                                $cantidadRecibidaImporte = 0;
                             }
-                            else{
-                                $detallepago->monto = $cuenta->saldo;
-                                $cantidadRecibida = $cantidadRecibida - $cuenta->saldo;
-                                $cuenta->saldo = 0;
-                            }
-
-                            $detallepago->update();
-                            if($request->hasFile('imagen')){
-                                $detallepago->ruta_imagen = $request->file('imagen')->store('public/cuenta/cobrar');
-                                $detallepago->update();
-                            }
-                            $cuenta->update();
-                            if($cuenta->saldo == 0)
+                            else
                             {
-                                $cuenta->estado='PAGADO';
-                                $cuenta->update();
+                                $detallepago->efectivo = $cantidadRecibidaEfectivo;
+                                $detallepago->importe = $cantidadRecibidaImporte;                                    
+                                $cuenta->sald = $cuenta->saldo - $cantidadRecibida;
+                                $cantidadRecibidaEfectivo = 0;
+                                $cantidadRecibidaImporte = 0;
                             }
                         }
+                        else{
+                            // $detallepago->monto = $cuenta->saldo;
+                            // $cantidadRecibida = $cantidadRecibida - $cuenta->saldo;
+                            // $cuenta->saldo = 0;
+                            if($cantidadRecibidaEfectivo == 0)
+                            {   $detallepago->efectivo  = 0;
+                                $detallepago->importe = $cuenta->saldo;
+                                $cantidadRecibidaImporte = $cantidadRecibidaImporte - $cuenta->saldo;
+                            }
+                            else
+                            {
+                                if($cuenta->saldo > $cantidadRecibidaEfectivo)
+                                {
+
+                                    $detallepago->efectivo = $cantidadRecibidaEfectivo;
+                                    $detallepago->importe = $cuenta->saldo - $detallepago->efectivo;
+                                    $cantidadRecibidaEfectivo = 0;
+                                    $cantidadRecibidaImporte = $cantidadRecibidaImporte - $detallepago->importe;
+                                }
+                                else{
+                                    $detallepago->efectivo = $cantidadRecibidaEfectivo;
+                                    $detallepago->importe = 0;
+                                    $cantidadRecibidaEfectivo = $cantidadRecibidaEfectivo-$cuenta->saldo;
+                                }
+                            }
+                            $cuenta->saldo=0;
+                        }
+
+                        $detallepago->update();
+                        if($request->hasFile('imagen')){
+                            $detallepago->ruta_imagen = $request->file('imagen')->store('public/cuenta/cobrar');
+                            $detallepago->update();
+                        }
+
+                        $cuenta->update();
+
+                        if($cuenta->saldo == 0)
+                        {
+                            $cuenta->estado='PAGADO';
+                            $cuenta->update();
+                        }
+                    }
                 }
 
             }

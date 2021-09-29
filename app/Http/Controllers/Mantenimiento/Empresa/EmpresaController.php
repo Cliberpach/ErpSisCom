@@ -525,10 +525,10 @@ class EmpresaController extends Controller
         // }
 
         //MODIFICAR NUMERACION DE FACTURACION DE LA EMPRESA
-        event(new EmpresaModificada(
-            $empresa,
-            $data['numeracion_tabla'])
-        );
+        // event(new EmpresaModificada(
+        //     $empresa,
+        //     $data['numeracion_tabla'])
+        // );
 
         $entidadesJSON = $request->get('entidades_tabla');
         $entidadtabla = json_decode($entidadesJSON[0]);

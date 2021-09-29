@@ -12,7 +12,7 @@
                 <input type="hidden" name="cuenta_cliente_id" id="cuenta_cliente_id">
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="row">
+                        <div class="row align-items-end">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="" class="required">Cliente</label>
@@ -86,24 +86,24 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="" class="required">Fecha</label>
-                                        <input type="date" name="fecha" id="fecha" class="form-control" value="{{$fecha_hoy}}">
+                                        <input type="date" name="fecha" id="fecha" class="form-control" value="{{$fecha_hoy}}" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="" class="required">Cantidad</label>
-                                        <input type="number" name="cantidad" id="cantidad" class="form-control">
+                                        <input type="text" name="cantidad" id="cantidad" value="0.00" class="form-control" onkeypress="return filterFloat(event, this);" readonly required>
                                     </div>
                                     <div class="form-group">
                                         <label for="" class="required">Observacion</label>
                                         <textarea name="observacion" id="observacion" cols="30" rows="3"
-                                        class="form-control"></textarea>
+                                        class="form-control" required></textarea>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="form-group">
                                         <label class="col-form-label required">Efectivo</label>
                                         <input type="text" value="0.00" class="form-control" id="efectivo_venta"
-                                            {{-- onkeypress="return filterFloat(event, this);" onkeyup="changeEfectivo(this)" --}}
-                                            name="efectivo_venta">
+                                            onkeypress="return filterFloat(event, this);" onkeyup="changeEfectivo(this)"
+                                            name="efectivo_venta" required>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-form-label required">Modo de pago</label>
@@ -119,8 +119,8 @@
                                     <div class="form-group">
                                         <label class="col-form-label required">Importe</label>
                                         <input type="text" class="form-control" id="importe_venta" value="0.00"
-                                            {{-- onkeypress="return filterFloat(event, this);" onkeyup="changeImporte(this)" --}}
-                                            name="importe_venta">
+                                            onkeypress="return filterFloat(event, this);" onkeyup="changeImporte(this)"
+                                            name="importe_venta" required>
                                     </div>
                                 </div>
                                 <div class="col-12">
@@ -162,8 +162,7 @@
             </div>
             <div class="modal-footer">
                 <div class="col-md-6 text-right">
-                    <button type="button" class="btn btn-primary btn-sm" id="btn_guardar_detalle"><i
-                            class="fa fa-save"></i> Guardar</button>
+                    <button type="submit" class="btn btn-primary btn-sm" id="btn_guardar_detalle" form="frmDetalle"><i class="fa fa-save"></i> Guardar</button>
                     <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
                             class="fa fa-times"></i> Cancelar</button>
                 </div>
@@ -183,7 +182,7 @@
 @endpush
 @push('scripts')
     <script>
-        $("#btn_guardar_detalle").click(function(e) {
+        $("#frmDetalle").submit(function(e) {
             e.preventDefault();
             var pago = $("#modal_detalle #pago").val();
             var fecha = $("#modal_detalle #fecha").val();
@@ -191,6 +190,11 @@
             var observacion = $("#modal_detalle #observacion").val();
             var saldo = parseFloat($("#modal_detalle #saldo").val());
             var id_cuenta_cliente = $("#modal_detalle #cuenta_cliente_id").val();
+
+            var efectivo_venta = $("#efectivo_venta").val();
+            var importe_venta = $("#importe_venta").val();
+            var cantidad = parseFloat(efectivo_venta)+parseFloat(importe_venta);
+            var modo_pago = $("#modo_pago").val();
 
             if (pago.length == 0 || fecha.length == 0 || fecha.length == 0 || cantidad.length == 0 || observacion.length == 0) {
                 toastr.error('Ingrese todo los datos');
@@ -200,7 +204,6 @@
                 } else {
                     var enviar = true;
                     if (pago == "TODO") {
-                        console.log(cantidad, saldo)
                         if (cantidad < saldo || cantidad == saldo) {
                             toastr.error("El monto a pagar, no cumple para el pago a varias cuentas")
                             enviar = false
@@ -211,9 +214,10 @@
                             enviar = false;
                         }
                     }
+
                     if (enviar) {
 
-                        $('#frmDetalle').submit();
+                        this.submit();
                     }
                 }
             }
@@ -246,5 +250,33 @@
                 $('.imagen').attr("src", "{{asset('img/default.png')}}")
             }
         });
+
+        function changeModoPago(b)
+        {
+            if(b.value == 1) {
+                    $("#efectivo_venta").attr('readonly',false)
+                    $("#importe_venta").attr('readonly',true)
+            }
+            else{
+                $("#efectivo_venta").attr('readonly',false)
+                $("#importe_venta").attr('readonly',false)
+            }
+        }
+
+        function changeEfectivo(b)
+        {
+            let efectivo = convertFloat($('#efectivo_venta').val());
+            let importe = convertFloat($('#importe_venta').val());
+            let suma = efectivo + importe;
+            $('#cantidad').val(suma.toFixed(2))
+        }
+
+        function changeImporte(b)
+        {
+            let efectivo = convertFloat($('#efectivo_venta').val());
+            let importe = convertFloat($('#importe_venta').val());
+            let suma = efectivo + importe;
+            $('#cantidad').val(suma.toFixed(2));
+        }
     </script>
 @endpush

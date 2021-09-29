@@ -36,6 +36,8 @@
                                 <tr>
                                     <th class="text-center">CÓDIGO</th>
                                     <th class="text-center">NOMBRE</th>
+                                    <th class="text-center">ALMACEN</th>
+                                    <th class="text-center">MARCA</th>
                                     <th class="text-center">CATEGORIA</th>
                                     <th class="text-center">STOCK</th>
                                     <th class="text-center">ACCIONES</th>
@@ -102,6 +104,14 @@
                 },
                 {
                     data: 'nombre',
+                    className: "text-left"
+                },
+                {
+                    data: 'almacen',
+                    className: "text-left"
+                },
+                {
+                    data: 'marca',
                     className: "text-left"
                 },
                 {

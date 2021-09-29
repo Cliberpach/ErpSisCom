@@ -252,6 +252,7 @@
             }
 
         });
+
         $('#limpiar_imagen').click(function() {
             $('.imagen').attr("src", "{{ asset('img/default.png') }}")
             var fileName = "Seleccionar"
@@ -278,6 +279,7 @@
                 $('.imagen').attr("src", "{{ asset('img/default.png') }}")
             }
         });
+
         function changeModoPago(b)
         {
             if(b.value==1) {
@@ -289,7 +291,5 @@
                 $("#importe_venta").attr('readonly',false)
             }
         }
-
-
     </script>
 @endpush

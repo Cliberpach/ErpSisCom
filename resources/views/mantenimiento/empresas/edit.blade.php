@@ -545,7 +545,7 @@
                                                 @endif
 
                                                 <div class="row">
-                                                    <div class="col-md-6 col-xs-12 b-r">
+                                                    <div class="col-md-6 col-xs-12 b-r d-none">
                                                         <p>Certificado Sunat</p>
                                                         <div class="form-group row">
                                                             <div class="col-lg-6 col-xs-12">

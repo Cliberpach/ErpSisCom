@@ -34,6 +34,8 @@ class ProductoController extends Controller
                 'codigo' => $producto->codigo,
                 'nombre' => $producto->nombre,
                 'categoria' => $producto->categoria->descripcion,
+                'almacen' => $producto->almacen->descripcion,
+                'marca' => $producto->marca->marca,
                 'stock' => $producto->stock
             ]);
         }

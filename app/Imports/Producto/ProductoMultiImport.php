@@ -13,7 +13,7 @@ class ProductoMultiImport implements withMultipleSheets
     public function sheets(): array
     {
         return [
-            0 =>new ProductoImport()
+            0 => new ProductoImport()
         ];
     }
 }

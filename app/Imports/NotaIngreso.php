@@ -29,6 +29,10 @@ class NotaIngreso implements ToCollection,WithHeadingRow,WithValidation
         $fecha = str_replace(" ", "", $fecha);
         $fecha = str_replace(":", "", $fecha);
 
+        $fecha_actual = Carbon::now();
+        $fecha_actual = date("d/m/Y",strtotime($fecha_actual));
+        $fecha_5 = date("Y-m-d",strtotime($fecha_hoy."+ 5 years"));
+
         $numero = $fecha . (DB::table('nota_ingreso')->count() + 1);
 
         $nota = AlmacenesNotaIngreso::create([
@@ -47,7 +51,7 @@ class NotaIngreso implements ToCollection,WithHeadingRow,WithValidation
                 'lote' => $row['codigo_lote'],
                 'cantidad' => $row['cantidad'],
                 'producto_id' => $producto->id,
-                'fecha_vencimiento' => $row['fecha_vencimiento']
+                'fecha_vencimiento' => $fecha_5
             ]);
         }
 
@@ -57,7 +61,7 @@ class NotaIngreso implements ToCollection,WithHeadingRow,WithValidation
         return [
                 'codigo' => function($attribute, $value, $onFailure) {
 
-                 $valor=DB::table('productos')->where('codigo',$value)->count();
+                 $valor = DB::table('productos')->where('codigo',$value)->count();
 
                   if ($valor === 0) {
 
