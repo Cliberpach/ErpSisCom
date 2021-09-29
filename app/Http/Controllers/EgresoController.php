@@ -37,15 +37,14 @@ class EgresoController extends Controller
     public function store(Request $request)
     {
         $egreso = new Egreso();
-        $egreso->tipodocumento_id = $request->tipo_documento;
+        $egreso->tipodocumento_id = 120;
         $egreso->cuenta_id = $request->cuenta;
         $egreso->documento = $request->documento;
         $egreso->descripcion = $request->descripcion;
         $egreso->importe = $request->importe;
         $egreso->save();
-        $ultimoMovimiento = Caja::findOrFail(1)->movimientos()->first();
         $detalleMovimientoEgreso = new DetalleMovimientoEgresosCaja();
-        $detalleMovimientoEgreso->mcaja_id = $ultimoMovimiento->id;
+        $detalleMovimientoEgreso->mcaja_id = movimientoUser()->id;
         $detalleMovimientoEgreso->egreso_id = $egreso->id;
         $detalleMovimientoEgreso->save();
 
@@ -55,7 +54,6 @@ class EgresoController extends Controller
     public function update(Request $request, $id)
     {
         $egreso = Egreso::findOrFail($id);
-        $egreso->tipodocumento_id = $request->tipo_documento_editar;
         $egreso->cuenta_id = $request->cuenta_editar;
         $egreso->documento = $request->documento_editar;
         $egreso->descripcion = $request->descripcion_editar;

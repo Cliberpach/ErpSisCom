@@ -8,6 +8,7 @@ use App\Pos\Caja;
 use App\Pos\MovimientoCaja;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -123,5 +124,25 @@ class CajaController extends Controller
             "ingresos" => $ingresos,
             "saldo" => ($movimiento->monto_inicial + $ingresos) - $egresos
         );
+    }
+    public function verificarEstadoUser(Request $request)
+    {
+        $mensaje=false;
+        $user=Auth::user();
+        if(MovimientoCaja::where('estado_movimiento','APERTURA')->count()!=0)
+        {
+            if($user->usuario=='ADMINISTRADOR')
+            {
+                $mensaje=true;
+            }
+            else
+            {
+                if(MovimientoCaja::where('colaborador_id',$user->user->persona->persona->persona_trabajador->colaborador->id)->count()!=0)
+                {
+                    $mensaje=true;
+                }
+            }
+        }
+        return $mensaje;
     }
 }

@@ -79,7 +79,7 @@ class CuentaProveedorController extends Controller
         {
             $detallepago=new DetalleCuentaProveedor();
             $detallepago->cuenta_proveedor_id=$cuentaProveedor->id;
-            $detallepago->mcaja_id=1;// hasta implementar por usuario ,movimiento caja
+            $detallepago->mcaja_id= movimientoUser()->id;
             $detallepago->observacion=$request->observacion;
             $detallepago->fecha=$request->fecha;
             $detallepago->importe=$request->importe_venta;
@@ -114,6 +114,7 @@ class CuentaProveedorController extends Controller
                         $cantidadTotal=$cantidadRecibidaEfectivo+$cantidadRecibidaImporte;
                         $detallepago=new DetalleCuentaProveedor();
                         $detallepago->cuenta_proveedor_id=$cuenta->id;
+                        $detallepago->mcaja_id= movimientoUser()->id;
                         $detallepago->monto=0;
                         $detallepago->observacion=$request->observacion;
                         $detallepago->fecha=$request->fecha;
