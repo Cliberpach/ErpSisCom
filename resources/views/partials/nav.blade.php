@@ -99,18 +99,18 @@
     <a href="#"><i class="fa fa-question-circle"></i> <span class="nav-label">Consulta </span><span
             class="fa arrow"></span></a>
     <ul class="nav nav-second-level collapse">
-        <li>
+        <li class="@yield('consulta-ventas-active')">
             <a href="#">Ventas <span class="fa arrow"></span></a>
             <ul class="nav nav-third-level">
-                <li><a href="#">Cotización</a></li>
-                <li><a href="#">Doc. Venta</a></li>
+                <li class="@yield('consulta-ventas-cotizacion-active')"><a href="{{ route('consultas.ventas.cotizacion.index') }}">Cotización</a></li>
+                <li class="@yield('consulta-ventas-documento-active')"><a href="{{ route('consultas.ventas.documento.index') }}">Doc. Venta</a></li>
             </ul>
         </li>
-        <li>
+        <li class="@yield('consulta-compras-active')">
             <a href="#">Compras <span class="fa arrow"></span></a>
             <ul class="nav nav-third-level">
-                <li><a href="#">Orden de Compra</a></li>
-                <li><a href="#">Doc. Compras</a></li>
+                <li class="@yield('consulta-compras-orden-active')"><a href="{{ route('consultas.compras.orden.index') }}">Orden de Compra</a></li>
+                <li class="@yield('consulta-compras-documento-active')"><a href="{{ route('consultas.compras.documento.index') }}">Doc. Compras</a></li>
             </ul>
         </li>
         <li class="@yield('cuenta_proveedor-active')"><a href="#">Cuenta Proveedor</a></li>
