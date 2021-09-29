@@ -29,118 +29,123 @@
                         <div class="row">
                             <div class="col-lg-6 col-xs-12 b-r">
                                 <h4><b>Datos Generales</b></h4>
-                                <div class="form-group row">
-                                    <div class="col-lg-6 col-xs-12">
-                                        <label class="required">Código ISO</label>
-                                        <input type="text" id="codigo" name="codigo" class="form-control {{ $errors->has('codigo') ? ' is-invalid' : '' }}" value="{{old('codigo')}}" maxlength="50" onkeyup="return mayus(this)">
-                                        @if ($errors->has('codigo'))
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $errors->first('codigo') }}</strong>
-                                            </span>
-                                        @endif
+                                <div class="row">
+                                    <div class="col-lg-6 col-xs-12 d-none">
+                                        <div class="form-group">
+                                            <label class="required">Código ISO</label>
+                                            <input type="text" id="codigo" name="codigo" class="form-control {{ $errors->has('codigo') ? ' is-invalid' : '' }}" value="{{old('codigo')}}" maxlength="50" onkeyup="return mayus(this)">
+                                            @if ($errors->has('codigo'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('codigo') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
-                                    <div class="col-lg-6 col-xs-12">
-                                        <label class="">Código de Barra</label>
-                                        <input type="text" id="codigo_barra" class="form-control {{ $errors->has('codigo_barra') ? ' is-invalid' : '' }}" name="codigo_barra" value="{{ old('codigo_barra')}}"   onkeyup="return mayus(this)">
-                                        @if ($errors->has('codigo_barra'))
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $errors->first('codigo_barra') }}</strong>
-                                            </span>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
+                                    
 
                                     <div class="col-lg-6 col-xs-12">
-                                        <label class="required">Unidad de Medida</label>
-                                        <select id="medida" name="medida" class="select2_form form-control {{ $errors->has('medida') ? ' is-invalid' : '' }}">
-                                            <option></option>
-                                            @foreach(unidad_medida() as $medida)
-                                                <option value="{{ $medida->id }}" {{ (old('medida') == $medida->id ? "selected" : "") }}>{{ $medida->simbolo.' - '.$medida->descripcion }}</option>
-                                            @endforeach
-                                        </select>
-                                        @if ($errors->has('medida'))
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $errors->first('medida') }}</strong>
-                                            </span>
-                                        @endif
+                                        <div class="form-group">
+                                            <label class="required">Unidad de Medida</label>
+                                            <select id="medida" name="medida" class="select2_form form-control {{ $errors->has('medida') ? ' is-invalid' : '' }}">
+                                                <option></option>
+                                                @foreach(unidad_medida() as $medida)
+                                                    <option value="{{ $medida->id }}" {{ (old('medida') == $medida->id ? "selected" : "") }}>{{ $medida->simbolo.' - '.$medida->descripcion }}</option>
+                                                @endforeach
+                                            </select>
+                                            @if ($errors->has('medida'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('medida') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
 
                                     <div class="col-lg-6 col-xs-12">
-                                        <label>Peso (KG)</label>
-                                        <input type="number" id="peso_producto" placeholder="0.00" step="0.001" min="0" onkeypress="return filterFloat(event, this);"  class="form-control {{ $errors->has('peso_producto') ? ' is-invalid' : '' }}" name="peso_producto" value="{{ old('peso_producto', 0.001)}}">
-                                        @if ($errors->has('peso_producto'))
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $errors->first('peso_producto') }}</strong>
-                                            </span>
-                                        @endif
+                                        <div class="form-group">
+                                            <label>Peso (KG)</label>
+                                            <input type="number" id="peso_producto" placeholder="0.00" step="0.001" min="0" onkeypress="return filterFloat(event, this);"  class="form-control {{ $errors->has('peso_producto') ? ' is-invalid' : '' }}" name="peso_producto" value="{{ old('peso_producto', 0.001)}}">
+                                            @if ($errors->has('peso_producto'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('peso_producto') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
 
-                                </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="required">Descripción del Producto</label>
+                                            <input type="text" id="nombre" name="nombre" class="form-control {{ $errors->has('nombre') ? ' is-invalid' : '' }}" value="{{old('nombre')}}" maxlength="191" onkeyup="return mayus(this)" required>
+                                            @if ($errors->has('nombre'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('nombre') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
 
-
-
-                                <div class="form-group">
-
-                                    <label class="required">Descripción del Producto</label>
-                                    <input type="text" id="nombre" name="nombre" class="form-control {{ $errors->has('nombre') ? ' is-invalid' : '' }}" value="{{old('nombre')}}" maxlength="191" onkeyup="return mayus(this)" required>
-                                    @if ($errors->has('nombre'))
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('nombre') }}</strong>
-                                        </span>
-                                    @endif
-
-                                </div>
-
-
-                                <div class="form-group">
-
-                                        <label class="required">Marca</label>
-                                        <select id="marca" name="marca" class="select2_form form-control {{ $errors->has('marca') ? ' is-invalid' : '' }}" required value="{{old('marca')}}">
-                                            <option></option>
-                                            @foreach($marcas as $marca)
-                                                <option value="{{ $marca->id }}" {{ (old('marca') == $marca->id ? "selected" : "") }} >{{ $marca->marca }}</option>
-                                            @endforeach
-                                        </select>
-                                        @if ($errors->has('marca'))
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $errors->first('marca') }}</strong>
-                                            </span>
-                                        @endif
-
-
-                                </div>
-
-                                <div class="form-group row">
                                     <div class="col-lg-6 col-xs-12">
-                                        <label class="required">Categoria</label>
-                                        <select id="categoria" name="categoria" class="select2_form form-control {{ $errors->has('familia') ? ' is-invalid' : '' }}">
-                                            <option></option>
-                                            @foreach($categorias as $categoria)
-                                                <option value="{{ $categoria->id }}" {{ (old('categoria') == $categoria->id ? "selected" : "") }} >{{ $categoria->descripcion }}</option>
-                                            @endforeach
-                                        </select>
-                                        @if ($errors->has('categoria'))
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $errors->first('categoria') }}</strong>
-                                            </span>
-                                        @endif
+                                        <div class="form-group">
+                                            <label class="">Código de Barra</label>
+                                            <input type="text" id="codigo_barra" class="form-control {{ $errors->has('codigo_barra') ? ' is-invalid' : '' }}" name="codigo_barra" value="{{ old('codigo_barra')}}"   onkeyup="return mayus(this)">
+                                            @if ($errors->has('codigo_barra'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('codigo_barra') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
-                                    <div class="col-lg-6 col-xs-12">
-                                        <label class="required">Almacén</label>
-                                        <select id="almacen" name="almacen" class="select2_form form-control {{ $errors->has('sub_familia') ? ' is-invalid' : '' }}" required >
-                                            <option></option>
-                                            @foreach($almacenes as $almacen)
-                                                <option value="{{ $almacen->id }}" {{ (old('almacen') == $almacen->id ? "selected" : "") }} >{{ $almacen->descripcion }}</option>
-                                            @endforeach
-                                        </select>
-                                        @if ($errors->has('almacen'))
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $errors->first('almacen') }}</strong>
-                                            </span>
-                                        @endif
+
+                                    <div class="col-lg-6 col-12">
+                                        <div class="form-group">
+                                            <label class="required">Marca</label>
+                                            <select id="marca" name="marca" class="select2_form form-control {{ $errors->has('marca') ? ' is-invalid' : '' }}" required value="{{old('marca')}}">
+                                                <option></option>
+                                                @foreach($marcas as $marca)
+                                                    <option value="{{ $marca->id }}" {{ (old('marca') == $marca->id ? "selected" : "") }} >{{ $marca->marca }}</option>
+                                                @endforeach
+                                            </select>
+                                            @if ($errors->has('marca'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('marca') }}</strong>
+                                                </span>
+                                            @endif    
+                                        </div>
                                     </div>
+                                    <div class="col-lg-6 col-12">
+                                        <div class="form-group">
+                                            <label class="required">Categoria</label>
+                                            <select id="categoria" name="categoria" class="select2_form form-control {{ $errors->has('familia') ? ' is-invalid' : '' }}">
+                                                <option></option>
+                                                @foreach($categorias as $categoria)
+                                                    <option value="{{ $categoria->id }}" {{ (old('categoria') == $categoria->id ? "selected" : "") }} >{{ $categoria->descripcion }}</option>
+                                                @endforeach
+                                            </select>
+                                            @if ($errors->has('categoria'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('categoria') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-12">
+                                        <div class="form-group">	
+                                            <label class="required">Almacén</label>
+                                            <select id="almacen" name="almacen" class="select2_form form-control {{ $errors->has('sub_familia') ? ' is-invalid' : '' }}" required >
+                                                <option></option>
+                                                @foreach($almacenes as $almacen)
+                                                    <option value="{{ $almacen->id }}" {{ (old('almacen') == $almacen->id ? "selected" : "") }} >{{ $almacen->descripcion }}</option>
+                                                @endforeach
+                                            </select>
+                                            @if ($errors->has('almacen'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('almacen') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+
                                 </div>
 
                             </div>

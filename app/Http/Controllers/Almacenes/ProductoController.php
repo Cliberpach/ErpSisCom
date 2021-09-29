@@ -113,6 +113,9 @@ class ProductoController extends Controller
             $producto->igv = $request->get('igv');
             $producto->save();
 
+            $producto->codigo = 1000 + $producto->id;
+            $producto->update();
+
             //Llenado de los Clientes
             $clientesJSON = $request->get('clientes_tabla');
             $clientetabla = json_decode($clientesJSON[0]);
