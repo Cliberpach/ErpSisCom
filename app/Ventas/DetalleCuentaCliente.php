@@ -23,13 +23,13 @@ class DetalleCuentaCliente extends Model
         return $this->belongsTo(CuentaCliente::class,'cuenta_cliente_id');
     }
 
-    protected static function booted()
-    {
-        static::created(function(DetalleCuentaCliente $detalle){
+    // protected static function booted()
+    // {
+    //     static::created(function(DetalleCuentaCliente $detalle){
 
-            $caja = MovimientoCaja::find($detalle->mcaja_id);
-            $caja->monto_final = $caja->monto_final + $detalle->monto;
-            $caja->update();            
-        });
-    }
+    //         $caja = MovimientoCaja::find($detalle->mcaja_id);
+    //         $caja->monto_final = $caja->monto_final + $detalle->monto;
+    //         $caja->update();            
+    //     });
+    // }
 }
