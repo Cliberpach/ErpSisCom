@@ -2,6 +2,7 @@
 
 namespace App\Ventas;
 
+use App\Pos\MovimientoCaja;
 use Illuminate\Database\Eloquent\Model;
 
 class DetalleCuentaCliente extends Model
@@ -12,6 +13,7 @@ class DetalleCuentaCliente extends Model
         'fecha',
         'observacion',
         'tipo_pago_id',
+        'mcaja_id',
         'efectivo',
         'importe',
         'monto',
@@ -19,5 +21,15 @@ class DetalleCuentaCliente extends Model
     public function cuenta_cliente()
     {
         return $this->belongsTo(CuentaCliente::class,'cuenta_cliente_id');
+    }
+
+    protected static function booted()
+    {
+        static::created(function(DetalleCuentaCliente $detalle){
+
+            $caja = MovimientoCaja::find($detalle->mcaja_id);
+            $caja->monto_final = $caja->monto_final + $detalle->monto;
+            $caja->update();            
+        });
     }
 }

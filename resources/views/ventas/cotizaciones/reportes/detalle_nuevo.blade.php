@@ -277,9 +277,9 @@
                     <tr >
                         <th style="text-align: center; border-right: 2px solid #52BE80; width: 10%;">CANT</th>
                         <th style="text-align: center;border-right: 2px solid #52BE80; width: 10%;">UM</th>
-                        <th style="text-align: center; border-right: 2px solid #52BE80: width: 70%;">DESCRIPCIÓN</th>
+                        <th style="text-align: center; border-right: 2px solid #52BE80; width: 60%;">DESCRIPCIÓN</th>
                         <th style="text-align: center; border-right: 2px solid #52BE80; width: 10%;">P. UNIT.</th>
-                        <th style="text-align: right">TOTAL</th>
+                        <th style="text-align: right; width: 10%;">TOTAL</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -287,8 +287,8 @@
                     <tr>
                         <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->cantidad }}</td>
                         <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->producto->tabladetalle->simbolo }}</td>
-                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->producto->codigo . ' - ' . $item->producto->nombre }}</td>
-                        <td style="text-align: left; border-right: 2px solid #52BE80">{{ $item->precio_nuevo }}</td>
+                        <td style="text-align: left; border-right: 2px solid #52BE80">{{ $item->producto->codigo . ' - ' . $item->producto->nombre }}</td>
+                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->precio_nuevo }}</td>
                         <td style="text-align: right">{{ $item->valor_venta }}</td>
                     </tr>
                     @endforeach

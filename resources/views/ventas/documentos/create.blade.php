@@ -496,6 +496,7 @@
 <script src="{{ asset('Inspinia/js/plugins/dataTables/datatables.min.js') }}"></script>
 <script src="{{ asset('Inspinia/js/plugins/dataTables/dataTables.bootstrap4.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 
 <script>
@@ -1233,6 +1234,7 @@
             correcto = false;
             toastr.error('La suma del importe y el efectivo debe ser igual al monto de la venta.');
         }
+        
         axios.get("{{ route('Caja.movimiento.verificarestado') }}").then((value) => {
             if (value.data == "") {
                 toastr.error("No hay ninguna apertura de caja");
