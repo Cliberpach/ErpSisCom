@@ -308,12 +308,12 @@
                                     @if($documento->ruta_qr)
                                     <img src="{{ base_path() . '/storage/app/'.$documento->ruta_qr }}" class="qr-img">
                                     @endif
-                                </td>
-                                <td>
-                                    <p class="m-0 p-0" style="color: #229954;"><em>¡¡Gracias por su confianza y preferencia!!</em></p><br>
                                     @if($documento->hash)
                                     <p class="m-0 p-0" style="font-size: 9px;">{{ $documento->hash }}</p>
                                     @endif
+                                </td>
+                                <td>
+                                    <p class="m-0 p-0" style="color: #229954;"><em>¡¡Gracias por su confianza y preferencia!!</em></p><br>
                                     <div style="width: 90%; text-align: right;">
                                         <img src="{{ public_path() . '/img/gota.png' }}" style="width: 50px;height: 45px;">
                                     </div>

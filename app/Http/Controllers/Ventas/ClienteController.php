@@ -364,10 +364,11 @@ class ClienteController extends Controller
                 'zona' => 'required',
                 'provincia' => 'required',
                 'distrito' => 'required',
-                'direccion' => 'nullable',
-                'telefono_movil' => 'nullable|numeric',
+                'direccion' => 'required',
+                'telefono_movil' => 'required|numeric',
                 'activo' => 'required',
             ];
+            
             $message = [
                 'tipo_documento.required' => 'El campo Tipo de documento es obligatorio.',
                 'tipo_cliente.required' => 'El campo Tipo de cliente es obligatorio.',
@@ -378,6 +379,8 @@ class ClienteController extends Controller
                 'zona.required' => 'El campo Zona es obligatorio',
                 'provincia.required' => 'El campo Provincia es obligatorio',
                 'distrito.required' => 'El campo Distrito es obligatorio',
+                'direccion.required' => 'El campo direccion es obligatorio',
+                'telefono_movil.required' => 'El campo telefono movil es obligatorio',
                 'activo.required' => 'El campo Estado es obligatorio',
     
             ];

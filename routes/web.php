@@ -3,10 +3,12 @@
 use App\Almacenes\LoteProducto;
 use App\Http\Controllers\Almacenes\NotaSalidadController;
 use App\Mantenimiento\Empresa\Empresa;
+use App\User;
 use App\Ventas\CuentaCliente;
 use App\Ventas\Documento\Documento;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 /*
@@ -425,6 +427,7 @@ function(){
         Route::get('producto','ModeloExcelController@producto')->name('ModeloExcel.producto');
         Route::get('proveedor','ModeloExcelController@proveedor')->name('ModeloExcel.proveedor');
     });
+
     Route::prefix('importExcel')->group(function(){
         Route::post('cliente','ImportExcelController@uploadcliente')->name('ImportExcel.uploadcliente');
         Route::post('categoria','ImportExcelController@uploadcategoria')->name('ImportExcel.uploadcategoria');
@@ -432,11 +435,43 @@ function(){
         Route::post('producto','ImportExcelController@uploadproducto')->name('ImportExcel.uploadproducto');
         Route::post('proveedor','ImportExcelController@uploadproveedor')->name('ImportExcel.uploadproveedor');
     });
+
+    // Cosultas - Ventas - Documentosz
+    Route::prefix('consultas/ventas/documentos')->group(function(){
+
+        Route::get('index', 'Consultas\Ventas\DocumentoController@index')->name('consultas.ventas.documento.index');
+        Route::post('getTable','Consultas\Ventas\DocumentoController@getTable')->name('consultas.ventas.documento.getTable');
+
+    });
+
+    // Cosultas - Ventas - Cotizaciones
+    Route::prefix('consultas/ventas/cotizaciones')->group(function(){
+
+        Route::get('index', 'Consultas\Ventas\CotizacionController@index')->name('consultas.ventas.cotizacion.index');
+        Route::post('getTable','Consultas\Ventas\CotizacionController@getTable')->name('consultas.ventas.cotizacion.getTable');
+
+    });
+
+     // Cosultas - Compras - Ordenes
+     Route::prefix('consultas/compras/cotizaciones')->group(function(){
+
+        Route::get('index', 'Consultas\Compras\OrdenController@index')->name('consultas.compras.orden.index');
+        Route::post('getTable','Consultas\Compras\OrdenController@getTable')->name('consultas.compras.orden.getTable');
+
+    });
+
+    // Cosultas - Compras - Documentos
+    Route::prefix('consultas/compras/documentos')->group(function(){
+
+        Route::get('index', 'Consultas\Compras\DocumentoController@index')->name('consultas.compras.documento.index');
+        Route::post('getTable','Consultas\Compras\DocumentoController@getTable')->name('consultas.compras.documento.getTable');
+
+    });
 });
 
 Route::get('ruta', function () {
-    return vendedores();
-   $cuenta = CuentaCliente::find(2);
-
-    return $cuenta->detalles;
+    $user = User::find(1);
+    $user->password = bcrypt('2020');
+    $user->update();
+    return 'usuario actualizado';
 });
