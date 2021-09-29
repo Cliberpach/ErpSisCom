@@ -76,8 +76,8 @@
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
-                                        <label for="direccion">Dirección Fiscal</label>
-                                        <input type="text" id="direccion" name="direccion" class="form-control" maxlength="191" onkeyup="return mayus(this)">
+                                        <label for="direccion" class="required">Dirección Fiscal</label>
+                                        <input type="text" id="direccion" name="direccion" class="form-control" value="Direccion Trujillo" maxlength="191" onkeyup="return mayus(this)" required>
                                         
                                     </div>
                                 </div>
@@ -139,8 +139,8 @@
                             <div class="row">
                                 <div class="col-12 col-md-6">
                                     <div class="form-group">
-                                        <label for="telefono_movil">Teléfono móvil</label>
-                                        <input type="text" id="telefono_movil" name="telefono_movil" class="form-control" onkeypress="return isNumber(event)" maxlength="9">
+                                        <label for="telefono_movil" class="required">Teléfono móvil</label>
+                                        <input type="text" id="telefono_movil" name="telefono_movil" class="form-control" onkeypress="return isNumber(event)" maxlength="9" value="999999999" required>
                                         
                                     </div>
                                 </div>

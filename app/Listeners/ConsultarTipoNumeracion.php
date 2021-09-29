@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Mantenimiento\Empresa\Numeracion;
+use App\Ventas\Documento\Documento;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\DB;
@@ -34,12 +35,13 @@ class ConsultarTipoNumeracion
                             ->where('empresa_numeracion_facturaciones.tipo_comprobante',$documento->tipo_venta)
                             ->where('empresa_numeracion_facturaciones.empresa_id',$documento->empresa_id)
                             ->where('cotizacion_documento.tipo_venta',$documento->tipo_venta)
+                            ->where('cotizacion_documento.estado','!=','ANULADO')
                             ->select('cotizacion_documento.*','empresa_numeracion_facturaciones.*')
                             ->orderBy('cotizacion_documento.correlativo','DESC')
                             ->get();
 
 
-        if (count($serie_comprobantes) == 0) {
+        if (count($serie_comprobantes) === 1) {
             //OBTENER EL DOCUMENTO INICIADO 
             $documento->correlativo = $numeracion->numero_iniciar;
             $documento->serie = $numeracion->serie;
