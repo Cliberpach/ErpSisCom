@@ -84,7 +84,7 @@
                                             <label for="" class="col-form-label required">Pago</label>
                                             <select name="pago" id="pago" class="form-control select2_form" required>
                                                 <option value="A CUENTA">A CUENTA</option>
-                                                <option value="TODO">TODO</option>
+                                                <option value="TODO">VARIAS CUENTAS</option>
                                             </select>
                                         </div>
                                     </div>

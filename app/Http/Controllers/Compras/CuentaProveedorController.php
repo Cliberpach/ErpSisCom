@@ -72,7 +72,6 @@ class CuentaProveedorController extends Controller
     }
     public function detallePago(Request $request)
     {
-        Log::info($request);
         $cuentaProveedor=CuentaProveedor::findOrFail($request->id);
         if($request->pago=="A CUENTA")
         {
@@ -113,7 +112,6 @@ class CuentaProveedorController extends Controller
                         $detallepago=new DetalleCuentaProveedor();
                         $detallepago->cuenta_proveedor_id=$cuenta->id;
                         $detallepago->mcaja_id= movimientoUser()->id;
-                        $detallepago->monto=0;
                         $detallepago->observacion=$request->observacion;
                         $detallepago->fecha=$request->fecha;
 
