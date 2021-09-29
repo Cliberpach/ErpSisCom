@@ -29,7 +29,7 @@ use App\Ventas\Cliente;
 use App\Ventas\TipoPago;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use App\Mantenimiento\Tabla\Detalle as TablaDetalle;
 // TABLAS-DETALLES
 
 if (!function_exists('tipos_moneda')) {
@@ -994,7 +994,13 @@ if (!function_exists('MovimientoCajaIngresos')) {
     {
         $totalIngresos = 0;
         foreach ($movimiento->detalleMovimientoVentas as $key => $item) {
-            $totalIngresos = $totalIngresos + $item->documento->efectivo;
+            if ($item->forma_pago == 160) {
+                if ($item->documento->tipo_pago_id == 1) {
+                    $totalIngresos = $totalIngresos + $item->documento->importe;
+                } else {
+                    $totalIngresos = $totalIngresos + $item->documento->efectivo;
+                }
+            }
         }
         foreach ($movimiento->detalleCuentaCliente as $item) {
             $totalIngresos = $totalIngresos  + $item->efectivo;
@@ -1008,8 +1014,11 @@ if (!function_exists('MovimientoCajaEgresos')) {
 
         $totalEgresos = 0;
         foreach ($movimiento->detalleMoviemientoEgresos as $key => $item) {
-            if ($item->egreso->estado == "ACTIVO") {
-                $totalEgresos = $totalEgresos + $item->egreso->importe;
+            $modo = TablaDetalle::where('descripcion', $item->modo_compra)->first();
+            if ($modo->simbolo === 'CREDITO' || $modo->simbolo === 'credito' || $modo->simbolo === 'CRÉDITO' || $modo->simbolo === 'crédito') {
+                if ($item->egreso->estado == "ACTIVO") {
+                    $totalEgresos = $totalEgresos + $item->egreso->importe;
+                }
             }
         }
         foreach ($movimiento->detalleCuentaProveedor as $key => $item) {
