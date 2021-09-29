@@ -1,7 +1,7 @@
 @extends('layout') @section('content')
 
 @section('consulta-active', 'active')
-@section('consulta-cuenta-cliente-active', 'active')
+@section('cuenta_proveedor-active', 'active')
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10 col-md-10">
@@ -19,11 +19,32 @@
 </div>
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
+        <div class="col-12">
+            <div class="row align-items-end">
+                <div class="col-12 col-md-5">
+                    <div class="form-group">
+                        <label for="fecha_desde">Fecha desde</label>
+                        <input type="date" id="fecha_desde" class="form-control">
+                    </div>
+                </div>
+                <div class="col-12 col-md-5">
+                    <div class="form-group">
+                        <label for="fecha_desde">Fecha hasta</label>
+                        <input type="date" id="fecha_hasta" class="form-control">
+                    </div>
+                </div>
+                <div class="col-12 col-md-2">
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-block" onclick="initTable()"><i class="fa fa-refresh"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-content">
                     <div class="table-responsive">
-                        <table class="table dataTables-cajas table-striped table-bordered table-hover"
+                        <table class="table dataTables-cuentas table-striped table-bordered table-hover"
                             style="text-transform:uppercase">
                             <thead>
                                 <tr>
@@ -57,11 +78,11 @@
 
 <script>
     $(document).ready(function() {
-        var cotizaciones = [];
+        var cuentas = [];
         // DataTables
         initTable();
 
-        $('.dataTables-cotizacion').DataTable();
+        $('.dataTables-cuentas').DataTable();
 
     });
 
@@ -102,20 +123,21 @@
                     $.ajax({
                         dataType : 'json',
                         type : 'post',
-                        url : '{{ route('consultas.ventas.cotizacion.getTable') }}',
+                        url : '{{ route('consultas.cuentas.proveedor.getTable') }}',
                         data : {'_token' : $('input[name=_token]').val(), 'fecha_desde' : fecha_desde, 'fecha_hasta' : fecha_hasta},
                         success: function(response) {
                             if (response.success) {
-                                cotizaciones = [];
-                                cotizaciones = response.cotizaciones;
+                                cuentas = [];
+                                cuentas = response.cuentas;
                                 loadTable();
                                 timerInterval = 0;
                                 Swal.resumeTimer();
                                 //console.log(colaboradores);
                             } else {
                                 Swal.resumeTimer();
-                                cotizaciones = [];
+                                cuentas = [];
                                 loadTable();
+                                toastr.error(response.mensaje)
                             }
                         }
                     });
@@ -130,14 +152,14 @@
 
     function loadTable()
     {
-        $('.dataTables-cotizacion').dataTable().fnDestroy();
-        $('.dataTables-cotizacion').DataTable({
+        $('.dataTables-cuentas').dataTable().fnDestroy();
+        $('.dataTables-cuentas').DataTable({
             "dom": '<"html5buttons"B>lTfgitp',
             "buttons": [{
                     extend: 'excelHtml5',
                     text: '<i class="fa fa-file-excel-o"></i> Excel',
                     titleAttr: 'Excel',
-                    title: 'CONSULTA COTIZACION'
+                    title: 'CONSULTA CUENTAS PROVEEDOR'
                 },
                 {
                     titleAttr: 'Imprimir',
@@ -157,51 +179,35 @@
             "bFilter": true,
             "bInfo": true,
             "bAutoWidth": false,
-            "data": cotizaciones,
+            "data": cuentas,
             "columns": [
                 {
-                    data: 'empresa',
+                    data: 'proveedor',
                     className: "text-left"
                 },
                 {
-                    data: 'cliente',
+                    data: 'numero_doc',
                     className: "text-left"
                 },
                 {
-                    data: 'fecha_documento',
+                    data: 'fecha_doc',
+                    className: "text-left"
+                },
+                {
+                    data: 'monto',
                     className: "text-center"
                 },
                 {
-                    data: 'total',
+                    data: 'acta',
                     className: "text-center"
                 },
-
                 {
-                    data: null,
-                    className: "text-center",
-                    render: function(data) {
-                        switch (data.estado) {
-                            case "PENDIENTE":
-                                return "<span class='badge badge-warning' d-block>" + data
-                                    .estado +
-                                    "</span>";
-                                break;
-                            case "VENCIDA":
-                                return "<span class='badge badge-danger' d-block>" + data
-                                    .estado +
-                                    "</span>";
-                                break;
-                            case "ATENDIDA":
-                                return "<span class='badge badge-success' d-block>" + data
-                                    .estado +
-                                    "</span>";
-                                break;
-                            default:
-                                return "<span class='badge badge-success' d-block>" + data
-                                    .estado +
-                                    "</span>";
-                        }
-                    },
+                    data: 'saldo',
+                    className: "text-center"
+                },
+                {
+                    data: 'estado',
+                    className: "text-center"
                 },
 
             ],

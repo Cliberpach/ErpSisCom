@@ -19,6 +19,7 @@ class LoteProducto extends Model
 
         'cantidad',
         'cantidad_logica',
+        'cantidad_inicial',
         
         'fecha_vencimiento',
         'fecha_entrega',

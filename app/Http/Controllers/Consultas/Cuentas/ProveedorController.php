@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Consultas\Cuentas;
 
 use App\Compras\CuentaProveedor;
 use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,21 +17,43 @@ class ProveedorController extends Controller
 
     public function getTable(Request $request){
 
-        if($request->fecha_desde && $request->fecha_hasta)
+        try
         {
-            $ordenes = CuentaProveedor::where('estado','!=','ANULADO')->whereBetween(DB::raw('DATE_FORMAT(created_at, "%d-%m-%Y")'), [$request->fecha_desde, $request->fecha_hasta])->orderBy('id', 'desc')->get();
-        }
-        else
-        {
-            $ordenes = CuentaProveedor::where('estado','!=','ANULADO')->orderBy('id', 'desc')->get();
-        }
-        
+            if($request->fecha_desde && $request->fecha_hasta)
+            {
+                $cuentas = CuentaProveedor::where('estado','!=','ANULADO')->whereBetween('fecha' , [$request->fecha_desde, $request->fecha_hasta])->orderBy('id', 'desc')->get();
+            }
+            else
+            {
+                $cuentas = CuentaProveedor::where('estado','!=','ANULADO')->orderBy('id', 'desc')->get();
+            }
+            
+            $coleccion = collect();
 
-        
-        $coleccion = collect();
-        return response()->json([
-            'success' => true,
-            'ordenes' => $coleccion
-        ]);
+            foreach ($cuentas as $key => $value) {
+                $coleccion->push([
+                    "id"=>$value->id,
+                    "proveedor"=>$value->documento->proveedor->descripcion,
+                    "numero_doc"=>$value->documento->numero_doc,
+                    "fecha_doc"=>strval($value->documento->created_at) ,
+                    "monto"=>$value->documento->total,
+                    "acta"=>$value->acta,
+                    "saldo"=>$value->saldo,
+                    "estado"=>$value->estado
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'cuentas' => $coleccion
+            ]);
+        }
+        catch(Exception $e)
+        {
+            return response()->json([
+                'success' => false,
+                'mensaje' => $e->getMessage()
+            ]);
+        }
     }
 }

@@ -20,7 +20,7 @@ class OrdenController extends Controller
 
         if($request->fecha_desde && $request->fecha_hasta)
         {
-            $ordenes = Orden::where('estado','!=','ANULADO')->whereBetween(DB::raw('DATE_FORMAT(created_at, "%d-%m-%Y")'), [$request->fecha_desde, $request->fecha_hasta])->orderBy('id', 'desc')->get();
+            $ordenes = Orden::where('estado','!=','ANULADO')->whereBetween('fecha_emision', [$request->fecha_desde, $request->fecha_hasta])->orderBy('id', 'desc')->get();
         }
         else
         {

@@ -27,6 +27,7 @@ class CreateLoteProductosTable extends Migration
 
             $table->unsignedDecimal('cantidad', 15,2);
             $table->unsignedDecimal('cantidad_logica', 15,2);
+            $table->unsignedDecimal('cantidad_inicial', 15,2)->nullable();
 
             $table->date('fecha_vencimiento');
             $table->date('fecha_entrega');

@@ -113,7 +113,7 @@
                 <li class="@yield('consulta-compras-documento-active')"><a href="{{ route('consultas.compras.documento.index') }}">Doc. Compras</a></li>
             </ul>
         </li>
-        <li class="@yield('cuenta_proveedor-active')"><a href="#">Cuenta Proveedor</a></li>
+        <li class="@yield('cuenta_proveedor-active')"><a href="{{ route('consultas.cuentas.proveedor.index') }}">Cuenta Proveedor</a></li>
         <li class="@yield('cuenta_cliente-active')"><a href="#">Cuenta Cliente</a></li>
         <li class="@yield('nota_salida_consulta-active')"><a href="#">Nota Salida</a></li>
         <li class="@yield('nota_ingreso_consulta-active')"><a href="#">Nota Ingreso</a></li>

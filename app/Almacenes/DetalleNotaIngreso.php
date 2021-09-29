@@ -43,6 +43,7 @@ class DetalleNotaIngreso extends Model
             $lote->producto_id = $detalle->producto_id;
             $lote->cantidad = $detalle->cantidad;
             $lote->cantidad_logica = $detalle->cantidad;
+            $lote->cantidad_inicial= $detalle->cantidad;
             $lote->fecha_vencimiento = $detalle->fecha_vencimiento;
             $lote->fecha_entrega = $detalle->nota_ingreso->fecha;
             $lote->observacion = 'NOTA DE INGRESO';

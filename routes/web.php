@@ -467,6 +467,14 @@ function(){
         Route::post('getTable','Consultas\Compras\DocumentoController@getTable')->name('consultas.compras.documento.getTable');
 
     });
+
+     // Cosultas - Compras - Documentos
+     Route::prefix('consultas/cuentas/proveedores')->group(function(){
+
+        Route::get('index', 'Consultas\Cuentas\ProveedorController@index')->name('consultas.cuentas.proveedor.index');
+        Route::post('getTable','Consultas\Cuentas\ProveedorController@getTable')->name('consultas.cuentas.proveedor.getTable');
+
+    });
 });
 
 Route::get('ruta', function () {
