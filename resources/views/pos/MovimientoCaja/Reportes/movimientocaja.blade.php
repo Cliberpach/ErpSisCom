@@ -329,7 +329,7 @@
                                 <td style="text-align: center; border-right: 2px solid #52BE80">0</td>
                                 <td style="text-align: center; border-right: 2px solid #52BE80">0</td>
                                 <td style="text-align: center; border-right: 2px solid #52BE80">
-                                    {{ $cuentaCliente->importe }}</td>
+                                    {{ $cuentaCliente->efectivo }}</td>
                             @elseif ($cuentaCliente->tipo_pago_id==2)
                                 <td style="text-align: center; border-right: 2px solid #52BE80">
                                     {{ $cuentaCliente->importe }}</td>
@@ -392,9 +392,35 @@
                 </tr>
             </thead>
             <tbody>
-                {{-- @foreach ($movimiento->detalleCuentaProveedor as )
-
-                @endforeach --}}
+                @foreach ($movimiento->detalleCuentaProveedor as $detalleProveedor)
+                    <td style="text-align: center; border-right: 2px solid #52BE80">
+                        {{ $detalleProveedor->cuenta_proveedor->documento->tipo_compra }}</td>
+                    <td style="text-align: center; border-right: 2px solid #52BE80">
+                        {{ $detalleProveedor->cuenta_proveedor->documento->numero_tipo }}</td>
+                    <td style="text-align: center; border-right: 2px solid #52BE80">
+                        {{$detalleProveedor->cuenta_proveedor->documento->proveedor->descripcion }}</td>
+                    <td style="text-align: center; border-right: 2px solid #52BE80">
+                        {{ $detalleProveedor->efectivo+$detalleProveedor->importe }}
+                    </td>
+                    @if ($detalleProveedor->tipo_pago_id == 1)
+                        <td style="text-align: center; border-right: 2px solid #52BE80">0</td>
+                        <td style="text-align: center; border-right: 2px solid #52BE80">0</td>
+                        <td style="text-align: center; border-right: 2px solid #52BE80">
+                            {{ $detalleProveedor->efectivo }}</td>
+                    @elseif ($detalleProveedor->tipo_pago_id==2)
+                        <td style="text-align: center; border-right: 2px solid #52BE80">
+                            {{ $detalleProveedor->importe }}</td>
+                        <td style="text-align: center; border-right: 2px solid #52BE80">0</td>
+                        <td style="text-align: center; border-right: 2px solid #52BE80">
+                            {{ $detalleProveedor->efectivo }}</td>
+                    @elseif ($detalleProveedor->tipo_pago_id==3)
+                        <td style="text-align: center; border-right: 2px solid #52BE80"></td>
+                        <td style="text-align: center; border-right: 2px solid #52BE80">
+                            {{ $detalleProveedor->importe }}</td>
+                        <td style="text-align: center; border-right: 2px solid #52BE80">
+                            {{ $detalleProveedor->efectivo }}</td>
+                    @endif
+                @endforeach
             </tbody>
         </table>
     </div><br>
