@@ -243,53 +243,10 @@ function eliminar(id) {
 
 
 function detalle(id) {
-    const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-            confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger',
-        },
-        buttonsStyling: false
-    })
+    var url = '{{ route("ventas.guiasremision.show", ":id")}}';
+    url = url.replace(':id',id);
 
-    Swal.fire({
-        title: "Opción Detalle",
-        text: "¿Seguro que desea obtener la guia de remision?",
-        showCancelButton: true,
-        icon: 'info',
-        confirmButtonColor: "#1ab394",
-        confirmButtonText: 'Si, Confirmar',
-        cancelButtonText: "No, Cancelar",
-        // showLoaderOnConfirm: true,
-    }).then((result) => {
-        if (result.value) {
-            
-            var url = '{{ route("ventas.guiasremision.show", ":id")}}';
-            url = url.replace(':id',id);
-
-            window.location.href = url
-
-            Swal.fire({
-                title: '¡Cargando!',
-                type: 'info',
-                text: 'Generando Guia',
-                showConfirmButton: false,
-                onBeforeOpen: () => {
-                    Swal.showLoading()
-                }
-            })
-
-        } else if (
-            /* Read more about handling dismissals below */
-            result.dismiss === Swal.DismissReason.cancel
-        ) {
-            swalWithBootstrapButtons.fire(
-                'Cancelado',
-                'La Solicitud se ha cancelado.',
-                'error'
-            )
-        }
-    })
-
+    window.open(url, "Comprobante SISCOM", "width=900, height=600")
 }
 
 function enviarSunat(id , sunat) {

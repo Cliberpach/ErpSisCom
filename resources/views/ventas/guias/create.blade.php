@@ -51,7 +51,7 @@
                                 <div class="form-group row">
 
                                     <div class="col-lg-6 col-xs-12" id="fecha_documento">
-                                        <label class="">Fecha de Documento</label>
+                                        <label class="required">Fecha de Documento</label>
                                         <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
@@ -72,7 +72,7 @@
                                     </div>
 
                                     <div class="col-lg-6 col-xs-12" id="fecha_entrega">
-                                        <label class="">Fecha de Atención</label>
+                                        <label class="required">Fecha de Atención</label>
                                         <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
@@ -80,7 +80,7 @@
                                             
 
                                             <input type="text" id="fecha_atencion_campo" name="fecha_atencion_campo"
-                                                class="form-control {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
+                                                class="form-control{{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
                                                 value="{{old('fecha_atencion',getFechaFormato( $documento->fecha_atencion ,'d/m/Y'))}}"
                                                 autocomplete="off" required readonly disabled>
 
@@ -99,7 +99,7 @@
 
                                 <div class="form-group row">
                                     <div class="col-lg-6 col-xs-12">
-                                        <label class="">Tipo: </label>
+                                        <label class="required">Tipo: </label>
                                         <select
                                             class="select2_form form-control {{ $errors->has('tipo_venta') ? ' is-invalid' : '' }}"
                                             style="text-transform: uppercase; width:100%" value="{{old('tipo_venta')}}"
@@ -122,7 +122,7 @@
                                     </div>
 
                                     <div class="col-md-6 col-xs-12">
-                                        <label >Moneda:</label>
+                                        <label class="required">Moneda:</label>
                                         <select id="moneda" name="moneda" class="select2_form form-control {{ $errors->has('moneda') ? ' is-invalid' : '' }}" disabled >
                                             <option selected>SOLES</option>
                                         </select>
@@ -132,25 +132,22 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="">Cliente: </label>
-                                        <select
-                                        class="select2_form form-control {{ $errors->has('proveedor_id') ? ' is-invalid' : '' }}"
-                                        style="text-transform: uppercase; width:100%" value="{{old('cliente_id')}}"
-                                        name="cliente_id" id="cliente_id" required disabled>
-                                        <option></option>
-                                            @foreach ($clientes as $cliente)
-                                                
-                                                <option value="{{$cliente->id}}" @if(old('cliente_id',$documento->cliente_id)==$cliente->id )
-                                                    {{'selected'}} @endif >{{$cliente->tipo_documento.': '.$cliente->documento.' - '.$cliente->nombre}}
-                                                </option>
+                                    <label class="required">Cliente: </label>
+                                    <select class="select2_form form-control {{ $errors->has('proveedor_id') ? ' is-invalid' : '' }}" style="text-transform: uppercase; width:100%" value="{{old('cliente_id')}}" name="cliente_id" id="cliente_id" required disabled>
+                                    <option></option>
+                                        @foreach ($clientes as $cliente)
+                                            
+                                            <option value="{{$cliente->id}}" @if(old('cliente_id',$documento->cliente_id)==$cliente->id )
+                                                {{'selected'}} @endif >{{$cliente->tipo_documento.': '.$cliente->documento.' - '.$cliente->nombre}}
+                                            </option>
 
-                                            @endforeach
-                                        </select>
+                                        @endforeach
+                                    </select>
                                 </div>
 
                                 <div class="form-group row">
                                     <div class="col-lg-6 col-xs-12">
-                                        <label class="">Cantidad de Productos: </label>
+                                        <label class="required">Cantidad de Productos: </label>
                                         <input type="number" name="cantidad_productos" id="cantidad_productos" value="{{old('peso_productos',$cantidad_productos)}}" readonly class="form-control {{ $errors->has('cantidad_productos') ? ' is-invalid' : '' }}">
                                         @if ($errors->has('cantidad_productos'))
                                             <span class="invalid-feedback" role="alert">
@@ -160,7 +157,7 @@
                                     </div>
 
                                     <div class="col-md-6 col-xs-12">
-                                        <label >Peso Total de productos:</label>
+                                        <label class="required">Peso Total de productos:</label>
                                         <input type="number" name="peso_productos" id="peso_productos" readonly value="{{old('peso_productos',$pesos_productos)}}" class="form-control {{ $errors->has('peso_productos') ? ' is-invalid' : '' }}">
                                         @if ($errors->has('peso_productos'))
                                             <span class="invalid-feedback" role="alert">
@@ -183,7 +180,7 @@
 
                                 <div class="form-group row">
                                     <div class="col-lg-8 col-xs-12">
-                                        <label class="">Empresa: </label>
+                                        <label class="required">Empresa: </label>
                                         
                                         <select class="select2_form form-control {{ $errors->has('empresa_id') ? ' is-invalid' : '' }}"
                                                 style="text-transform: uppercase; width:100%" value="{{old('empresa_id',$documento->empresa_id)}}"
@@ -198,7 +195,7 @@
 
                                     <div class="col-lg-4 col-xs-12">
                                         <label class="required">Ubigeo: </label>
-                                        <input type="text" id="ubigeo_partida" class="form-control {{ $errors->has('ubigeo_partida') ? ' is-invalid' : '' }}" required name="ubigeo_partida" value="{{ old('ubigeo_partida',$empresa->ubigeo)}}">
+                                        <input type="text" id="ubigeo_partida" class="form-control input-required {{ $errors->has('ubigeo_partida') ? ' is-invalid' : '' }}" required name="ubigeo_partida" value="{{ old('ubigeo_partida',$empresa->ubigeo)}}">
                                         @if ($errors->has('ubigeo_partida'))
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $errors->first('ubigeo_partida') }}</strong>
@@ -210,9 +207,9 @@
 
                                 
                                 <div class="form-group">
-                                    <label class="">Dirección de la Empresa (Partida): </label>
+                                    <label class="required">Dirección de la Empresa (Partida): </label>
                                     <textarea type="text" placeholder=""
-                                        class="form-control {{ $errors->has('direccion_tienda') ? ' is-invalid' : '' }}"
+                                        class="form-control input-required {{ $errors->has('direccion_tienda') ? ' is-invalid' : '' }}"
                                         name="direccion_empresa" id="direccion_empresa" value="{{old('direccion_empresa',$direccion_empresa->direccion_fiscal)}}" required >{{old('direccion_empresa',$direccion_empresa->direccion_fiscal)}}</textarea>
                                    
 
@@ -249,7 +246,7 @@
 
                                     <div class="col-lg-4 col-xs-12">
                                         <label class="required">Ubigeo: </label>
-                                        <input type="text" id="ubigeo_llegada" class="form-control {{ $errors->has('ubigeo_llegada') ? ' is-invalid' : '' }}" required  name="ubigeo_llegada" value="{{ old('ubigeo_llegada')}}">
+                                        <input type="text" id="ubigeo_llegada" class="form-control input-required {{ $errors->has('ubigeo_llegada') ? ' is-invalid' : '' }}" required  name="ubigeo_llegada" value="{{ old('ubigeo_llegada')}}">
                                         @if ($errors->has('ubigeo_llegada'))
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $errors->first('ubigeo_llegada') }}</strong>
@@ -262,7 +259,7 @@
                                 <div class="form-group">
                                     <label class="required">Dirección de la tienda o destino (Llegada): </label>
                                     <textarea type="text" placeholder=""
-                                        class="form-control {{ $errors->has('direccion_tienda') ? ' is-invalid' : '' }}"
+                                        class="form-control input-required {{ $errors->has('direccion_tienda') ? ' is-invalid' : '' }}"
                                         name="direccion_tienda" id="direccion_tienda" value="{{old('direccion_tienda')}}"  required >{{old('direccion_tienda')}}</textarea>
                                    
 

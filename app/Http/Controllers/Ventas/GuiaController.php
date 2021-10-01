@@ -36,12 +36,20 @@ class GuiaController extends Controller
         $productos = Producto::where('estado', 'ACTIVO')->get();
         $direccion_empresa = Empresa::findOrFail($documento->empresa_id);
 
-        $pesos_productos =  DB::table('cotizacion_documento_detalles')
+        /*$pesos_productos =  DB::table('cotizacion_documento_detalles')
                     ->join('lote_productos','lote_productos.id','=','cotizacion_documento_detalles.lote_id')
                     ->join('productos','productos.id','=','lote_productos.producto_id')
                     ->select('productos.*','cotizacion_documento_detalles.*')
                     ->where('cotizacion_documento_detalles.documento_id','=',$id)
-                    ->sum("productos.peso_producto");
+                    ->sum("productos.peso_producto");*/
+        $pesos_productos = 0.00;
+        foreach($detalles as $detalle)
+        {
+            $peso_item = $detalle->cantidad * $detalle->lote->producto->peso_producto;
+            $pesos_productos = $pesos_productos + $peso_item;
+        }
+        
+        
         $cantidad_productos =  DB::table('cotizacion_documento_detalles')
                     ->where('cotizacion_documento_detalles.documento_id','=',$id)
                     ->sum("cotizacion_documento_detalles.cantidad");
