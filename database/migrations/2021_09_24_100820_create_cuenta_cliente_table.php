@@ -23,7 +23,6 @@ class CreateCuentaClienteTable extends Migration
             $table->text('acta')->nullable();
             $table->unsignedDecimal('saldo')->nullable()->default(0.00);            
             $table->enum('estado',['PENDIENTE','PAGADO','ANULADO'])->default('PENDIENTE');
-            $table->date('fecha')->useCurrent();
             $table->timestamps();
         });
     }

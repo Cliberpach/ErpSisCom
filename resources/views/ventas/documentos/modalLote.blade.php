@@ -215,6 +215,8 @@ function ingresarProducto(producto) {
     $("#precio").attr({ 
         "min" : 1,
     });
+    document.getElementById('cantidad').focus()
+    setTimeout(function() { $('input[name="cantidad"]').focus() }, 10);
     //LIMPIAR MODAL
     limpiarModallote()
 }

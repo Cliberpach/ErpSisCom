@@ -49,16 +49,19 @@ class DocumentoController extends Controller
             $otros = 0.00;
             $efectivo = 0.00;
 
-            if ($documento->tipo_pago_id == 1) {
-                $efectivo = $documento->importe;
-            }
-            else if ($documento->tipo_pago_id == 2){
-                $transferencia = $documento->importe ;
-                $efectivo = $documento->efectivo;
-            }
-            else {
-                $otros = $documento->importe;
-                $efectivo = $documento->efectivo;
+            if($documento->tipo_pago_id)
+            {
+                if ($documento->tipo_pago_id == 1) {
+                    $efectivo = $documento->importe;
+                }
+                else if ($documento->tipo_pago_id == 2){
+                    $transferencia = $documento->importe ;
+                    $efectivo = $documento->efectivo;
+                }
+                else {
+                    $otros = $documento->importe;
+                    $efectivo = $documento->efectivo;
+                }
             }
 
             $coleccion->push([
@@ -297,7 +300,7 @@ class DocumentoController extends Controller
                 'fecha_atencion_campo'=> 'required',
                 'tipo_venta'=> 'required',
                 'forma_pago'=> 'required',
-                'tipo_pago_id'=> 'required',
+                'tipo_pago_id'=> 'nullable',
                 'efectivo'=> 'required',
                 'importe'=> 'required',
                 'empresa_id'=> 'required',
@@ -310,7 +313,7 @@ class DocumentoController extends Controller
                 'fecha_documento_campo.required' => 'El campo Fecha de Emisión es obligatorio.',
                 'tipo_venta.required' => 'El campo tipo de venta es obligatorio.',
                 'forma_pago.required' => 'El campo forma de pago es obligatorio.',
-                'tipo_pago_id.required' => 'El campo modo de pago es obligatorio.',
+                //'tipo_pago_id.required' => 'El campo modo de pago es obligatorio.',
                 'importe.required' => 'El campo importe es obligatorio.',
                 'efectivo.required' => 'El campo efectivo es obligatorio.',
                 'fecha_atencion_campo.required' => 'El campo Fecha de Entrega es obligatorio.',

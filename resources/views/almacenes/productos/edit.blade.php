@@ -32,7 +32,7 @@
                                 <div class="form-group row">
                                     <div class="col-lg-6 col-xs-12">
                                         <label class="required">Código ISO</label>
-                                        <input type="text" id="codigo" name="codigo" class="form-control {{ $errors->has('codigo') ? ' is-invalid' : '' }}" value="{{ old('codigo', $producto->codigo) }}" maxlength="50" onkeyup="return mayus(this)">
+                                        <input type="text" id="codigo" name="codigo" class="form-control {{ $errors->has('codigo') ? ' is-invalid' : '' }}" value="{{ old('codigo', $producto->codigo) }}" maxlength="50" onkeyup="return mayus(this)" readonly>
                                         @if ($errors->has('codigo'))
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $errors->first('codigo') }}</strong>

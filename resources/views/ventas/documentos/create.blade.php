@@ -44,400 +44,385 @@
                         <div class="row">
                             <div class="col-sm-6 b-r">
                                 <h4 class=""><b>Documento de venta</b></h4>
-                                <div class="
-                                    row">
+                                <div class="row">
                                     <div class="col-md-12">
                                         <p>Registrar datos del documento de venta:</p>
                                     </div>
-                            </div>
-
-                            <div class="form-group row">
-
-                                <div class="col-lg-6 col-xs-12" id="fecha_documento">
-                                    <label
-                                        class="">Fecha de Documento</label>
-                                        <div class="
-                                        input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-calendar"></i>
-                                        </span>
-                                        @if (!empty($cotizacion))
-                                            <input type="date" id="fecha_documento_campo" name="fecha_documento_campo"
-                                                class="form-control {{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
-                                                value="{{ old('fecha_documento', $cotizacion->fecha_documento) }}"
-                                                autocomplete="off" required readonly>
-                                        @else
-                                            <input type="date" id="fecha_documento_campo" name="fecha_documento_campo"
-                                                class="form-control{{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
-                                                value="{{ old('fecha_documento', $fecha_hoy) }}" autocomplete="off"
-                                                required readonly>
-                                        @endif
-
-                                        @if ($errors->has('fecha_documento_campo'))
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $errors->first('fecha_documento_campo') }}</strong>
-                                            </span>
-                                        @endif
                                 </div>
+
+                                <div class="form-group row">
+                                    <div class="col-lg-6 col-xs-12" id="fecha_documento">
+                                        <label class="">Fecha de Documento</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </span>
+                                                @if (!empty($cotizacion))
+                                                    <input type="date" id="fecha_documento_campo" name="fecha_documento_campo"
+                                                        class="form-control {{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
+                                                        value="{{ old('fecha_documento', $cotizacion->fecha_documento) }}"
+                                                        autocomplete="off" required readonly>
+                                                @else
+                                                    <input type="date" id="fecha_documento_campo" name="fecha_documento_campo"
+                                                        class="form-control{{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
+                                                        value="{{ old('fecha_documento', $fecha_hoy) }}" autocomplete="off"
+                                                        required readonly>
+                                                @endif
+
+                                                @if ($errors->has('fecha_documento_campo'))
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $errors->first('fecha_documento_campo') }}</strong>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-xs-12" id="fecha_entrega">
+                                        <label class="">Fecha de Atención</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+
+                                            @if (!empty($cotizacion))
+                                                <input type="date" id="fecha_atencion_campo" name="fecha_atencion_campo"
+                                                    class="form-control {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
+                                                    value="{{ old('fecha_atencion', $cotizacion->fecha_atencion) }}"
+                                                    autocomplete="off" readonly disabled>
+                                            @else
+
+                                                <input type="date" id="fecha_atencion_campo" name="fecha_atencion_campo"
+                                                    class="form-control {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
+                                                    value="{{ old('fecha_atencion', $fecha_hoy) }}" autocomplete="off" required
+                                                    readonly disabled>
+
+                                            @endif
+
+                                            @if ($errors->has('fecha_atencion'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('fecha_atencion') }}</strong>
+                                                </span>
+                                                @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-lg-6 col-xs-12">
+                                        <label class="required">Forma de pago</label>
+                                        <select name="forma_pago" id="forma_pago"
+                                            class="select2_form form-control input-required {{ $errors->has('forma_pago') ? ' is-invalid' : '' }}"
+                                            style="text-transform: uppercase; width:100%" value="{{ old('forma_pago') }}" required>
+                                            <option value=""></option>
+                                            @foreach (forma_pago() as $pago)
+                                                <option value="{{ $pago->id }}"
+                                                    {{ $pago->descripcion === 'CONTADO' ? 'selected' : '' }}>
+                                                    {{ $pago->descripcion }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-6 col-xs-12" id="fecha_vencimiento">
+                                        <label class="required">Fecha de vencimiento</label>
+                                        <div class="input-group date">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="date" id="fecha_vencimiento_campo" name="fecha_vencimiento_campo"
+                                                class="form-control input-required" autocomplete="off"
+                                                {{ $errors->has('fecha_vencimiento_campo') ? ' is-invalid' : '' }}
+                                                value="{{ old('fecha_vencimiento_campo', $fecha_hoy) }}" required>
+                                            @if ($errors->has('fecha_vencimiento_campo'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('fecha_vencimiento_campo') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-lg-6 col-xs-12">
+                                        <label class="required">Tipo de Comprobante: </label>
+                                        <select
+                                            class="select2_form form-control input-required {{ $errors->has('tipo_venta') ? ' is-invalid' : '' }}"
+                                            style="text-transform: uppercase; width:100%" value="{{ old('tipo_venta') }}"
+                                            name="tipo_venta" id="tipo_venta" required @if (!empty($cotizacion)) '' @else onchange="consultarSeguntipo()" @endif>
+                                            <option></option>
+
+                                            @foreach (tipos_venta() as $tipo)
+                                                @if ($tipo->tipo == 'VENTA' || $tipo->tipo == 'AMBOS')
+                                                    <option value="{{ $tipo->id }}" @if (old('tipo_venta') == $tipo->nombre) {{ 'selected' }} @endif>
+                                                        {{ $tipo->nombre }}</option>
+                                                @endif
+                                            @endforeach
+
+                                            @if ($errors->has('tipo_venta'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('tipo_venta') }}</strong>
+                                                </span>
+                                            @endif
+
+
+
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6 col-xs-12">
+                                        <label>Moneda:</label>
+                                        <select id="moneda" name="moneda"
+                                            class="select2_form form-control {{ $errors->has('moneda') ? ' is-invalid' : '' }}"
+                                            disabled>
+                                            <option selected>SOLES</option>
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
                             </div>
 
-                            <div class="col-lg-6 col-xs-12" id="fecha_entrega">
-                                <label class="">Fecha de Atención</label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-calendar"></i>
-                                        </span>
+                            <div class="col-sm-6">
+
+                                <div class="form-group">
+                                    <label class="required">Empresa: </label>
 
                                     @if (!empty($cotizacion))
-                                        <input type="date" id="fecha_atencion_campo" name="fecha_atencion_campo"
-                                            class="form-control {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
-                                            value="{{ old('fecha_atencion', $cotizacion->fecha_atencion) }}"
-                                            autocomplete="off" readonly disabled>
+                                        <select
+                                            class="select2_form form-control input-required {{ $errors->has('empresa_id') ? ' is-invalid' : '' }}"
+                                            style="text-transform: uppercase; width:100%"
+                                            value="{{ old('empresa_id', $cotizacion->empresa_id) }}" name="empresa_id" id="empresa_id"
+                                            disabled>
+                                            <option></option>
+                                            @foreach ($empresas as $empresa)
+                                                <option value="{{ $empresa->id }}" @if (old('empresa_id', $cotizacion->empresa_id) == $empresa->id){{ 'selected' }}@endif {{ $empresa->id === 1 ? 'selected' : '' }}>{{ $empresa->razon_social }}</option>
+                                            @endforeach
+                                        </select>
                                     @else
-
-                                        <input type="date" id="fecha_atencion_campo" name="fecha_atencion_campo"
-                                            class="form-control {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
-                                            value="{{ old('fecha_atencion', $fecha_hoy) }}" autocomplete="off" required
-                                            readonly disabled>
-
+                                        <select class="select2_form form-control input-required {{ $errors->has('empresa_id') ? ' is-invalid' : '' }}"
+                                            style="text-transform: uppercase; width:100%" value="{{ old('empresa_id') }}" name="empresa_id"
+                                            id="empresa_id" required onchange="obtenerTiposComprobantes(this)" disabled>
+                                            <option></option>
+                                            @foreach ($empresas as $empresa)
+                                                <option value="{{ $empresa->id }}" @if (old('empresa_id') == $empresa->id)
+                                                    {{ 'selected' }}
+                                            @endif
+                                            {{ $empresa->id === 1 ? 'selected' : '' }}>{{ $empresa->razon_social }}</option>
+                                            @endforeach
+                                        </select>
                                     @endif
+                                </div>
 
-                                    @if ($errors->has('fecha_atencion'))
+                                <div class="form-group">
+                                    <label class="required">Cliente: @if (empty($cotizacion))<button type="button" class="btn btn-outline btn-primary" onclick="modalCliente()">Registrar</button>@endif</label>
+                                    <input type="hidden" name="tipo_cliente_documento" id="tipo_cliente_documento">
+                                    <input type="hidden" name="tipo_cliente_2" id="tipo_cliente_2" value='1'>
+                                    @if (!empty($cotizacion))
+                                        <select
+                                            class="select2_form form-control input-required {{ $errors->has('cliente_id') ? ' is-invalid' : '' }}"
+                                            style="text-transform: uppercase; width:100%"
+                                            value="{{ old('cliente_id', $cotizacion->cliente_id) }}" name="cliente_id" id="cliente_id"
+                                            disabled>
+                                            <option></option>
+                                            @foreach ($clientes as $cliente)
+                                                <option value="{{ $cliente->id }}" @if (old('cliente_id', $cotizacion->cliente_id) == $cliente->id){{ 'selected' }}@endif >{{ $cliente->getDocumento() }} - {{ $cliente->nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    @else
+                                        <select class="select2_form form-control input-required {{ $errors->has('cliente_id') ? ' is-invalid' : '' }}"
+                                            style="text-transform: uppercase; width:100%" value="{{ old('cliente_id') }}" name="cliente_id"
+                                            id="cliente_id" required onchange="obtenerTipocliente(this.value)"> <!-- disabled -->
+                                            <option></option>
+                                        </select>
+                                    @endif
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Observación:</label>
+
+                                    <textarea type="text" placeholder=""
+                                        class="form-control {{ $errors->has('observacion') ? ' is-invalid' : '' }}"
+                                        name="observacion" id="observacion" onkeyup="return mayus(this)"
+                                        value="{{ old('observacion') }}">{{ old('observacion') }}</textarea>
+
+
+                                    @if ($errors->has('observacion'))
                                         <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('fecha_atencion') }}</strong>
+                                            <strong>{{ $errors->first('observacion') }}</strong>
                                         </span>
                                     @endif
-                            </div>
-                        </div>
-
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-lg-6 col-xs-12">
-                        <label class="required">Forma de pago</label>
-                        <select name="forma_pago" id="forma_pago"
-                            class="select2_form form-control input-required {{ $errors->has('forma_pago') ? ' is-invalid' : '' }}"
-                            style="text-transform: uppercase; width:100%" value="{{ old('forma_pago') }}" required>
-                            <option value=""></option>
-                            @foreach (forma_pago() as $pago)
-                                <option value="{{ $pago->id }}"
-                                    {{ $pago->descripcion === 'CONTADO' ? 'selected' : '' }}>
-                                    {{ $pago->descripcion }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-lg-6 col-xs-12" id="fecha_vencimiento">
-                        <label class="required">Fecha de vencimiento</label>
-                        <div class="input-group date">
-                            <span class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </span>
-                            <input type="date" id="fecha_vencimiento_campo" name="fecha_vencimiento_campo"
-                                class="form-control input-required" autocomplete="off"
-                                {{ $errors->has('fecha_vencimiento_campo') ? ' is-invalid' : '' }}
-                                value="{{ old('fecha_vencimiento_campo', $fecha_hoy) }}" required>
-                            @if ($errors->has('fecha_vencimiento_campo'))
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $errors->first('fecha_vencimiento_campo') }}</strong>
-                                </span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-lg-6 col-xs-12">
-                        <label class="required">Tipo de Comprobante: </label>
-                        <select
-                            class="select2_form form-control input-required {{ $errors->has('tipo_venta') ? ' is-invalid' : '' }}"
-                            style="text-transform: uppercase; width:100%" value="{{ old('tipo_venta') }}"
-                            name="tipo_venta" id="tipo_venta" required @if (!empty($cotizacion)) '' @else onchange="consultarSeguntipo()" @endif>
-                            <option></option>
-
-                            @foreach (tipos_venta() as $tipo)
-                                @if ($tipo->tipo == 'VENTA' || $tipo->tipo == 'AMBOS')
-                                    <option value="{{ $tipo->id }}" @if (old('tipo_venta') == $tipo->nombre) {{ 'selected' }} @endif>
-                                        {{ $tipo->nombre }}</option>
-                                @endif
-                            @endforeach
-
-                            @if ($errors->has('tipo_venta'))
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $errors->first('tipo_venta') }}</strong>
-                                </span>
-                            @endif
-
-
-
-                        </select>
-                    </div>
-
-                    <div class="col-md-6 col-xs-12">
-                        <label>Moneda:</label>
-                        <select id="moneda" name="moneda"
-                            class="select2_form form-control {{ $errors->has('moneda') ? ' is-invalid' : '' }}"
-                            disabled>
-                            <option selected>SOLES</option>
-                        </select>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="col-sm-6">
-
-                <div class="form-group">
-                    <label class="required">Empresa: </label>
-
-                    @if (!empty($cotizacion))
-                        <select
-                            class="select2_form form-control input-required {{ $errors->has('empresa_id') ? ' is-invalid' : '' }}"
-                            style="text-transform: uppercase; width:100%"
-                            value="{{ old('empresa_id', $cotizacion->empresa_id) }}" name="empresa_id" id="empresa_id"
-                            disabled>
-                            <option></option>
-                            @foreach ($empresas as $empresa)
-                                <option value="{{ $empresa->id }}" @if (old('empresa_id', $cotizacion->empresa_id) == $empresa->id)
-                                    {{ 'selected' }}
-                            @endif
-                            {{ $empresa->id === 1 ? 'selected' : '' }}>{{ $empresa->razon_social }}</option>
-                    @endforeach
-                    </select>
-                @else
-                    <select class="select2_form form-control input-required {{ $errors->has('empresa_id') ? ' is-invalid' : '' }}"
-                        style="text-transform: uppercase; width:100%" value="{{ old('empresa_id') }}" name="empresa_id"
-                        id="empresa_id" required onchange="obtenerTiposComprobantes(this)" disabled>
-                        <option></option>
-                        @foreach ($empresas as $empresa)
-                            <option value="{{ $empresa->id }}" @if (old('empresa_id') == $empresa->id)
-                                {{ 'selected' }}
-                        @endif
-                        {{ $empresa->id === 1 ? 'selected' : '' }}>{{ $empresa->razon_social }}</option>
-                        @endforeach
-                    </select>
-                    @endif
-
-
-
-                </div>
-
-
-                <div class="form-group">
-                    <label class="required">Cliente: @if (empty($cotizacion))<button type="button" class="btn btn-outline btn-primary" onclick="modalCliente()">Registrar</button>@endif</label>
-                    <input type="hidden" name="tipo_cliente_documento" id="tipo_cliente_documento">
-                    <input type="hidden" name="tipo_cliente_2" id="tipo_cliente_2" value='1'>
-                    @if (!empty($cotizacion))
-                        <select
-                            class="select2_form form-control input-required {{ $errors->has('cliente_id') ? ' is-invalid' : '' }}"
-                            style="text-transform: uppercase; width:100%"
-                            value="{{ old('cliente_id', $cotizacion->cliente_id) }}" name="cliente_id" id="cliente_id"
-                            disabled>
-                            <option></option>
-                            @foreach ($clientes as $cliente)
-                                <option value="{{ $cliente->id }}" @if (old('cliente_id', $cotizacion->cliente_id) == $cliente->id){{ 'selected' }}@endif >{{ $cliente->getDocumento() }} - {{ $cliente->nombre }}
-                            </option>
-                    @endforeach
-                    </select>
-                @else
-                    <select class="select2_form form-control input-required {{ $errors->has('cliente_id') ? ' is-invalid' : '' }}"
-                        style="text-transform: uppercase; width:100%" value="{{ old('cliente_id') }}" name="cliente_id"
-                        id="cliente_id" required onchange="obtenerTipocliente(this.value)"> <!-- disabled -->
-                        <option></option>
-                    </select>
-                    @endif
-                </div>
-
-                <div class="form-group">
-                    <label>Observación:</label>
-
-                    <textarea type="text" placeholder=""
-                        class="form-control {{ $errors->has('observacion') ? ' is-invalid' : '' }}"
-                        name="observacion" id="observacion" onkeyup="return mayus(this)"
-                        value="{{ old('observacion') }}">{{ old('observacion') }}</textarea>
-
-
-                    @if ($errors->has('observacion'))
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $errors->first('observacion') }}</strong>
-                        </span>
-                    @endif
-
-
-                </div>
-
-
-                <!-- OBTENER TIPO DE CLIENTE -->
-                <input type="hidden" class="form-control" name="" id="tipo_cliente">
-                <!-- OBTENER DATOS DEL PRODUCTO -->
-                <input type="hidden" class="form-control" name="" id="presentacion_producto">
-                <input type="hidden" class="form-control" name="" id="codigo_nombre_producto">
-                <!-- LLENAR DATOS EN UN ARRAY -->
-                <input type="hidden" class="form-control" id="productos_tabla" name="productos_tabla[]">
-                <!-- TIPO PAGO -->
-                <input type="hidden" class="form-control" name="tipo_pago_id" id="tipo_pago_id">
-                <!-- EFECTIVO -->
-                <input type="hidden" class="form-control" name="efectivo" id="efectivo_form">
-                <!-- IMPORTE -->
-                <input type="hidden" class="form-control" name="importe" id="importe_form">
-
-            </div>
-
-        </div>
-
-        <hr>
-
-        <div class="row">
-
-            <div class="col-lg-12">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h4 class=""><b>Detalle del Documento de Venta</b></h4>
-                                    </div>
-                                    <div class="
-                            panel-body">
-
-                            @if (empty($cotizacion))
-                                <div class="row">
-                                    <div class="col-lg-6 col-xs-12">
-                                        <label class="col-form-label required">Producto:</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="producto_lote" readonly>
-                                            <span class="input-group-append">
-                                                <button type="button" class="btn btn-primary" disabled id="buscarLotes"
-                                                    data-toggle="modal" data-target="#modal_lote"><i
-                                                        class='fa fa-search'></i> Buscar
-                                                </button>
-                                            </span>
-                                        </div>
-                                        <div class="invalid-feedback"><b><span id="error-producto"></span></b>
-                                        </div>
-                                    </div>
-
-                                    <input type="hidden" name="producto_id" id="producto_id">
-                                    <input type="hidden" name="producto_unidad" id="producto_unidad">
-
-                                    <div class="col-lg-2 col-xs-12">
-
-                                        <label class="col-form-label required">Cantidad:</label>
-                                        <input type="number" value='0.00' id="cantidad" class="form-control" disabled>
-                                        <div class="invalid-feedback"><b><span id="error-cantidad"></span></b>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-2 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="col-form-label required" for="amount">Precio:</label>
-                                            <input type="number" id="precio" class="form-control" disabled>
-                                            <div class="invalid-feedback"><b><span id="error-precio"></span></b>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-
-                                    <div class="col-lg-2 col-xs-12">
-
-                                        <div class="form-group">
-                                            <label class="col-form-label" for="amount">&nbsp;</label>
-                                            <button type=button class="btn btn-block btn-warning" style='color:white;'
-                                                id="btn_agregar_detalle" disabled> <i class="fa fa-plus"></i>
-                                                AGREGAR</button>
-                                        </div>
-
-                                    </div>
-
 
 
                                 </div>
-                                <hr>
-                            @endif
 
 
-                            <div class="table-responsive">
-                                <table
-                                    class="table dataTables-detalle-documento table-striped table-bordered table-hover"
-                                    style="text-transform:uppercase">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th class="text-center">ACCIONES</th>
-                                            <th class="text-center">CANTIDAD</th>
-                                            <th class="text-center">UM</th>
-                                            <th class="text-center">PRODUCTO</th>
-                                            <th class="text-center">V. UNITARIO</th>
-                                            <th class="text-center">P. UNITARIO</th>
-                                            <th class="text-center">DESCUENTO</th>
-                                            <th class="text-center">P. NUEVO</th>
-                                            <th class="text-center">TOTAL</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                                <!-- OBTENER TIPO DE CLIENTE -->
+                                <input type="hidden" class="form-control" name="" id="tipo_cliente">
+                                <!-- OBTENER DATOS DEL PRODUCTO -->
+                                <input type="hidden" class="form-control" name="" id="presentacion_producto">
+                                <input type="hidden" class="form-control" name="" id="codigo_nombre_producto">
+                                <!-- LLENAR DATOS EN UN ARRAY -->
+                                <input type="hidden" class="form-control" id="productos_tabla" name="productos_tabla[]">
+                                <!-- TIPO PAGO -->
+                                <input type="hidden" class="form-control" name="tipo_pago_id" id="tipo_pago_id">
+                                <!-- EFECTIVO -->
+                                <input type="hidden" class="form-control" name="efectivo" id="efectivo_form">
+                                <!-- IMPORTE -->
+                                <input type="hidden" class="form-control" name="importe" id="importe_form">
 
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th class="text-center" colspan="9">Sub Total:</th>
-                                            <th class="text-center"><span
-                                                    id="subtotal">@if (!empty($cotizacion)) {{ $cotizacion->sub_total }} @else 0.0 @endif</span></th>
-                                        </tr>
-                                        <tr>
-                                            <th class="text-center" colspan="9">IGV <span id="igv_int"></span>:</th>
-                                            <th class="text-center"><span
-                                                    id="igv_monto">@if (!empty($cotizacion)) {{ $cotizacion->total_igv }} @else 0.0 @endif</span></th>
-                                        </tr>
-                                        <tr>
-                                            <th class="text-center" colspan="9">TOTAL:</th>
-                                            <th class="text-center"><span id="total">@if (!empty($cotizacion)) {{ $cotizacion->total }} @else 0.0 @endif</span>
-                                            </th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
                             </div>
+
+                        </div>
+
+                        <input type="hidden" name="monto_sub_total" id="monto_sub_total" value="{{ old('monto_sub_total') }}">
+                        <input type="hidden" name="monto_total_igv" id="monto_total_igv" value="{{ old('monto_total_igv') }}">
+                        <input type="hidden" name="monto_total" id="monto_total" value="{{ old('monto_total') }}">
+
+                        
+                    </form>
+                    <hr>
+                    <div class="row">
+
+                        <div class="col-lg-12">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h4 class=""><b>Detalle del Documento de Venta</b></h4>
+                                                </div>
+                                                <div class="
+                                        panel-body">
+
+                                        @if (empty($cotizacion))
+                                            <div class="row">
+                                                <div class="col-lg-6 col-xs-12">
+                                                    <label class="col-form-label required">Producto:</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="producto_lote" readonly>
+                                                        <span class="input-group-append">
+                                                            <button type="button" class="btn btn-primary" disabled id="buscarLotes"
+                                                                data-toggle="modal" data-target="#modal_lote"><i
+                                                                    class='fa fa-search'></i> Buscar
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                    <div class="invalid-feedback"><b><span id="error-producto"></span></b>
+                                                    </div>
+                                                </div>
+
+                                                <input type="hidden" name="producto_id" id="producto_id">
+                                                <input type="hidden" name="producto_unidad" id="producto_unidad">
+
+                                                <div class="col-lg-2 col-xs-12">
+
+                                                    <label class="col-form-label required">Cantidad:</label>
+                                                    <input type="text" name="cantidad"  id="cantidad" class="form-control" onkeypress="return isNumber(event)" onkeydown="nextFocus(event,'precio')" disabled>
+                                                    <div class="invalid-feedback"><b><span id="error-cantidad"></span></b>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-2 col-xs-12">
+                                                    <div class="form-group">
+                                                        <label class="col-form-label required" for="amount">Precio:</label>
+                                                        <input type="number" id="precio" name="precio" class="form-control" onkeydown="nextFocus(event,'btn_agregar_detalle')" disabled>
+                                                        <div class="invalid-feedback"><b><span id="error-precio"></span></b>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div class="col-lg-2 col-xs-12">
+
+                                                    <div class="form-group">
+                                                        <label class="col-form-label" for="amount">&nbsp;</label>
+                                                        <button type=button class="btn btn-block btn-warning" style='color:white;'
+                                                            id="btn_agregar_detalle" disabled> <i class="fa fa-plus"></i>
+                                                            AGREGAR</button>
+                                                    </div>
+
+                                                </div>
+
+
+
+                                            </div>
+                                            <hr>
+                                        @endif
+
+
+                                        <div class="table-responsive">
+                                            <table
+                                                class="table dataTables-detalle-documento table-striped table-bordered table-hover"
+                                                style="text-transform:uppercase">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th class="text-center">ACCIONES</th>
+                                                        <th class="text-center">CANTIDAD</th>
+                                                        <th class="text-center">UM</th>
+                                                        <th class="text-center">PRODUCTO</th>
+                                                        <th class="text-center">V. UNITARIO</th>
+                                                        <th class="text-center">P. UNITARIO</th>
+                                                        <th class="text-center">DESCUENTO</th>
+                                                        <th class="text-center">P. NUEVO</th>
+                                                        <th class="text-center">TOTAL</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th class="text-center" colspan="9">Sub Total:</th>
+                                                        <th class="text-center"><span
+                                                                id="subtotal">@if (!empty($cotizacion)) {{ $cotizacion->sub_total }} @else 0.0 @endif</span></th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-center" colspan="9">IGV <span id="igv_int"></span>:</th>
+                                                        <th class="text-center"><span
+                                                                id="igv_monto">@if (!empty($cotizacion)) {{ $cotizacion->total_igv }} @else 0.0 @endif</span></th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-center" colspan="9">TOTAL:</th>
+                                                        <th class="text-center"><span id="total">@if (!empty($cotizacion)) {{ $cotizacion->total }} @else 0.0 @endif</span>
+                                                        </th>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group row">
+
+                        <div class="col-md-6 text-left" style="color:#fcbc6c">
+                            <i class="fa fa-exclamation-circle"></i> <small>Los campos marcados con asterisco
+                                (<label class="required"></label>) son obligatorios.</small>
+                        </div>
+
+                        <div class="col-md-6 text-right">
+
+                            <a href="{{ route('ventas.documento.index') }}" id="btn_cancelar" class="btn btn-w-m btn-default">
+                                <i class="fa fa-arrow-left"></i> Regresar
+                            </a>
+                            @if (empty($errores))
+                                <button type="button" id="btn_grabar" class="btn btn-w-m btn-primary">
+                                    <i class="fa fa-save"></i> Grabar 
+                                </button>
+                            @else
+                                @if (count($errores) == 0)
+                                    <button type="button" id="btn_grabar" class="btn btn-w-m btn-primary">
+                                        <i class="fa fa-save"></i> Grabar 
+                                    </button>
+                                @endif
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
-
         </div>
-
-        <input type="hidden" name="monto_sub_total" id="monto_sub_total" value="{{ old('monto_sub_total') }}">
-        <input type="hidden" name="monto_total_igv" id="monto_total_igv" value="{{ old('monto_total_igv') }}">
-        <input type="hidden" name="monto_total" id="monto_total" value="{{ old('monto_total') }}">
-
-        <div class="hr-line-dashed"></div>
-        <div class="form-group row">
-
-            <div class="col-md-6 text-left" style="color:#fcbc6c">
-                <i class="fa fa-exclamation-circle"></i> <small>Los campos marcados con asterisco
-                    (<label class="required"></label>) son obligatorios.</small>
-            </div>
-
-            <div class="col-md-6 text-right">
-
-                <a href="{{ route('ventas.documento.index') }}" id="btn_cancelar" class="btn btn-w-m btn-default">
-                    <i class="fa fa-arrow-left"></i> Regresar
-                </a>
-                @if (empty($errores))
-                    <button type="button" id="btn_grabar" class="btn btn-w-m btn-primary">
-                        <i class="fa fa-save"></i> Grabar
-                    </button>
-                @else
-                    @if (count($errores) == 0)
-                        <button type="button" id="btn_grabar" class="btn btn-w-m btn-primary">
-                            <i class="fa fa-save"></i> Grabar
-                        </button>
-                    @endif
-                @endif
-            </div>
-        </div>
-        </form>
     </div>
-</div>
-</div>
-
-</div>
-
 </div>
 @include('ventas.documentos.modal')
 @include('ventas.documentos.modalLote')
@@ -601,7 +586,7 @@
             width: '100%',
         });
 
-        $("#form_pago").select2({
+        $("#forma_pago").select2({
             placeholder: "SELECCIONAR",
             allowClear: true,
             width: '100%',
@@ -835,8 +820,10 @@
         }
 
         if (enviar != true) {
-
-            Swal.fire({
+            llegarDatos();
+            sumaTotal();
+            $('#asegurarCierre').val(1);
+            /*Swal.fire({
                 title: 'Opción Agregar',
                 text: "¿Seguro que desea agregar Producto?",
                 icon: 'question',
@@ -850,7 +837,7 @@
                     sumaTotal();
                     $('#asegurarCierre').val(1);
                 } else if (
-                    /* Read more about handling dismissals below */
+                    // Read more about handling dismissals below
                     result.dismiss === Swal.DismissReason.cancel
                 ) {
                     swalWithBootstrapButtons.fire(
@@ -859,7 +846,7 @@
                         'error'
                     )
                 }
-            })
+            })*/
 
         }
     })
@@ -909,6 +896,8 @@
         }
         agregarTabla(detalle);
         cambiarCantidad(detalle, '1');
+        $('#precio').prop('disabled' , true)
+        $('#cantidad').prop('disabled' , true)
     }
 
     //AGREGAR EL DETALLE A LA TABLA
@@ -1202,8 +1191,19 @@
             let total = $('#monto_total').val();
             $('#monto_venta').val(total);
             $('#importe_venta').val(total);
-            $('#modal_pago').modal('show');
-            $('#modo_pago').val('1-EFECTIVO').trigger('change.select2');
+            let forma_pago = $('#forma_pago').val();
+            if(convertFloat(forma_pago) === 161)
+            {
+                $('#importe_form').val(0.00);
+                $('#efectivo_form').val(0.00);
+                $('#tipo_pago_id').val('');
+                enviarVenta();
+            }
+            else
+            {
+                $('#modal_pago').modal('show');
+                $('#modo_pago').val('1-EFECTIVO').trigger('change.select2');
+            }
         }
     });
 
@@ -1238,65 +1238,9 @@
             correcto = false;
             toastr.error('La suma del importe y el efectivo debe ser igual al monto de la venta.');
         }
-        
-        axios.get("{{ route('Caja.movimiento.verificarestado') }}").then((value) => {
-            if (value.data == "") {
-                toastr.error("No hay ninguna apertura de caja");
-            } else {
-                if (correcto) {
-
-                    Swal.fire({
-                        title: 'Opción Guardar',
-                        text: "¿Seguro que desea guardar cambios?",
-                        icon: 'question',
-                        customClass: {
-                            container: 'my-swal'
-                        },
-                        showCancelButton: true,
-                        confirmButtonColor: "#1ab394",
-                        confirmButtonText: 'Si, Confirmar',
-                        cancelButtonText: "No, Cancelar",
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            var tipo = validarTipo();
-
-                            if (tipo == false) {
-                                cargarProductos();
-                                //CARGAR DATOS TOTAL
-                                $('#monto_sub_total').val($('#subtotal').text())
-                                $('#monto_total_igv').val($('#igv_monto').text())
-                                $('#monto_total').val($('#total').text())
-
-                                document.getElementById("moneda").disabled = false;
-                                document.getElementById("observacion").disabled = false;
-                                document.getElementById("fecha_documento_campo").disabled =
-                                    false;
-                                document.getElementById("fecha_atencion_campo").disabled =
-                                false;
-                                document.getElementById("empresa_id").disabled = false;
-                                document.getElementById("cliente_id").disabled = false;
-                                //HABILITAR EL CARGAR PAGINA
-                                $('#asegurarCierre').val(2)
-                                $('#enviar_documento').submit();
-                            }
-
-
-                        } else if (
-                            /* Read more about handling dismissals below */
-                            result.dismiss === Swal.DismissReason.cancel
-                        ) {
-                            swalWithBootstrapButtons.fire(
-                                'Cancelado',
-                                'La Solicitud se ha cancelado.',
-                                'error'
-                            )
-                        }
-                    })
-                }
-            }
-        })
-
-
+        if (correcto) {
+            enviarVenta();
+        }
     });
 
     function validarCampos() {
@@ -1552,6 +1496,61 @@
         }
     }
 
+    function enviarVenta()
+    {
+        axios.get("{{ route('Caja.movimiento.verificarestado') }}").then((value) => {
+            if (value.data == "") {
+                toastr.error("No hay ninguna apertura de caja");
+            } else {                
+                Swal.fire({
+                    title: 'Opción Guardar',
+                    text: "¿Seguro que desea guardar cambios?",
+                    icon: 'question',
+                    customClass: {
+                        container: 'my-swal'
+                    },
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ab394",
+                    confirmButtonText: 'Si, Confirmar',
+                    cancelButtonText: "No, Cancelar",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var tipo = validarTipo();
+
+                        if (tipo == false) {
+                            cargarProductos();
+                            //CARGAR DATOS TOTAL
+                            $('#monto_sub_total').val($('#subtotal').text())
+                            $('#monto_total_igv').val($('#igv_monto').text())
+                            $('#monto_total').val($('#total').text())
+
+                            document.getElementById("moneda").disabled = false;
+                            document.getElementById("observacion").disabled = false;
+                            document.getElementById("fecha_documento_campo").disabled = false;
+                            document.getElementById("fecha_atencion_campo").disabled = false;
+                            document.getElementById("empresa_id").disabled = false;
+                            document.getElementById("cliente_id").disabled = false;
+                            //HABILITAR EL CARGAR PAGINA
+                            $('#asegurarCierre').val(2)
+                            $('#enviar_documento').submit();
+                        }
+
+
+                    } else if (
+                        /* Read more about handling dismissals below */
+                        result.dismiss === Swal.DismissReason.cancel
+                    ) {
+                        swalWithBootstrapButtons.fire(
+                            'Cancelado',
+                            'La Solicitud se ha cancelado.',
+                            'error'
+                        )
+                    }
+                })
+            }
+        })
+    }
+
     //ERRORES DEVOLUCIONES
     @if (!empty($errores))
         $('#asegurarCierre').val(1)
@@ -1570,12 +1569,12 @@
         $('#modal_cliente').modal('show');
     }
 
-    function nextFocus(inputF, inputS) {     
-        document.getElementById(inputF).addEventListener('keydown', function(event) {
-            if (event.keyCode == 13) {             
-                document.getElementById(inputS).focus();         
-            }     
-        }); 
+    function nextFocus(event, inputS) {     
+        if (event.keyCode == 13) {             
+            
+            setTimeout(function() { $('#'+inputS).focus() }, 10);
+            document.getElementById(inputS).focus();         
+        } 
     }
 
     //background-color: #00f;

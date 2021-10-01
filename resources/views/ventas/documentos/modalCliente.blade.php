@@ -324,50 +324,10 @@
             if (tipo_documento === 'DNI' || tipo_documento === 'RUC') {
                 var url = (tipo_documento === 'DNI') ? '{{ route('getApidni', ':documento') }}' :
                     '{{ route('getApiruc', ':documento') }}';
-                url_ = url.replace(':documento', documento);
+                url = url.replace(':documento', documento);
                 var textAlert = (tipo_documento === 'DNI') ? "¿Desea consultar DNI a RENIEC?" :
                     "¿Desea consultar RUC a SUNAT?";
-                let timerInterval;
                 Swal.fire({
-                    title: 'Consultando...',
-                    icon: 'info',
-                    customClass: {
-                        container: 'my-swal'
-                    },
-                    timer: 10,
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                        Swal.stopTimer();
-                        $.ajax({
-                            dataType : 'json',
-                            type : 'get',
-                            url : url_,
-                            success: function(response) {
-                                if (response.success) {    
-                                    $('#documento').removeClass('is-invalid')
-                                    
-                                    if (tipo_documento === 'DNI'){
-                                        camposDNI(JSON.parse(response.data));
-                                    }
-                                    else{
-                                        camposRUC(JSON.parse(response.data));
-                                    }
-                                    
-                                    timerInterval = 0;
-                                    Swal.resumeTimer();
-                                } else {
-                                    Swal.resumeTimer();
-                                    clearDatosPersona(true);
-                                }
-                            }
-                        });
-                    },
-                    willClose: () => {
-                        clearInterval(timerInterval)
-                    }
-                });
-                /*Swal.fire({
                     title: 'Consultar',
                     text: textAlert,
                     icon: 'question',
@@ -406,22 +366,21 @@
 
                         consultaExitosa();
                     }
-                });*/
+                });
             }
         }
 
         function camposDNI(objeto) {
-            if (objeto === undefined)
+            console.log(objeto);
+            if (objeto.value === undefined)
                 return;
 
-            if(objeto.success)
+            if(objeto.value.success)
             {
-                
-                consultaExitosa();
-                var nombres = objeto.data.nombres;
-                var apellido_paterno = objeto.data.apellido_paterno;
-                var apellido_materno = objeto.data.apellido_materno;
-                var codigo_verificacion = objeto.data.codigo_verificacion;
+                var nombres = objeto.value.data.nombres;
+                var apellido_paterno = objeto.value.data.apellido_paterno;
+                var apellido_materno = objeto.value.data.apellido_materno;
+                var codigo_verificacion = objeto.value.data.codigo_verificacion;
 
                 var nombre = "";
                 if (nombres !== '-' && nombres !== "NULL") {
@@ -445,17 +404,17 @@
         }
 
         function camposRUC(objeto) {
-            if (objeto === undefined)
+            console.log(objeto)
+            if (objeto.value === undefined)
                 return;
-            if(objeto.success)
+            if(objeto.value.success)
             {
-                consultaExitosa();
-                var razonsocial = objeto.data.nombre_o_razon_social;
-                var direccion = objeto.data.direccion;
-                var departamento = objeto.data.ubigeo[0];
-                var provincia = objeto.data.ubigeo[1];
-                var distrito = objeto.data.ubigeo[2];
-                var estado = objeto.data.estado;
+                var razonsocial = objeto.value.data.nombre_o_razon_social;
+                var direccion = objeto.value.data.direccion;
+                var departamento = objeto.value.data.ubigeo[0];
+                var provincia = objeto.value.data.ubigeo[1];
+                var distrito = objeto.value.data.ubigeo[2];
+                var estado = objeto.value.data.estado;
 
                 if (razonsocial != '-' && razonsocial != "NULL") {
                     $('#nombre').val(razonsocial);

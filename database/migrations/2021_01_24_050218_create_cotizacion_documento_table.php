@@ -36,7 +36,7 @@ class CreateCotizacionDocumentoTable extends Migration
             $table->unsignedDecimal('total_igv', 15, 2);
             $table->unsignedDecimal('total', 15, 2);
 
-            $table->unsignedInteger('tipo_pago_id');
+            $table->unsignedInteger('tipo_pago_id')->nullable();
             $table->foreign('tipo_pago_id')->references('id')->on('tipos_pago')->onDelete('cascade');
             $table->unsignedDecimal('efectivo', 15, 2)->nullable()->default(0.00);
             $table->unsignedDecimal('importe', 15, 2)->nullable()->default(0.00);

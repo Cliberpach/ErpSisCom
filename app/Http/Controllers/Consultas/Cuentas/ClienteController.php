@@ -20,7 +20,7 @@ class ClienteController extends Controller
         {
             if($request->fecha_desde && $request->fecha_hasta)
             {
-                $cuentas = CuentaCliente::where('estado','!=','ANULADO')->whereBetween('fecha' , [$request->fecha_desde, $request->fecha_hasta])->orderBy('id', 'desc')->get();
+                $cuentas = CuentaCliente::where('estado','!=','ANULADO')->whereBetween('fecha_doc' , [$request->fecha_desde, $request->fecha_hasta])->orderBy('id', 'desc')->get();
             }
             else
             {
