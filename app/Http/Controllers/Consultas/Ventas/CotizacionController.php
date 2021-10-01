@@ -16,16 +16,19 @@ class CotizacionController extends Controller
 
     public function getTable(Request $request){
 
+        $consulta = Cotizacion::where('estado','!=','ANULADO');
+
         if($request->fecha_desde && $request->fecha_hasta)
         {
-            $cotizaciones = Cotizacion::where('estado','!=','ANULADO')->whereBetween('fecha_documento', [$request->fecha_desde, $request->fecha_hasta])->orderBy('id', 'desc')->get();
+            $consulta->whereBetween('fecha_documento', [$request->fecha_desde, $request->fecha_hasta]);
         }
-        else
+
+        if($request->cliente_id)
         {
-            $cotizaciones = Cotizacion::where('estado','!=','ANULADO')->orderBy('id', 'desc')->get();
+            $consulta->where('cliente_id',$request->cliente_id);
         }
         
-
+        $cotizaciones = $consulta->orderBy('id', 'desc')->get();
         
         $coleccion = collect();
         foreach($cotizaciones as $cotizacion){

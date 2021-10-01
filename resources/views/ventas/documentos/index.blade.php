@@ -22,6 +22,10 @@
     </div>
 </div>
 
+<div>
+    <a id="nueva_ventana" target="_blank">liga</a>
+</div>
+
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
         <div class="col-lg-12">
@@ -437,7 +441,10 @@ function modificar(cotizacion,id) {
 }
 
 function comprobanteElectronico(id) {
-    const swalWithBootstrapButtons = Swal.mixin({
+    var url = '{{ route("ventas.documento.comprobante", ":id")}}';
+    url = url.replace(':id',id+'-100');
+    window.open(url, "Comprobante SISCOM", "width=900, height=600")
+    /*const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
             cancelButton: 'btn btn-danger',
@@ -473,7 +480,6 @@ function comprobanteElectronico(id) {
             })
 
         } else if (
-            /* Read more about handling dismissals below */
             result.dismiss === Swal.DismissReason.cancel
         ) {
             swalWithBootstrapButtons.fire(
@@ -482,12 +488,15 @@ function comprobanteElectronico(id) {
                 'error'
             )
         }
-    })
+    })*/
 
 }
 
 function comprobanteElectronicoTicket(id) {
-    const swalWithBootstrapButtons = Swal.mixin({
+    var url = '{{ route("ventas.documento.comprobante", ":id")}}';
+    url = url.replace(':id',id+'-80');    
+    window.open(url, "Comprobante SISCOM", "width=900, height=600");
+    /*const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
             cancelButton: 'btn btn-danger',
@@ -523,7 +532,7 @@ function comprobanteElectronicoTicket(id) {
             })
 
         } else if (
-            /* Read more about handling dismissals below */
+            // Read more about handling dismissals below
             result.dismiss === Swal.DismissReason.cancel
         ) {
             swalWithBootstrapButtons.fire(
@@ -532,8 +541,7 @@ function comprobanteElectronicoTicket(id) {
                 'error'
             )
         }
-    })
-
+    });*/
 }
 
 function xmlElectronico(id) {
@@ -684,6 +692,19 @@ function enviarSunat(id , sunat) {
         showConfirmButton: false,
         timer: 5500
     })
+@endif
+
+@if(Session::has('documento_id'))
+    let doc = '{{ Session::get("documento_id")}}';
+    let id = doc+'-100';
+
+    console.log(id);
+
+    var url = '{{ route("ventas.documento.comprobante", ":id")}}';
+    url = url.replace(':id', id);
+    // $('#nueva_ventana').attr('href',url);
+    // document.getElementById('nueva_ventana').click;
+    window.open(url, "Comprobante SISCOM", "width=900, height=600")
 @endif
 </script>
 @endpush

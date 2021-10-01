@@ -26,7 +26,13 @@ class ParametroController extends Controller
         ]); 
         $estado = $response->getStatusCode();
         $data = $response->getBody()->getContents();
-        return $data;
+        $arreglo = [
+            'success' => true,
+            'data' => $data,
+        ];
+        //return $data;
+
+        return response()->json($arreglo);
     }
     public function apiDni($dni)
     {
@@ -49,6 +55,12 @@ class ParametroController extends Controller
         $estado = $response->getStatusCode();
         $data = $response->getBody()->getContents();
 
-        return $data;
+        $arreglo = [
+            'success' => true,
+            'data' => $data,
+        ];
+        //return $data;
+
+        return response()->json($arreglo);
     }
 }

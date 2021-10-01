@@ -75,7 +75,7 @@ class Documento extends Model
                 $cuenta_proveedor = new CuentaProveedor();
                 $cuenta_proveedor->compra_documento_id = $documento->id;
                 // $cuenta_proveedor->numero_doc = $documento->numero_doc;
-                // $cuenta_proveedor->fecha_doc = $documento->fecha_doc;
+                $cuenta_proveedor->fecha_doc = $documento->fecha_emision;
                 // $cuenta_proveedor->monto = $documento->total;
                 $cuenta_proveedor->saldo = $documento->total;
                 $cuenta_proveedor->acta = 'DOCUMENTO COMPRA';

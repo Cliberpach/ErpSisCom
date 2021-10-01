@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers\Consultas\Cuentas;
 
-use App\Compras\CuentaProveedor;
 use App\Http\Controllers\Controller;
+use App\Ventas\CuentaCliente;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
-class ProveedorController extends Controller
+class ClienteController extends Controller
 {
     public function index()
     {
-        return view('consultas.cuentas.proveedor');
+        return view('consultas.cuentas.cliente');
     }
 
     public function getTable(Request $request){
@@ -21,11 +20,11 @@ class ProveedorController extends Controller
         {
             if($request->fecha_desde && $request->fecha_hasta)
             {
-                $cuentas = CuentaProveedor::where('estado','!=','ANULADO')->whereBetween('fecha_doc' , [$request->fecha_desde, $request->fecha_hasta])->orderBy('id', 'desc')->get();
+                $cuentas = CuentaCliente::where('estado','!=','ANULADO')->whereBetween('fecha' , [$request->fecha_desde, $request->fecha_hasta])->orderBy('id', 'desc')->get();
             }
             else
             {
-                $cuentas = CuentaProveedor::where('estado','!=','ANULADO')->orderBy('id', 'desc')->get();
+                $cuentas = CuentaCliente::where('estado','!=','ANULADO')->orderBy('id', 'desc')->get();
             }
             
             $coleccion = collect();
@@ -33,9 +32,9 @@ class ProveedorController extends Controller
             foreach ($cuentas as $key => $value) {
                 $coleccion->push([
                     "id"=>$value->id,
-                    "proveedor"=>$value->documento->proveedor->descripcion,
+                    "cliente"=>$value->documento->clienteEntidad->nombre,
                     "numero_doc"=>$value->documento->numero_doc,
-                    "fecha_doc"=>strval($value->documento->created_at) ,
+                    "fecha_doc"=>strval($value->documento->fecha_documento) ,
                     "monto"=>$value->documento->total,
                     "acta"=>$value->acta,
                     "saldo"=>$value->saldo,

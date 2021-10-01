@@ -1,45 +1,33 @@
 @extends('layout') @section('content')
 
 @section('consulta-active', 'active')
-@section('consulta-ventas-active', 'active')
-@section('consulta-ventas-cotizacion-active', 'active')
+@section('cuenta_cliente-active', 'active')
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10 col-md-10">
-        <h2 style="text-transform:uppercase"><b>Listado de Cotizaciones</b></h2>
+        <h2 style="text-transform:uppercase"><b>Lista de Cuentas Clientes</b></h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{ route('home') }}">Panel de Control</a>
             </li>
             <li class="breadcrumb-item active">
-                <strong>Cotizaciones</strong>
+                <strong>Cuentas Clientes</strong>
             </li>
+
         </ol>
     </div>
 </div>
-
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
         <div class="col-12">
             <div class="row align-items-end">
-                <div class="col-12 col-md-4">
-                    <div class="form-group">
-                        <label for="fecha_desde">Cliente</label>
-                        <select name="cliente_id" id="cliente_id" class="select2_form form-control">
-                            <option value=""></option>
-                            @foreach(clientes() as $cliente)
-                                <option value="{{$cliente->id}}">{{ $cliente->getDocumento() }} - {{ $cliente->nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                <div class="col-12 col-md-3">
+                <div class="col-12 col-md-5">
                     <div class="form-group">
                         <label for="fecha_desde">Fecha desde</label>
                         <input type="date" id="fecha_desde" class="form-control">
                     </div>
                 </div>
-                <div class="col-12 col-md-3">
+                <div class="col-12 col-md-5">
                     <div class="form-group">
                         <label for="fecha_desde">Fecha hasta</label>
                         <input type="date" id="fecha_hasta" class="form-control">
@@ -56,20 +44,19 @@
             <div class="ibox ">
                 <div class="ibox-content">
                     <div class="table-responsive">
-                        <table class="table dataTables-cotizacion table-striped table-bordered table-hover"
+                        <table class="table dataTables-cuentas table-striped table-bordered table-hover"
                             style="text-transform:uppercase">
                             <thead>
                                 <tr>
-                                    <th class="text-center">EMPRESA</th>
                                     <th class="text-center">CLIENTE</th>
-                                    <th class="text-center">FECHA DOCUMENTO</th>
-                                    <th class="text-center">TOTAL</th>
+                                    <th class="text-center">NUMERO</th>
+                                    <th class="text-center">FECHADOC</th>
+                                    <th class="text-center">MONTO</th>
+                                    <th class="text-center">ACTA</th>
+                                    <th class="text-center">SALDO</th>
                                     <th class="text-center">ESTADO</th>
                                 </tr>
                             </thead>
-                            <tbody>
-
-                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -80,31 +67,22 @@
 
 @stop
 @push('styles')
-<link href="{{ asset('Inspinia/css/plugins/select2/select2.min.css') }}" rel="stylesheet">
 <!-- DataTable -->
 <link href="{{ asset('Inspinia/css/plugins/dataTables/datatables.min.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
-<script src="{{ asset('Inspinia/js/plugins/select2/select2.full.min.js') }}"></script>
 <!-- DataTable -->
 <script src="{{ asset('Inspinia/js/plugins/dataTables/datatables.min.js') }}"></script>
 <script src="{{ asset('Inspinia/js/plugins/dataTables/dataTables.bootstrap4.min.js') }}"></script>
 
 <script>
     $(document).ready(function() {
-        $(".select2_form").select2({
-            placeholder: "SELECCIONAR",
-            allowClear: true,
-            height: '200px',
-            width: '100%',
-        }); 
-
-        var cotizaciones = [];
+        var cuentas = [];
         // DataTables
         initTable();
 
-        $('.dataTables-cotizacion').DataTable();
+        $('.dataTables-cuentas').DataTable();
 
     });
 
@@ -113,7 +91,6 @@
         let verificar = true;
         var fecha_desde = $('#fecha_desde').val();
         var fecha_hasta = $('#fecha_hasta').val();
-        var cliente_id = $('#cliente_id').val();
         if (fecha_desde !== '' && fecha_desde !== null && fecha_hasta == '') {
             verificar = false;
             toastr.error('Ingresar fecha hasta');
@@ -146,20 +123,21 @@
                     $.ajax({
                         dataType : 'json',
                         type : 'post',
-                        url : '{{ route('consultas.ventas.cotizacion.getTable') }}',
-                        data : {'_token' : $('input[name=_token]').val(), 'fecha_desde' : fecha_desde, 'fecha_hasta' : fecha_hasta, 'cliente_id' : cliente_id},
+                        url : '{{ route('consultas.cuentas.cliente.getTable') }}',
+                        data : {'_token' : $('input[name=_token]').val(), 'fecha_desde' : fecha_desde, 'fecha_hasta' : fecha_hasta},
                         success: function(response) {
                             if (response.success) {
-                                cotizaciones = [];
-                                cotizaciones = response.cotizaciones;
+                                cuentas = [];
+                                cuentas = response.cuentas;
                                 loadTable();
                                 timerInterval = 0;
                                 Swal.resumeTimer();
                                 //console.log(colaboradores);
                             } else {
                                 Swal.resumeTimer();
-                                cotizaciones = [];
+                                cuentas = [];
                                 loadTable();
+                                toastr.error(response.mensaje)
                             }
                         }
                     });
@@ -174,14 +152,14 @@
 
     function loadTable()
     {
-        $('.dataTables-cotizacion').dataTable().fnDestroy();
-        $('.dataTables-cotizacion').DataTable({
+        $('.dataTables-cuentas').dataTable().fnDestroy();
+        $('.dataTables-cuentas').DataTable({
             "dom": '<"html5buttons"B>lTfgitp',
             "buttons": [{
                     extend: 'excelHtml5',
                     text: '<i class="fa fa-file-excel-o"></i> Excel',
                     titleAttr: 'Excel',
-                    title: 'CONSULTA COTIZACION'
+                    title: 'CONSULTA CUENTAS PROVEEDOR'
                 },
                 {
                     titleAttr: 'Imprimir',
@@ -201,51 +179,35 @@
             "bFilter": true,
             "bInfo": true,
             "bAutoWidth": false,
-            "data": cotizaciones,
+            "data": cuentas,
             "columns": [
-                {
-                    data: 'empresa',
-                    className: "text-left"
-                },
                 {
                     data: 'cliente',
                     className: "text-left"
                 },
                 {
-                    data: 'fecha_documento',
+                    data: 'numero_doc',
+                    className: "text-left"
+                },
+                {
+                    data: 'fecha_doc',
+                    className: "text-left"
+                },
+                {
+                    data: 'monto',
                     className: "text-center"
                 },
                 {
-                    data: 'total',
+                    data: 'acta',
                     className: "text-center"
                 },
-
                 {
-                    data: null,
-                    className: "text-center",
-                    render: function(data) {
-                        switch (data.estado) {
-                            case "PENDIENTE":
-                                return "<span class='badge badge-warning' d-block>" + data
-                                    .estado +
-                                    "</span>";
-                                break;
-                            case "VENCIDA":
-                                return "<span class='badge badge-danger' d-block>" + data
-                                    .estado +
-                                    "</span>";
-                                break;
-                            case "ATENDIDA":
-                                return "<span class='badge badge-success' d-block>" + data
-                                    .estado +
-                                    "</span>";
-                                break;
-                            default:
-                                return "<span class='badge badge-success' d-block>" + data
-                                    .estado +
-                                    "</span>";
-                        }
-                    },
+                    data: 'saldo',
+                    className: "text-center"
+                },
+                {
+                    data: 'estado',
+                    className: "text-center"
                 },
 
             ],

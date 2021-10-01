@@ -428,7 +428,8 @@ class ClienteController extends Controller
             return response()->json([
                 'result' => 'success',
                 'mensaje' => 'Cliente creado exitosamente.',
-                'data' => array('mensajes' => 'Cliente creado exitosamente.')
+                'cliente' => $cliente,
+                'data' => array('mensajes' => array('mensaje' => ['Cliente creado exitosamente.']))
             ]);
         }
         catch(Exception $e)

@@ -337,6 +337,7 @@ function(){
         Route::get('pagos/show/{id}', 'Ventas\Documentos\PagoController@show')->name('ventas.documentos.pago.show');
         // Route::get('getBox/document/{id}', 'Compras\Documentos\PagoController@getBox')->name('compras.documentos.pago.getBox');
         Route::post('customers','Ventas\DocumentoController@customers')->name('ventas.customers');
+        Route::post('customers-all','Ventas\DocumentoController@customers_all')->name('ventas.customers_all');
         Route::get('getLot/{id}','Ventas\DocumentoController@getLot')->name('ventas.getLot');
         Route::post('vouchersAvaible','Ventas\DocumentoController@vouchersAvaible')->name('ventas.vouchersAvaible');
 
@@ -468,11 +469,35 @@ function(){
 
     });
 
-     // Cosultas - Compras - Documentos
+     // Cosultas - Cuentas - Proveedores
      Route::prefix('consultas/cuentas/proveedores')->group(function(){
 
         Route::get('index', 'Consultas\Cuentas\ProveedorController@index')->name('consultas.cuentas.proveedor.index');
         Route::post('getTable','Consultas\Cuentas\ProveedorController@getTable')->name('consultas.cuentas.proveedor.getTable');
+
+    });
+
+     // Cosultas - Cuentas - Clientes
+     Route::prefix('consultas/cuentas/clientes')->group(function(){
+
+        Route::get('index', 'Consultas\Cuentas\ClienteController@index')->name('consultas.cuentas.cliente.index');
+        Route::post('getTable','Consultas\Cuentas\ClienteController@getTable')->name('consultas.cuentas.cliente.getTable');
+
+    });
+
+     // Cosultas - Notas - Salida
+     Route::prefix('consultas/notas/salidad')->group(function(){
+
+        Route::get('index', 'Consultas\Notas\SalidadController@index')->name('consultas.notas.salidad.index');
+        Route::post('getTable','Consultas\Notas\SalidadController@getTable')->name('consultas.notas.salidad.getTable');
+
+    });
+
+     // Cosultas - Notas - Ingreso
+     Route::prefix('consultas/notas/ingreso')->group(function(){
+
+        Route::get('index', 'Consultas\Notas\IngresoController@index')->name('consultas.notas.ingreso.index');
+        Route::post('getTable','Consultas\Notas\IngresoController@getTable')->name('consultas.notas.ingreso.getTable');
 
     });
 });

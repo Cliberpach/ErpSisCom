@@ -324,10 +324,50 @@
             if (tipo_documento === 'DNI' || tipo_documento === 'RUC') {
                 var url = (tipo_documento === 'DNI') ? '{{ route('getApidni', ':documento') }}' :
                     '{{ route('getApiruc', ':documento') }}';
-                url = url.replace(':documento', documento);
+                url_ = url.replace(':documento', documento);
                 var textAlert = (tipo_documento === 'DNI') ? "¿Desea consultar DNI a RENIEC?" :
                     "¿Desea consultar RUC a SUNAT?";
+                let timerInterval;
                 Swal.fire({
+                    title: 'Consultando...',
+                    icon: 'info',
+                    customClass: {
+                        container: 'my-swal'
+                    },
+                    timer: 10,
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        Swal.stopTimer();
+                        $.ajax({
+                            dataType : 'json',
+                            type : 'get',
+                            url : url_,
+                            success: function(response) {
+                                if (response.success) {    
+                                    $('#documento').removeClass('is-invalid')
+                                    
+                                    if (tipo_documento === 'DNI'){
+                                        camposDNI(JSON.parse(response.data));
+                                    }
+                                    else{
+                                        camposRUC(JSON.parse(response.data));
+                                    }
+                                    
+                                    timerInterval = 0;
+                                    Swal.resumeTimer();
+                                } else {
+                                    Swal.resumeTimer();
+                                    clearDatosPersona(true);
+                                }
+                            }
+                        });
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                });
+                /*Swal.fire({
                     title: 'Consultar',
                     text: textAlert,
                     icon: 'question',
@@ -366,20 +406,22 @@
 
                         consultaExitosa();
                     }
-                });
+                });*/
             }
         }
 
         function camposDNI(objeto) {
-            if (objeto.value === undefined)
+            if (objeto === undefined)
                 return;
 
-            if(objeto.value.success)
+            if(objeto.success)
             {
-                var nombres = objeto.value.data.nombres;
-                var apellido_paterno = objeto.value.data.apellido_paterno;
-                var apellido_materno = objeto.value.data.apellido_materno;
-                var codigo_verificacion = objeto.value.data.codigo_verificacion;
+                
+                consultaExitosa();
+                var nombres = objeto.data.nombres;
+                var apellido_paterno = objeto.data.apellido_paterno;
+                var apellido_materno = objeto.data.apellido_materno;
+                var codigo_verificacion = objeto.data.codigo_verificacion;
 
                 var nombre = "";
                 if (nombres !== '-' && nombres !== "NULL") {
@@ -403,17 +445,17 @@
         }
 
         function camposRUC(objeto) {
-            console.log(objeto);
-            if (objeto.value === undefined)
+            if (objeto === undefined)
                 return;
-            if(objeto.value.success)
+            if(objeto.success)
             {
-                var razonsocial = objeto.value.data.nombre_o_razon_social;
-                var direccion = objeto.value.data.direccion;
-                var departamento = objeto.value.data.ubigeo[0];
-                var provincia = objeto.value.data.ubigeo[1];
-                var distrito = objeto.value.data.ubigeo[2];
-                var estado = objeto.value.data.estado;
+                consultaExitosa();
+                var razonsocial = objeto.data.nombre_o_razon_social;
+                var direccion = objeto.data.direccion;
+                var departamento = objeto.data.ubigeo[0];
+                var provincia = objeto.data.ubigeo[1];
+                var distrito = objeto.data.ubigeo[2];
+                var estado = objeto.data.estado;
 
                 if (razonsocial != '-' && razonsocial != "NULL") {
                     $('#nombre').val(razonsocial);
@@ -634,28 +676,16 @@
                 contentType: false,
                 processData: false,
                 success: function (respuesta) {
-                    console.log(respuesta)
                     if (respuesta.result === 'success') {
                         document.getElementById('frmCliente').reset();
-                        let cliente = respuesta.data;
-                        console.log(cliente)
-                        if(cliente.tipo_documento == 'RUC')
-                        {
-                            $('#tipo_venta').val("127").trigger("change"); 
-                            $('#cliente_id').val(cliente.id); 
-                        }
-                        else
-                        {
-                            $('#tipo_venta').val("128").trigger("change"); 
-                            $('#cliente_id').val(cliente.id); 
-                        }                       
+                        let cliente = respuesta.cliente;
+                        obtenerClientes_(cliente);                 
                         $('#modal_cliente').modal('hide'); 
                     }
                     let mensaje = sHtmlErrores(respuesta.data.mensajes);
                     toastr[respuesta.result](mensaje);
                 },
                 error: function (respuesta) {
-                    console.log(respuesta)
                     let sHtmlMensaje = sHtmlErrores(respuesta.responseJSON.errors);
                     toastr[result.error](sHtmlMensaje);
                 },
@@ -664,6 +694,66 @@
                 }
             })
         })
+
+        function obtenerClientes_(cliente) {
+            $("#cliente_id").empty().trigger('change');
+            clientes_global = [];
+            let timerInterval;
+            Swal.fire({
+                title: 'Cargando Clientes...',
+                icon: 'info',
+                customClass: {
+                    container: 'my-swal'
+                },
+                timer: 10,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                    Swal.stopTimer();
+                    $.ajax({
+                        dataType: 'json',
+                        url: '{{ route('ventas.customers_all') }}',
+                        type: 'post',
+                        data: {
+                            '_token': $('input[name=_token]').val(),
+                            'tipo_id': $('#tipo_venta').val()
+                        },
+                        success: function(data) {
+                            timerInterval = 0;
+                            Swal.resumeTimer();
+                            
+                            clientes_global = data.clientes;
+                            if (data.clientes.length > 0) {
+                                $('#cliente_id').append('<option></option>').trigger('change');
+                                for(var i = 0;i < data.clientes.length; i++)
+                                {
+                                    var newOption = '<option value="'+data.clientes[i].id+'">'+data.clientes[i].tipo_documento + ': ' + data.clientes[i].documento + ' - ' + data.clientes[i].nombre+'</option>';
+                                    $('#cliente_id').append(newOption).trigger('change');
+                                    //departamentos += '<option value="'+result.departamentos[i].id+'">'+result.departamentos[i].nombre+'</option>';
+                                }
+
+                                if(cliente.tipo_documento === 'RUC')
+                                {
+                                    //$('#tipo_venta').val("127").trigger("change"); 
+                                    $('#cliente_id').val(cliente.id).trigger("change"); 
+                                }
+                                else
+                                {
+                                    //$('#tipo_venta').val("128").trigger("change"); 
+                                    $('#cliente_id').val(cliente.id).trigger("change"); 
+                                }      
+                            } else {
+                                toastr.error('Clientes no encontrados.', 'Error');
+                            }
+                            $('#tipo_cliente_documento').val(data.tipo);
+                        },
+                    })
+                },
+                willClose: () => {
+                    clearInterval(timerInterval)
+                }
+            });
+        }
 
     </script>
 @endpush

@@ -970,7 +970,7 @@ if (!function_exists('proveedores')) {
 if (!function_exists('clientes')) {
     function clientes()
     {
-        return Cliente::get();
+        return Cliente::where('estado','!=','ANULADO')->get();
     }
 }
 if (!function_exists('movimientoUser')) {

@@ -481,7 +481,7 @@ class DocumentoController extends Controller
             DB::commit();
 
             Session::flash('success','Documento de Venta creada.');
-            return redirect()->route('ventas.documento.index')->with('guardar', 'success');
+            return redirect()->route('ventas.documento.index')->with('documento_id', $documento->id);
         }
         catch(Exception $e)
         {
@@ -1179,6 +1179,19 @@ class DocumentoController extends Controller
                     'existe' => ($resultado == true) ? true : false,
                     'comprobante' => $detalle->descripcion,
                     'empresa' => $empresa->razon_social,
+                ];
+
+        return  response()->json($enviar);
+
+
+    }
+
+    public function customers_all(Request $request)
+    {
+        $clientes = Cliente::where('estado','!=','ANULADO')->get();
+
+        $enviar = [
+                    'clientes' => $clientes
                 ];
 
         return  response()->json($enviar);

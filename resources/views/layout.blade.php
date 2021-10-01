@@ -268,11 +268,22 @@
 
     <script>
         function consultaExitosa() {
-            Swal.fire(
-                '¡Búsqueda Exitosa!',
-                'Datos ingresados.',
-                'success'
-            )
+            // Swal.fire(
+            //     '¡Búsqueda Exitosa!',
+            //     'Datos ingresados.',
+            //     'success'
+            // )
+
+            Swal.fire({
+                icon: 'success',
+                title: '¡Búsqueda Exitosa!',
+                text: 'Datos ingresados.',                
+                customClass: {
+                    container: 'my-swal'
+                },
+                showConfirmButton: false,
+                timer: 1500
+            })
         }
         //Loader
         window.addEventListener("load",function(){

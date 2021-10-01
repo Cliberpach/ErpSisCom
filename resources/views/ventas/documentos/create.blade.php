@@ -68,7 +68,7 @@
                                                 autocomplete="off" required readonly>
                                         @else
                                             <input type="date" id="fecha_documento_campo" name="fecha_documento_campo"
-                                                class="form-control {{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
+                                                class="form-control{{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
                                                 value="{{ old('fecha_documento', $fecha_hoy) }}" autocomplete="off"
                                                 required readonly>
                                         @endif
@@ -82,13 +82,11 @@
                             </div>
 
                             <div class="col-lg-6 col-xs-12" id="fecha_entrega">
-                                <label
-                                    class="">Fecha de Atención</label>
-                                        <div class="
-                                    input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-calendar"></i>
-                                    </span>
+                                <label class="">Fecha de Atención</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
 
                                     @if (!empty($cotizacion))
                                         <input type="date" id="fecha_atencion_campo" name="fecha_atencion_campo"
@@ -118,7 +116,7 @@
                     <div class="col-lg-6 col-xs-12">
                         <label class="required">Forma de pago</label>
                         <select name="forma_pago" id="forma_pago"
-                            class="select2_form form-control {{ $errors->has('forma_pago') ? ' is-invalid' : '' }}"
+                            class="select2_form form-control input-required {{ $errors->has('forma_pago') ? ' is-invalid' : '' }}"
                             style="text-transform: uppercase; width:100%" value="{{ old('forma_pago') }}" required>
                             <option value=""></option>
                             @foreach (forma_pago() as $pago)
@@ -135,7 +133,7 @@
                                 <i class="fa fa-calendar"></i>
                             </span>
                             <input type="date" id="fecha_vencimiento_campo" name="fecha_vencimiento_campo"
-                                class="form-control" autocomplete="off"
+                                class="form-control input-required" autocomplete="off"
                                 {{ $errors->has('fecha_vencimiento_campo') ? ' is-invalid' : '' }}
                                 value="{{ old('fecha_vencimiento_campo', $fecha_hoy) }}" required>
                             @if ($errors->has('fecha_vencimiento_campo'))
@@ -149,34 +147,19 @@
 
                 <div class="form-group row">
                     <div class="col-lg-6 col-xs-12">
-                        <label class="required">Tipo: </label>
+                        <label class="required">Tipo de Comprobante: </label>
                         <select
-                            class="select2_form form-control {{ $errors->has('tipo_venta') ? ' is-invalid' : '' }}"
+                            class="select2_form form-control input-required {{ $errors->has('tipo_venta') ? ' is-invalid' : '' }}"
                             style="text-transform: uppercase; width:100%" value="{{ old('tipo_venta') }}"
                             name="tipo_venta" id="tipo_venta" required @if (!empty($cotizacion)) '' @else onchange="consultarSeguntipo()" @endif>
                             <option></option>
 
-                            @if (!empty($cotizacion))
-                                @foreach (tipos_venta() as $tipo)
-                                    @if ($tipo->tipo == 'VENTA' || $tipo->tipo == 'AMBOS')
-                                        @if ($cotizacion->cliente->tipo_documento === 'RUC' && $tipo->id === 127)
-                                            <option value="{{ $tipo->id }}" @if (old('tipo_venta') == $tipo->nombre) {{ 'selected' }} @endif>
-                                                {{ $tipo->nombre }}</option>
-                                        @endif
-                                        @if ($cotizacion->cliente->tipo_documento != 'RUC' && $tipo->id != 127)
-                                            <option value="{{ $tipo->id }}" @if (old('tipo_venta') == $tipo->nombre) {{ 'selected' }} @endif>
-                                                {{ $tipo->nombre }}</option>
-                                        @endif
-                                    @endif
-                                @endforeach
-                            @else
-                                @foreach (tipos_venta() as $tipo)
-                                    @if ($tipo->tipo == 'VENTA' || $tipo->tipo == 'AMBOS')
-                                        <option value="{{ $tipo->id }}" @if (old('tipo_venta') == $tipo->nombre) {{ 'selected' }} @endif>
-                                            {{ $tipo->nombre }}</option>
-                                    @endif
-                                @endforeach
-                            @endif
+                            @foreach (tipos_venta() as $tipo)
+                                @if ($tipo->tipo == 'VENTA' || $tipo->tipo == 'AMBOS')
+                                    <option value="{{ $tipo->id }}" @if (old('tipo_venta') == $tipo->nombre) {{ 'selected' }} @endif>
+                                        {{ $tipo->nombre }}</option>
+                                @endif
+                            @endforeach
 
                             @if ($errors->has('tipo_venta'))
                                 <span class="invalid-feedback" role="alert">
@@ -210,7 +193,7 @@
 
                     @if (!empty($cotizacion))
                         <select
-                            class="select2_form form-control {{ $errors->has('empresa_id') ? ' is-invalid' : '' }}"
+                            class="select2_form form-control input-required {{ $errors->has('empresa_id') ? ' is-invalid' : '' }}"
                             style="text-transform: uppercase; width:100%"
                             value="{{ old('empresa_id', $cotizacion->empresa_id) }}" name="empresa_id" id="empresa_id"
                             disabled>
@@ -223,7 +206,7 @@
                     @endforeach
                     </select>
                 @else
-                    <select class="select2_form form-control {{ $errors->has('empresa_id') ? ' is-invalid' : '' }}"
+                    <select class="select2_form form-control input-required {{ $errors->has('empresa_id') ? ' is-invalid' : '' }}"
                         style="text-transform: uppercase; width:100%" value="{{ old('empresa_id') }}" name="empresa_id"
                         id="empresa_id" required onchange="obtenerTiposComprobantes(this)" disabled>
                         <option></option>
@@ -247,22 +230,20 @@
                     <input type="hidden" name="tipo_cliente_2" id="tipo_cliente_2" value='1'>
                     @if (!empty($cotizacion))
                         <select
-                            class="select2_form form-control {{ $errors->has('cliente_id') ? ' is-invalid' : '' }}"
+                            class="select2_form form-control input-required {{ $errors->has('cliente_id') ? ' is-invalid' : '' }}"
                             style="text-transform: uppercase; width:100%"
                             value="{{ old('cliente_id', $cotizacion->cliente_id) }}" name="cliente_id" id="cliente_id"
                             disabled>
                             <option></option>
                             @foreach ($clientes as $cliente)
-                                <option value="{{ $cliente->id }}" @if (old('cliente_id', $cotizacion->cliente_id) == $cliente->id)
-                                    {{ 'selected' }}
-                            @endif >{{ $cliente->getDocumento() }} - {{ $cliente->nombre }}
+                                <option value="{{ $cliente->id }}" @if (old('cliente_id', $cotizacion->cliente_id) == $cliente->id){{ 'selected' }}@endif >{{ $cliente->getDocumento() }} - {{ $cliente->nombre }}
                             </option>
                     @endforeach
                     </select>
                 @else
-                    <select class="select2_form form-control {{ $errors->has('cliente_id') ? ' is-invalid' : '' }}"
+                    <select class="select2_form form-control input-required {{ $errors->has('cliente_id') ? ' is-invalid' : '' }}"
                         style="text-transform: uppercase; width:100%" value="{{ old('cliente_id') }}" name="cliente_id"
-                        id="cliente_id" required disabled onchange="obtenerTipocliente(this.value)">
+                        id="cliente_id" required onchange="obtenerTipocliente(this.value)"> <!-- disabled -->
                         <option></option>
                     </select>
                     @endif
@@ -478,6 +459,11 @@
         z-index: 3000 !important;
     }
 
+    .input-required 
+    {
+        background-color: aquamarine !important;
+    }
+
 </style>
 
 @endpush
@@ -500,6 +486,8 @@
 
 
 <script>
+    
+    var clientes_global = [];
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
@@ -618,6 +606,24 @@
             allowClear: true,
             width: '100%',
         });
+
+        @if(empty($cotizacion))
+            obtenerClientes();
+        @else
+            $.ajax({
+                dataType: 'json',
+                url: '{{ route('ventas.customers_all') }}',
+                type: 'post',
+                data: {
+                    '_token': $('input[name=_token]').val(),
+                    'tipo_id': $('#tipo_venta').val()
+                },
+                success: function(data) {
+                    clientes_global = data.clientes;
+                    console.log(clientes_global)
+                },
+            })
+        @endif
     });
 
     function obtenerProducto(id) {
@@ -856,9 +862,6 @@
             })
 
         }
-
-
-
     })
 
     function buscarProducto(id) {
@@ -1186,6 +1189,7 @@
     })*/
 
     $('#btn_grabar').click(function(e) {
+    //$('#enviar_documento').submit(function(e) {
         e.preventDefault();
         cargarProductos();
         let correcto = validarCampos();
@@ -1334,6 +1338,42 @@
             correcto = false;
             toastr.error('El campo fecha de vencimiento es requerido.');
         }
+
+        console.log(clientes_global)
+        if(clientes_global.length > 0)
+        {
+            let index = clientes_global.findIndex(cliente => cliente.id == cliente_id);
+            if(index != undefined)
+            {
+                let cliente = clientes_global[index];
+                if(cliente != undefined)
+                {
+                    if(convertFloat(tipo_venta) === 127 && cliente.tipo_documento != 'RUC')
+                    {
+                        correcto = false;
+                        toastr.error('El tipo de comprobante seleccionado requiere que el cliente tenga RUC.');
+                    }
+
+                    if(convertFloat(tipo_venta) === 128 && cliente.tipo_documento != 'DNI')
+                    {
+                        correcto = false;
+                        toastr.error('El tipo de comprobante seleccionado requiere que el cliente tenga DNI.');
+                    }
+                }
+                else{
+                    correcto = false;
+                    toastr.error('Ocurrió un error porfavor seleccionar nuevamente un cliente.');
+                }
+            }
+            else{
+                correcto = false;
+                toastr.error('Ocurrió un error porfavor seleccionar nuevamente un cliente.');
+            }
+        }
+        else{
+            correcto = false;
+            toastr.error('Ocurrió un error porfavor recargar la pagina.');
+        }
         // let cadena_hoy = fecha_documento_campo.split('/');
         // let conv_hoy = cadena_hoy[0]+'-'+cadena_hoy[1]+'-'+cadena_hoy[2];
 
@@ -1419,11 +1459,11 @@
     function consultarSeguntipo() {
         $('#empresa_id').prop("disabled", false);
         obtenerTiposComprobantes()
-        obtenerClientes()
+        //obtenerClientes()
     }
 
     function obtenerClientes() {
-        if ($('#tipo_venta_id').val() != '') {
+        /*if ($('#tipo_venta_id').val() != '') {
             $.ajax({
                 dataType: 'json',
                 url: '{{ route('ventas.customers') }}',
@@ -1452,7 +1492,46 @@
                     $('#tipo_cliente_documento').val(data.tipo);
                 },
             })
-        }
+        }*/
+
+        clientes_global = [];
+        $("#cliente_id").empty().trigger('change');
+        $.ajax({
+            dataType: 'json',
+            url: '{{ route('ventas.customers_all') }}',
+            type: 'post',
+            data: {
+                '_token': $('input[name=_token]').val(),
+                'tipo_id': $('#tipo_venta').val()
+            },
+            success: function(data) {
+                clientes_global = data.clientes;
+                if (data.clientes.length > 0) {
+                    $('#cliente_id').append('<option></option>').trigger('change');
+                    for(var i = 0;i < data.clientes.length; i++)
+                    {
+                        var newOption = '<option value="'+data.clientes[i].id+'">'+data.clientes[i].tipo_documento + ': ' + data.clientes[i].documento + ' - ' + data.clientes[i].nombre+'</option>';
+                        $('#cliente_id').append(newOption).trigger('change');
+                        //departamentos += '<option value="'+result.departamentos[i].id+'">'+result.departamentos[i].nombre+'</option>';
+                    }
+                    // $('#cliente_id').val($('#cliente_id option:first-child').val()).trigger('change');
+                    // //$('#cliente_id').prop("disabled", false);
+                    // var clientes = '<option value="" selected disabled >SELECCIONAR</option>'
+                    // for (var i = 0; i < data.clientes.length; i++)
+                    //     clientes += '<option value="' + data.clientes[i].id + '">' + data.clientes[i]
+                    //     .tipo_documento + ': ' + data.clientes[i].documento + ' - ' + data.clientes[i]
+                    //     .nombre + '</option>';
+
+                } else {
+                    //$('#cliente_id').val($('#cliente_id option:first-child').val()).trigger('change');
+                    //$('#cliente_id').prop("disabled", true);
+                    toastr.error('Clientes no encontrados.', 'Error');
+                }
+
+                //$("#cliente_id").html(clientes);
+                $('#tipo_cliente_documento').val(data.tipo);
+            },
+        })
     }
 
     function obtenerTipocliente(cliente_id) {
@@ -1490,6 +1569,16 @@
         $('#telefono_movil').val('999999999');
         $('#modal_cliente').modal('show');
     }
+
+    function nextFocus(inputF, inputS) {     
+        document.getElementById(inputF).addEventListener('keydown', function(event) {
+            if (event.keyCode == 13) {             
+                document.getElementById(inputS).focus();         
+            }     
+        }); 
+    }
+
+    //background-color: #00f;
 </script>
 
 <script>
