@@ -11,7 +11,7 @@
 
                     <div class="form-group row">
 
-                        <div class="col-lg-6 col-xs-12">
+                        <div class="col-lg-6 col-xs-12 select-required">
                             <label class="required">Tipo de documento</label>
                             <select id="tipo_documento" name="tipo_documento"
                                 class="select2_form form-control {{ $errors->has('tipo_documento') ? ' is-invalid' : '' }}">
@@ -35,7 +35,7 @@
 
                             <div class="input-group">
                                 <input type="text" id="documento" name="documento"
-                                    class="form-control {{ $errors->has('documento') ? ' is-invalid' : '' }}"
+                                    class="form-control input-required {{ $errors->has('documento') ? ' is-invalid' : '' }}"
                                     value="{{ old('documento') ? old('documento') : $cliente->documento }}"
                                     maxlength="8" onkeypress="return isNumber(event)" required>
                                 <span class="input-group-append"><a style="color:white" @if ($cliente->estado != '') onclick="consultarDocumento2()" @else onclick="consultarDocumento()" @endif class="btn btn-primary"><i class="fa fa-search"></i> <span
@@ -54,7 +54,7 @@
 
                     <div class="form-group row">
 
-                        <div class="col-lg-6 col-xs-12">
+                        <div class="col-lg-6 col-xs-12 select-required">
                             <label class="required">Tipo Cliente</label>
                             <select id="tipo_cliente" name="tipo_cliente"
                                 class="select2_form form-control {{ $errors->has('tipo_cliente') ? ' is-invalid' : '' }}"
@@ -120,7 +120,7 @@
                         <label class="required"
                             id="lblNombre">{{ old('documento', $cliente->documento) == 'RUC' ? 'Razón social' : 'Nombre' }}</label>
                         <input type="text" id="nombre" name="nombre"
-                            class="form-control {{ $errors->has('nombre') ? ' is-invalid' : '' }}"
+                            class="form-control input-required {{ $errors->has('nombre') ? ' is-invalid' : '' }}"
                             value="{{ old('nombre') ? old('nombre') : $cliente->nombre }}" maxlength="191"
                             onkeyup="return mayus(this)" required>
                         @if ($errors->has('nombre'))
@@ -133,7 +133,7 @@
                     <div class="form-group">
                         <label class="required">Dirección Fiscal</label>
                         <input type="text" id="direccion" name="direccion"
-                            class="form-control {{ $errors->has('direccion') ? ' is-invalid' : '' }}"
+                            class="form-control input-required {{ $errors->has('direccion') ? ' is-invalid' : '' }}"
                             value="{{ old('direccion') ? old('direccion') : $cliente->direccion }}" maxlength="191"
                             onkeyup="return mayus(this)" required>
                         @if ($errors->has('direccion'))
@@ -150,7 +150,7 @@
 
 
                     <div class="form-group row">
-                        <div class="col-lg-6 col-xs-12">
+                        <div class="col-lg-6 col-xs-12 select-required">
                             <label class="required">Departamento</label>
                             <select id="departamento" name="departamento"
                                 class="select2_form form-control {{ $errors->has('departamento') ? ' is-invalid' : '' }}"
@@ -168,7 +168,7 @@
                                 </span>
                             @endif
                         </div>
-                        <div class="col-lg-6 col-xs-12">
+                        <div class="col-lg-6 col-xs-12 select-required">
                             <label class="required">Provincia</label>
                             <select id="provincia" name="provincia"
                                 class="select2_form form-control {{ $errors->has('provincia') ? ' is-invalid' : '' }}"
@@ -190,7 +190,7 @@
 
                     <div class="form-group row">
 
-                        <div class="col-lg-6 col-xs-12">
+                        <div class="col-lg-6 col-xs-12 select-required">
                             <label class="required">Distrito</label>
                             <select id="distrito" name="distrito"
                                 class="select2_form form-control {{ $errors->has('distrito') ? ' is-invalid' : '' }}"
@@ -228,7 +228,7 @@
                         <div class="col-lg-6 col-xs-12">
                             <label class="required">Teléfono móvil</label>
                             <input type="text" id="telefono_movil" name="telefono_movil"
-                                class="form-control {{ $errors->has('telefono_movil') ? ' is-invalid' : '' }}"
+                                class="form-control input-required {{ $errors->has('telefono_movil') ? ' is-invalid' : '' }}"
                                 value="{{ old('telefono_movil') ? old('telefono_movil') : $cliente->telefono_movil }}"
                                 onkeypress="return isNumber(event)" maxlength="9" required>
                             @if ($errors->has('telefono_movil'))
@@ -257,7 +257,7 @@
                     <div class="form-group">
                         <label class="required">Correo electrónico</label>
                         <input type="email" id="correo_electronico" name="correo_electronico"
-                            class="form-control {{ $errors->has('correo_electronico') ? ' is-invalid' : '' }}"
+                            class="form-control input-required {{ $errors->has('correo_electronico') ? ' is-invalid' : '' }}"
                             value="{{ old('correo_electronico') ? old('correo_electronico') : $cliente->correo_electronico }}"
                             maxlength="100" onkeyup="return mayus(this)" required>
                         @if ($errors->has('correo_electronico'))

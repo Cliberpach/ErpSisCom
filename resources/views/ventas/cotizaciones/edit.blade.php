@@ -41,7 +41,7 @@
                                                 <i class="fa fa-calendar"></i>
                                             </span>
                                             <input type="date" id="fecha_documento" name="fecha_documento"
-                                                class="form-control {{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
+                                                class="form-control input-required {{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
                                                 value="{{ old('fecha_documento', $cotizacion->fecha_documento) }}"
                                                 autocomplete="off" required readonly>
                                             @if ($errors->has('fecha_documento'))
@@ -53,14 +53,14 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-lg-6 col-xs-12">
+                                    <div class="col-lg-6 col-xs-12 select-required">
                                         <label class="required">Moneda</label>
                                         <select id="moneda" name="moneda" disabled
                                             class="select2_form form-control {{ $errors->has('moneda') ? ' is-invalid' : '' }}">
                                             <option selected>SOLES</option>
                                         </select>
                                     </div>
-                                    <div class="col-lg-6 col-xs-12">
+                                    <div class="col-lg-6 col-xs-12 select-required">
                                         <label class="required">Empresa</label>
                                         <select id="empresa" name="empresa"
                                             class="select2_form form-control {{ $errors->has('empresa') ? ' is-invalid' : '' }}">
@@ -81,7 +81,7 @@
                             </div>
                             <div class="col-lg-12 col-xs-12">
                                 <div class="row">
-                                    <div class="col-lg-4 col-xs-12">
+                                    <div class="col-lg-4 col-xs-12 select-required">
                                         <label class="required">Cliente</label>
                                         <select id="cliente" name="cliente"
                                             class="select2_form form-control {{ $errors->has('cliente') ? ' is-invalid' : '' }}"
@@ -107,7 +107,7 @@
                                                 <i class="fa fa-calendar"></i>
                                             </span>
                                             <input type="date" id="fecha_atencion" name="fecha_atencion"
-                                                class="form-control {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
+                                                class="form-control input-required {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
                                                 value="{{ old('fecha_atencion', $cotizacion->fecha_atencion) }}"
                                                 autocomplete="off" required readonly>
                                             @if ($errors->has('fecha_atencion'))
@@ -126,7 +126,7 @@
                                                 </span>
                                             </div>
                                             <input type="text" value="{{ old('igv', $cotizacion->igv) }}" maxlength="3"
-                                                class="form-control {{ $errors->has('igv') ? ' is-invalid' : '' }}"
+                                                class="form-control input-required {{ $errors->has('igv') ? ' is-invalid' : '' }}"
                                                 name="igv" id="igv" onkeyup="return mayus(this)" required>
                                             @if ($errors->has('igv'))
                                                 <span class="invalid-feedback" role="alert">

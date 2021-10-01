@@ -197,7 +197,7 @@
                 <tr>
                     <td>MODO DE PAGO</td>
                     <td>:</td>
-                    <td>{{ $documento->formaPago() }}</td>
+                    <td class="text-uppercase">{{ $documento->formaPago() }}</td>
                 </tr>
             </table>
         </div><br>

@@ -23,13 +23,24 @@
         
         <div class="col-12">
             <div class="row align-items-end">
-                <div class="col-12 col-md-5">
+                <div class="col-12 col-md-4">
+                    <div class="form-group">
+                        <label for="proveedor_id">Proveedor</label>
+                        <select name="proveedor_id" id="proveedor_id" class="select2_form form-control">
+                            <option value=""></option>
+                            @foreach(proveedores() as $proveedor)
+                                <option value="{{$proveedor->id}}">{{ $proveedor->tipoDocumento() }} - {{ $proveedor->descripcion }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
                     <div class="form-group">
                         <label for="fecha_desde">Fecha desde</label>
                         <input type="date" id="fecha_desde" class="form-control">
                     </div>
                 </div>
-                <div class="col-12 col-md-5">
+                <div class="col-12 col-md-3">
                     <div class="form-group">
                         <label for="fecha_desde">Fecha hasta</label>
                         <input type="date" id="fecha_hasta" class="form-control">
@@ -73,6 +84,7 @@
 
 @stop
 @push('styles')
+<link href="{{ asset('Inspinia/css/plugins/select2/select2.min.css') }}" rel="stylesheet">
 <!-- DataTable -->
 <link href="{{asset('Inspinia/css/plugins/dataTables/datatables.min.css')}}" rel="stylesheet">
 <style>
@@ -84,12 +96,20 @@
 @endpush
 
 @push('scripts')
+<script src="{{ asset('Inspinia/js/plugins/select2/select2.full.min.js') }}"></script>
 <!-- DataTable -->
 <script src="{{asset('Inspinia/js/plugins/dataTables/datatables.min.js')}}"></script>
 <script src="{{asset('Inspinia/js/plugins/dataTables/dataTables.bootstrap4.min.js')}}"></script>
 
 <script>
 $(document).ready(function() {
+    $(".select2_form").select2({
+        placeholder: "SELECCIONAR",
+        allowClear: true,
+        height: '200px',
+        width: '100%',
+    }); 
+
     var ordenes = [];
     // DataTables
     initTable();
@@ -103,6 +123,7 @@ function initTable()
     let verificar = true;
     var fecha_desde = $('#fecha_desde').val();
     var fecha_hasta = $('#fecha_hasta').val();
+    var proveedor_id = $('#proveedor_id').val();
     if (fecha_desde !== '' && fecha_desde !== null && fecha_hasta == '') {
         verificar = false;
         toastr.error('Ingresar fecha hasta');
@@ -136,7 +157,7 @@ function initTable()
                     dataType : 'json',
                     type : 'post',
                     url : '{{ route('consultas.compras.orden.getTable') }}',
-                    data : {'_token' : $('input[name=_token]').val(), 'fecha_desde' : fecha_desde, 'fecha_hasta' : fecha_hasta},
+                    data : {'_token' : $('input[name=_token]').val(), 'fecha_desde' : fecha_desde, 'fecha_hasta' : fecha_hasta, 'proveedor_id' : proveedor_id},
                     success: function(response) {
                         if (response.success) {
                             ordenes = [];

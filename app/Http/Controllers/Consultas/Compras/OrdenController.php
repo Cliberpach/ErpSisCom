@@ -17,16 +17,20 @@ class OrdenController extends Controller
     }
 
     public function getTable(Request $request){
+        
+        $consulta = Orden::where('estado','!=','ANULADO');
 
         if($request->fecha_desde && $request->fecha_hasta)
         {
-            $ordenes = Orden::where('estado','!=','ANULADO')->whereBetween('fecha_emision', [$request->fecha_desde, $request->fecha_hasta])->orderBy('id', 'desc')->get();
+            $consulta->whereBetween('fecha_emision', [$request->fecha_desde, $request->fecha_hasta]);
         }
-        else
+
+        if($request->proveedor_id)
         {
-            $ordenes = Orden::where('estado','!=','ANULADO')->orderBy('id', 'desc')->get();
+            $consulta->where('proveedor_id',$request->proveedor_id);
         }
-        
+
+        $ordenes = $consulta->orderBy('id', 'desc')->get();
 
         
         $coleccion = collect();

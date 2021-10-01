@@ -93,9 +93,9 @@
                                         <input type="text" name="cantidad" id="cantidad" value="0.00" class="form-control" onkeypress="return filterFloat(event, this);" readonly required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="" class="required">Observacion</label>
+                                        <label for="">Observacion</label>
                                         <textarea name="observacion" id="observacion" cols="30" rows="3"
-                                        class="form-control" required></textarea>
+                                        class="form-control"></textarea>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
@@ -196,7 +196,7 @@
             var cantidad = parseFloat(efectivo_venta)+parseFloat(importe_venta);
             var modo_pago = $("#modo_pago").val();
 
-            if (pago.length == 0 || fecha.length == 0 || fecha.length == 0 || cantidad.length == 0 || observacion.length == 0) {
+            if (pago.length == 0 || fecha.length == 0 || fecha.length == 0 || cantidad.length == 0) {
                 toastr.error('Ingrese todo los datos');
             } else {
                 if (saldo == 0) {

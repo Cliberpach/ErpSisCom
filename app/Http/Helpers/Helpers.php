@@ -963,7 +963,7 @@ if (!function_exists('cuentas')) {
 if (!function_exists('proveedores')) {
     function proveedores()
     {
-        return Proveedor::get();
+        return Proveedor::where('estado','!=','ANULADO')->get();
     }
 }
 

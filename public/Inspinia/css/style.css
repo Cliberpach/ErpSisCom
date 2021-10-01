@@ -4037,6 +4037,16 @@ a.forum-item-title:hover {
 .select2-container--default .select2-selection--multiple {
   border-color: #e7eaec;
 }
+.select-required .select2-container--default .select2-selection--single,
+.select-required .select2-container--default .select2-selection--multiple {
+  background-color: #D1F2EB !important;
+}
+
+.input-required 
+{
+    background-color: #D1F2EB !important;
+}
+
 .select2-container--default.select2-container--focus .select2-selection--single,
 .select2-container--default.select2-container--focus .select2-selection--multiple {
   border-color: #1ab394;

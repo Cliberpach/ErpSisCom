@@ -797,7 +797,7 @@ class DocumentoController extends Controller
                 }
                 else
                 {
-                    $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_normal_nuevo',[
+                    $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_normal_nuevo',[ //_nuevo
                         'documento' => $documento,
                         'detalles' => $documento->detalles,
                         'moneda' => $documento->simboloMoneda(),

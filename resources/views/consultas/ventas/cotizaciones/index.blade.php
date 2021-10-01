@@ -24,7 +24,7 @@
             <div class="row align-items-end">
                 <div class="col-12 col-md-4">
                     <div class="form-group">
-                        <label for="fecha_desde">Cliente</label>
+                        <label for="cliente_id">Cliente</label>
                         <select name="cliente_id" id="cliente_id" class="select2_form form-control">
                             <option value=""></option>
                             @foreach(clientes() as $cliente)

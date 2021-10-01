@@ -64,7 +64,7 @@
                                                         autocomplete="off" required readonly>
                                                 @else
                                                     <input type="date" id="fecha_documento_campo" name="fecha_documento_campo"
-                                                        class="form-control{{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
+                                                        class="form-control input-required{{ $errors->has('fecha_documento') ? ' is-invalid' : '' }}"
                                                         value="{{ old('fecha_documento', $fecha_hoy) }}" autocomplete="off"
                                                         required readonly>
                                                 @endif
@@ -92,7 +92,7 @@
                                             @else
 
                                                 <input type="date" id="fecha_atencion_campo" name="fecha_atencion_campo"
-                                                    class="form-control {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
+                                                    class="form-control input-required {{ $errors->has('fecha_atencion') ? ' is-invalid' : '' }}"
                                                     value="{{ old('fecha_atencion', $fecha_hoy) }}" autocomplete="off" required
                                                     readonly disabled>
 
@@ -108,10 +108,10 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <div class="col-lg-6 col-xs-12">
+                                    <div class="col-lg-6 col-xs-12 select-required">
                                         <label class="required">Forma de pago</label>
                                         <select name="forma_pago" id="forma_pago"
-                                            class="select2_form form-control input-required {{ $errors->has('forma_pago') ? ' is-invalid' : '' }}"
+                                            class="select2_form form-control {{ $errors->has('forma_pago') ? ' is-invalid' : '' }}"
                                             style="text-transform: uppercase; width:100%" value="{{ old('forma_pago') }}" required>
                                             <option value=""></option>
                                             @foreach (forma_pago() as $pago)
@@ -141,10 +141,10 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <div class="col-lg-6 col-xs-12">
+                                    <div class="col-lg-6 col-xs-12 select-required">
                                         <label class="required">Tipo de Comprobante: </label>
                                         <select
-                                            class="select2_form form-control input-required {{ $errors->has('tipo_venta') ? ' is-invalid' : '' }}"
+                                            class="select2_form form-control {{ $errors->has('tipo_venta') ? ' is-invalid' : '' }}"
                                             style="text-transform: uppercase; width:100%" value="{{ old('tipo_venta') }}"
                                             name="tipo_venta" id="tipo_venta" required @if (!empty($cotizacion)) '' @else onchange="consultarSeguntipo()" @endif>
                                             <option></option>
@@ -167,7 +167,7 @@
                                         </select>
                                     </div>
 
-                                    <div class="col-md-6 col-xs-12">
+                                    <div class="col-md-6 col-xs-12 select-required">
                                         <label>Moneda:</label>
                                         <select id="moneda" name="moneda"
                                             class="select2_form form-control {{ $errors->has('moneda') ? ' is-invalid' : '' }}"
@@ -183,12 +183,12 @@
 
                             <div class="col-sm-6">
 
-                                <div class="form-group">
+                                <div class="form-group select-required">
                                     <label class="required">Empresa: </label>
 
                                     @if (!empty($cotizacion))
                                         <select
-                                            class="select2_form form-control input-required {{ $errors->has('empresa_id') ? ' is-invalid' : '' }}"
+                                            class="select2_form form-control {{ $errors->has('empresa_id') ? ' is-invalid' : '' }}"
                                             style="text-transform: uppercase; width:100%"
                                             value="{{ old('empresa_id', $cotizacion->empresa_id) }}" name="empresa_id" id="empresa_id"
                                             disabled>
@@ -198,7 +198,7 @@
                                             @endforeach
                                         </select>
                                     @else
-                                        <select class="select2_form form-control input-required {{ $errors->has('empresa_id') ? ' is-invalid' : '' }}"
+                                        <select class="select2_form form-control {{ $errors->has('empresa_id') ? ' is-invalid' : '' }}"
                                             style="text-transform: uppercase; width:100%" value="{{ old('empresa_id') }}" name="empresa_id"
                                             id="empresa_id" required onchange="obtenerTiposComprobantes(this)" disabled>
                                             <option></option>
@@ -212,7 +212,7 @@
                                     @endif
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group select-required">
                                     <label class="required">Cliente: @if (empty($cotizacion))<button type="button" class="btn btn-outline btn-primary" onclick="modalCliente()">Registrar</button>@endif</label>
                                     <input type="hidden" name="tipo_cliente_documento" id="tipo_cliente_documento">
                                     <input type="hidden" name="tipo_cliente_2" id="tipo_cliente_2" value='1'>
@@ -442,11 +442,6 @@
 <style>
     .my-swal {
         z-index: 3000 !important;
-    }
-
-    .input-required 
-    {
-        background-color: aquamarine !important;
     }
 
 </style>
