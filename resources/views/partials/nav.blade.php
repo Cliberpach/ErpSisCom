@@ -142,7 +142,7 @@
     <ul class="nav nav-second-level collapse">
         <li class="@yield('proveedor_kardex-active')"><a href="#">Proveedor</a></li>
         <li class="@yield('cliente_kardex-active')"><a href="#">Cliente</a></li>
-        <li class="@yield('producto_kardex-active')"><a href="#">Producto</a></li>
+        <li class="@yield('producto_kardex-active')"><a href="{{ route('consultas.kardex.producto.index') }}">Producto</a></li>
     </ul>
 </li>
 

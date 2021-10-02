@@ -18,12 +18,12 @@ class EmpresaSeeder extends Seeder
     {
         //Agroensancha S.R.L
         $empresa = new Empresa();
-        $empresa->ruc = '11111111111';
-        $empresa->razon_social = 'EMPRESA XYZ';
-        $empresa->razon_social_abreviada = 'EMPRESA XYZ';
-        $empresa->direccion_fiscal = 'Direccion TRUJILLO';
+        $empresa->ruc = '10706602009';
+        $empresa->razon_social = 'ESCOBEDO PEREZ GRISELDA';
+        $empresa->razon_social_abreviada = 'ESCOBEDO PEREZ GRISELDA';
+        $empresa->direccion_fiscal = 'Av. Cesar Vallejo 429 Urb. Palermo - Trujillo';
         $empresa->direccion_llegada = 'TRUJILLO';
-        $empresa->dni_representante = '12345678';
+        $empresa->dni_representante = '70004110';
         $empresa->nombre_representante = 'NOMBRE APELLIDOPAT APELLIDOMAT';
         $empresa->num_asiento = 'A00001';
         $empresa->num_partida = '11036086';
@@ -35,15 +35,15 @@ class EmpresaSeeder extends Seeder
         $facturacion = new Facturacion();
         $facturacion->empresa_id = $empresa->id; //RELACION CON LA EMPRESA
         $facturacion->fe_id = 1048; //ID EMPRESA API
-        $facturacion->sol_user = 'usersol';
-        $facturacion->sol_pass = 'contrasol';
+        $facturacion->sol_user = 'NALLYNCE';
+        $facturacion->sol_pass = 'ocottleau';
         $facturacion->plan = 'free';
         $facturacion->ambiente = 'beta';
         $facturacion->certificado =  null;
-        $facturacion->token_code =  '-';
+        $facturacion->token_code =  'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2MzEzNzE0NjQsImV4cCI6NDc4NDk3MTQ2NCwidXNlcm5hbWUiOiJMZXN0ZXIiLCJjb21wYW55IjoiMTA3MDY2MDIwMDkifQ.rO1aEO_yuX0YeDGeGYNaW6el_nlUpFe6asTNp646vIdpmV3ekHuoc5-aB-059M6qc9HJYiTzjykcHHTEhQM4PuLDMo8imS5q1zYRviVBTNYs6d4dY3BVamA2GJJCoPuKqsZo11NNWpVjThMyYzFeXKIeNZde_IN_8Nslkl-QsNxTPHpdmVkyxSgHtJGzTE3SuxDCbu9KiIQZPcpx3d6dCBhCc0bQCUZ0OTDTpiHXLA9JCiN3wXmlZwP0EUQfpHkDiD9k6Un-54Wd9ukq8ihL5iE47NkN6E1bhrgpuRsx_4GwqOli2Fkwuf7ywJWXYfm0UfMYssHgbrhvq7r3CDAgXtg7FhqZ9rXkFLsYgo0LxHuebecJ7o9cZm6aNU9S0IStsS8UBjWowtbuoBTni11GE8JEQQH7fsgDP8ftsvASElYFIXioPV2mG6Tuza1eFrnJHCIW9kzAe0Fbo4pF2ddHmzkD0d3Ujr7Jwv2uJX-5XK9rTOmdo9dWwj997GEbOJ9w7ZkeqYPBXzGXRf39JodhvBvzb8E4HY99IA8aItm0osMBk6gktGvQ2KKoU-RgyRdD_ksxpw1dSyQG6q51pGNctcOwlexSXlwswLxn3apbevgWhQQscapsKNR8xD4G5Nbk-qtApvHLxRk2DnqhnCMYAUs8u2dY2iOhjKCbFY38wfo';
         $facturacion->save();
 
-        /*Numeracion::create([
+        Numeracion::create([
             'empresa_id' => $empresa->id,
             'serie' => 'F001',
             'tipo_comprobante' => 127,
@@ -57,7 +57,7 @@ class EmpresaSeeder extends Seeder
             'tipo_comprobante' => 128,
             'numero_iniciar' => 1,
             'emision_iniciada' => 1,
-        ]);*/
+        ]);
 
         Numeracion::create([
             'empresa_id' => $empresa->id,

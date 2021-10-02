@@ -1,5 +1,6 @@
 <?php
 
+use App\Almacenes\Kardex;
 use App\Almacenes\LoteProducto;
 use App\Http\Controllers\Almacenes\NotaSalidadController;
 use App\Mantenimiento\Empresa\Empresa;
@@ -500,9 +501,19 @@ function(){
         Route::post('getTable','Consultas\Notas\IngresoController@getTable')->name('consultas.notas.ingreso.getTable');
 
     });
+
+    // Cosultas - Kardex - Producto
+    Route::prefix('consultas/kardex/producto')->group(function(){
+
+        Route::get('index', 'Consultas\Kardex\ProductoController@index')->name('consultas.kardex.producto.index');
+        Route::post('getTable','Consultas\Kardex\ProductoController@getTable')->name('consultas.kardex.producto.getTable');
+
+    });
 });
 
 Route::get('ruta', function () {
+    $kardex = Kardex::find(1);
+    return $kardex->producto;
     $user = User::find(1);
     $user->password = bcrypt('2020');
     $user->update();

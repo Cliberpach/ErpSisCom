@@ -2,6 +2,7 @@
 
 namespace App\Ventas\Documento;
 
+use App\Almacenes\Kardex;
 use Illuminate\Database\Eloquent\Model;
 
 class Detalle extends Model
@@ -33,5 +34,25 @@ class Detalle extends Model
     public function lote()
     {
         return $this->belongsTo('App\Almacenes\LoteProducto','lote_id');
+    }
+
+    protected static function booted()
+    {
+        static::created(function(Detalle $detalle){
+
+            //KARDEX
+            $kardex = new Kardex();
+            $kardex->origen = 'VENTA';
+            $kardex->numero_doc = $detalle->documento->numero_doc;
+            $kardex->fecha = $detalle->documento->fecha_documento;
+            $kardex->cantidad = $detalle->cantidad;            
+            $kardex->producto_id = $detalle->lote->producto_id;
+            $kardex->descripcion = 'CLIENTES VARIOS';
+            $kardex->precio = $detalle->precio_nuevo;
+            $kardex->importe = $detalle->precio_nuevo * $detalle->cantidad;
+            $kardex->stock = $detalle->lote->producto->stock - $detalle->cantidad;
+            $kardex->save();
+            
+        });
     }
 }
