@@ -1558,6 +1558,7 @@
     function modalCliente() {
         document.getElementById('frmCliente').reset();
         $('#departamento').val("13").trigger("change");
+        $('#tipo_cliente_id').val("121").trigger("change");
         $('#tipo_documento').val("").trigger("change");
         $('#direccion').val('Direccion Trujillo');
         $('#telefono_movil').val('999999999');

@@ -27,6 +27,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade as PDF;
+use App\Ventas\ErrorVenta;
 use Exception;
 use Illuminate\Support\Facades\Mail;
 //CONVERTIR DE NUMEROS A LETRAS
@@ -433,6 +434,59 @@ class DocumentoController extends Controller
             $gestion = "DOCUMENTO DE VENTA";
             crearRegistro($documento , $descripcion , $gestion);
 
+            if((int)$documento->tipo_venta === 127 || (int)$documento->tipo_venta === 128)
+            {
+                $envio = self::sunat_valida($documento->id);
+                if(!$envio['success'])
+                {
+                    DB::rollBack();
+                    foreach ($productotabla as $producto) {
+                        $lote = LoteProducto::findOrFail($producto->producto_id);
+                        $lote->cantidad_logica =  $lote->cantidad_logica + $producto->cantidad;
+                        $lote->update();
+                    }
+                    Session::flash('error',$envio['mensaje']);
+                    return back()->with('sunat_error', 'error');
+                }
+                else
+                {
+                    DB::commit();
+                    $vp = self::venta_comprobante($documento->id);
+                    $ve = self::venta_email($documento->id);
+                    Session::flash('success','Documento de venta creado.');
+                    return redirect()->route('ventas.documento.index')->with('documento_id', $documento->id);
+                }
+            }
+            else{
+                DB::commit();
+                $vp = self::venta_comprobante($documento->id);
+                $ve = self::venta_email($documento->id);
+                Session::flash('success','Documento de venta creado.');
+                return redirect()->route('ventas.documento.index')->with('documento_id', $documento->id);
+            }
+        }
+        catch(Exception $e)
+        {
+            $productosJSON = $request->get('productos_tabla');
+            $productotabla = json_decode($productosJSON[0]);
+            DB::rollBack();
+            foreach ($productotabla as $producto) {
+                $lote = LoteProducto::findOrFail($producto->producto_id);
+                $lote->cantidad_logica =  $lote->cantidad_logica + $producto->cantidad;
+                $lote->update();
+            }
+            Session::flash('error', (string) $e->getMessage());
+            return back();
+        }
+    }
+
+    public function venta_comprobante($id)
+    {
+        try
+        {
+            $documento = Documento::find($id);
+            $empresa = Empresa::findOrFail($documento->empresa_id);
+            
             $legends = self::obtenerLeyenda($documento);
             $legends = json_encode($legends,true);
             $legends = json_decode($legends,true);
@@ -449,6 +503,26 @@ class DocumentoController extends Controller
                 "legends" =>  $legends,
                 ])->setPaper('a4')->setWarnings(false)
                 ->save(public_path().'/storage/comprobantessiscom/'.$documento->nombre_comprobante_archivo);
+            
+            return array('success' => true,'mensaje' => 'Documento validado.');
+        }
+        catch(Exception $e)
+        {
+            $errorVenta = new ErrorVenta();
+            $errorVenta->documento_id = $documento->id;
+            $errorVenta->tipo = 'pdf';
+            $errorVenta->descripcion = 'Error al generar pdf';
+            $errorVenta->ecxepcion = $e->getMessage();
+            $errorVenta->save();
+            return array('success' => false,'mensaje' => 'Documento no validado.');
+        }
+    }
+
+    public function venta_email($id)
+    {
+        try
+        {
+            $documento = Documento::find($id);
 
             if((int)$documento->tipo_venta === 127 || (int)$documento->tipo_venta === 128)
             {
@@ -480,24 +554,18 @@ class DocumentoController extends Controller
                     });
                 }
             }
-
-            DB::commit();
-
-            Session::flash('success','Documento de Venta creada.');
-            return redirect()->route('ventas.documento.index')->with('documento_id', $documento->id);
+            
+            return array('success' => true,'mensaje' => 'Documento validado.');
         }
         catch(Exception $e)
         {
-            $productosJSON = $request->get('productos_tabla');
-            $productotabla = json_decode($productosJSON[0]);
-            DB::rollBack();
-            foreach ($productotabla as $producto) {
-                $lote = LoteProducto::findOrFail($producto->producto_id);
-                $lote->cantidad_logica =  $lote->cantidad_logica + $producto->cantidad;
-                $lote->update();
-            }
-            Session::flash('error', (string) $e->getMessage());
-            return back();
+            $errorVenta = new ErrorVenta();
+            $errorVenta->documento_id = $documento->id;
+            $errorVenta->tipo = 'email';
+            $errorVenta->descripcion = 'Error al enviar email';
+            $errorVenta->ecxepcion = $e->getMessage();
+            $errorVenta->save();
+            return array('success' => false,'mensaje' => 'Documento no validado.');
         }
     }
 
@@ -996,166 +1064,7 @@ class DocumentoController extends Controller
         $existe = event(new DocumentoNumeracion($documento));
         if($existe[0]){
             if ($existe[0]->get('existe') == true) {
-                if ($documento->sunat != '1') {
-                    //ARREGLO COMPROBANTE
-                    $arreglo_comprobante = array(
-                        "tipoOperacion" => $documento->tipoOperacion(),
-                        "tipoDoc"=> $documento->tipoDocumento(),
-                        "serie" => $existe[0]->get('numeracion')->serie,
-                        "correlativo" => $documento->correlativo,
-                        "fechaEmision" => self::obtenerFechaEmision($documento),
-                        "fecVencimiento" => self::obtenerFechaVencimiento($documento),
-                        "observacion" => $documento->observacion,
-                        "formaPago" => array(
-                            "moneda" =>  $documento->simboloMoneda(),
-                            "tipo" =>  $documento->formaPago(),
-                        ),
-                        "tipoMoneda" => $documento->simboloMoneda(),
-                        "client" => array(
-                            "tipoDoc" => $documento->tipoDocumentoCliente(),
-                            "numDoc" => $documento->documento_cliente,
-                            "rznSocial" => $documento->cliente,
-                            "address" => array(
-                                "direccion" => $documento->direccion_cliente,
-                            )),
-                        "company" => array(
-                            "ruc" =>  $documento->ruc_empresa,
-                            "razonSocial" => $documento->empresa,
-                            "address" => array(
-                                "direccion" => $documento->direccion_fiscal_empresa,
-                            )),
-                        "mtoOperGravadas" => (float)$documento->sub_total,
-                        "mtoOperExoneradas" => 0,
-                        "mtoIGV" => (float)$documento->total_igv,
-
-                        "valorVenta" => (float)$documento->sub_total,
-                        "totalImpuestos" => (float)$documento->total_igv,
-                        "subTotal" => (float)$documento->total,
-                        "mtoImpVenta" => (float)$documento->total,
-                        "ublVersion" => "2.1",
-                        "details" => self::obtenerProductos($documento->id),
-                        "legends" =>  self::obtenerLeyenda($documento),
-                    );
-
-                    //OBTENER JSON DEL COMPROBANTE EL CUAL SE ENVIARA A SUNAT
-                    $data = enviarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
-
-                    //RESPUESTA DE LA SUNAT EN JSON
-                    $json_sunat = json_decode($data);
-                    if ($json_sunat->sunatResponse->success == true) {
-
-                        $documento->sunat = '1';
-
-                        $data_comprobante = generarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
-
-                        $name = $existe[0]->get('numeracion')->serie."-".$documento->correlativo.'.pdf';
-
-                        $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'.DIRECTORY_SEPARATOR.$name);
-
-                        if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'))) {
-                            mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'));
-                        }
-
-                        file_put_contents($pathToFile, $data_comprobante);
-
-                        $arreglo_qr = array(
-                            "ruc" => $documento->ruc_empresa,
-                            "tipo" => $documento->tipoDocumento(),
-                            "serie" => $existe[0]->get('numeracion')->serie,
-                            "numero" => $documento->correlativo,
-                            "emision" => self::obtenerFechaEmision($documento),
-                            "igv" => 18,
-                            "total" => (float)$documento->total,
-                            "clienteTipo" => $documento->tipoDocumentoCliente(),
-                            "clienteNumero" => $documento->documento_cliente
-                        );
-
-                        /********************************/
-                        $data_qr = generarQrApi(json_encode($arreglo_qr), $documento->empresa_id);
-
-                        $name_qr = $existe[0]->get('numeracion')->serie."-".$documento->correlativo.'.svg';
-
-                        $pathToFile_qr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'.DIRECTORY_SEPARATOR.$name_qr);
-
-                        if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'))) {
-                            mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'));
-                        }
-
-                        file_put_contents($pathToFile_qr, $data_qr);
-
-                        /********************************/
-
-                        $data_xml = generarXmlapi(json_encode($arreglo_comprobante), $documento->empresa_id);
-                        $name_xml = $documento->serie.'-'.$documento->correlativo.'.xml';
-                        $pathToFile_xml = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'xml'.DIRECTORY_SEPARATOR.$name_xml);
-                        if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'xml'))) {
-                            mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'xml'));
-                        }
-                        file_put_contents($pathToFile_xml, $data_xml);
-
-                        /********************************* */
-
-                        $documento->nombre_comprobante_archivo = $name;
-                        $documento->hash = $json_sunat->hash;
-                        $documento->xml = $name_xml;
-                        $documento->ruta_comprobante_archivo = 'public/sunat/'.$name;
-                        $documento->ruta_qr = 'public/qrs/'.$name_qr;
-                        $documento->update();
-
-
-                        //Registro de actividad
-                        $descripcion = "SE AGREGÓ EL COMPROBANTE ELECTRONICO: ". $existe[0]->get('numeracion')->serie."-".$documento->correlativo;
-                        $gestion = "COMPROBANTES ELECTRONICOS";
-                        crearRegistro($documento , $descripcion , $gestion);
-
-                        // Session::flash('success','Documento de Venta enviada a Sunat con exito.');
-                        // return view('ventas.documentos.index',[
-
-                        //     'id_sunat' => $json_sunat->sunatResponse->cdrResponse->id,
-                        //     'descripcion_sunat' => $json_sunat->sunatResponse->cdrResponse->description,
-                        //     'notas_sunat' => $json_sunat->sunatResponse->cdrResponse->notes,
-                        //     'sunat_exito' => true
-
-                        // ])->with('sunat_exito', 'success');
-                        return array('success' => true,'mensaje' => 'Documento de Venta enviada a Sunat con exito.');
-
-                    }else{
-
-                        //COMO SUNAT NO LO ADMITE VUELVE A SER 0
-                        $documento->correlativo = null;
-                        $documento->serie = null;
-                        $documento->sunat = '2';
-                        $documento->update();
-
-                        if ($json_sunat->sunatResponse->error) {
-                            $id_sunat = $json_sunat->sunatResponse->error->code;
-                            $descripcion_sunat = $json_sunat->sunatResponse->error->message;
-
-
-                        }else {
-                            $id_sunat = $json_sunat->sunatResponse->cdrResponse->id;
-                            $descripcion_sunat = $json_sunat->sunatResponse->cdrResponse->description;
-
-                        };
-
-
-                        // Session::flash('error','Documento de Venta sin exito en el envio a sunat.');
-                        // return view('ventas.documentos.index',[
-                        //     'id_sunat' =>  $id_sunat,
-                        //     'descripcion_sunat' =>  $descripcion_sunat,
-                        //     'sunat_error' => true,
-
-                        // ])->with('sunat_error', 'error');
-                        return array('success' => false, 'mensaje' => $descripcion_sunat);
-                    }
-                }else{
-                    $documento->sunat = '1';
-                    $documento->update();
-                    // Session::flash('error','Documento de venta fue enviado a Sunat.');
-                    // return redirect()->route('ventas.documento.index')->with('sunat_existe', 'error');
-
-                    return array('success' => false, 'mensaje' => 'Documento de venta fue enviado a Sunat.');
-                }
+                return array('success' => true,'mensaje' => 'Documento validado.');
             }else{
                 // Session::flash('error','Tipo de Comprobante no registrado en la empresa.');
                 // return redirect()->route('ventas.documento.index')->with('sunat_existe', 'error');
@@ -1167,6 +1076,171 @@ class DocumentoController extends Controller
             return array('success' => false, 'mensaje' => 'Empresa sin parametros para emitir comprobantes electronicos.');
         }
 
+    }
+
+    public function sunat_valida($id)
+    {
+        $documento = Documento::find($id);
+        if ($documento->sunat != '1') {
+            //ARREGLO COMPROBANTE
+            $arreglo_comprobante = array(
+                "tipoOperacion" => $documento->tipoOperacion(),
+                "tipoDoc"=> $documento->tipoDocumento(),
+                "serie" => $documento->serie,
+                "correlativo" => $documento->correlativo,
+                "fechaEmision" => self::obtenerFechaEmision($documento),
+                "fecVencimiento" => self::obtenerFechaVencimiento($documento),
+                "observacion" => $documento->observacion,
+                "formaPago" => array(
+                    "moneda" =>  $documento->simboloMoneda(),
+                    "tipo" =>  $documento->formaPago(),
+                ),
+                "tipoMoneda" => $documento->simboloMoneda(),
+                "client" => array(
+                    "tipoDoc" => $documento->tipoDocumentoCliente(),
+                    "numDoc" => $documento->documento_cliente,
+                    "rznSocial" => $documento->cliente,
+                    "address" => array(
+                        "direccion" => $documento->direccion_cliente,
+                    )),
+                "company" => array(
+                    "ruc" =>  $documento->ruc_empresa,
+                    "razonSocial" => $documento->empresa,
+                    "address" => array(
+                        "direccion" => $documento->direccion_fiscal_empresa,
+                    )),
+                "mtoOperGravadas" => (float)$documento->sub_total,
+                "mtoOperExoneradas" => 0,
+                "mtoIGV" => (float)$documento->total_igv,
+
+                "valorVenta" => (float)$documento->sub_total,
+                "totalImpuestos" => (float)$documento->total_igv,
+                "subTotal" => (float)$documento->total,
+                "mtoImpVenta" => (float)$documento->total,
+                "ublVersion" => "2.1",
+                "details" => self::obtenerProductos($documento->id),
+                "legends" =>  self::obtenerLeyenda($documento),
+            );
+
+            //OBTENER JSON DEL COMPROBANTE EL CUAL SE ENVIARA A SUNAT
+            $data = enviarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
+
+            //RESPUESTA DE LA SUNAT EN JSON
+            $json_sunat = json_decode($data);
+            if ($json_sunat->sunatResponse->success == true) {
+
+                $documento->sunat = '1';
+
+                $data_comprobante = generarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
+
+                $name = $documento->serie."-".$documento->correlativo.'.pdf';
+
+                $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'.DIRECTORY_SEPARATOR.$name);
+
+                if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'))) {
+                    mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'));
+                }
+
+                file_put_contents($pathToFile, $data_comprobante);
+
+                $arreglo_qr = array(
+                    "ruc" => $documento->ruc_empresa,
+                    "tipo" => $documento->tipoDocumento(),
+                    "serie" => $documento->serie,
+                    "numero" => $documento->correlativo,
+                    "emision" => self::obtenerFechaEmision($documento),
+                    "igv" => 18,
+                    "total" => (float)$documento->total,
+                    "clienteTipo" => $documento->tipoDocumentoCliente(),
+                    "clienteNumero" => $documento->documento_cliente
+                );
+
+                /********************************/
+                $data_qr = generarQrApi(json_encode($arreglo_qr), $documento->empresa_id);
+
+                $name_qr = $documento->serie."-".$documento->correlativo.'.svg';
+
+                $pathToFile_qr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'.DIRECTORY_SEPARATOR.$name_qr);
+
+                if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'))) {
+                    mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'));
+                }
+
+                file_put_contents($pathToFile_qr, $data_qr);
+
+                /********************************/
+
+                $data_xml = generarXmlapi(json_encode($arreglo_comprobante), $documento->empresa_id);
+                $name_xml = $documento->serie.'-'.$documento->correlativo.'.xml';
+                $pathToFile_xml = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'xml'.DIRECTORY_SEPARATOR.$name_xml);
+                if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'xml'))) {
+                    mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'xml'));
+                }
+                file_put_contents($pathToFile_xml, $data_xml);
+
+                /********************************* */
+
+                $documento->nombre_comprobante_archivo = $name;
+                $documento->hash = $json_sunat->hash;
+                $documento->xml = $name_xml;
+                $documento->ruta_comprobante_archivo = 'public/sunat/'.$name;
+                $documento->ruta_qr = 'public/qrs/'.$name_qr;
+                $documento->update();
+
+
+                //Registro de actividad
+                $descripcion = "SE AGREGÓ EL COMPROBANTE ELECTRONICO: ". $documento->serie."-".$documento->correlativo;
+                $gestion = "COMPROBANTES ELECTRONICOS";
+                crearRegistro($documento , $descripcion , $gestion);
+
+                // Session::flash('success','Documento de Venta enviada a Sunat con exito.');
+                // return view('ventas.documentos.index',[
+
+                //     'id_sunat' => $json_sunat->sunatResponse->cdrResponse->id,
+                //     'descripcion_sunat' => $json_sunat->sunatResponse->cdrResponse->description,
+                //     'notas_sunat' => $json_sunat->sunatResponse->cdrResponse->notes,
+                //     'sunat_exito' => true
+
+                // ])->with('sunat_exito', 'success');
+                return array('success' => true,'mensaje' => 'Documento de Venta enviada a Sunat con exito.');
+
+            }else{
+
+                //COMO SUNAT NO LO ADMITE VUELVE A SER 0
+                $documento->correlativo = null;
+                $documento->serie = null;
+                $documento->sunat = '2';
+                $documento->update();
+
+                if ($json_sunat->sunatResponse->error) {
+                    $id_sunat = $json_sunat->sunatResponse->error->code;
+                    $descripcion_sunat = $json_sunat->sunatResponse->error->message;
+
+
+                }else {
+                    $id_sunat = $json_sunat->sunatResponse->cdrResponse->id;
+                    $descripcion_sunat = $json_sunat->sunatResponse->cdrResponse->description;
+
+                };
+
+
+                // Session::flash('error','Documento de Venta sin exito en el envio a sunat.');
+                // return view('ventas.documentos.index',[
+                //     'id_sunat' =>  $id_sunat,
+                //     'descripcion_sunat' =>  $descripcion_sunat,
+                //     'sunat_error' => true,
+
+                // ])->with('sunat_error', 'error');
+                return array('success' => false, 'mensaje' => $descripcion_sunat);
+            }
+        }else{
+            $documento->sunat = '1';
+            $documento->update();
+            // Session::flash('error','Documento de venta fue enviado a Sunat.');
+            // return redirect()->route('ventas.documento.index')->with('sunat_existe', 'error');
+
+            return array('success' => false, 'mensaje' => 'Documento de venta fue enviado a Sunat.');
+        }
     }
 
     public function vouchersAvaible(Request $request)
