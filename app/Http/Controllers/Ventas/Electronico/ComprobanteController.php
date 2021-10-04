@@ -162,28 +162,69 @@ class ComprobanteController extends Controller
                     if ($json_sunat->sunatResponse->success == true) {
         
                         $documento->sunat = '1';
-        
+
                         $data_comprobante = generarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
 
-                        $name = $existe[0]->get('numeracion')->serie."-".$documento->correlativo.'.pdf';
-                        
+                        $name = $documento->serie."-".$documento->correlativo.'.pdf';
+
                         $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'.DIRECTORY_SEPARATOR.$name);
-        
+
                         if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'))) {
                             mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'));
                         }
-        
+
                         file_put_contents($pathToFile, $data_comprobante);
+
+                        $arreglo_qr = array(
+                            "ruc" => $documento->ruc_empresa,
+                            "tipo" => $documento->tipoDocumento(),
+                            "serie" => $documento->serie,
+                            "numero" => $documento->correlativo,
+                            "emision" => self::obtenerFechaEmision($documento),
+                            "igv" => 18,
+                            "total" => (float)$documento->total,
+                            "clienteTipo" => $documento->tipoDocumentoCliente(),
+                            "clienteNumero" => $documento->documento_cliente
+                        );
+
+                        /********************************/
+                        $data_qr = generarQrApi(json_encode($arreglo_qr), $documento->empresa_id);
+
+                        $name_qr = $documento->serie."-".$documento->correlativo.'.svg';
+
+                        $pathToFile_qr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'.DIRECTORY_SEPARATOR.$name_qr);
+
+                        if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'))) {
+                            mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'));
+                        }
+
+                        file_put_contents($pathToFile_qr, $data_qr);
+
+                        /********************************/
+
+                        $data_xml = generarXmlapi(json_encode($arreglo_comprobante), $documento->empresa_id);
+                        $name_xml = $documento->serie.'-'.$documento->correlativo.'.xml';
+                        $pathToFile_xml = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'xml'.DIRECTORY_SEPARATOR.$name_xml);
+                        if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'xml'))) {
+                            mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'xml'));
+                        }
+                        file_put_contents($pathToFile_xml, $data_xml);
+
+                        /********************************* */
+
                         $documento->nombre_comprobante_archivo = $name;
+                        $documento->hash = $json_sunat->hash;
+                        $documento->xml = $name_xml;
                         $documento->ruta_comprobante_archivo = 'public/sunat/'.$name;
-                        $documento->update(); 
-        
-        
+                        $documento->ruta_qr = 'public/qrs/'.$name_qr;
+                        $documento->update();
+
+
                         //Registro de actividad
-                        $descripcion = "SE AGREGÓ EL COMPROBANTE ELECTRONICO: ". $existe[0]->get('numeracion')->serie."-".$documento->correlativo;
+                        $descripcion = "SE AGREGÓ EL COMPROBANTE ELECTRONICO: ". $documento->serie."-".$documento->correlativo;
                         $gestion = "COMPROBANTES ELECTRONICOS";
                         crearRegistro($documento , $descripcion , $gestion);
-                        
+
                         Session::flash('success','Documento de Venta enviada a Sunat con exito.');
                         return view('ventas.documentos.index',[
                             
