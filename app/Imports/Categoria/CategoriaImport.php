@@ -19,7 +19,7 @@ class CategoriaImport implements ToCollection,WithHeadingRow
     {
         Log::info($collection);
         foreach ($collection as  $row) {
-            if($row['rubro']!=null && Categoria::where('descripcion',$row['rubro'])->count()==0) {
+            if($row['rubro']!=null && Categoria::where('descripcion',$row['rubro'])->where('estado','ACTIVO')->count()==0) {
                 $categoria=new Categoria();
                 $categoria->descripcion=$row['rubro'];
                 $categoria->save();
