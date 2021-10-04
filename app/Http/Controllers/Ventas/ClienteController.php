@@ -359,7 +359,7 @@ class ClienteController extends Controller
                     $query->whereIn('estado',["ACTIVO"]);
                 })],
                 'nombre' => 'required',
-                'tipo_cliente' => 'required',
+                'tipo_cliente_id' => 'required',
                 'departamento' => 'required',
                 'zona' => 'required',
                 'provincia' => 'required',
@@ -371,7 +371,7 @@ class ClienteController extends Controller
             
             $message = [
                 'tipo_documento.required' => 'El campo Tipo de documento es obligatorio.',
-                'tipo_cliente.required' => 'El campo Tipo de cliente es obligatorio.',
+                'tipo_cliente_id.required' => 'El campo Tipo de cliente es obligatorio.',
                 'documento.required' => 'El campo Nro. Documento es obligatorio',
                 'documento.unique' => 'El campo Nro. Documento debe ser único',
                 'documento.numeric' => 'El campo Nro. Documento debe ser numérico',
@@ -403,7 +403,7 @@ class ClienteController extends Controller
             $cliente->tipo_documento = $request->get('tipo_documento');
     
             $cliente->documento = $request->get('documento');
-            $cliente->tabladetalles_id = $request->input('tipo_cliente');
+            $cliente->tabladetalles_id = $request->input('tipo_cliente_id');
             $cliente->nombre = $request->get('nombre');
             $cliente->codigo = $request->get('codigo');
             $cliente->zona = $request->get('zona');

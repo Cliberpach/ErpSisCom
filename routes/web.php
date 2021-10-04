@@ -513,7 +513,7 @@ function(){
 
 Route::get('ruta', function () {
     $kardex = Kardex::find(1);
-    return $kardex->producto;
+    return tipo_clientes();
     $user = User::find(1);
     $user->password = bcrypt('2020');
     $user->update();

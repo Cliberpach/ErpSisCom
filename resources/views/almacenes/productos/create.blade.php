@@ -46,7 +46,7 @@
                                     <div class="col-lg-6 col-xs-12">
                                         <div class="form-group">
                                             <label class="required">Unidad de Medida</label>
-                                            <select id="medida" name="medida" class="select2_form form-control {{ $errors->has('medida') ? ' is-invalid' : '' }}">
+                                            <select id="medida" name="medida" class="select2_form form-control {{ $errors->has('medida') ? ' is-invalid' : '' }}" required>
                                                 <option></option>
                                                 @foreach(unidad_medida() as $medida)
                                                     <option value="{{ $medida->id }}" {{ (old('medida') == $medida->id ? "selected" : "") }}>{{ $medida->simbolo.' - '.$medida->descripcion }}</option>

@@ -48,7 +48,7 @@
                                 <div class="col-12 col-md-6">
                                     <div class="form-group">
                                         <label class="required" for="tipo_cliente">Tipo Cliente</label>
-                                        <select id="tipo_cliente" name="tipo_cliente" class="select2_form form-control" style="width: 100%" required>
+                                        <select id="tipo_cliente_id" name="tipo_cliente_id" class="select2_form form-control" style="width: 100%" required>
                                             <option></option>
                                             @foreach (tipo_clientes() as $tipo_cliente)
                                                 <option value="{{ $tipo_cliente->id }}">{{ $tipo_cliente->descripcion }}</option>
