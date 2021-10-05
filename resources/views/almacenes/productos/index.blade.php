@@ -54,6 +54,8 @@
     </div>
 </div>
 
+@include('almacenes.productos.modalIngreso')
+
 @stop
 @push('styles')
 <!-- DataTable -->
@@ -134,14 +136,16 @@
                         var url_editar = '{{ route('almacenes.producto.edit', ':id') }}';
                         url_editar = url_editar.replace(':id', data.id);
 
-                        return "<div class='btn-group'>" +
-                            "<a class='btn btn-success btn-sm' href='" + url_detalle +
-                            "' title='Detalle'><i class='fa fa-eye'></i></a>" +
-                            "<a class='btn btn-warning btn-sm modificarDetalle' href='" +
-                            url_editar + "' title='Modificar'><i class='fa fa-edit'></i></a>" +
-                            "<a class='btn btn-danger btn-sm' href='#' onclick='eliminar(" +
-                            data.id + ")' title='Eliminar'><i class='fa fa-trash'></i></a>" +
-                            "</div>";
+                        return "<div class='btn-group' style='text-transform:capitalize;'><button data-toggle='dropdown' class='btn btn-primary btn-sm  dropdown-toggle'><i class='fa fa-bars'></i></button><ul class='dropdown-menu'>" +
+
+                            "<li><a class='dropdown-item' href='" + url_detalle +"' title='Detalle'><i class='fa fa-eye'></i> Ver</a></b></li>" +
+                            "<li><a class='dropdown-item modificarDetalle' href='" + url_editar + "' title='Modificar'><i class='fa fa-edit'></i> Editar</a></b></li>" +
+                            "<li><a class='dropdown-item' href='#' onclick='eliminar(" + data.id + ")' title='Eliminar'><i class='fa fa-trash'></i> Eliminar</a></b></li>" +
+                            "<li class='dropdown-divider'></li>" +
+
+                            "<li><a class='dropdown-item nuevo-ingreso' href='#' title='Ingreso'><i class='fa fa-save'></i> Ingreso</a></b></li>" +
+
+                        "</ul></div>";
                     }
                 }
 
@@ -155,6 +159,19 @@
         // Eventos
         $('#btn_añadir_producto').on('click', añadirProducto);
     });
+
+    $(".dataTables-producto").on('click','.nuevo-ingreso',function(){
+        var data = $(".dataTables-producto").dataTable().fnGetData($(this).closest('tr'));
+
+        $('#modal_ingreso').modal('show');
+        $('#cantidad_fast').val('');
+        $('#producto_id_fast').val(data.id);
+        setTimeout(function() { $('#cantidad_fast').focus() }, 10);
+
+    });
+
+
+
 
     //Controlar Error
     $.fn.DataTable.ext.errMode = 'throw';

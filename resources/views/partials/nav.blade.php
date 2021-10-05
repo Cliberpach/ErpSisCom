@@ -117,7 +117,7 @@
         <li class="@yield('cuenta_cliente-active')"><a href="{{ route('consultas.cuentas.cliente.index') }}">Cuenta Cliente</a></li>
         <li class="@yield('nota_salida_consulta-active')"><a href="{{ route('consultas.notas.salidad.index') }}">Nota Salida</a></li>
         <li class="@yield('nota_ingreso_consulta-active')"><a href="{{ route('consultas.notas.ingreso.index') }}">Nota Ingreso</a></li>
-        <li class="@yield('utilidad_bruta-active')"><a href="#">Utilidad Bruta</a></li>
+        <li class="@yield('utilidad_bruta-active')"><a href="{{ route('consultas.caja.utilidad.index') }}">Utilidad Bruta</a></li>
     </ul>
 </li>
 
