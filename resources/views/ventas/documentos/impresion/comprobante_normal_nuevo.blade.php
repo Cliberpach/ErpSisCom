@@ -15,8 +15,8 @@
             .cabecera{
                 width: 100%;
                 position: relative;
-                height: 100px;
-                max-height: 150px;
+                height: 120px;
+                max-height: 200px;
             }
 
             .logo {
@@ -83,7 +83,7 @@
             .numero-documento {
                 margin: 1px;
                 padding-top: 20px;
-                padding-bottom: 20px;                
+                padding-bottom: 20px;
                 border: 2px solid #52BE80;
                 font-size: 14px;
             }
@@ -114,7 +114,7 @@
 
             .informacion{
                 width: 100%;
-                position: relative;           
+                position: relative;
                 border: 2px solid #52BE80;
             }
 
@@ -125,8 +125,8 @@
 
             .cuerpo{
                 width: 100%;
-                position: relative; 
-                border: 1px solid red;     
+                position: relative;
+                border: 1px solid red;
             }
 
             .tbl-detalles {
@@ -193,10 +193,10 @@
             </div>
             <div class="empresa">
                 <div class="empresa-info">
-                    <p class="m-0 p-0 text-uppercase nombre-empresa">{{ DB::table('empresas')->count() == 0 ? 'SISCOM ' : DB::table('empresas')->first()->razon_social }}</p>
+                    <p class="m-0 p-0 text-uppercase nombre-empresa">DE: {{ DB::table('empresas')->count() == 0 ? 'SISCOM ' : DB::table('empresas')->first()->razon_social }}</p>
                     <p class="m-0 p-0 text-uppercase direccion-empresa">{{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->direccion_fiscal }}</p>
-                    
-                    <p class="m-0 p-0 text-info-empresa">Central telefónica: {{ DB::table('empresas')->count() == 0 ? '-' : DB::table('empresas')->first()->telefono }}</p>
+
+                    <p class="m-0 p-0 text-info-empresa">Tlfn: {{ DB::table('empresas')->count() == 0 ? '-' : DB::table('empresas')->first()->telefono.' / '.DB::table('empresas')->first()->celular }}</p>
                     <p class="m-0 p-0 text-info-empresa">Email: {{ DB::table('empresas')->count() == 0 ? '-' : DB::table('empresas')->first()->correo }}</p>
                 </div>
             </div>
@@ -221,7 +221,7 @@
             </div>
             <div class="logo-empresa">
                 <img src="{{ public_path() . '/img/motosierra.jpg' }}" class="img-logo">
-            </div>            
+            </div>
             <div class="logo-empresa">
                 <img src="{{ public_path() . '/img/mochila.jpg' }}" class="img-logo">
             </div>

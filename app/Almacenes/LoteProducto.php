@@ -20,7 +20,7 @@ class LoteProducto extends Model
         'cantidad',
         'cantidad_logica',
         'cantidad_inicial',
-        
+
         'fecha_vencimiento',
         'fecha_entrega',
         'observacion',
@@ -30,7 +30,7 @@ class LoteProducto extends Model
 
         'estado'
     ];
-    
+
     public $timestamps = true;
 
     public function producto()
@@ -38,9 +38,19 @@ class LoteProducto extends Model
         return $this->belongsTo('App\Almacenes\Producto','producto_id');
     }
 
+    public function detalle_nota()
+    {
+        return $this->hasOne('App\Almacenes\DetalleNotaIngreso','lote_id','id');
+    }
+
+    public function detalle_compra()
+    {
+        return $this->hasOne('App\Compras\Documento\Detalle','lote_id','id');
+    }
+
     public function documento_compra()
     {
-        return $this->belongsTo('App\Compras\Documento\Detalle','compra_documento_id');
+        return $this->belongsTo('App\Compras\Documento\Documento','documento_compra_id','id');
     }
 
     public function nota()
@@ -51,7 +61,7 @@ class LoteProducto extends Model
     //EVENTO AL CREAR Y AL MODIFICAR
     protected static function booted()
     {
-        static::saved(function(LoteProducto $loteProducto){          
+        static::saved(function(LoteProducto $loteProducto){
             //RECORRER DETALLE NOTAS
             $cantidadProductos = LoteProducto::where('producto_id',$loteProducto->producto_id)->where('estado','1')->sum('cantidad');
             //ACTUALIZAR EL STOCK DEL PRODUCTO
@@ -60,7 +70,7 @@ class LoteProducto extends Model
             $producto->update();
         });
 
-        static::updated(function(LoteProducto $loteProducto){          
+        static::updated(function(LoteProducto $loteProducto){
             //RECORRER DETALLE NOTAS
             $cantidadProductos = LoteProducto::where('producto_id',$loteProducto->producto_id)->where('estado','1')->sum('cantidad');
             //ACTUALIZAR EL STOCK DEL PRODUCTO
@@ -69,7 +79,7 @@ class LoteProducto extends Model
             $producto->update();
         });
 
-        static::deleted(function(LoteProducto $loteProducto){          
+        static::deleted(function(LoteProducto $loteProducto){
             //RECORRER DETALLE NOTAS
             $cantidadProductos = LoteProducto::where('producto_id',$loteProducto->producto_id)->where('estado','1')->sum('cantidad');
             //ACTUALIZAR EL STOCK DEL PRODUCTO

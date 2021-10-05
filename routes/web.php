@@ -6,6 +6,7 @@ use App\Http\Controllers\Almacenes\NotaSalidadController;
 use App\Mantenimiento\Empresa\Empresa;
 use App\User;
 use App\Ventas\CuentaCliente;
+use App\Ventas\Documento\Detalle;
 use App\Ventas\Documento\Documento;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -167,6 +168,7 @@ function(){
         Route::get('getdata','Almacenes\NotaIngresoController@gettable')->name('almacenes.nota_ingreso.data');
         Route::get('create','Almacenes\NotaIngresoController@create')->name('almacenes.nota_ingreso.create');
         Route::post('store', 'Almacenes\NotaIngresoController@store')->name('almacenes.nota_ingreso.store');
+        Route::post('/storeFast', 'Almacenes\NotaIngresoController@storeFast')->name('almacenes.nota_ingreso.storeFast');
         Route::get('edit/{id}','Almacenes\NotaIngresoController@edit')->name('almacenes.nota_ingreso.edit');
         Route::get('show/{id}','Almacenes\NotaIngresoController@show')->name('almacenes.nota_ingreso.show');
         Route::put('update/{id}', 'Almacenes\NotaIngresoController@update')->name('almacenes.nota_ingreso.update');
@@ -509,11 +511,19 @@ function(){
         Route::post('getTable','Consultas\Kardex\ProductoController@getTable')->name('consultas.kardex.producto.getTable');
 
     });
+
+    // Cosultas - Caja - Utilidad
+    Route::prefix('consultas/caja/utilidad')->group(function(){
+
+        Route::get('index', 'Consultas\Caja\UtilidadController@index')->name('consultas.caja.utilidad.index');
+        Route::post('getTable','Consultas\Caja\UtilidadController@getTable')->name('consultas.caja.utilidad.getTable');
+
+    });
 });
 
 Route::get('ruta', function () {
-    $kardex = Kardex::find(1);
-    return tipo_clientes();
+    $detalle = Detalle::find(1);
+    return $detalle->lote->detalle_compra;
     $user = User::find(1);
     $user->password = bcrypt('2020');
     $user->update();

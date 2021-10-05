@@ -151,6 +151,64 @@ class NotaIngresoController extends Controller
         return redirect()->route('almacenes.nota_ingreso.index')->with('guardar', 'success');
     }
 
+    public function storeFast(Request $request)
+    {
+        $fecha_hoy = Carbon::now()->toDateString();
+        $fecha_ = Carbon::createFromFormat('Y-m-d', $fecha_hoy);
+        $fecha = Carbon::createFromFormat('Y-m-d', $fecha_hoy);
+        $fecha = str_replace("-", "", $fecha);
+        $fecha = str_replace(" ", "", $fecha);
+        $fecha = str_replace(":", "", $fecha);
+
+        $fecha_actual = Carbon::now();
+        $fecha_actual = date("d/m/Y",strtotime($fecha_actual));
+        $fecha_5 = date("Y-m-d",strtotime($fecha_hoy."+ 5 years"));
+
+        $data = $request->all();
+
+        $rules = [
+            'producto_id' => 'required',
+            'cantidad' => 'nullable',
+        ];
+
+        $message = [
+
+            'producto_id.required' => 'El campo producto  es Obligatorio',
+            'cantidad.required' => 'El campo cantidad  es Obligatorio',
+        ];
+
+        $validator =  Validator::make($data, $rules, $message);
+
+        if ($validator->fails()) {
+            Session::flash('error','Ingreso no creado porfavor llenar todos los datos.');
+            return redirect()->route('almacenes.producto.index')->with('guardar', 'error');
+        }
+
+        $notaingreso = new NotaIngreso();
+        $notaingreso->numero = $fecha . (DB::table('nota_ingreso')->count() + 1);
+        $notaingreso->fecha = $fecha_;
+        $notaingreso->origen = 'INGRESO RAPIDO';
+        $notaingreso->usuario = Auth()->user()->usuario;
+        $notaingreso->save();
+
+        DetalleNotaIngreso::create([
+            'nota_ingreso_id' => $notaingreso->id,
+            'lote' => 'LT-'.$fecha_actual,
+            'cantidad' => $request->cantidad,
+            'producto_id' => $request->producto_id,
+            'fecha_vencimiento' => $fecha_5
+        ]);
+
+        //Registro de actividad
+        $descripcion = "SE AGREGÓ LA NOTA DE INGRESO ";
+        $gestion = "ALMACEN / NOTA INGRESO";
+        crearRegistro($notaingreso, $descripcion, $gestion);
+
+
+        Session::flash('success','Ingreso creado correctamente.');
+        return redirect()->route('almacenes.producto.index')->with('guardar', 'success');
+    }
+
     /**
      * Display the specified resource.
      *
