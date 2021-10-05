@@ -276,7 +276,7 @@ class ProductoController extends Controller
         $producto->estado = 'ANULADO';
         $producto->update();
 
-        $producto->detalles()->update(['estado'=> 'ANULADO']);
+       // $producto->detalles()->update(['estado'=> 'ANULADO']);
 
         //Registro de actividad
         $descripcion = "SE ELIMINÓ EL PRODUCTO CON LA DESCRIPCION: ". $producto->nombre;
@@ -291,11 +291,11 @@ class ProductoController extends Controller
     {
         $data = $request->all();
 
-        $result = 0;
-        if ($data['id']) {
-            ProductoDetalle::destroy($data['id']);
-            $result = 1;
-        }
+        $result = 1;
+        // if ($data['id']) {
+        //     ProductoDetalle::destroy($data['id']);
+        //     $result = 1;
+        // }
 
         $data = ['exito' => ($result === 1)];
 
