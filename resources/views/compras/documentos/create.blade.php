@@ -1298,7 +1298,6 @@
             };
             productos.push(fila);
         });
-        console.log(productos);
         $('#productos_tabla').val(JSON.stringify(productos));
     }
     //OBTENER EL producto POR SU ID 
@@ -1360,12 +1359,13 @@
     }
 
     function sinIgv(subtotal) {
-        var igv =  subtotal * 0.18
-        var total = subtotal + igv
-        $('#igv_int').text('18%')
-        $('#subtotal').text(subtotal.toFixed(2))
-        $('#igv_monto').text(igv.toFixed(2))
-        $('#total').text(total.toFixed(2))
+        var calcularIgv = 18/100
+        var base = subtotal / (1 + calcularIgv)
+        var nuevo_igv = subtotal - base;
+        $('#igv_int').text(18+'%')
+        $('#subtotal').text(base.toFixed(2))
+        $('#igv_monto').text(nuevo_igv.toFixed(2))
+        $('#total').text(subtotal.toFixed(2))
     }
 
     function conIgv(subtotal) {

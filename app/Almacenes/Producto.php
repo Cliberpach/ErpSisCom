@@ -44,7 +44,7 @@ class Producto extends Model
     {
         return $this->belongsTo('App\Almacenes\Categoria');
     }
-
+    
     public function detalles()
     {
         return $this->hasMany('App\Almacenes\ProductoDetalle');

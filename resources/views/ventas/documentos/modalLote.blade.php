@@ -25,7 +25,7 @@
                                 <th class="text-center">LOTE</th>
                                 <th class="text-center">FECHA VENCE.</th>
                                 <th class="text-center">CANTID.</th>
-                                <th class="text-center">CATEGORIA</th>
+                                <th class="text-center">COD. BARRA</th>
                                 <th class="text-center">PREC.VENTA</th>
 
                             </tr>
@@ -155,7 +155,7 @@ function obtenerLotesproductos(tipo_cliente) {
             {data: 'codigo_lote', className: "text-center", name:"lote_productos.codigo_lote" },
             {data: 'fecha_venci', className: "text-center", name:"lote_productos.fecha_vencimiento" },
             {data: 'cantidad_logica', className: "text-center", name:"lote_productos.cantidad_logica" },
-            {data: 'categoria', className: "text-center", name:"categorias.descripcion" },
+            {data: 'codigo_barra', className: "text-center", name:"productos.codigo_barra" },
             {data: 'precio_venta', className: "text-center", name:"productos_clientes.monto" },
         ],
         "bLengthChange": true,

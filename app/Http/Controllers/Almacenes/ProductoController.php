@@ -32,6 +32,7 @@ class ProductoController extends Controller
             $coleccion->push([
                 'id' => $producto->id,
                 'codigo' => $producto->codigo,
+                'codigo_barra' => $producto->codigo_barra,
                 'nombre' => $producto->nombre,
                 'categoria' => $producto->categoria->descripcion,
                 'almacen' => $producto->almacen->descripcion,
@@ -39,7 +40,7 @@ class ProductoController extends Controller
                 'stock' => $producto->stock
             ]);
         }
-        return DataTables::of($coleccion)->toJson();
+        return DataTables::of($coleccion)->make(true);
     }
 
     public function create()

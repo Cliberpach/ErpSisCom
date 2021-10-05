@@ -35,6 +35,7 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">CÓDIGO</th>
+                                    <th class="text-center">CÓDIGO BARRA</th>
                                     <th class="text-center">NOMBRE</th>
                                     <th class="text-center">ALMACEN</th>
                                     <th class="text-center">MARCA</th>
@@ -102,6 +103,10 @@
             "ajax": "{{ route('almacenes.producto.getTable') }}",
             "columns": [{
                     data: 'codigo',
+                    className: "text-left"
+                },
+                {
+                    data: 'codigo_barra',
                     className: "text-left"
                 },
                 {

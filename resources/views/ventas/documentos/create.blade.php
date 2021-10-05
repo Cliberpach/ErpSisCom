@@ -42,14 +42,17 @@
                             <input type="hidden" name="cotizacion_id" value="{{ $cotizacion->id }}">
                         @endif
                         <div class="row">
-                            <div class="col-sm-6 b-r">
+                            <div class="col-12">                                
                                 <h4 class=""><b>Documento de venta</b></h4>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <p>Registrar datos del documento de venta:</p>
                                     </div>
                                 </div>
-
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 b-r">
                                 <div class="form-group row">
                                     <div class="col-lg-6 col-xs-12" id="fecha_documento">
                                         <label class="">Fecha de Documento</label>
@@ -109,39 +112,6 @@
 
                                 <div class="form-group row">
                                     <div class="col-lg-6 col-xs-12 select-required">
-                                        <label class="required">Forma de pago</label>
-                                        <select name="forma_pago" id="forma_pago"
-                                            class="select2_form form-control {{ $errors->has('forma_pago') ? ' is-invalid' : '' }}"
-                                            style="text-transform: uppercase; width:100%" value="{{ old('forma_pago') }}" required>
-                                            <option value=""></option>
-                                            @foreach (forma_pago() as $pago)
-                                                <option value="{{ $pago->id }}"
-                                                    {{ $pago->descripcion === 'CONTADO' ? 'selected' : '' }}>
-                                                    {{ $pago->descripcion }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-6 col-xs-12" id="fecha_vencimiento">
-                                        <label class="required">Fecha de vencimiento</label>
-                                        <div class="input-group date">
-                                            <span class="input-group-addon">
-                                                <i class="fa fa-calendar"></i>
-                                            </span>
-                                            <input type="date" id="fecha_vencimiento_campo" name="fecha_vencimiento_campo"
-                                                class="form-control input-required" autocomplete="off"
-                                                {{ $errors->has('fecha_vencimiento_campo') ? ' is-invalid' : '' }}
-                                                value="{{ old('fecha_vencimiento_campo', $fecha_hoy) }}" required>
-                                            @if ($errors->has('fecha_vencimiento_campo'))
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $errors->first('fecha_vencimiento_campo') }}</strong>
-                                                </span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <div class="col-lg-6 col-xs-12 select-required">
                                         <label class="required">Tipo de Comprobante: </label>
                                         <select
                                             class="select2_form form-control {{ $errors->has('tipo_venta') ? ' is-invalid' : '' }}"
@@ -183,7 +153,7 @@
 
                             <div class="col-sm-6">
 
-                                <div class="form-group select-required">
+                                <div class="form-group select-required d-none">
                                     <label class="required">Empresa: </label>
 
                                     @if (!empty($cotizacion))
@@ -212,6 +182,39 @@
                                     @endif
                                 </div>
 
+                                <div class="form-group row">
+                                    <div class="col-lg-6 col-xs-12 select-required">
+                                        <label class="required">Forma de pago</label>
+                                        <select name="forma_pago" id="forma_pago"
+                                            class="select2_form form-control {{ $errors->has('forma_pago') ? ' is-invalid' : '' }}"
+                                            style="text-transform: uppercase; width:100%" value="{{ old('forma_pago') }}" required>
+                                            <option value=""></option>
+                                            @foreach (forma_pago() as $pago)
+                                                <option value="{{ $pago->id }}"
+                                                    {{ $pago->descripcion === 'CONTADO' ? 'selected' : '' }}>
+                                                    {{ $pago->descripcion }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-6 col-xs-12" id="fecha_vencimiento">
+                                        <label class="required">Fecha de vencimiento</label>
+                                        <div class="input-group date">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="date" id="fecha_vencimiento_campo" name="fecha_vencimiento_campo"
+                                                class="form-control input-required" autocomplete="off"
+                                                {{ $errors->has('fecha_vencimiento_campo') ? ' is-invalid' : '' }}
+                                                value="{{ old('fecha_vencimiento_campo', $fecha_hoy) }}" required>
+                                            @if ($errors->has('fecha_vencimiento_campo'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('fecha_vencimiento_campo') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="form-group select-required">
                                     <label class="required">Cliente: @if (empty($cotizacion))<button type="button" class="btn btn-outline btn-primary" onclick="modalCliente()">Registrar</button>@endif</label>
                                     <input type="hidden" name="tipo_cliente_documento" id="tipo_cliente_documento">
@@ -237,7 +240,7 @@
                                     @endif
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group d-none">
                                     <label>Observación:</label>
 
                                     <textarea type="text" placeholder=""

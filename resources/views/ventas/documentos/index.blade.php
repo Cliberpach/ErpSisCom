@@ -236,6 +236,7 @@ $(document).ready(function() {
                         "<li class='dropdown-divider'></li>" +
                         
                         "<li><a class='dropdown-item' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-send'></i> Enviar Sunat</a></b></li>" +
+                        "<li><a class='dropdown-item' onclick='enviarSunatBaja(" +data.id+ ")'  title='Enviar Sunat Baja'><b><i class='fa fa-remove'></i> Dar de baja sunat</a></b></li>" +
                         "<li><a class='dropdown-item' onclick='guia(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-file'></i> Guia Remision</a></b></li>"
                         
                     "</ul></div>"
@@ -296,7 +297,6 @@ function eliminar(id) {
 }
 
 function pagar(id,tipo) {
-  
 
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
@@ -404,7 +404,6 @@ function pagar(id,tipo) {
         
         }
     })
-
 
 }
 
@@ -626,6 +625,56 @@ function  guia(id) {
 }
 
 function enviarSunat(id , sunat) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger',
+        },
+        buttonsStyling: false
+    })
+
+    Swal.fire({
+        title: "Opción Enviar a Sunat",
+        text: "¿Seguro que desea enviar documento de venta a Sunat?",
+        showCancelButton: true,
+        icon: 'info',
+        confirmButtonColor: "#1ab394",
+        confirmButtonText: 'Si, Confirmar',
+        cancelButtonText: "No, Cancelar",
+        // showLoaderOnConfirm: true,
+    }).then((result) => {
+        if (result.value) {
+            
+            var url = '{{ route("ventas.documento.sunat", ":id")}}';
+            url = url.replace(':id',id);
+
+            window.location.href = url
+
+            Swal.fire({
+                title: '¡Cargando!',
+                type: 'info',
+                text: 'Enviando documento de venta a Sunat',
+                showConfirmButton: false,
+                onBeforeOpen: () => {
+                    Swal.showLoading()
+                }
+            })
+
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            swalWithBootstrapButtons.fire(
+                'Cancelado',
+                'La Solicitud se ha cancelado.',
+                'error'
+            )
+        }
+    })
+
+}
+
+function enviarSunatBaja(id , sunat) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
