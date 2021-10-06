@@ -373,8 +373,8 @@ class DocumentoController extends Controller
             $documento->numero_doc = 'VENTA-'.$numero_doc;
             $documento->update();
             //Llenado de los articulos
-            $productosJSON = $request->get('productos_tabla');
-            $productotabla = json_decode($productosJSON[0]);
+            $productosJSON = $request->get('productos_tabla[]');
+            $productotabla = json_decode($productosJSON);
             foreach ($productotabla as $producto) {
                 $lote = LoteProducto::findOrFail($producto->producto_id);
                 Detalle::create([
@@ -442,7 +442,13 @@ class DocumentoController extends Controller
                 $vp = self::venta_comprobante($documento->id);
                 $ve = self::venta_email($documento->id);
                 Session::flash('success','Documento de venta creado.');
-                return redirect()->route('ventas.documento.index')->with('documento_id', $documento->id);
+                //return redirect()->route('ventas.documento.index')->with('documento_id', $documento->id);
+
+                return response()->json([
+                    'success' => true,
+                    'documento_id'=> $documento->id
+                ]);
+
                 /*if(!$envio_['success'])
                 {
                     DB::rollBack();
@@ -468,21 +474,30 @@ class DocumentoController extends Controller
                 $vp = self::venta_comprobante($documento->id);
                 $ve = self::venta_email($documento->id);
                 Session::flash('success','Documento de venta creado.');
-                return redirect()->route('ventas.documento.index')->with('documento_id', $documento->id);
+                return response()->json([
+                    'success' => true,
+                    'documento_id'=> $documento->id
+                ]);
+                //return redirect()->route('ventas.documento.index')->with('documento_id', $documento->id);
             }
         }
         catch(Exception $e)
         {
-            $productosJSON = $request->get('productos_tabla');
-            $productotabla = json_decode($productosJSON[0]);
+            $productosJSON = $request->get('productos_tabla[]');
+            $productotabla = json_decode($productosJSON);
             DB::rollBack();
-            foreach ($productotabla as $producto) {
+            /*foreach ($productotabla as $producto) {
                 $lote = LoteProducto::findOrFail($producto->producto_id);
                 $lote->cantidad_logica =  $lote->cantidad_logica + $producto->cantidad;
                 $lote->update();
-            }
-            Session::flash('error', (string) $e->getMessage());
-            return redirect()->route('ventas.documento.index');
+            }*/
+            //Session::flash('error', (string) $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'mensaje'=> 'Ocurrio un error porfavor volver a intentar, si el error persiste comunicarse con el administrador del sistema.',
+                'excepcion' => $e->getMessage()
+            ]);
+            //return redirect()->route('ventas.documento.index');
         }
     }
 

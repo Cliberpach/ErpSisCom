@@ -35,7 +35,7 @@
                 <div class="ibox-content">
 
                     <input type="hidden" id='asegurarCierre'>
-                    <form action="{{ route('ventas.documento.store') }}" method="POST" id="enviar_documento">
+                    <form action="" method="POST" id="enviar_documento">
                         {{ csrf_field() }}
 
                         @if (!empty($cotizacion))
@@ -1280,8 +1280,6 @@
             correcto = false;
             toastr.error('El campo fecha de vencimiento es requerido.');
         }
-
-        console.log(clientes_global)
         if(clientes_global.length > 0)
         {
             let index = clientes_global.findIndex(cliente => cliente.id == cliente_id);
@@ -1500,7 +1498,7 @@
             if (value.data == "") {
                 toastr.error("No hay ninguna apertura de caja");
             } else {                
-                Swal.fire({
+                /*Swal.fire({
                     title: 'Opción Guardar',
                     text: "¿Seguro que desea guardar cambios?",
                     icon: 'question',
@@ -1535,7 +1533,6 @@
 
 
                     } else if (
-                        /* Read more about handling dismissals below */
                         result.dismiss === Swal.DismissReason.cancel
                     ) {
                         swalWithBootstrapButtons.fire(
@@ -1544,7 +1541,122 @@
                             'error'
                         )
                     }
-                })
+                })*/
+
+                let envio_ok = true;
+
+                var tipo = validarTipo();
+
+                if (tipo == false) {
+                    cargarProductos();
+                    //CARGAR DATOS TOTAL
+                    $('#monto_sub_total').val($('#subtotal').text())
+                    $('#monto_total_igv').val($('#igv_monto').text())
+                    $('#monto_total').val($('#total').text())
+
+                    document.getElementById("moneda").disabled = false;
+                    document.getElementById("observacion").disabled = false;
+                    document.getElementById("fecha_documento_campo").disabled = false;
+                    document.getElementById("fecha_atencion_campo").disabled = false;
+                    document.getElementById("empresa_id").disabled = false;
+                    document.getElementById("cliente_id").disabled = false;
+                    //HABILITAR EL CARGAR PAGINA
+                    //$('#asegurarCierre').val(2)
+                    //$('#enviar_documento').submit();
+                }
+                else
+                {
+                    envio_ok = false;
+                }
+
+                if(envio_ok)
+                {
+                    let formDocumento = document.getElementById('enviar_documento');
+                    let formData = new FormData(formDocumento);
+
+                    var object = {};
+                    formData.forEach(function(value, key){
+                        object[key] = value;
+                    });
+
+                    console.log(object);
+
+                    //var json = JSON.stringify(object);
+
+                    var datos = object;
+                    var init = {
+                        // el método de envío de la información será POST
+                        method: "POST",
+                        headers: { // cabeceras HTTP
+                            // vamos a enviar los datos en formato JSON
+                            'Content-Type': 'application/json'
+                        },
+                        // el cuerpo de la petición es una cadena de texto 
+                        // con los datos en formato JSON
+                        body: JSON.stringify(datos) // convertimos el objeto a texto
+                    };
+
+                    var url = '{{ route("ventas.documento.store") }}';
+                    var textAlert = "¿Seguro que desea guardar cambios?";
+                    Swal.fire({
+                        title: 'Opción Guardar',
+                        text: textAlert,
+                        icon: 'question',
+                        customClass: {
+                            container: 'my-swal'
+                        },
+                        showCancelButton: true,
+                        confirmButtonColor: "#1ab394",
+                        confirmButtonText: 'Si, Confirmar',
+                        cancelButtonText: "No, Cancelar",
+                        showLoaderOnConfirm: true,
+                        allowOutsideClick: false,
+                        preConfirm: (login) => {
+                            return fetch(url,init)
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error(response.statusText)
+                                    }
+                                    return response.json()
+                                })
+                                .catch(error => {
+                                    Swal.showValidationMessage(
+                                        `Ocurrió un error`
+                                    );
+                                })
+                        },
+                        allowOutsideClick: () => !Swal.isLoading()
+                    }).then((result) => {
+                        if (result.value !== undefined && result.isConfirmed) {
+                            if(result.value.success)
+                            {
+                                toastr.success('¡Documento de venta creado!','Exito')
+
+                                let id = result.value.documento_id;
+                                var url_open_pdf = '{{ route("ventas.documento.comprobante", ":id")}}';
+                                url_open_pdf = url_open_pdf.replace(':id',id+'-100');
+                                window.open(url_open_pdf, "Comprobante SISCOM", "width=900, height=600");
+
+                                $('#asegurarCierre').val(2);
+                            
+                                location = "{{ route('ventas.documento.index') }}";
+                            }
+                            else
+                            {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: '¡'+ result.value.mensaje +'!',               
+                                    customClass: {
+                                        container: 'my-swal'
+                                    },
+                                    showConfirmButton: false,
+                                    timer: 2500
+                                });
+                            }
+                        }
+                    });
+                }
             }
         })
     }

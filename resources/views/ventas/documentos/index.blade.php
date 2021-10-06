@@ -23,7 +23,7 @@
 </div>
 
 <div>
-    <a id="nueva_ventana" target="_blank">liga</a>
+    <a id="nueva_ventana" class="d-none" target="_blank"></a>
 </div>
 
 <div class="wrapper wrapper-content animated fadeInRight">
@@ -236,7 +236,7 @@ $(document).ready(function() {
                         "<li class='dropdown-divider'></li>" +
                         
                         "<li><a class='dropdown-item' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-send'></i> Enviar Sunat</a></b></li>" +
-                        "<li><a class='dropdown-item' onclick='enviarSunatBaja(" +data.id+ ")'  title='Enviar Sunat Baja'><b><i class='fa fa-remove'></i> Dar de baja sunat</a></b></li>" +
+                        "<li class='d-none'><a class='dropdown-item' onclick='enviarSunatBaja(" +data.id+ ")'  title='Enviar Sunat Baja'><b><i class='fa fa-remove'></i> Dar de baja sunat</a></b></li>" +
                         "<li><a class='dropdown-item' onclick='guia(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-file'></i> Guia Remision</a></b></li>"
                         
                     "</ul></div>"
