@@ -703,6 +703,12 @@
         $('#lote').val('LT-{{ $fecha_actual }}');
         $('#fecha_vencimiento').val('{{$fecha_5}}');
         $('#costo_flete').val('0.00');
+        $("#igv_check").attr('checked', true);
+        $('#igv_requerido').addClass("required")
+        $('#igv').prop('required', true)
+        $('#igv').val('18')
+        var igv = ($('#igv').val()) + ' %'
+        $('#igv_int').text(igv)
     });
     //Select2
     $(".select2_form").select2({

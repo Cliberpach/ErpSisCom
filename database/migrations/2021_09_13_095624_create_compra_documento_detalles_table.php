@@ -33,8 +33,8 @@ class CreateCompraDocumentoDetallesTable extends Migration
             $table->unsignedInteger('lote_id')->unsigned()->nullable();
             $table->foreign('lote_id')->references('id')->on('lote_productos')->onDelete('cascade');
 
-            $table->unsignedDecimal('precio', 15,3);
-            $table->unsignedDecimal('costo_flete', 15,3);
+            $table->unsignedDecimal('precio', 15,4);
+            $table->unsignedDecimal('costo_flete', 15,4);
             $table->timestamps();
         });
     }

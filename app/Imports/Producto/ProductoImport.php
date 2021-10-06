@@ -42,6 +42,10 @@ class ProductoImport implements ToCollection,WithHeadingRow,WithValidation
                 $producto->igv = $row['igv']=='SI'? 1 : 0;
                 $producto->save();
 
+                $producto->codigo = 1000 + $producto->id;
+                $producto->update();
+
+
 
                     TipoCliente::create([
                         'producto_id' => $producto->id,

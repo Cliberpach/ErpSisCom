@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class GuiaController extends Controller
 {
@@ -212,7 +213,7 @@ class GuiaController extends Controller
 
     public function show($id)
     {
-        $guia = Guia::findOrFail($id);
+        $guia = Guia::with(['documento','documento.detalles','documento.detalles.lote','documento.detalles.lote.producto'])->findOrFail($id);
         if ($guia->sunat == '0' || $guia->sunat == '2' ) {
             //ARREGLO GUIA
             $arreglo_guia = array(
@@ -273,7 +274,14 @@ class GuiaController extends Controller
                 mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'guias'));
             }
             file_put_contents($pathToFile, $data);
-            return response()->file($pathToFile);
+            $empresa = Empresa::first();
+            $pdf = PDF::loadview('ventas.guias.reportes.guia',[
+                'guia' => $guia,
+                'empresa' => $empresa,
+                ])->setPaper('a4')->setWarnings(false);
+            return $pdf->stream('guia.pdf');
+
+            //return response()->file($pathToFile);
         }else{
             $existe = event(new NumeracionGuiaRemision($guia));
             //OBTENER CORRELATIVO DE LA GUIA DE REMISION
@@ -286,7 +294,15 @@ class GuiaController extends Controller
                 mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'guias'));
             }
             file_put_contents($pathToFile, $data);
-            return response()->file($pathToFile);
+
+            $empresa = Empresa::first();
+            $pdf = PDF::loadview('ventas.guias.reportes.guia',[
+                'guia' => $guia,
+                'empresa' => $empresa,
+                ])->setPaper('a4')->setWarnings(false);
+            return $pdf->stream('guia.pdf');
+
+            //return response()->file($pathToFile);
         }
 
 
@@ -364,7 +380,14 @@ class GuiaController extends Controller
                             mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'.DIRECTORY_SEPARATOR.'guia'));
                         }
 
-                        file_put_contents($pathToFile, $data);
+                        //file_put_contents($pathToFile, $data);
+                        $empresa = Empresa::first();
+                        PDF::loadview('ventas.guias.reportes.guia',[
+                            'guia' => $guia,
+                            'empresa' => $empresa,
+                            ])->setPaper('a4')->setWarnings(false)
+                            ->save(public_path().'/storage/sunat/guia/'.$name);
+
                         $guia->nombre_comprobante_archivo = $name;
                         $guia->ruta_comprobante_archivo = 'public/sunat/guia/'.$name;
                         $guia->update(); 
