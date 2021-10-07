@@ -39,6 +39,7 @@ class ProductoImport implements ToCollection,WithHeadingRow,WithValidation
                 $producto->stock_minimo = $row['stockminimo'];
                 $producto->precio_venta_minimo = $row['precioventaminimo'];
                 $producto->precio_venta_maximo = $row['precioventamaximo'];
+                $producto->codigo_barra = $row['codigobarra'];
                 $producto->igv = $row['igv']=='SI'? 1 : 0;
                 $producto->save();
 

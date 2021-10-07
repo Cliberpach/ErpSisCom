@@ -41,7 +41,6 @@ class ProductoListaExport implements WithEvents,WithColumnWidths,WithTitle,HasRe
                     $i++;
                 }
                 //------------------------
-
                 $categorias= Categoria::where('estado','ACTIVO')->get();
                 $event->sheet->setCellValue('B1','Categorias');
                 $i=2;
@@ -50,7 +49,6 @@ class ProductoListaExport implements WithEvents,WithColumnWidths,WithTitle,HasRe
                     $i++;
                 }
                 //------------------------
-
                 $marcas= Marca::where('estado', 'ACTIVO')->get();
                 $event->sheet->setCellValue('C1','Marcas');
                 $i=2;
@@ -59,7 +57,6 @@ class ProductoListaExport implements WithEvents,WithColumnWidths,WithTitle,HasRe
                     $i++;
                 }
                 //------------------------
-
                 $almacenes= Almacen::where('estado', 'ACTIVO')->get();
                 $event->sheet->setCellValue('D1','Almacenes');
                 $i=2;

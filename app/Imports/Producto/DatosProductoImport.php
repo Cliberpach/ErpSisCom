@@ -25,6 +25,7 @@ class DatosProductoImport implements ToCollection, WithHeadingRow
                 'stockminimo' => $row['stockminimo'],
                 'precioventaminimo' => $row['precioventaminimo'],
                 'precioventamaximo' => $row['precioventamaximo'],
+                'codigobarra' => $row['codigobarra'],
                 'igv' => $row['igv'],
                 'precionormal' => $row['precionormal'],
                 'preciodistribuidor' => $row['preciodistribuidor'],

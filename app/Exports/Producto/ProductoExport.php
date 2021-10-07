@@ -18,7 +18,8 @@ use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 
 class ProductoExport implements fromArray, WithHeadings, ShouldAutoSize, WithEvents
 {
-    function title():String{
+    function title(): String
+    {
         return "productos";
     }
     /**
@@ -27,37 +28,39 @@ class ProductoExport implements fromArray, WithHeadings, ShouldAutoSize, WithEve
     public function array(): array
     {
         $data = array();
-        array_push($data,[
-            'UnidadMedida'=>'NIU-UNIDAD (BIENES)',
-            'Peso'=>'0.00',
-            'Nombre'=>'GATILLO',
-            'Categorias'=>'MOTORES',
-            'Marcas'=>'JET AGRO',
-            'Almacenes'=>'CENTRAL',
-            'StockMinimo'=>'0.00',
-            'PrecioVentaMinimo'=>'0.00',
-            'PrecioVentaMaximo'=>'0.00',
-            'Igv'=>'SI',
-            'PrecioNormal'=>'0.00',
-            'PrecioDistribuidor'=>'0.00',
+        array_push($data, [
+            'UnidadMedida' => 'NIU-UNIDAD (BIENES)',
+            'Peso' => '0.00',
+            'Nombre' => 'GATILLO',
+            'Categorias' => 'MOTORES',
+            'Marcas' => 'JET AGRO',
+            'Almacenes' => 'CENTRAL',
+            'StockMinimo' => '0.00',
+            'PrecioVentaMinimo' => '0.00',
+            'PrecioVentaMaximo' => '0.00',
+            'Igv' => 'SI',
+            'PrecioNormal' => '0.00',
+            'PrecioDistribuidor' => '0.00',
+            'CodigoBarra' => '115464856'
         ]);
         return $data;
     }
     public function headings(): array
     {
         return [
-                'UnidadMedida',
-                'Peso',
-                'Nombre',
-                'Categorias',
-                'Marcas',
-                'Almacenes',
-                'StockMinimo',
-                'PrecioVentaMinimo',
-                'PrecioVentaMaximo',
-                'Igv',
-                'PrecioNormal',
-                'PrecioDistribuidor',
+            'UnidadMedida',
+            'Peso',
+            'Nombre',
+            'Categorias',
+            'Marcas',
+            'Almacenes',
+            'StockMinimo',
+            'PrecioVentaMinimo',
+            'PrecioVentaMaximo',
+            'Igv',
+            'PrecioNormal',
+            'PrecioDistribuidor',
+            'CodigoBarra'
         ];
     }
     public function registerEvents(): array
@@ -66,7 +69,7 @@ class ProductoExport implements fromArray, WithHeadings, ShouldAutoSize, WithEve
 
             BeforeWriting::class => [self::class, 'beforeWriting'],
             AfterSheet::class    => function (AfterSheet $event) {
-                $event->sheet->getStyle('A1:L1')->applyFromArray(
+                $event->sheet->getStyle('A1:M1')->applyFromArray(
                     [
                         'fill' => [
                             'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_GRADIENT_LINEAR,
@@ -93,7 +96,7 @@ class ProductoExport implements fromArray, WithHeadings, ShouldAutoSize, WithEve
                     $validation->setShowDropDown(true);
                     $validation->setErrorTitle('Error en escritura');
                     $validation->setError('El valor no esta en la lista');
-                    $validation->setFormula1('detalles!$A$2:$A$'.(unidad_medida()->count()+1));
+                    $validation->setFormula1('detalles!$A$2:$A$' . (unidad_medida()->count() + 1));
 
                     $validation = $event->sheet->getCell('D' . $j)->getDataValidation();
                     $validation->setType(DataValidation::TYPE_LIST);
@@ -104,7 +107,7 @@ class ProductoExport implements fromArray, WithHeadings, ShouldAutoSize, WithEve
                     $validation->setShowDropDown(true);
                     $validation->setErrorTitle('Error en escritura');
                     $validation->setError('El valor no esta en la lista');
-                    $validation->setFormula1('detalles!$B$2:$B$'.(Categoria::where('estado','ACTIVO')->count()+1));
+                    $validation->setFormula1('detalles!$B$2:$B$' . (Categoria::where('estado', 'ACTIVO')->count() + 1));
 
                     $validation = $event->sheet->getCell('E' . $j)->getDataValidation();
                     $validation->setType(DataValidation::TYPE_LIST);
@@ -115,7 +118,7 @@ class ProductoExport implements fromArray, WithHeadings, ShouldAutoSize, WithEve
                     $validation->setShowDropDown(true);
                     $validation->setErrorTitle('Error en escritura');
                     $validation->setError('El valor no esta en la lista');
-                    $validation->setFormula1('detalles!$C$2:$C$'.(Marca::where('estado', 'ACTIVO')->count()+1));
+                    $validation->setFormula1('detalles!$C$2:$C$' . (Marca::where('estado', 'ACTIVO')->count() + 1));
 
                     $validation = $event->sheet->getCell('F' . $j)->getDataValidation();
                     $validation->setType(DataValidation::TYPE_LIST);
@@ -126,9 +129,8 @@ class ProductoExport implements fromArray, WithHeadings, ShouldAutoSize, WithEve
                     $validation->setShowDropDown(true);
                     $validation->setErrorTitle('Error en escritura');
                     $validation->setError('El valor no esta en la lista');
-                    $validation->setFormula1('detalles!$D$2:$D$'.(Almacen::where('estado', 'ACTIVO')->count()+1));
+                    $validation->setFormula1('detalles!$D$2:$D$' . (Almacen::where('estado', 'ACTIVO')->count() + 1));
                 }
-
             },
         ];
     }
