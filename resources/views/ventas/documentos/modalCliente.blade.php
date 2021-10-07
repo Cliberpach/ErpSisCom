@@ -140,14 +140,14 @@
                                 <div class="col-12 col-md-6">
                                     <div class="form-group">
                                         <label for="telefono_movil" class="required">Teléfono móvil</label>
-                                        <input type="text" id="telefono_movil" name="telefono_movil" class="form-control" onkeypress="return isNumber(event)" maxlength="9" value="999999999" required>
+                                        <input type="text" id="telefono_movil" name="telefono_movil" class="form-control" onkeypress="return isNroPhone(event)" maxlength="9" value="999999999" required>
                                         
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="form-group">
                                         <label for="telefono_fijo">Teléfono fijo</label>
-                                        <input type="text" id="telefono_fijo" name="telefono_fijo" class="form-control" onkeypress="return isNumber(event)" maxlength="9">
+                                        <input type="text" id="telefono_fijo" name="telefono_fijo" class="form-control" onkeypress="return isNroPhone(event)" maxlength="9">
                                     </div>
                                 </div>
                                 <div class="col-12">
