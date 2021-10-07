@@ -281,7 +281,7 @@ $(document).ready(function() {
                     return "<div class='btn-group' style='text-transform:capitalize;'><button data-toggle='dropdown' class='btn btn-primary btn-sm  dropdown-toggle'><i class='fa fa-bars'></i></button><ul class='dropdown-menu'>" +
                         "<li><a class='dropdown-item' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-send'></i> Enviar Sunat</a></b></li>" +
                         "<li><a class='dropdown-item' onclick='guia(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-file'></i> Guia Remision</a></b></li>" +
-                        "<li class='d-none'><a class='dropdown-item' href='"+ url_nota +"'  title='Notas'><b><i class='fa fa-file-o'></i> Notas</a></b></li>" +
+                        "<li><a class='dropdown-item' href='"+ url_nota +"'  title='Notas'><b><i class='fa fa-file-o'></i> Notas</a></b></li>" +
                         "<li class='dropdown-divider'></li>" +                        
                         "<li><a class='dropdown-item' onclick='eliminar(" + data.id + ")' title='Eliminar'><b><i class='fa fa-trash'></i> Eliminar</a></b></li>" +
                     "</ul></div>"

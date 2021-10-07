@@ -105,7 +105,7 @@
                         </div>
                         <hr>
                         <div class="row">
-                            <div class="col-12 col-md-5">
+                            <div class="col-12 col-md-6">
                                 <div class="form-group row">
                                     <div class="col-12 col-md-5">
                                         <label class="required">{{ $documento->tipo_documento_cliente }}</label>
@@ -114,7 +114,7 @@
                                         <input type="text" class="form-control" name="documento_cliente" value="{{ $documento->tipo_documento_cliente }}" readonly>
                                     </div>
                                 </div>
-                                <div class="form-group row">
+                                <div class="form-group row d-none">
                                     <div class="col-12 col-md-5">
                                         <label class="required">Serie Nota</label>
                                     </div>
@@ -122,7 +122,7 @@
                                         <input type="text" class="form-control" name="serie_nota" value="" readonly>
                                     </div>
                                 </div>
-                                <div class="form-group row">
+                                <div class="form-group row d-none">
                                     <div class="col-12 col-md-5">
                                         <label class="required">Nro. Nota</label>
                                     </div>
@@ -162,6 +162,8 @@
                                         <input type="text" class="form-control" name="numero_doc" value="{{ $documento->correlativo }}" readonly>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-12 col-md-6">
                                 <div class="form-group row">
                                     <div class="col-12 col-md-5">
                                         <label class="required">Tipo Pago</label>
@@ -186,7 +188,6 @@
                                         <input type="text" class="form-control" name="total_igv" value="{{ $documento->total_igv }}" readonly>
                                     </div>
                                 </div>
-
                                 <div class="form-group row">
                                     <div class="col-12 col-md-5">
                                         <label class="required">Total</label>
@@ -204,19 +205,29 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-7">
-                                <div class="table-responsive">
-                                    <table id="tbl-detalles" class="table tbl-detalles" style="width: 100%; text-transform:uppercase;">
-                                        <thead>
-                                            <th>Cantidad</th>
-                                            <th>Descripcion</th>
-                                            <th>P. Unitario</th>
-                                            <th>Total</th>
-                                            <th></th>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="prueba()"><i class="fa fa-refresh"></i></button>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="table-responsive">
+                                            <table id="tbl-detalles" class="table table-hover tbl-detalles" style="width: 100%; text-transform:uppercase;">
+                                                <thead>
+                                                    <th></th>
+                                                    <th>Cant.</th>
+                                                    <th>Descripcion</th>
+                                                    <th>P. Unit</th>
+                                                    <th>Total</th>
+                                                    <th>Opciones</th>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -293,26 +304,116 @@
 
         actualizarData('{{ $documento->id }}')
         viewData();
+        aceptarData();
+        cancelarData();
+        eliminarData();
     });
 
     function actualizarData(id) {
         let url = '{{ route("ventas.getDetalles",":id") }}';
         url = url.replace(':id',id);
+
+        dibujarTabla();
+        var t = $('.tbl-detalles').DataTable();
+        t.clear().draw();
+        $.ajax({
+            dataType: 'json',
+            type: 'get',
+            url: url,
+        }).done(function(result) {
+            let detalles = result.detalles;
+            for(let i = 0; i < detalles.length; i++)
+            {
+                agregarTabla(detalles[i]);
+            }
+            sumaTotal();
+        });
+    }
+
+    function prueba()
+    {   var t = $('.tbl-detalles').DataTable();
+        t.rows().data().each(function(el, index) { 
+            console.log(el);
+        })
+    }
+    function sumaTotal()
+    {
+        let t = $('.tbl-detalles').DataTable();
+        let total = 0;
+        let detalles = [];
+        t.rows().data().each(function(el, index) { 
+            let cantidad = el[1]; 
+            let descripcion = el[2]; 
+            let precio_nuevo = el[3]; 
+            let total_venta = el[1] * el[3];
+
+            let detalle = { 
+                cantidad: cantidad, 
+                descripcion: descripcion,
+                precio_nuevo: precio_nuevo,
+                total_venta: total_venta,
+            }
+
+            detalles.push(detalle); 
+        });
+
+        t.clear().draw(); 
+        if(detalles.length> 0)
+        {
+            for(let i = 0; i < detalles.length; i++) { 
+                agregarTabla(detalles[i]); 
+            }
+        } 
+
+        t.rows().data().each(function(el, index) { 
+            total=Number(el[4]) + total
+        });
+
+        conIgv(convertFloat(total),convertFloat(18)) 
+    }
+
+    function conIgv(total, igv) {
+        let subtotal = total / (1 + (igv / 100));
+        let igv_calculado = total - subtotal;
+        $('#sub_total').val((Math.round(subtotal * 10) / 10).toFixed(2))
+        $('#total_igv').val((Math.round(igv_calculado * 10) / 10).toFixed(2))
+        $('#total').val((Math.round(total * 10) / 10).toFixed(2))
+        //Math.round(fDescuento * 10) / 10
+    }
+
+    //AGREGAR EL DETALLE A LA TABLA
+    function agregarTabla($detalle) {
+        var t = $('.tbl-detalles').DataTable();
+        t.row.add([
+            '',
+            Number($detalle.cantidad).toFixed(2),
+            $detalle.descripcion,
+            Number($detalle.precio_nuevo).toFixed(2),
+            Number($detalle.total_venta).toFixed(2),
+            '',
+        ]).draw(false);
+        //cargarProductos()
+    }
+
+    function dibujarTabla()
+    {
         $('#tbl-detalles').dataTable().fnDestroy();
         $('#tbl-detalles').DataTable({
+            "ordering" : false,
             "bPaginate": false,
             "bLengthChange": false,
             "bFilter": false,
             "bInfo": false,
             "bAutoWidth": false,
-            "processing": true,
+            /*"processing": true,
             "serverSide": true,
             "ajax": url,
             "columns": [
-                { data: 'cantidad', className: 'cantidad' },
-                { data: 'descripcion', className: 'descripcion' },
-                { data: 'precio_nuevo', className: 'precio_nuevo' },
-                { data: 'total_venta', className: 'total_venta' },
+                { visible: false},
+                { data: 'cantidad', className: 'cantidad', sWidth: '15%' },
+                { data: 'descripcion', className: 'descripcion', sWidth: '40%' },
+                { data: 'precio_nuevo', className: 'precio_nuevo', sWidth: '15%' },
+                { data: 'total_venta', className: 'total_venta',sWidth: '15%' },
                 {
                     defaultContent: '<div class="btn-group">' +
                         '<button id="editar" type="button" class="btn btn-sm btn-primary">' +
@@ -328,7 +429,69 @@
                         '<span class="glyphicon glyphicon-remove" > </span>' +
                         '</button>' +
                         '</div>',
-                    className: 'text-right',
+                    className: 'text-center',
+                    sWidth: '15%'
+                },
+            ],*/
+            "columnDefs": [{
+                    "targets": [0],
+                    "visible": false,
+                    "searchable": false
+                },
+                {
+                    "targets": [1],
+                },
+                {
+                    "targets": [2],
+                },
+                {
+                    "targets": [3],
+                },
+                {
+                    "targets": [4],
+                },
+                {
+                    "targets": [5],
+                    data: null,
+                    defaultContent: '<div class="btn-group">' +
+                        '<button id="editar" type="button" class="btn btn-sm btn-primary">' +
+                        '<span class="glyphicon glyphicon-pencil" > </span>' +
+                        '</button>' +
+                        '<button id="eliminar" type="button" class="btn btn-sm btn-danger">' +
+                        '<span class="glyphicon glyphicon-trash" > </span>' +
+                        '</button>' +
+                        '<button id="aceptar" type="button" class="btn btn-sm btn-success" style="display:none;">' +
+                        '<span class="glyphicon glyphicon-ok" > </span>' +
+                        '</button>' +
+                        '<button id="cancelar" type="button" class="btn btn-sm btn-warning" style="display:none;">' +
+                        '<span class="glyphicon glyphicon-remove" > </span>' +
+                        '</button>' +
+                        '</div>',
+                }
+            ],
+            'bAutoWidth': false,
+            'aoColumns': [{
+                    sWidth: '0%'
+                },
+                {
+                    sWidth: '15%',                 
+                    sClass: 'cantidad'
+                },
+                {
+                    sWidth: '40%',                 
+                    sClass: 'descripcion'
+                },
+                {
+                    sWidth: '15%',                 
+                    sClass: 'precio_nuevo'
+                },
+                {
+                    sWidth: '15%',                    
+                    sClass: 'total_venta'
+                },
+                {
+                    sWidth: '15%',
+                    sClass: 'text-center'
                 },
             ],
             "language": {
@@ -341,28 +504,108 @@
     }
 
     function viewData() {
-    $("#tbl-detalles").on('click', '#editar', function() {
+        $("#tbl-detalles").on('click', '#editar', function() {
 
-        //var data = $("#propuestas").dataTable().fnGetData($(this).closest('tr'));
+            //var data = $("#propuestas").dataTable().fnGetData($(this).closest('tr'));
 
-        $(this).parents("tr").find(".cantidad").each(function() {
-            var cont = $(this).html();
-            var input = '<input type="text" class="form-control" value="' + cont + '" onkepress="return isNumber(this)"/>';
-            $(this).html(input);
+            $(this).parents("tr").find(".cantidad").each(function() {
+                var cont = $(this).html();
+                var input = '<input type="text" class="form-control cantidad_input" value="' + cont + '" onkeypress="return isNumber(event)"/>';
+                $(this).html(input);
+            });
+
+            $(this).parents("tr").find(".precio_nuevo").each(function() {
+                var cont = $(this).html();
+                var input = '<input type="text" class="form-control precio_nuevo_input" value="' + cont + '" onkeypress="return isNumber(event)"/>';
+                $(this).html(input);
+            });
+
+            $(this).parent().find("#editar").hide();
+            $(this).parent().find("#eliminar").hide();
+            $(this).parent().find("#aceptar").show();
+            $(this).parent().find("#cancelar").show();
         });
+    }
 
-        $(this).parents("tr").find(".precio_nuevo").each(function() {
-            var cont = $(this).html();
-            var input = '<input type="text" class="form-control" value="' + cont + '" onkepress="return isNumber(this)"/>';
-            $(this).html(input);
+    function aceptarData() {
+        $("#tbl-detalles").on('click', '#aceptar', function() {
+
+            var data = $("#tbl-detalles").dataTable().fnGetData($(this).closest('tr'));
+            let table = $('#tbl-detalles').DataTable();
+            let index = table.row($(this).parents('tr')).index();
+            $(this).parents("tr").find(".cantidad").each(function() {
+                let con = $(this).find('.cantidad_input').val();
+                $(this).html(con);
+
+                table.cell({
+                    row: index,
+                    column: 1
+                }).data(con).draw();
+            });
+
+            $(this).parents("tr").find(".precio_nuevo").each(function() {
+                let con = $(this).find('.precio_nuevo_input').val();
+                $(this).html(con);
+
+                table.cell({
+                    row: index,
+                    column: 3
+                }).data(con).draw();
+            });
+
+            $(this).parent().find("#editar").show();
+            $(this).parent().find("#eliminar").show();
+            $(this).parent().find("#aceptar").hide();
+            $(this).parent().find("#cancelar").hide();
+
+            sumaTotal();
         });
+        
+    }
 
-        $(this).parent().find("#editar").hide();
-        $(this).parent().find("#eliminar").hide();
-        $(this).parent().find("#aceptar").show();
-        $(this).parent().find("#cancelar").show();
-    });
-}
+    function cancelarData() {
+        $("#tbl-detalles").on('click', '#cancelar', function() {
+
+            var data = $("#tbl-detalles").dataTable().fnGetData($(this).closest('tr'));
+            let index = table.row($(this).parents('tr')).index();
+            $(this).parents("tr").find(".cantidad").each(function() {
+                let con = $(this).find('.cantidad_input').val();
+                $(this).html(con);
+
+                table.cell({
+                    row: index,
+                    column: 1
+                }).data(con).draw();
+            });
+
+            $(this).parents("tr").find(".precio_nuevo").each(function() {
+                let con = $(this).find('.precio_nuevo_input').val();
+                $(this).html(con);
+
+                table.cell({
+                    row: index,
+                    column: 3
+                }).data(con).draw();
+            });
+
+            $(this).parent().find("#editar").show();
+            $(this).parent().find("#eliminar").show();
+            $(this).parent().find("#aceptar").hide();
+            $(this).parent().find("#cancelar").hide();
+
+            sumaTotal();
+        });
+    }
+
+    function eliminarData()
+    {
+        $("#tbl-detalles").on('click', '#eliminar', function() {
+            let table = $('#tbl-detalles').DataTable();
+            $(this).parents('tr').remove();
+
+            sumaTotal();
+        });
+    }
 
 </script>
 @endpush
