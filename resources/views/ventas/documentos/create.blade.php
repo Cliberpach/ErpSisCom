@@ -1045,11 +1045,7 @@
                     let dinero=precio_unitario * (pdescuento / 100); 
                     let precio_nuevo = precio_unitario - dinero; 
                     let valor_venta = precio_nuevo * el[2]; 
-                    // let precio_unitario=precio_inicial; 
-                    // let valor_unitario=precio_unitario / (1 + igv_calculado); 
-                    // let dinero=precio_unitario * (pdescuento / 100); 
-                    // let precio_nuevo=precio_unitario - dinero; 
-                    // let valor_venta=(precio_nuevo * el[2]) / (1 + igv_calculado); 
+                    
                     let detalle = { 
                         producto_id: el[0], 
                         unidad: el[3],

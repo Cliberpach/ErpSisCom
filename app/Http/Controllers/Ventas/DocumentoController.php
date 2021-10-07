@@ -839,12 +839,12 @@ class DocumentoController extends Controller
                     $legends = self::obtenerLeyenda($documento);
                     $legends = json_encode($legends,true);
                     $legends = json_decode($legends,true);
-
+                    $detalles = Detalle::where('estado','ACTIVO')->where('documento_id', $documento->id)->get();
                     if($size === 80)
                     {
                         $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_ticket',[
                             'documento' => $documento,
-                            'detalles' => $documento->detalles,
+                            'detalles' => $detalles,
                             'moneda' => $documento->simboloMoneda(),
                             'empresa' => $empresa,
                             "legends" =>  $legends,
@@ -882,6 +882,8 @@ class DocumentoController extends Controller
                     $legends = json_encode($legends,true);
                     $legends = json_decode($legends,true);
 
+                    $detalles = Detalle::where('estado','ACTIVO')->where('documento_id', $documento->id)->get();
+                    
                     if($size === 80)
                     {
                         $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_ticket',[

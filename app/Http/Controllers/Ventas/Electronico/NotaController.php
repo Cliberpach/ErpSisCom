@@ -82,7 +82,12 @@ class NotaController extends Controller
                 'total_venta' => $item->valor_venta
             ]);
         }
-        return DataTables::of($coleccion)->make(true);
+        //return DataTables::of($coleccion)->make(true);
+
+        return response()->json([
+            'success' => true,
+            'detalles' => $coleccion
+        ]);
     }
 
     public function obtenerFecha($fecha)
