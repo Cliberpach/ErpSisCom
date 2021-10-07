@@ -32,7 +32,7 @@
             <div class="ibox ">
                 <div class="ibox-content">
                     <div class="table-responsive">
-                        <table class="table dataTables-orden table-striped table-bordered table-hover"
+                        <table class="table dataTables-documento table-striped table-bordered table-hover"
                         style="text-transform:uppercase">
                             <thead>
                                 <tr>
@@ -57,6 +57,7 @@
                                     <th class="text-center">EFECT.</th>
                                     <th class="text-center">ESTADO</th>
                                     <th class="text-center">SUNAT</th>
+                                    <th class="text-center">DESCARGAS</th>
                                     <th class="text-center">ACCIONES</th>
                                 </tr>
                             </thead>
@@ -67,6 +68,44 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal inmodal" id="modal_descargas_pdf" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title descarga-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-6 text-center">
+                        <div class="form-group">
+                            <button class="btn btn-info file-pdf"><i class="fa fa-file-pdf-o"></i></button><br>
+                            <b>Descargar A4</b>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 text-center">
+                        <div class="form-group">
+                            <button class="btn btn-info file-ticket"><i class="fa fa-file-o"></i></button><br>
+                            <b>Descargar Ticket</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-times"></i> Cancelar</button>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -92,7 +131,7 @@
 $(document).ready(function() {
 
     // DataTables
-    $('.dataTables-orden').DataTable({
+    $('.dataTables-documento').DataTable({
         "dom": '<"html5buttons"B>lTfgitp',
         "buttons": [{
                 extend: 'excelHtml5',
@@ -128,8 +167,6 @@ $(document).ready(function() {
                 visible: false
             },
 
-
-
             {
                 data: null,
                 className: "text-center letrapequeña",
@@ -142,18 +179,22 @@ $(document).ready(function() {
                 }
                 
             },
+
             {
                 data: 'id',
                 className: "text-center letrapequeña",
             },
+
             {
                 data: 'fecha_documento',
                 className: "text-center letrapequeña"
             },
+            
             {
                 data: 'tipo_venta',
                 className: "text-center letrapequeña",
             },
+
             {
                 data: 'cliente',
                 className: "text-left letrapequeña"
@@ -176,7 +217,6 @@ $(document).ready(function() {
                 data: 'efectivo',
                 className: "text-center letrapequeña"
             },
-
 
             {
                 data: null,
@@ -218,7 +258,15 @@ $(document).ready(function() {
                     }
                 },
             },
-
+            {
+                data: null,
+                className: "text-center letrapequeña",
+                render: function(data) {
+                    return "<button class='btn btn-info btn-pdf mb-1' title='Detalle'>PDF</button>" +
+                        "<button class='btn btn-info' onclick='xmlElectronico(" +data.id+ ")' title='Detalle'>XML</button>"
+                }
+            },
+            
             {
                 data: null,
                 className: "text-center letrapequeña",
@@ -227,18 +275,16 @@ $(document).ready(function() {
                     var url_detalle = '{{ route("ventas.documento.show", ":id")}}';
                     url_detalle = url_detalle.replace(':id', data.id);
 
+                    var url_nota = '{{ route("ventas.notas.create", ":id")}}';
+                    url_nota = url_nota.replace(':id', data.id);
+
                     return "<div class='btn-group' style='text-transform:capitalize;'><button data-toggle='dropdown' class='btn btn-primary btn-sm  dropdown-toggle'><i class='fa fa-bars'></i></button><ul class='dropdown-menu'>" +
-                    
-                        "<li><a class='dropdown-item' target='_blank' onclick='comprobanteElectronico(" +data.id+ ")' title='Detalle'><b><i class='fa fa-file-pdf-o'></i> Pdf</a></b></li>" +
-                        "<li><a class='dropdown-item' target='_blank' onclick='comprobanteElectronicoTicket(" +data.id+ ")' title='Detalle'><b><i class='fa fa-ticket'></i> Ticket</a></b></li>" +
-                        "<li><a class='dropdown-item' target='_blank' onclick='xmlElectronico(" +data.id+ ")' title='Detalle'><b><i class='fa fa-code'></i> XML</a></b></li>" +
-                        "<li><a class='dropdown-item' onclick='eliminar(" + data.id + ")' title='Eliminar'><b><i class='fa fa-trash'></i> Eliminar</a></b></li>" +
-                        "<li class='dropdown-divider'></li>" +
-                        
                         "<li><a class='dropdown-item' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-send'></i> Enviar Sunat</a></b></li>" +
                         "<li class='d-none'><a class='dropdown-item' onclick='enviarSunatBaja(" +data.id+ ")'  title='Enviar Sunat Baja'><b><i class='fa fa-remove'></i> Dar de baja sunat</a></b></li>" +
-                        "<li><a class='dropdown-item' onclick='guia(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-file'></i> Guia Remision</a></b></li>"
-                        
+                        "<li><a class='dropdown-item' onclick='guia(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-file'></i> Guia Remision</a></b></li>" +
+                        "<li class='d-none'><a class='dropdown-item' href='"+ url_nota +"'  title='Nota'><b><i class='fa fa-file-o'></i> Nota</a></b></li>" +
+                        "<li class='dropdown-divider'></li>" +                        
+                        "<li><a class='dropdown-item' onclick='eliminar(" + data.id + ")' title='Eliminar'><b><i class='fa fa-trash'></i> Eliminar</a></b></li>" +
                     "</ul></div>"
                 }
             }
@@ -249,9 +295,18 @@ $(document).ready(function() {
         },
         "order": [],
     });
-
     tablaDatos = $('.dataTables-enviados').DataTable();
 
+});
+
+$(".dataTables-documento").on('click','.btn-pdf',function(){
+    var data = $(".dataTables-documento").dataTable().fnGetData($(this).closest('tr'));
+    let fn_pdf = 'comprobanteElectronico(' + data.id + ')';
+    let fn_ticket = 'comprobanteElectronicoTicket(' + data.id + ')';
+    $('.descarga-title').html(data.serie + '-' + data.correlativo);
+    $('.file-pdf').attr('onclick',fn_pdf);
+    $('.file-ticket').attr('onclick',fn_ticket);
+    $('#modal_descargas_pdf').modal('show');
 });
 
 //Controlar Error

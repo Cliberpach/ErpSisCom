@@ -69,6 +69,8 @@ class DocumentoController extends Controller
                 'id' => $documento->id,
                 'tipo_venta' => $documento->nombreTipo(),
                 'tipo_pago' => $documento->tipo_pago,
+                'serie' => $documento->serie,
+                'correlativo' => $documento->correlativo,
                 'cliente' => $documento->tipo_documento_cliente.': '.$documento->documento_cliente.' - '.$documento->cliente,
                 'empresa' => $documento->empresa,
                 'cotizacion_venta' =>  $documento->cotizacion_venta,
@@ -528,7 +530,9 @@ class DocumentoController extends Controller
             return array('success' => true,'mensaje' => 'Documento validado.');
         }
         catch(Exception $e)
-        {
+        {            
+            $documento = Documento::find($id);
+
             $errorVenta = new ErrorVenta();
             $errorVenta->documento_id = $documento->id;
             $errorVenta->tipo = 'pdf';
@@ -580,6 +584,8 @@ class DocumentoController extends Controller
         }
         catch(Exception $e)
         {
+            $documento = Documento::find($id);
+            
             $errorVenta = new ErrorVenta();
             $errorVenta->documento_id = $documento->id;
             $errorVenta->tipo = 'email';
@@ -1153,6 +1159,8 @@ class DocumentoController extends Controller
         }
         catch(Exception $e)
         {
+            $documento = Documento::findOrFail($id);
+
             $errorVenta = new ErrorVenta();
             $errorVenta->documento_id = $documento->id;
             $errorVenta->tipo = 'sunat-existe';
@@ -1331,6 +1339,8 @@ class DocumentoController extends Controller
         }
         catch(Exception $e)
         {
+            $documento = Documento::find($id);
+
             $errorVenta = new ErrorVenta();
             $errorVenta->documento_id = $documento->id;
             $errorVenta->tipo = 'sunat-envio';

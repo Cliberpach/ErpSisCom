@@ -1,9 +1,9 @@
 @extends('layout') @section('content')
 
 @section('ventas-active', 'active')
-@section('notas-active', 'active')
+@section('documento-active', 'active')
 <div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-lg-10 col-md-10">
+    <div class="col-12 col-md-8">
        <h2  style="text-transform:uppercase"><b>Listado de Notas de Credito / Debito</b></h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -14,10 +14,87 @@
             </li>
         </ol>
     </div>
+    <div class="col-12 col-md-2">
+        <button type="submit" class="btn btn-block btn-w-m btn-primary m-t-md" form="frm-credito">
+            <i class="fa fa-plus-square"></i> Nota de crédito
+        </button>
+    </div>
+    <div class="col-12 col-md-2">
+        <button type="submit" class="btn btn-block btn-w-m btn-info m-t-md" form="frm-debito">
+            <i class="fa fa-plus-square"></i> Nota de débito
+        </button>
+    </div>
 </div>
+
+<form action="{{ route('ventas.notas.create') }}" class="d-none" method="POST" id="frm-debito">
+    @csrf
+    <input type="hidden" name="nota" value="1">
+    <input type="hidden" name="comprobante" value="{{ $documento->id }}">
+</form>
 
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
+        <div class="col-md-12 m-t">
+            <div class="alert alert-info">
+                <div class="row">
+                    <div class="col-12">
+                        <p style="text-transform:uppercase"><strong><i class="fa fa-caret-right"></i> Información del documento de venta:</strong></p>
+                    </div>
+                </div>
+                <div class="row"  style="text-transform:uppercase">
+                    <div class="col-md-6 b-r">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label><strong>Comprobante: </strong></label>
+                                <p class="text-navy">{{ $documento->nombreDocumento() }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label><strong>Código: </strong></label>
+                                <p class="">{{ $documento->serie.'-'.$documento->correlativo }}</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><strong>Cliente: </strong></label>
+                            <p>{{ $documento->clienteEntidad->nombre }}</p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    <label><strong>{{ $documento->tipo_documento_cliente}} </strong></label>
+                                    <p>{{ $documento->clienteEntidad->documento }}</p>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">        
+                                <div class="form-group">
+                                    <label><strong>Dirección: </strong></label>
+                                    <p>{{ $documento->clienteEntidad->direccion }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label><strong>Sub Total: </strong></label>
+                                <p>{{ number_format($documento->sub_total, 2) }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label><strong>Igv {{$documento->igv}}% </strong></label>
+                                <p>{{ number_format($documento->total_igv, 2) }}</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><strong>Total: </strong></label>
+                            <p>{{ number_format($documento->total, 2) }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-content">

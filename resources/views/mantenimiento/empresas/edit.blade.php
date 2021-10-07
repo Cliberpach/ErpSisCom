@@ -1255,7 +1255,7 @@
         limpiarErrores()
         var enviar = true;
 
-        if ( $('#estado_fe').prop("checked") ) {
+        if ( $('#estado_fe').prop("checked") || !$('#estado_fe').prop("checked")) {
             if ($('#logo_txt').text() == 'Seleccionar') {
                 enviar = false
                 $('#logo').addClass("is-invalid")

@@ -378,6 +378,18 @@ function(){
         // Route::get('sunat/comprobante/{id}','Ventas\GuiaController@sunat')->name('ventas.documento.sunat');
 
     });
+
+    //NOTAS DE CREDITO / DEBITO
+    Route::prefix('notas/electronicos')->group(function(){
+        Route::get('/', 'Ventas\Electronico\NotaController@index')->name('ventas.notas');
+        Route::get('create/{id}', 'Ventas\Electronico\NotaController@create')->name('ventas.notas.create');
+        Route::post('store', 'Ventas\Electronico\NotaController@store')->name('ventas.notas.store');
+        Route::get('getNotes','Ventas\Electronico\NotaController@getNotes')->name('ventas.getNotes');
+        Route::get('show/{id}','Ventas\Electronico\NotaController@show')->name('ventas.notas.show');
+        Route::get('sunat/{id}','Ventas\Electronico\NotaController@sunat')->name('ventas.notas.sunat');
+    });
+
+    //Caja
     Route::prefix('caja')->group(function () {
         Route::get('/index','Pos\Cajacontroller@index')->name('Caja.index');
         Route::get('/getCajas','Pos\Cajacontroller@getCajas')->name('Caja.getCajas');
@@ -522,10 +534,5 @@ function(){
 });
 
 Route::get('ruta', function () {
-    $detalle = Detalle::find(1);
-    return $detalle->lote->detalle_compra;
-    $user = User::find(1);
-    $user->password = bcrypt('2020');
-    $user->update();
-    return 'usuario actualizado';
+    return cod_motivos();
 });

@@ -197,6 +197,7 @@ class TablaSeeder extends Seeder
        $tabla->descripcion = 'FORMAS DE PAGO';
        $tabla->sigla = 'FP';
        $tabla->save();
+
        //31
        $tabla = new General();
        $tabla->descripcion = 'TURNOS';
@@ -207,6 +208,13 @@ class TablaSeeder extends Seeder
        $tabla = new General();
        $tabla->descripcion = 'CUENTAS';
        $tabla->sigla = 'CUENTAS';
+       $tabla->save();
+
+       //33
+       $tabla = new General();
+       $tabla->descripcion = 'TIPOS NOTA DE CREDITO';
+       $tabla->sigla = 'CODMOTIVO';       
+       $tabla->editable = '1';
        $tabla->save();
 
     }

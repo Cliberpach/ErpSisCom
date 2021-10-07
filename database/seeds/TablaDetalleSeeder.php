@@ -946,7 +946,7 @@ class TablaDetalleSeeder extends Seeder
         //TIPO DE DOCUMENTO (VENTA)
         $detalle = new Detalle();
         $detalle->descripcion = "FACTURA ELECTRÓNICA";
-        $detalle->nombre = "FACTURA";
+        $detalle->nombre = "FACTURA ELECTRÓNICA";
         $detalle->simbolo = '01';
         $detalle->parametro = 'F';
         $detalle->operacion = '0101';
@@ -958,7 +958,7 @@ class TablaDetalleSeeder extends Seeder
 
         $detalle = new Detalle();
         $detalle->descripcion = "BOLETA DE VENTA ELECTRÓNICA";
-        $detalle->nombre = "BOLETA DE VENTA";
+        $detalle->nombre = "BOLETA DE VENTA ELECTRÓNICA";
         $detalle->simbolo = '03';
         $detalle->parametro = 'B';
         $detalle->operacion = '0101';
@@ -1233,28 +1233,8 @@ class TablaDetalleSeeder extends Seeder
         $detalle->editable = 1;
         $detalle->save();
 
-        //Tipos de pago
-        $tipo = new TipoPago();
-        $tipo->descripcion = "EFECTIVO";
-        $tipo->simbolo = 'ME';
-        $tipo->estado = 'ACTIVO';
-        $tipo->editable = 1;
-        $tipo->save();
-
-        $tipo = new TipoPago();
-        $tipo->descripcion = "TRANSFERENCIA";
-        $tipo->simbolo = 'MT';
-        $tipo->estado = 'ACTIVO';
-        $tipo->editable = 1;
-        $tipo->save();
-
-        $tipo = new TipoPago();
-        $tipo->descripcion = "YAPE/PLIN";
-        $tipo->simbolo = 'MY/P';
-        $tipo->estado = 'ACTIVO';
-        $tipo->editable = 1;
-        $tipo->save();
-
+        
+        //Turnos
         $detalle = new Detalle();
         $detalle->descripcion = "MAÑANA";
         $detalle->simbolo = 'AM';
@@ -1275,5 +1255,98 @@ class TablaDetalleSeeder extends Seeder
         $detalle->estado = 'ACTIVO';
         $detalle->tabla_id = 31;
         $detalle->save();
+
+        //Tipo nota de credito
+        //TIPO DE DOCUMENTO (VENTA)
+        $detalle = new Detalle();
+        $detalle->descripcion = "Anulación de operación";
+        $detalle->nombre = "Anulación de operación";
+        $detalle->simbolo = '01';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 33;
+        $detalle->editable = 1;
+        $detalle->save();
+
+        $detalle = new Detalle();
+        $detalle->descripcion = "Anulación por error en el RUC";
+        $detalle->nombre = "Anulación por error en el RUC";
+        $detalle->simbolo = '02';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 33;
+        $detalle->editable = 1;
+        $detalle->save();
+
+        $detalle = new Detalle();
+        $detalle->descripcion = "Correción por error en la descripcion";
+        $detalle->nombre = "Correción por error en la descripcion";
+        $detalle->simbolo = '03';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 33;
+        $detalle->editable = 1;
+        $detalle->save();
+
+        $detalle = new Detalle();
+        $detalle->descripcion = "Descuento global";
+        $detalle->nombre = "Descuento global";
+        $detalle->simbolo = '04';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 33;
+        $detalle->editable = 1;
+        $detalle->save();
+
+        $detalle = new Detalle();
+        $detalle->descripcion = "Descuento por item";
+        $detalle->nombre = "Descuento por item";
+        $detalle->simbolo = '05';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 33;
+        $detalle->editable = 1;
+        $detalle->save();
+
+        $detalle = new Detalle();
+        $detalle->descripcion = "Descuento por item";
+        $detalle->nombre = "Descuento por item";
+        $detalle->simbolo = '06';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 33;
+        $detalle->editable = 1;
+        $detalle->save();
+
+        $detalle = new Detalle();
+        $detalle->descripcion = "Devolución por item";
+        $detalle->nombre = "Devolución por item";
+        $detalle->simbolo = '07';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 33;
+        $detalle->editable = 1;
+        $detalle->save();
+
+        $detalle = new Detalle();
+        $detalle->descripcion = "Bonificación";
+        $detalle->nombre = "Bonificacion";
+        $detalle->simbolo = '08';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 33;
+        $detalle->editable = 1;
+        $detalle->save();
+
+        $detalle = new Detalle();
+        $detalle->descripcion = "Disminución en el valor";
+        $detalle->nombre = "Disminución en el valor";
+        $detalle->simbolo = '09';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 33;
+        $detalle->editable = 1;
+        $detalle->save();
+
+        $detalle = new Detalle();
+        $detalle->descripcion = "Otros conceptos";
+        $detalle->nombre = "Otros conceptos";
+        $detalle->simbolo = '10';
+        $detalle->estado = 'ACTIVO';
+        $detalle->tabla_id = 33;
+        $detalle->editable = 1;
+        $detalle->save();
+
     }
 }
