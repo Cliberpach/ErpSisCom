@@ -69,6 +69,7 @@ class DocumentoController extends Controller
                 'id' => $documento->id,
                 'tipo_venta' => $documento->nombreTipo(),
                 'tipo_pago' => $documento->tipo_pago,
+                'numero_doc' =>  $documento->serie.'-'.$documento->correlativo,
                 'serie' => $documento->serie,
                 'correlativo' => $documento->correlativo,
                 'cliente' => $documento->tipo_documento_cliente.': '.$documento->documento_cliente.' - '.$documento->cliente,
@@ -357,7 +358,7 @@ class DocumentoController extends Controller
             $documento->sub_total = $request->get('monto_sub_total');
             $documento->total_igv = $request->get('monto_total_igv');
             $documento->total = $request->get('monto_total');
-            $documento->igv = $request->get('igv');
+            $documento->igv = $request->get('igv') ? $request->get('igv') : 18;
             $documento->moneda = 1;
 
             $documento->tipo_pago_id = $request->get('tipo_pago_id');

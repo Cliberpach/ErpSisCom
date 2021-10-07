@@ -218,13 +218,13 @@
                                                             <div class="col-md-6">
                                                                 <label>Teléfono:</label>
                                                                 <input type="text" placeholder="" class="form-control" name="telefono"
-                                                                    id="telefono"  onkeyup="return mayus(this)"
+                                                                    id="telefono"  onkeypress="return isNroPhone(event)"
                                                                     value="{{old('telefono', $empresa->telefono)}}">
                                                             </div>
                                                             <div class="col-md-6">
                                                                 <label>Celular:</label>
                                                                 <input type="text" placeholder="" class="form-control" name="celular"
-                                                                    id="celular"  onkeyup="return mayus(this)"
+                                                                    id="celular"  onkeypress="return isNroPhone(event)"
                                                                     value="{{old('celular',$empresa->celular)}}">
                                                             </div>
 
@@ -714,7 +714,7 @@
         width: '100%',
     });
     // Solo campos numericos
-    $('#ruc, #ubigeo_empresa, #dni_representante, #telefono , #celular' ).on('input', function() {
+    $('#ruc, #ubigeo_empresa, #dni_representante' ).on('input', function() {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
 

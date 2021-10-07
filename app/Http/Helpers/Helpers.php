@@ -161,7 +161,7 @@ if (!function_exists('tipos_venta')) {
 if (!function_exists('cod_motivos')) {
     function cod_motivos()
     {
-        return General::find(33)->detalles;
+        return TablaDetalle::where('tabla_id',33)->wherein('simbolo',['01','07'])->get();
     }
 }
 

@@ -14,22 +14,23 @@
             </li>
         </ol>
     </div>
+    
+    <div class="col-12 col-md-2">
+        <button type="submit" class="btn btn-block btn-w-m btn-info m-t-md d-none" form="frm-debito">
+            <i class="fa fa-plus-square"></i> Nota de débito
+        </button>
+    </div>
     <div class="col-12 col-md-2">
         <button type="submit" class="btn btn-block btn-w-m btn-primary m-t-md" form="frm-credito">
             <i class="fa fa-plus-square"></i> Nota de crédito
         </button>
     </div>
-    <div class="col-12 col-md-2">
-        <button type="submit" class="btn btn-block btn-w-m btn-info m-t-md" form="frm-debito">
-            <i class="fa fa-plus-square"></i> Nota de débito
-        </button>
-    </div>
 </div>
 
-<form action="{{ route('ventas.notas.create') }}" class="d-none" method="POST" id="frm-debito">
+<form action="{{ route('ventas.notas.create') }}" class="d-none" method="POST" id="frm-credito">
     @csrf
-    <input type="hidden" name="nota" value="1">
-    <input type="hidden" name="comprobante" value="{{ $documento->id }}">
+    <input type="hidden" name="nota" value="0">
+    <input type="hidden" name="documento_id" value="{{ $documento->id }}">
 </form>
 
 <div class="wrapper wrapper-content animated fadeInRight">
@@ -140,6 +141,8 @@
 <script>
     $(document).ready(function() {
 
+        var url = '{{ route("ventas.getNotes", ":id")}}';
+        url = url.replace(':id', '{{ $documento->id }}');
         // DataTables
         $('.dataTables-notas').DataTable({
             "dom": '<"html5buttons"B>lTfgitp',
@@ -168,7 +171,7 @@
             "bInfo": true,
             "bAutoWidth": false,
             "processing": true,
-            "ajax": "{{ route('ventas.getNotes')}}",
+            "ajax": url,
             "columns": [
                 //NOTAS
                 {

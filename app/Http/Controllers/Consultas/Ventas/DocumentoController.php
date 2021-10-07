@@ -56,7 +56,7 @@ class DocumentoController extends Controller
                 'cliente' => $documento->tipo_documento_cliente.': '.$documento->documento_cliente.' - '.$documento->cliente,
                 'empresa' => $documento->empresa,
                 'cotizacion_venta' =>  $documento->cotizacion_venta,
-                'numero_doc' =>  $documento->numero_doc,
+                'numero_doc' =>  $documento->serie.'-'.$documento->correlativo,
                 'fecha_documento' =>  Carbon::parse($documento->fecha_documento)->format( 'd/m/Y'),
                 'estado' => $documento->estado,
                 'sunat' => $documento->sunat,

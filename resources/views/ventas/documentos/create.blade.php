@@ -277,6 +277,12 @@
 
                         </div>
 
+                        @if(!empty($cotizacion))                            
+                            <input type="hidden" name="igv" id="igv" value="{{ $cotizacion->igv }}">
+                        @else
+                            <input type="hidden" name="igv" id="igv" value="18">
+                        @endif
+
                         <input type="hidden" name="monto_sub_total" id="monto_sub_total" value="{{ old('monto_sub_total') }}">
                         <input type="hidden" name="monto_total_igv" id="monto_total_igv" value="{{ old('monto_total_igv') }}">
                         <input type="hidden" name="monto_total" id="monto_total" value="{{ old('monto_total') }}">
@@ -1019,57 +1025,102 @@
 
                 if(detalles.length > 0)
                 {
-                for(let i = 0; i < detalles.length; i++) { agregarTabla(detalles[i]); } } t.rows().data().each(function(el,
-                    index) { total=Number(el[9]) + total }); conIgv(convertFloat(total),convertFloat('{{ $cotizacion->igv }}'))
-                @else t.rows().data().each(function(el, index) { let igv=convertFloat(18); let
-                    igv_calculado=convertFloat(igv / 100); let pdescuento=convertFloat(el[11]); let
-                    precio_inicial=convertFloat(el[10]); let precio_unitario=precio_inicial / 1.18; let
-                    valor_unitario=precio_unitario / 1.18; let dinero=precio_unitario * (pdescuento / 100); let
-                    precio_nuevo=precio_unitario - dinero; let valor_venta=precio_nuevo * el[2]; // let
-                    precio_unitario=precio_inicial; // let valor_unitario=precio_unitario / (1 + igv_calculado); // let
-                    dinero=precio_unitario * (pdescuento / 100); // let precio_nuevo=precio_unitario - dinero; // let
-                    valor_venta=(precio_nuevo * el[2]) / (1 + igv_calculado); let detalle={ producto_id: el[0], unidad: el[3],
-                    producto: el[4], precio_unitario: precio_unitario, valor_unitario: valor_unitario, valor_venta: valor_venta,
-                    cantidad: convertFloat(el[2]), precio_inicial: precio_inicial, dinero: dinero, descuento: pdescuento,
-                    precio_nuevo: precio_nuevo, } detalles.push(detalle); }); t.clear().draw(); if(detalles.length> 0)
-                    {
-                    for(let i = 0; i < detalles.length; i++) { agregarTabla(detalles[i]); } } t.rows().data().each(function(el,
-                        index) { total=Number(el[9]) + total }); conIgv(convertFloat(total), convertFloat(18)) @endif
-                    @else
-                        t.rows().data().each(function(el, index) {
-                        let igv = convertFloat(18);
-                        let igv_calculado = convertFloat(igv / 100);
-                        let pdescuento = convertFloat(el[11]);
-                        let precio_inicial = convertFloat(el[10]);
-                        let precio_unitario = precio_inicial;
-                        let valor_unitario = precio_unitario / (1 + igv_calculado);
-                        let dinero = precio_unitario * (pdescuento / 100);
-                        let precio_nuevo = precio_unitario - dinero;
-                        let valor_venta = precio_nuevo * el[2];
+                    for(let i = 0; i < detalles.length; i++) { 
+                        agregarTabla(detalles[i]); 
+                    } 
+                } 
 
-                        let detalle = {
-                        producto_id: el[0],
+                t.rows().data().each(function(el, index) { 
+                    total=Number(el[9]) + total 
+                }); 
+                conIgv(convertFloat(total),convertFloat('{{ $cotizacion->igv }}'))
+            @else 
+                t.rows().data().each(function(el, index) { 
+                    let igv=convertFloat(18); 
+                    let igv_calculado=convertFloat(igv / 100); 
+                    let pdescuento=convertFloat(el[11]); let
+                    precio_inicial=convertFloat(el[10]); 
+                    let precio_unitario = precio_inicial / 1.18; 
+                    let valor_unitario = precio_unitario / 1.18; 
+                    let dinero=precio_unitario * (pdescuento / 100); 
+                    let precio_nuevo = precio_unitario - dinero; 
+                    let valor_venta = precio_nuevo * el[2]; 
+                    // let precio_unitario=precio_inicial; 
+                    // let valor_unitario=precio_unitario / (1 + igv_calculado); 
+                    // let dinero=precio_unitario * (pdescuento / 100); 
+                    // let precio_nuevo=precio_unitario - dinero; 
+                    // let valor_venta=(precio_nuevo * el[2]) / (1 + igv_calculado); 
+                    let detalle = { 
+                        producto_id: el[0], 
                         unidad: el[3],
-                        producto: el[4],
-                        precio_unitario: precio_unitario,
-                        valor_unitario: valor_unitario,
+                        producto: el[4], 
+                        precio_unitario: precio_unitario, 
+                        valor_unitario: valor_unitario, 
                         valor_venta: valor_venta,
-                        cantidad: convertFloat(el[2]),
-                        precio_inicial: precio_inicial,
-                        dinero: dinero,
+                        cantidad: convertFloat(el[2]), 
+                        precio_inicial: precio_inicial, 
+                        dinero: dinero, 
                         descuento: pdescuento,
-                        precio_nuevo: precio_nuevo,
-                        }
-                        detalles.push(detalle);
-                        });
+                        precio_nuevo: precio_nuevo, 
+                    }
 
-                        t.clear().draw();
+                    detalles.push(detalle); 
+                }); 
+                    
+                t.clear().draw(); 
+                if(detalles.length> 0)
+                {
+                    for(let i = 0; i < detalles.length; i++) { 
+                        agregarTabla(detalles[i]); 
+                    }
+                } 
+                
+                t.rows().data().each(function(el, index) { 
+                    total=Number(el[9]) + total
+                }); 
+                conIgv(convertFloat(total), convertFloat(18)) 
+            @endif
+        @else
+            t.rows().data().each(function(el, index) {
+                let igv = convertFloat(18);
+                let igv_calculado = convertFloat(igv / 100);
+                let pdescuento = convertFloat(el[11]);
+                let precio_inicial = convertFloat(el[10]);
+                let precio_unitario = precio_inicial;
+                let valor_unitario = precio_unitario / (1 + igv_calculado);
+                let dinero = precio_unitario * (pdescuento / 100);
+                let precio_nuevo = precio_unitario - dinero;
+                let valor_venta = precio_nuevo * el[2];
 
-                        if(detalles.length > 0)
-                        {
-                        for(let i = 0; i < detalles.length; i++) { agregarTabla(detalles[i]); } }
-                            t.rows().data().each(function(el, index) { total=Number(el[9]) + total });
-                            conIgv(convertFloat(total),convertFloat(18)) @endif
+                let detalle = {
+                    producto_id: el[0],
+                    unidad: el[3],
+                    producto: el[4],
+                    precio_unitario: precio_unitario,
+                    valor_unitario: valor_unitario,
+                    valor_venta: valor_venta,
+                    cantidad: convertFloat(el[2]),
+                    precio_inicial: precio_inicial,
+                    dinero: dinero,
+                    descuento: pdescuento,
+                    precio_nuevo: precio_nuevo,
+                }
+                detalles.push(detalle);
+            });
+
+            t.clear().draw();
+
+            if(detalles.length > 0)
+            {
+                for(let i = 0; i < detalles.length; i++) { 
+                    agregarTabla(detalles[i]); 
+                }
+            }
+            t.rows().data().each(function(el, index) { 
+                total=Number(el[9]) + total 
+            });
+            conIgv(convertFloat(total),convertFloat(18)) 
+        @endif
 
 
     }
@@ -1665,8 +1716,7 @@
     @if (!empty($errores))
         $('#asegurarCierre').val(1)
         @foreach ($errores as $error)
-            toastr.error('La cantidad solicitada '+"{{ $error->cantidad }}"+' excede al stock del producto
-            '+"{{ $error->producto }}", 'Error');
+            toastr.error('La cantidad solicitada '+"{{ $error->cantidad }}"+' excede al stock del producto'+"{{ $error->producto }}", 'Error');
         @endforeach
     @endif
 

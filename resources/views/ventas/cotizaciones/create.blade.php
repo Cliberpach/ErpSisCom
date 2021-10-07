@@ -193,7 +193,7 @@
                                                     </div>
                                                     <div class="col-lg-2 col-xs-12">
                                                         <label class="required">Cantidad</label>
-                                                        <input type="text" id="cantidad" class="form-control"
+                                                        <input type="numer" id="cantidad" class="form-control"
                                                             maxlength="10" onkeypress="return isNumber(event);"
                                                             disabled>
                                                         <div class="invalid-feedback"><b><span
@@ -660,21 +660,33 @@
         }
 
         if ($('#precio').val() == '') {
-
             toastr.error('Ingrese el precio del producto.', 'Error');
             enviar = true;
-
             $("#precio").addClass("is-invalid");
             $('#error-precio').text('El campo Precio es obligatorio.')
+        } else {
+            if ($('#precio').val() == 0) {
+                toastr.error('Ingrese el precio del producto superior a 0.0.', 'Error');
+                enviar = true;
+                $("#precio").addClass("is-invalid");
+                $('#error-precio').text('El campo precio debe ser mayor a 0.')
+            }
         }
 
         if ($('#cantidad').val() == '') {
             toastr.error('Ingrese cantidad del artículo.', 'Error');
             enviar = true;
-
             $("#cantidad").addClass("is-invalid");
             $('#error-cantidad').text('El campo Cantidad es obligatorio.')
         }
+
+        if ($('#cantidad').val() == 0) {
+            toastr.error('El stock del producto es 0.', 'Error');
+            enviar = true;
+            $("#cantidad").addClass("is-invalid");
+            $('#error-cantidad').text('El campo cantidad debe ser mayor a 0.')
+        }
+       
         if (enviar != true) {
             Swal.fire({
                 title: 'Opción Agregar',

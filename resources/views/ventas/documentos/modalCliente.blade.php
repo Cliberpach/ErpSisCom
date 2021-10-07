@@ -153,7 +153,7 @@
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label for="correo_electronico">Correo electr&oacute;nico</label>
-                                        <input type="text" id="correo_electronico" name="correo_electronico" class="form-control" onkeypress="return isNumber(event)" maxlength="9">
+                                        <input type="text" id="correo_electronico" name="correo_electronico" class="form-control">
                                     </div>
                                 </div>
                             </div>

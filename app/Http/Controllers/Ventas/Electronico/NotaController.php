@@ -6,6 +6,7 @@ use App\Almacenes\LoteProducto;
 use App\Almacenes\Producto;
 use App\Http\Controllers\Controller;
 use App\Mantenimiento\Empresa\Numeracion;
+use App\Ventas\Documento\Detalle;
 use App\Ventas\Documento\Documento;
 use App\Ventas\Nota;
 use App\Ventas\NotaDetalle;
@@ -25,9 +26,9 @@ class NotaController extends Controller
         return view('ventas.notas.index',compact('documento'));
     }
 
-    public function getNotes()
+    public function getNotes($id)
     {
-        $notas = Nota::where('tipo_nota',"1")->orderBy('id','DESC')->get();
+        $notas = Nota::where('tipo_nota',"0")->where('documento_id', $id)->orderBy('id','DESC')->get();
 
         $coleccion = collect([]);
         foreach($notas as $nota){
@@ -48,21 +49,40 @@ class NotaController extends Controller
         return DataTables::of($coleccion)->toJson();
     }
 
-    public function create($id)
+    public function create(Request $request)
     {
-        $documento = Documento::findOrFail($id);
+        $documento = Documento::findOrFail($request->documento_id);
         $fecha_hoy = Carbon::now()->toDateString();
         $productos = Producto::where('estado', 'ACTIVO')->get();
         //NOTAS
         //CREDITO -> 0
         //DEBITO -> 1
-        return view('ventas.notas.credito.create',[
-            'documento' => $documento,
-            'fecha_hoy' => $fecha_hoy,
-            'productos' => $productos, 
-            'tipo_nota' => '1'
-        ]);
+        if($request->nota === '0')
+        {
+            return view('ventas.notas.credito.create',[
+                'documento' => $documento,
+                'fecha_hoy' => $fecha_hoy,
+                'productos' => $productos,
+                'tipo_nota' => '0'
+            ]);
+        }
+    }
 
+    public function getDetalles($id)
+    {
+        
+        $detalles = Detalle::where('estado','ACTIVO')->where('documento_id',$id)->get();
+        $coleccion = collect();
+        foreach($detalles as $item)
+        {
+            $coleccion->push([
+                'cantidad' => $item->cantidad,
+                'descripcion' => $item->lote->producto->nombre,
+                'precio_nuevo' => $item->precio_nuevo,
+                'total_venta' => $item->valor_venta
+            ]);
+        }
+        return DataTables::of($coleccion)->make(true);
     }
 
     public function obtenerFecha($fecha)
@@ -87,7 +107,7 @@ class NotaController extends Controller
        
         $data = $request->all();
         $rules = [
-            'comprobante_id' => 'required',
+            'documento_id' => 'required',
             'fecha_emision'=> 'required',
             'tipo_nota'=> 'required',
             'empresa'=> 'required',
@@ -106,16 +126,16 @@ class NotaController extends Controller
         ];
         Validator::make($data, $rules, $message)->validate();
 
-        $documento = Documento::findOrFail($request->get('comprobante_id'));
+        $documento = Documento::findOrFail($request->get('documento_id'));
 
         $nota = new Nota(); 
         $nota->documento_id = $documento->id;  
-        $nota->tipDocAfectado = '01';
+        $nota->tipDocAfectado = $documento->tipoDocumento();
         $nota->numDocfectado = $documento->serie.'-'.$documento->correlativo;
-        $nota->codMotivo = "02";
+        $nota->codMotivo = $request->get('cod_motivo');
         $nota->desMotivo =  $request->get('motivo');
 
-        $nota->tipoDoc = '08'; 
+        $nota->tipoDoc = $request->get('tipo_nota') === '0' ? '07' : '08'; 
         $nota->fechaEmision = Carbon::createFromFormat('d/m/Y', $request->get('fecha_emision'))->format('Y-m-d');
 
         //EMPRESA
@@ -124,21 +144,21 @@ class NotaController extends Controller
         $nota->direccion_fiscal_empresa =  $documento->direccion_fiscal_empresa;
         $nota->empresa_id =  $documento->empresa_id; //OBTENER NUMERACION DE LA EMPRESA 
         //CLIENTE       
-        $nota->cod_tipo_documento_cliente =  '6';
+        $nota->cod_tipo_documento_cliente =  $documento->tipoDocumentoCliente();
         $nota->tipo_documento_cliente =  $documento->tipo_documento_cliente;
         $nota->documento_cliente =  $documento->documento_cliente;
         $nota->direccion_cliente =  $documento->direccion_cliente;
         $nota->cliente =  $documento->cliente;
 
         $nota->sunat = '0';
-        $nota->tipo_nota = '1'; //1 -> DEBITO
+        $nota->tipo_nota = $request->get('tipo_nota'); //0 -> DEBITO
 
-        $nota->mtoOperGravadas = $request->get('monto_sub_total');
-        $nota->mtoIGV = $request->get('monto_total_igv');
-        $nota->totalImpuestos = $request->get('monto_total_igv');
-        $nota->mtoImpVenta =  $request->get('monto_total');
+        $nota->mtoOperGravadas = $request->get('sub_total');
+        $nota->mtoIGV = $request->get('total_igv');
+        $nota->totalImpuestos = $request->get('total_igv');
+        $nota->mtoImpVenta =  $request->get('total');
 
-        $nota->value = self::convertirTotal($request->get('monto_total'));
+        $nota->value = self::convertirTotal($request->get('total'));
         $nota->code = '1000';
         $nota->save();
 

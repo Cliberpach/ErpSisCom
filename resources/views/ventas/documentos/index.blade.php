@@ -47,7 +47,7 @@
                                    
                                     <th style="display:none;"></th>
                                     <th class="text-center">C.O</th>
-                                    <th class="text-center">ID</th>
+                                    <th class="text-center"># DOC</th>
                                     <th class="text-center">FECHA DOC.</th>
                                     <th class="text-center">TIPO</th>
                                     <th class="text-center">CLIENTE</th>
@@ -181,7 +181,7 @@ $(document).ready(function() {
             },
 
             {
-                data: 'id',
+                data: 'numero_doc',
                 className: "text-center letrapequeña",
             },
 
@@ -275,14 +275,13 @@ $(document).ready(function() {
                     var url_detalle = '{{ route("ventas.documento.show", ":id")}}';
                     url_detalle = url_detalle.replace(':id', data.id);
 
-                    var url_nota = '{{ route("ventas.notas.create", ":id")}}';
+                    var url_nota = '{{ route("ventas.notas", ":id")}}';
                     url_nota = url_nota.replace(':id', data.id);
 
                     return "<div class='btn-group' style='text-transform:capitalize;'><button data-toggle='dropdown' class='btn btn-primary btn-sm  dropdown-toggle'><i class='fa fa-bars'></i></button><ul class='dropdown-menu'>" +
                         "<li><a class='dropdown-item' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-send'></i> Enviar Sunat</a></b></li>" +
-                        "<li class='d-none'><a class='dropdown-item' onclick='enviarSunatBaja(" +data.id+ ")'  title='Enviar Sunat Baja'><b><i class='fa fa-remove'></i> Dar de baja sunat</a></b></li>" +
                         "<li><a class='dropdown-item' onclick='guia(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-file'></i> Guia Remision</a></b></li>" +
-                        "<li class='d-none'><a class='dropdown-item' href='"+ url_nota +"'  title='Nota'><b><i class='fa fa-file-o'></i> Nota</a></b></li>" +
+                        "<li class='d-none'><a class='dropdown-item' href='"+ url_nota +"'  title='Notas'><b><i class='fa fa-file-o'></i> Notas</a></b></li>" +
                         "<li class='dropdown-divider'></li>" +                        
                         "<li><a class='dropdown-item' onclick='eliminar(" + data.id + ")' title='Eliminar'><b><i class='fa fa-trash'></i> Eliminar</a></b></li>" +
                     "</ul></div>"
