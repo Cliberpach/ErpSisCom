@@ -76,10 +76,12 @@ class NotaController extends Controller
         foreach($detalles as $item)
         {
             $coleccion->push([
+                'id' => $item->id,
                 'cantidad' => $item->cantidad,
                 'descripcion' => $item->lote->producto->nombre,
-                'precio_nuevo' => $item->precio_nuevo,
-                'total_venta' => $item->valor_venta
+                'precio_unitario' => $item->precio_nuevo,
+                'importe_venta' => $item->valor_venta,
+                'editable' => 0
             ]);
         }
         //return DataTables::of($coleccion)->make(true);
@@ -115,19 +117,17 @@ class NotaController extends Controller
             'documento_id' => 'required',
             'fecha_emision'=> 'required',
             'tipo_nota'=> 'required',
-            'empresa'=> 'required',
             'cliente'=> 'required',
             'motivo' => 'required',
-            'comprobante_afectado' => 'required'
+            'cod_motivo' => 'required',
             
         ];
         $message = [
             'fecha_emision.required' => 'El campo Fecha de Emisión es obligatorio.',
             'tipo_nota.required' => 'El campo Tipo es obligatorio.',
-            'empresa.required' => 'El campo Empresa es obligatorio.',
+            'cod_motivo.required' => 'El campo Tipo Nota de Crédito es obligatorio.',
             'cliente.required' => 'El campo Cliente es obligatorio.',
             'motivo.required' => 'El campo Motivo es obligatorio.',
-            'comprobante_afectado.required' => 'El campo Comprobante Afectado es obligatorio.',
         ];
         Validator::make($data, $rules, $message)->validate();
 
@@ -136,12 +136,12 @@ class NotaController extends Controller
         $nota = new Nota(); 
         $nota->documento_id = $documento->id;  
         $nota->tipDocAfectado = $documento->tipoDocumento();
-        $nota->numDocfectado = $documento->serie.'-'.$documento->correlativo;
+        $nota->numDocfectado = $documento->correlativo;
         $nota->codMotivo = $request->get('cod_motivo');
         $nota->desMotivo =  $request->get('motivo');
 
         $nota->tipoDoc = $request->get('tipo_nota') === '0' ? '07' : '08'; 
-        $nota->fechaEmision = Carbon::createFromFormat('d/m/Y', $request->get('fecha_emision'))->format('Y-m-d');
+        $nota->fechaEmision = $request->get('fecha_emision');
 
         //EMPRESA
         $nota->ruc_empresa =  $documento->ruc_empresa;

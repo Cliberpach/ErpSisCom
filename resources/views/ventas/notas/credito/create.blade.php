@@ -31,6 +31,7 @@
                         {{csrf_field()}}
                         <input type="hidden" name="documento_id" value="{{old('documento_id', $documento->id)}}">
                         <input type="hidden" name="tipo_nota" value="{{ $documento->tipo_nota }}">
+                        <input type="hidden" name="productos_tabla">
                         <div class="row">
                             <div class="col-12 col-md-5 b-r">
                                 <div class="row">
@@ -43,7 +44,7 @@
                                         <label class="required">Tipo Nota de Crédito</label>
                                     </div>
                                     <div class="col-12 col-md-7">
-                                        <select name="cod_motivo" id="cod_motivo" class="select2_form form-control">
+                                        <select name="cod_motivo" id="cod_motivo" class="select2_form form-control" onchange="changeTipoNota(this)" required>
                                             <option value=""></option>
                                             @foreach(cod_motivos() as $item)
                                                 <option value="{{ $item->simbolo }}">{{ $item->descripcion }}</option>
@@ -56,7 +57,7 @@
                                         <label class="required">Motivo</label>
                                     </div>
                                     <div class="col-12 col-md-7">
-                                        <textarea name="des_motivo" id="des_motivo" rows="2" class="form-control"></textarea>
+                                        <textarea name="des_motivo" id="des_motivo" rows="2" class="form-control" required></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -105,17 +106,17 @@
                         </div>
                         <hr>
                         <div class="row">
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-4">
                                 <div class="form-group row">
-                                    <div class="col-12 col-md-5">
+                                    <div class="col-12 col-md-6">
                                         <label class="required">{{ $documento->tipo_documento_cliente }}</label>
                                     </div>
-                                    <div class="col-12 col-md-7">
-                                        <input type="text" class="form-control" name="documento_cliente" value="{{ $documento->tipo_documento_cliente }}" readonly>
+                                    <div class="col-12 col-md-6">
+                                        <input type="text" class="form-control" name="documento_cliente" value="{{ $documento->documento_cliente }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row d-none">
-                                    <div class="col-12 col-md-5">
+                                    <div class="col-12 col-md-6">
                                         <label class="required">Serie Nota</label>
                                     </div>
                                     <div class="col-12 col-md-7">
@@ -123,7 +124,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group row d-none">
-                                    <div class="col-12 col-md-5">
+                                    <div class="col-12 col-md-6">
                                         <label class="required">Nro. Nota</label>
                                     </div>
                                     <div class="col-12 col-md-7">
@@ -131,101 +132,107 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-12 col-md-5">
+                                    <div class="col-12 col-md-6">
                                         <label class="required">Emisión de Nota</label>
                                     </div>
-                                    <div class="col-12 col-md-7">
-                                        <input type="date" class="form-control" name="fecha_emision" value="{{ $fecha_hoy }}">
+                                    <div class="col-12 col-md-6">
+                                        <input type="date" class="form-control" name="fecha_emision" value="{{ $fecha_hoy }}" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-12 col-md-5">
+                                    <div class="col-12 col-md-6">
                                         <label class="required">Fecha Documento</label>
                                     </div>
-                                    <div class="col-12 col-md-7">
+                                    <div class="col-12 col-md-6">
                                         <input type="date" class="form-control" name="fecha_documento" value="{{ $documento->fecha_documento }}" readonly>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-12 col-md-4">                                
                                 <div class="form-group row">
-                                    <div class="col-12 col-md-5">
+                                    <div class="col-12 col-md-6">
                                         <label class="required">Serie doc. afectado</label>
                                     </div>
-                                    <div class="col-12 col-md-7">
+                                    <div class="col-12 col-md-6">
                                         <input type="text" class="form-control" name="serie_doc" value="{{ $documento->serie }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-12 col-md-5">
+                                    <div class="col-12 col-md-6">
                                         <label class="required">Nro. doc. afectado</label>
                                     </div>
-                                    <div class="col-12 col-md-7">
+                                    <div class="col-12 col-md-6">
                                         <input type="text" class="form-control" name="numero_doc" value="{{ $documento->correlativo }}" readonly>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-12 col-md-6">
                                 <div class="form-group row">
-                                    <div class="col-12 col-md-5">
+                                    <div class="col-12 col-md-6">
                                         <label class="required">Tipo Pago</label>
                                     </div>
-                                    <div class="col-12 col-md-7">
+                                    <div class="col-12 col-md-6">
                                         <input type="text" class="form-control text-uppercase" name="tipo_pago" value="{{ $documento->formaPago() }}" readonly>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-12 col-md-4">                                
                                 <div class="form-group row">
-                                    <div class="col-12 col-md-5">
+                                    <div class="col-12 col-md-6">
                                         <label class="required">Sub Total</label>
                                     </div>
-                                    <div class="col-12 col-md-7">
-                                        <input type="text" class="form-control" name="sub_total" value="{{ $documento->sub_total }}" readonly>
+                                    <div class="col-12 col-md-6">
+                                        <input type="text" class="form-control" name="sub_total" id="sub_total" value="{{ $documento->sub_total }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-12 col-md-5">
+                                    <div class="col-12 col-md-6">
                                         <label class="required">IGV {{$documento->igv }}%</label>
                                     </div>
-                                    <div class="col-12 col-md-7">
-                                        <input type="text" class="form-control" name="total_igv" value="{{ $documento->total_igv }}" readonly>
+                                    <div class="col-12 col-md-6">
+                                        <input type="text" class="form-control" name="total_igv" id="total_igv" value="{{ $documento->total_igv }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-12 col-md-5">
+                                    <div class="col-12 col-md-6">
                                         <label class="required">Total</label>
                                     </div>
-                                    <div class="col-12 col-md-7">
-                                        <input type="text" class="form-control" name="total" value="{{ $documento->total }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-12 col-md-5">
-                                        <label class="required">Nuevo Total</label>
-                                    </div>
-                                    <div class="col-12 col-md-7">
-                                        <input type="text" class="form-control" name="nuevo_total" value="{{ $documento->total }}" readonly>
+                                    <div class="col-12 col-md-6">
+                                        <input type="text" class="form-control" name="total" id="total" value="{{ $documento->total }}" readonly>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <button type="button" class="btn btn-secondary btn-sm" onclick="prueba()"><i class="fa fa-refresh"></i></button>
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-10">
+                                                <h4><b>Detalles de la nota de crédito</b></h4>
+                                            </div>
+                                            <div class="col-2 text-right">
+                                                <button type="button" class="btn btn-secondary btn-sm" onclick="actualizarData({{ $documento->id }})"><i class="fa fa-refresh"></i></button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-12">
-                                        <div class="table-responsive">
-                                            <table id="tbl-detalles" class="table table-hover tbl-detalles" style="width: 100%; text-transform:uppercase;">
-                                                <thead>
-                                                    <th></th>
-                                                    <th>Cant.</th>
-                                                    <th>Descripcion</th>
-                                                    <th>P. Unit</th>
-                                                    <th>Total</th>
-                                                    <th>Opciones</th>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </table>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="table-responsive">
+                                                    <table id="tbl-detalles" class="table table-hover tbl-detalles" style="width: 100%; text-transform:uppercase;">
+                                                        <thead>
+                                                            <th></th>
+                                                            <th>Cant.</th>
+                                                            <th>Descripcion</th>
+                                                            <th>P. Unit</th>
+                                                            <th>Total</th>
+                                                            <th>Opciones</th>
+                                                            <th></th>
+                                                        </thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -263,8 +270,7 @@
     </div>
 
 </div>
-@include('ventas.documentos.modal')
-@include('ventas.documentos.modalLote')
+@include('ventas.notas.credito.modal')
 
 @stop
 @push('styles')
@@ -304,10 +310,108 @@
 
         actualizarData('{{ $documento->id }}')
         viewData();
-        aceptarData();
-        cancelarData();
-        eliminarData();
+
+        $('#cantidad_devolver').on('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            let max = parseInt(this.max);
+            let valor = parseInt(this.value);
+            if (valor > max) {
+                toastr.error('La cantidad ingresada supera al stock del producto Max(' + max + ').', 'Error');
+                this.value = max;
+            }
+        });
+
     });
+
+    function changeTipoNota(b)
+    {
+        if(b.value != '')
+        {
+            if(b.value == '01')
+            {
+                actualizarData('{{ $documento->id }}')
+            }
+            else
+            {
+                actualizarData('{{ $documento->id }}')
+            }
+        }
+    }
+
+    function limpiarForm()
+    {
+        $("#cantidad_devolver").attr('readonly');
+        $("#cantidad_devolver").val('');
+        $("#descripcion").attr('readonly');
+        $("#descripcion").val('');
+        $("#precio_unitario").attr('readonly');
+        $("#precio_unitario").val('');
+        $("#descuento_dev").attr('readonly');
+        $("#descuento_dev").val('');
+        $("#monto_igv").attr('readonly');
+        $("#monto_igv").val('');
+        $("#importe_venta").attr('readonly');
+        $("#importe_venta").val('');
+        
+    }
+
+    function viewData() {
+        $("#tbl-detalles").on('click', '#editar', function() {
+
+            let cod_motivo = $('#cod_motivo').val();
+
+            if(cod_motivo != '')
+            {
+                var data = $(".tbl-detalles").dataTable().fnGetData($(this).closest('tr'));
+                let table = $('#tbl-detalles').DataTable();
+                let index = table.row($(this).parents('tr')).index();
+                let igv = convertFloat('{{ $documento->igv }}')
+                let total_igv = data[3] - (data[3] / (1 + (igv/100)));
+
+                limpiarForm();
+
+                $('#indice').val(index);
+                $('#cantidad_devolver').val(data[1]);
+                $('#descripcion').val(data[2]);
+                $('#precio_unitario').val(data[3]);
+                $('#monto_igv').val(total_igv);
+                $('#importe_venta').val(data[4]);
+
+                $("#cantidad_devolver").attr({
+                        "max": data[1],
+                        "min": 1,
+                    });
+
+                if(cod_motivo != '01')
+                {
+                    console.log('o1')
+                    $("#cantidad_devolver").removeAttr('readonly');
+                    $("#precio_unitario").removeAttr('readonly');
+                }
+                $('#modal_editar_detalle').modal('show');
+            }
+            else
+            {
+                toastr.error('Seleccionar tipo de nota de crédito','Error')
+            }
+        });
+    }
+
+    function cargarProductos() {
+        var productos = [];
+        var table = $('.tbl-detalles').DataTable();
+        var data = table.rows().data();
+        data.each(function(value, index) {
+            let fila = {
+                id: value[0],
+                cantidad: value[1],
+                precio_unitario: value[3],
+            };
+            productos.push(fila);
+        });
+
+        $('#productos_tabla').val(JSON.stringify(productos));
+    }
 
     function actualizarData(id) {
         let url = '{{ route("ventas.getDetalles",":id") }}';
@@ -331,27 +435,33 @@
     }
 
     function prueba()
-    {   var t = $('.tbl-detalles').DataTable();
+    {   
+        var t = $('.tbl-detalles').DataTable();
         t.rows().data().each(function(el, index) { 
             console.log(el);
         })
     }
+
     function sumaTotal()
     {
         let t = $('.tbl-detalles').DataTable();
         let total = 0;
         let detalles = [];
         t.rows().data().each(function(el, index) { 
+            let id = el[0];
             let cantidad = el[1]; 
             let descripcion = el[2]; 
-            let precio_nuevo = el[3]; 
-            let total_venta = el[1] * el[3];
+            let precio_unitario = el[3]; 
+            let importe_venta = el[1] * el[3];
+            let editable = el[6];
 
             let detalle = { 
+                id: id,
                 cantidad: cantidad, 
                 descripcion: descripcion,
-                precio_nuevo: precio_nuevo,
-                total_venta: total_venta,
+                precio_unitario: precio_unitario,
+                importe_venta: importe_venta,
+                editable: editable,
             }
 
             detalles.push(detalle); 
@@ -366,7 +476,7 @@
         } 
 
         t.rows().data().each(function(el, index) { 
-            total=Number(el[4]) + total
+            total = Number(el[4]) + total
         });
 
         conIgv(convertFloat(total),convertFloat(18)) 
@@ -375,9 +485,9 @@
     function conIgv(total, igv) {
         let subtotal = total / (1 + (igv / 100));
         let igv_calculado = total - subtotal;
-        $('#sub_total').val((Math.round(subtotal * 10) / 10).toFixed(2))
-        $('#total_igv').val((Math.round(igv_calculado * 10) / 10).toFixed(2))
-        $('#total').val((Math.round(total * 10) / 10).toFixed(2))
+        $('#sub_total').val((Math.round(subtotal * 10) / 10).toFixed(2));
+        $('#total_igv').val((Math.round(igv_calculado * 10) / 10).toFixed(2));
+        $('#total').val((Math.round(total * 10) / 10).toFixed(2));
         //Math.round(fDescuento * 10) / 10
     }
 
@@ -385,12 +495,13 @@
     function agregarTabla($detalle) {
         var t = $('.tbl-detalles').DataTable();
         t.row.add([
-            '',
+            $detalle.id,
             Number($detalle.cantidad).toFixed(2),
             $detalle.descripcion,
-            Number($detalle.precio_nuevo).toFixed(2),
-            Number($detalle.total_venta).toFixed(2),
+            Number($detalle.precio_unitario).toFixed(2),
+            Number($detalle.importe_venta).toFixed(2),
             '',
+            $detalle.editable,
         ]).draw(false);
         //cargarProductos()
     }
@@ -405,34 +516,6 @@
             "bFilter": false,
             "bInfo": false,
             "bAutoWidth": false,
-            /*"processing": true,
-            "serverSide": true,
-            "ajax": url,
-            "columns": [
-                { visible: false},
-                { data: 'cantidad', className: 'cantidad', sWidth: '15%' },
-                { data: 'descripcion', className: 'descripcion', sWidth: '40%' },
-                { data: 'precio_nuevo', className: 'precio_nuevo', sWidth: '15%' },
-                { data: 'total_venta', className: 'total_venta',sWidth: '15%' },
-                {
-                    defaultContent: '<div class="btn-group">' +
-                        '<button id="editar" type="button" class="btn btn-sm btn-primary">' +
-                        '<span class="glyphicon glyphicon-pencil" > </span>' +
-                        '</button>' +
-                        '<button id="eliminar" type="button" class="btn btn-sm btn-danger">' +
-                        '<span class="glyphicon glyphicon-trash" > </span>' +
-                        '</button>' +
-                        '<button id="aceptar" type="button" class="btn btn-sm btn-success" style="display:none;">' +
-                        '<span class="glyphicon glyphicon-ok" > </span>' +
-                        '</button>' +
-                        '<button id="cancelar" type="button" class="btn btn-sm btn-warning" style="display:none;">' +
-                        '<span class="glyphicon glyphicon-remove" > </span>' +
-                        '</button>' +
-                        '</div>',
-                    className: 'text-center',
-                    sWidth: '15%'
-                },
-            ],*/
             "columnDefs": [{
                     "targets": [0],
                     "visible": false,
@@ -453,21 +536,14 @@
                 {
                     "targets": [5],
                     data: null,
-                    defaultContent: '<div class="btn-group">' +
-                        '<button id="editar" type="button" class="btn btn-sm btn-primary">' +
+                    defaultContent: '<button id="editar" type="button" class="btn btn-sm btn-info btn-rounded">' +
                         '<span class="glyphicon glyphicon-pencil" > </span>' +
-                        '</button>' +
-                        '<button id="eliminar" type="button" class="btn btn-sm btn-danger">' +
-                        '<span class="glyphicon glyphicon-trash" > </span>' +
-                        '</button>' +
-                        '<button id="aceptar" type="button" class="btn btn-sm btn-success" style="display:none;">' +
-                        '<span class="glyphicon glyphicon-ok" > </span>' +
-                        '</button>' +
-                        '<button id="cancelar" type="button" class="btn btn-sm btn-warning" style="display:none;">' +
-                        '<span class="glyphicon glyphicon-remove" > </span>' +
-                        '</button>' +
-                        '</div>',
-                }
+                        '</button>',
+                    visible: $('#cod_motivo').val() === '01' ? false : true
+                },
+                {
+                    "targets": [6],
+                },
             ],
             'bAutoWidth': false,
             'aoColumns': [{
@@ -483,127 +559,34 @@
                 },
                 {
                     sWidth: '15%',                 
-                    sClass: 'precio_nuevo'
+                    sClass: 'precio_unitario'
                 },
                 {
                     sWidth: '15%',                    
-                    sClass: 'total_venta'
+                    sClass: 'importe_venta'
                 },
                 {
                     sWidth: '15%',
                     sClass: 'text-center'
                 },
+                {
+                    sWidth: '0%',
+                    visible: false
+                },
             ],
+            "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                if (aData[6] == 1) {
+                    $('td', nRow).css('background-color', '#D1F2EB');
+                    $('td', nRow).css('color', '#2980B9');
+                    $('td', nRow).css('font-weight', 'bold');
+                }
+            },
             "language": {
                 "url": "/Spanish.json"
             },
             "order": [
                 [1, 'asc']
             ],
-        });
-    }
-
-    function viewData() {
-        $("#tbl-detalles").on('click', '#editar', function() {
-
-            //var data = $("#propuestas").dataTable().fnGetData($(this).closest('tr'));
-
-            $(this).parents("tr").find(".cantidad").each(function() {
-                var cont = $(this).html();
-                var input = '<input type="text" class="form-control cantidad_input" value="' + cont + '" onkeypress="return isNumber(event)"/>';
-                $(this).html(input);
-            });
-
-            $(this).parents("tr").find(".precio_nuevo").each(function() {
-                var cont = $(this).html();
-                var input = '<input type="text" class="form-control precio_nuevo_input" value="' + cont + '" onkeypress="return isNumber(event)"/>';
-                $(this).html(input);
-            });
-
-            $(this).parent().find("#editar").hide();
-            $(this).parent().find("#eliminar").hide();
-            $(this).parent().find("#aceptar").show();
-            $(this).parent().find("#cancelar").show();
-        });
-    }
-
-    function aceptarData() {
-        $("#tbl-detalles").on('click', '#aceptar', function() {
-
-            var data = $("#tbl-detalles").dataTable().fnGetData($(this).closest('tr'));
-            let table = $('#tbl-detalles').DataTable();
-            let index = table.row($(this).parents('tr')).index();
-            $(this).parents("tr").find(".cantidad").each(function() {
-                let con = $(this).find('.cantidad_input').val();
-                $(this).html(con);
-
-                table.cell({
-                    row: index,
-                    column: 1
-                }).data(con).draw();
-            });
-
-            $(this).parents("tr").find(".precio_nuevo").each(function() {
-                let con = $(this).find('.precio_nuevo_input').val();
-                $(this).html(con);
-
-                table.cell({
-                    row: index,
-                    column: 3
-                }).data(con).draw();
-            });
-
-            $(this).parent().find("#editar").show();
-            $(this).parent().find("#eliminar").show();
-            $(this).parent().find("#aceptar").hide();
-            $(this).parent().find("#cancelar").hide();
-
-            sumaTotal();
-        });
-        
-    }
-
-    function cancelarData() {
-        $("#tbl-detalles").on('click', '#cancelar', function() {
-
-            var data = $("#tbl-detalles").dataTable().fnGetData($(this).closest('tr'));
-            let index = table.row($(this).parents('tr')).index();
-            $(this).parents("tr").find(".cantidad").each(function() {
-                let con = $(this).find('.cantidad_input').val();
-                $(this).html(con);
-
-                table.cell({
-                    row: index,
-                    column: 1
-                }).data(con).draw();
-            });
-
-            $(this).parents("tr").find(".precio_nuevo").each(function() {
-                let con = $(this).find('.precio_nuevo_input').val();
-                $(this).html(con);
-
-                table.cell({
-                    row: index,
-                    column: 3
-                }).data(con).draw();
-            });
-
-            $(this).parent().find("#editar").show();
-            $(this).parent().find("#eliminar").show();
-            $(this).parent().find("#aceptar").hide();
-            $(this).parent().find("#cancelar").hide();
-
-            sumaTotal();
-        });
-    }
-
-    function eliminarData()
-    {
-        $("#tbl-detalles").on('click', '#eliminar', function() {
-            let table = $('#tbl-detalles').DataTable();
-            $(this).parents('tr').remove();
-
-            sumaTotal();
         });
     }
 

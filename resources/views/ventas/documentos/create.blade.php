@@ -296,9 +296,8 @@
                             <div class="panel panel-primary">
                                 <div class="panel-heading">
                                     <h4 class=""><b>Detalle del Documento de Venta</b></h4>
-                                                </div>
-                                                <div class="
-                                        panel-body">
+                                </div>
+                                <div class="panel-body">
 
                                         @if (empty($cotizacion))
                                             <div class="row">
