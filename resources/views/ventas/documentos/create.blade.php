@@ -42,7 +42,7 @@
                             <input type="hidden" name="cotizacion_id" value="{{ $cotizacion->id }}">
                         @endif
                         <div class="row">
-                            <div class="col-12">                                
+                            <div class="col-12">
                                 <h4 class=""><b>Documento de venta</b></h4>
                                 <div class="row">
                                     <div class="col-md-12">
@@ -277,7 +277,7 @@
 
                         </div>
 
-                        @if(!empty($cotizacion))                            
+                        @if(!empty($cotizacion))
                             <input type="hidden" name="igv" id="igv" value="{{ $cotizacion->igv }}">
                         @else
                             <input type="hidden" name="igv" id="igv" value="18">
@@ -287,7 +287,7 @@
                         <input type="hidden" name="monto_total_igv" id="monto_total_igv" value="{{ old('monto_total_igv') }}">
                         <input type="hidden" name="monto_total" id="monto_total" value="{{ old('monto_total') }}">
 
-                        
+
                     </form>
                     <hr>
                     <div class="row">
@@ -416,12 +416,12 @@
                             </a>
                             @if (empty($errores))
                                 <button type="button" id="btn_grabar" class="btn btn-w-m btn-primary">
-                                    <i class="fa fa-save"></i> Grabar 
+                                    <i class="fa fa-save"></i> Grabar
                                 </button>
                             @else
                                 @if (count($errores) == 0)
                                     <button type="button" id="btn_grabar" class="btn btn-w-m btn-primary">
-                                        <i class="fa fa-save"></i> Grabar 
+                                        <i class="fa fa-save"></i> Grabar
                                     </button>
                                 @endif
                             @endif
@@ -474,7 +474,7 @@
 
 
 <script>
-    
+
     var clientes_global = [];
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
@@ -1024,56 +1024,56 @@
 
                 if(detalles.length > 0)
                 {
-                    for(let i = 0; i < detalles.length; i++) { 
-                        agregarTabla(detalles[i]); 
-                    } 
-                } 
+                    for(let i = 0; i < detalles.length; i++) {
+                        agregarTabla(detalles[i]);
+                    }
+                }
 
-                t.rows().data().each(function(el, index) { 
-                    total=Number(el[9]) + total 
-                }); 
+                t.rows().data().each(function(el, index) {
+                    total=Number(el[9]) + total
+                });
                 conIgv(convertFloat(total),convertFloat('{{ $cotizacion->igv }}'))
-            @else 
-                t.rows().data().each(function(el, index) { 
-                    let igv=convertFloat(18); 
-                    let igv_calculado=convertFloat(igv / 100); 
+            @else
+                t.rows().data().each(function(el, index) {
+                    let igv=convertFloat(18);
+                    let igv_calculado=convertFloat(igv / 100);
                     let pdescuento=convertFloat(el[11]); let
-                    precio_inicial=convertFloat(el[10]); 
-                    let precio_unitario = precio_inicial / 1.18; 
-                    let valor_unitario = precio_unitario / 1.18; 
-                    let dinero=precio_unitario * (pdescuento / 100); 
-                    let precio_nuevo = precio_unitario - dinero; 
-                    let valor_venta = precio_nuevo * el[2]; 
-                    
-                    let detalle = { 
-                        producto_id: el[0], 
+                    precio_inicial=convertFloat(el[10]);
+                    let precio_unitario = precio_inicial / 1.18;
+                    let valor_unitario = precio_unitario / 1.18;
+                    let dinero=precio_unitario * (pdescuento / 100);
+                    let precio_nuevo = precio_unitario - dinero;
+                    let valor_venta = precio_nuevo * el[2];
+
+                    let detalle = {
+                        producto_id: el[0],
                         unidad: el[3],
-                        producto: el[4], 
-                        precio_unitario: precio_unitario, 
-                        valor_unitario: valor_unitario, 
+                        producto: el[4],
+                        precio_unitario: precio_unitario,
+                        valor_unitario: valor_unitario,
                         valor_venta: valor_venta,
-                        cantidad: convertFloat(el[2]), 
-                        precio_inicial: precio_inicial, 
-                        dinero: dinero, 
+                        cantidad: convertFloat(el[2]),
+                        precio_inicial: precio_inicial,
+                        dinero: dinero,
                         descuento: pdescuento,
-                        precio_nuevo: precio_nuevo, 
+                        precio_nuevo: precio_nuevo,
                     }
 
-                    detalles.push(detalle); 
-                }); 
-                    
-                t.clear().draw(); 
+                    detalles.push(detalle);
+                });
+
+                t.clear().draw();
                 if(detalles.length> 0)
                 {
-                    for(let i = 0; i < detalles.length; i++) { 
-                        agregarTabla(detalles[i]); 
+                    for(let i = 0; i < detalles.length; i++) {
+                        agregarTabla(detalles[i]);
                     }
-                } 
-                
-                t.rows().data().each(function(el, index) { 
+                }
+
+                t.rows().data().each(function(el, index) {
                     total=Number(el[9]) + total
-                }); 
-                conIgv(convertFloat(total), convertFloat(18)) 
+                });
+                conIgv(convertFloat(total), convertFloat(18))
             @endif
         @else
             t.rows().data().each(function(el, index) {
@@ -1107,14 +1107,14 @@
 
             if(detalles.length > 0)
             {
-                for(let i = 0; i < detalles.length; i++) { 
-                    agregarTabla(detalles[i]); 
+                for(let i = 0; i < detalles.length; i++) {
+                    agregarTabla(detalles[i]);
                 }
             }
-            t.rows().data().each(function(el, index) { 
-                total=Number(el[9]) + total 
+            t.rows().data().each(function(el, index) {
+                total=Number(el[9]) + total
             });
-            conIgv(convertFloat(total),convertFloat(18)) 
+            conIgv(convertFloat(total),convertFloat(18))
         @endif
 
 
@@ -1543,7 +1543,7 @@
         axios.get("{{ route('Caja.movimiento.verificarestado') }}").then((value) => {
             if (value.data == "") {
                 toastr.error("No hay ninguna apertura de caja");
-            } else {                
+            } else {
                 /*Swal.fire({
                     title: 'Opción Guardar',
                     text: "¿Seguro que desea guardar cambios?",
@@ -1625,8 +1625,6 @@
                         object[key] = value;
                     });
 
-                    console.log(object);
-
                     //var json = JSON.stringify(object);
 
                     var datos = object;
@@ -1637,7 +1635,7 @@
                             // vamos a enviar los datos en formato JSON
                             'Content-Type': 'application/json'
                         },
-                        // el cuerpo de la petición es una cadena de texto 
+                        // el cuerpo de la petición es una cadena de texto
                         // con los datos en formato JSON
                         body: JSON.stringify(datos) // convertimos el objeto a texto
                     };
@@ -1684,7 +1682,7 @@
                                 window.open(url_open_pdf, "Comprobante SISCOM", "width=900, height=600");
 
                                 $('#asegurarCierre').val(2);
-                            
+
                                 location = "{{ route('ventas.documento.index') }}";
                             }
                             else
@@ -1692,7 +1690,7 @@
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error',
-                                    text: '¡'+ result.value.mensaje +'!',               
+                                    text: '¡'+ result.value.mensaje +'!',
                                     customClass: {
                                         container: 'my-swal'
                                     },
@@ -1725,12 +1723,12 @@
         $('#modal_cliente').modal('show');
     }
 
-    function nextFocus(event, inputS) {     
-        if (event.keyCode == 13) {             
-            
+    function nextFocus(event, inputS) {
+        if (event.keyCode == 13) {
+
             setTimeout(function() { $('#'+inputS).focus() }, 10);
-            document.getElementById(inputS).focus();         
-        } 
+            document.getElementById(inputS).focus();
+        }
     }
 
     //background-color: #00f;

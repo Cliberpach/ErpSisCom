@@ -27,11 +27,11 @@
 
                 <div class="ibox-content">
 
-                    <form action="{{route('ventas.notas.store')}}" method="POST" id="enviar_documento">
-                        {{csrf_field()}}
+                    <form id="enviar_documento">
+                        @csrf
                         <input type="hidden" name="documento_id" value="{{old('documento_id', $documento->id)}}">
-                        <input type="hidden" name="tipo_nota" value="{{ $documento->tipo_nota }}">
-                        <input type="hidden" name="productos_tabla">
+                        <input type="hidden" name="tipo_nota" value="{{ $tipo_nota }}">
+                        <input type="hidden" name="productos_tabla" id="productos_tabla">
                         <div class="row">
                             <div class="col-12 col-md-5 b-r">
                                 <div class="row">
@@ -148,7 +148,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-4">                                
+                            <div class="col-12 col-md-4">
                                 <div class="form-group row">
                                     <div class="col-12 col-md-6">
                                         <label class="required">Serie doc. afectado</label>
@@ -174,7 +174,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-4">                                
+                            <div class="col-12 col-md-4">
                                 <div class="form-group row">
                                     <div class="col-12 col-md-6">
                                         <label class="required">Sub Total</label>
@@ -233,6 +233,37 @@
                                                     </table>
                                                 </div>
                                             </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-12 col-md-8"></div>
+                                                    <div class="col-12 col-md-4">
+                                                        <div class="form-group row">
+                                                            <div class="col-12 col-md-6">
+                                                                <label class="required">Sub Total</label>
+                                                            </div>
+                                                            <div class="col-12 col-md-6">
+                                                                <input type="text" class="form-control" name="sub_total_nuevo" id="sub_total_nuevo" value="" readonly>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-12 col-md-6">
+                                                                <label class="required">IGV {{$documento->igv }}%</label>
+                                                            </div>
+                                                            <div class="col-12 col-md-6">
+                                                                <input type="text" class="form-control" name="total_igv_nuevo" id="total_igv_nuevo" value="" readonly>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-12 col-md-6">
+                                                                <label class="required">Total</label>
+                                                            </div>
+                                                            <div class="col-12 col-md-6">
+                                                                <input type="text" class="form-control" name="total_nuevo" id="total_nuevo" value="" readonly>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -246,15 +277,20 @@
                             </div>
 
                             <div class="col-md-6 text-right">
+                                <div class="row">
+                                    <div class="col-12 col-md-6">
+                                        <a href="{{route('ventas.notas',$documento->id)}}" id="btn_cancelar"
+                                            class="btn btn-w-m btn-block btn-default">
+                                            <i class="fa fa-arrow-left"></i> Regresar
+                                        </a>
 
-                                <a href="{{route('ventas.documento.index')}}" id="btn_cancelar"
-                                    class="btn btn-w-m btn-default">
-                                    <i class="fa fa-arrow-left"></i> Regresar
-                                </a>
-                                
-                                <button type="submit" id="btn_grabar" class="btn btn-w-m btn-primary">
-                                    <i class="fa fa-save"></i> Grabar
-                                </button>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <button type="submit" class="btn btn-w-m btn-block btn-primary">
+                                            <i class="fa fa-save"></i> Grabar
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
@@ -352,7 +388,7 @@
         $("#monto_igv").val('');
         $("#importe_venta").attr('readonly');
         $("#importe_venta").val('');
-        
+
     }
 
     function viewData() {
@@ -406,6 +442,7 @@
                 id: value[0],
                 cantidad: value[1],
                 precio_unitario: value[3],
+                editable: value[6],
             };
             productos.push(fila);
         });
@@ -435,9 +472,9 @@
     }
 
     function prueba()
-    {   
+    {
         var t = $('.tbl-detalles').DataTable();
-        t.rows().data().each(function(el, index) { 
+        t.rows().data().each(function(el, index) {
             console.log(el);
         })
     }
@@ -447,47 +484,55 @@
         let t = $('.tbl-detalles').DataTable();
         let total = 0;
         let detalles = [];
-        t.rows().data().each(function(el, index) { 
+        t.rows().data().each(function(el, index) {
             let id = el[0];
-            let cantidad = el[1]; 
-            let descripcion = el[2]; 
-            let precio_unitario = el[3]; 
+            let cantidad = el[1];
+            let descripcion = el[2];
+            let precio_unitario = el[3];
             let importe_venta = el[1] * el[3];
             let editable = el[6];
 
-            let detalle = { 
+            let detalle = {
                 id: id,
-                cantidad: cantidad, 
+                cantidad: cantidad,
                 descripcion: descripcion,
                 precio_unitario: precio_unitario,
                 importe_venta: importe_venta,
                 editable: editable,
             }
 
-            detalles.push(detalle); 
+            detalles.push(detalle);
         });
 
-        t.clear().draw(); 
+        t.clear().draw();
         if(detalles.length> 0)
         {
-            for(let i = 0; i < detalles.length; i++) { 
-                agregarTabla(detalles[i]); 
+            for(let i = 0; i < detalles.length; i++) {
+                agregarTabla(detalles[i]);
             }
-        } 
+        }
 
-        t.rows().data().each(function(el, index) { 
-            total = Number(el[4]) + total
+        t.rows().data().each(function(el, index) {
+            if(el[6] == 1 && $('#cod_motivo').val() != '01')
+            {
+                total = Number(el[4]) + total
+            }
+
+            if($('#cod_motivo').val() === '01')
+            {
+                total = Number(el[4]) + total
+            }
         });
 
-        conIgv(convertFloat(total),convertFloat(18)) 
+        conIgv(convertFloat(total),convertFloat(18))
     }
 
     function conIgv(total, igv) {
         let subtotal = total / (1 + (igv / 100));
         let igv_calculado = total - subtotal;
-        $('#sub_total').val((Math.round(subtotal * 10) / 10).toFixed(2));
-        $('#total_igv').val((Math.round(igv_calculado * 10) / 10).toFixed(2));
-        $('#total').val((Math.round(total * 10) / 10).toFixed(2));
+        $('#sub_total_nuevo').val((Math.round(subtotal * 10) / 10).toFixed(2));
+        $('#total_igv_nuevo').val((Math.round(igv_calculado * 10) / 10).toFixed(2));
+        $('#total_nuevo').val((Math.round(total * 10) / 10).toFixed(2));
         //Math.round(fDescuento * 10) / 10
     }
 
@@ -550,19 +595,19 @@
                     sWidth: '0%'
                 },
                 {
-                    sWidth: '15%',                 
+                    sWidth: '15%',
                     sClass: 'cantidad'
                 },
                 {
-                    sWidth: '40%',                 
+                    sWidth: '40%',
                     sClass: 'descripcion'
                 },
                 {
-                    sWidth: '15%',                 
+                    sWidth: '15%',
                     sClass: 'precio_unitario'
                 },
                 {
-                    sWidth: '15%',                    
+                    sWidth: '15%',
                     sClass: 'importe_venta'
                 },
                 {
@@ -589,6 +634,100 @@
             ],
         });
     }
+
+    $('#enviar_documento').submit(function (e) {
+        e.preventDefault();
+
+        cargarProductos();
+        let formDocumento = document.getElementById('enviar_documento');
+        let formData = new FormData(formDocumento);
+
+        var object = {};
+        formData.forEach(function(value, key){
+            object[key] = value;
+        });
+
+        console.log(object);
+
+        //var json = JSON.stringify(object);
+
+        var datos = object;
+        var init = {
+            // el método de envío de la información será POST
+            method: "POST",
+            headers: { // cabeceras HTTP
+                // vamos a enviar los datos en formato JSON
+                'Content-Type': 'application/json'
+            },
+            // el cuerpo de la petición es una cadena de texto
+            // con los datos en formato JSON
+            body: JSON.stringify(datos) // convertimos el objeto a texto
+        };
+
+        var url = '{{ route("ventas.notas.store") }}';
+        var textAlert = "¿Seguro que desea guardar cambios?";
+        Swal.fire({
+            title: 'Opción Guardar',
+            text: textAlert,
+            icon: 'question',
+            customClass: {
+                container: 'my-swal'
+            },
+            showCancelButton: true,
+            confirmButtonColor: "#1ab394",
+            confirmButtonText: 'Si, Confirmar',
+            cancelButtonText: "No, Cancelar",
+            showLoaderOnConfirm: true,
+            allowOutsideClick: false,
+            preConfirm: (login) => {
+                return fetch(url,init)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(response.statusText)
+                        }
+                        return response.json()
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(
+                            `Ocurrió un error`
+                        );
+                    })
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.value !== undefined && result.isConfirmed) {
+                if(result.value.errors)
+                {
+                    let mensaje = sHtmlErrores(result.value.data.mensajes);
+                    toastr.error(mensaje);
+                }
+                else if(result.value.success)
+                {
+                    toastr.success('Nota de crédito creada!','Exito')
+
+                    let id = result.value.nota_id;
+                    /*let url_open_pdf = '{{ route("ventas.notas.show", ":id")}}';
+                    url_open_pdf = url_open_pdf.replace(':id',id);
+                    window.open(url_open_pdf, "Comprobante SISCOM", "width=900, height=600");*/
+
+                    location = "{{route('ventas.notas',$documento->id)}}";
+                }
+                else
+                {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: '¡'+ result.value.mensaje +'!',
+                        customClass: {
+                            container: 'my-swal'
+                        },
+                        showConfirmButton: false,
+                        timer: 2500
+                    });
+                }
+            }
+        });
+    });
 
 </script>
 @endpush

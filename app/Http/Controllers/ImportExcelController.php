@@ -45,7 +45,7 @@ class ImportExcelController extends Controller
         $objeto=new ProductoSheet();
         Excel::import($objeto,$archivo);
 
-        $datos= $objeto->get_data();
+        $datos = $objeto->get_data();
 
         // try
         // {

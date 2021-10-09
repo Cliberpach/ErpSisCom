@@ -16,14 +16,14 @@
     </div>
     
     <div class="col-12 col-md-2">
-        <button type="submit" class="btn btn-block btn-w-m btn-info m-t-md d-none" form="frm-debito">
+        <a href="{{ route('ventas.notas.create', array('documento_id' => $documento->id, 'nota' => '1')) }}" class="btn btn-block btn-w-m btn-info m-t-md d-none">
             <i class="fa fa-plus-square"></i> Nota de débito
-        </button>
+        </a>
     </div>
     <div class="col-12 col-md-2">
-        <button type="submit" class="btn btn-block btn-w-m btn-primary m-t-md" form="frm-credito">
+        <a href="{{ route('ventas.notas.create', array('documento_id' => $documento->id, 'nota' => '0')) }}" class="btn btn-block btn-w-m btn-primary m-t-md">
             <i class="fa fa-plus-square"></i> Nota de crédito
-        </button>
+        </a>
     </div>
 </div>
 

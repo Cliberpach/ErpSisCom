@@ -382,7 +382,7 @@ function(){
     //NOTAS DE CREDITO / DEBITO
     Route::prefix('notas/electronicos')->group(function(){
         Route::get('index/{id}', 'Ventas\Electronico\NotaController@index')->name('ventas.notas');
-        Route::post('create/', 'Ventas\Electronico\NotaController@create')->name('ventas.notas.create');
+        Route::get('create', 'Ventas\Electronico\NotaController@create')->name('ventas.notas.create');
         Route::post('store', 'Ventas\Electronico\NotaController@store')->name('ventas.notas.store');
         Route::get('getNotes/{id}','Ventas\Electronico\NotaController@getNotes')->name('ventas.getNotes');
         Route::get('getDetalles/{id}','Ventas\Electronico\NotaController@getDetalles')->name('ventas.getDetalles');

@@ -612,7 +612,7 @@ class GuiaController extends Controller
 
                     // ])->with('sunat_exito', 'success');
 
-                    return array('success' => true,'mensaje' => 'Guia de venta enviada a Sunat con exito.');
+                    return array('success' => true,'mensaje' => 'Guia de remisión enviada a Sunat con exito.');
 
                 }else{
 
