@@ -208,6 +208,21 @@ class NotaController extends Controller
                             'mtoValorUnitario'=>  $producto->precio_unitario / (1 + ($documento->igv/100)),
                             'mtoPrecioUnitario' => $producto->precio_unitario,
                         ]);
+
+                        if ($detalle->cantidad - $producto->cantidad > 0)
+                        {
+                            $detalle->cantidad = $detalle->cantidad - $producto->cantidad;
+                            $detalle->update();
+                        }
+                        else
+                        {
+                            $detalle->estado = 'ANULADO';
+                            $detalle->update();
+                        }
+
+                        $lote->cantidad = $lote->cantidad + $producto->cantidad;
+                        $lote->cantidad_logica = $lote->cantidad_logica + $producto->cantidad;
+                        $lote->update();
                     }
                 }
                 else
@@ -231,6 +246,26 @@ class NotaController extends Controller
                         'mtoValorUnitario'=>  $producto->precio_unitario / (1 + ($documento->igv/100)),
                         'mtoPrecioUnitario' => $producto->precio_unitario,
                     ]);
+
+                    if ($detalle->cantidad - $producto->cantidad > 0)
+                    {
+                        $detalle->cantidad = $detalle->cantidad - $producto->cantidad;
+                        $detalle->update();
+                    }
+                    else
+                    {
+                        $detalle->estado = 'ANULADO';
+                        $detalle->update();
+                    }
+
+                    $lote->cantidad = $lote->cantidad + $producto->cantidad;
+                    $lote->cantidad_logica = $lote->cantidad_logica + $producto->cantidad;
+                    $lote->update();
+
+                    $documento->sunat = '2';
+                    $documento->serie = null;
+                    $documento->correlativo = null;
+                    $documento->update();
                 }
             }
 
@@ -266,7 +301,7 @@ class NotaController extends Controller
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'mensaje'=> 'Ocurrio un error porfavor volver a intentar, si el error persiste comunicarse con el administrador del sistema.',
+                'mensaje'=> $e->getMessage(),
                 'excepcion' => $e->getMessage()
             ]);
         }
@@ -365,50 +400,54 @@ class NotaController extends Controller
 
     public function obtenerCorrelativo($nota, $numeracion)
     {
+        if(empty($nota->correlativo))
+        {
+            $serie_comprobantes = DB::table('empresa_numeracion_facturaciones')
+            ->join('empresas','empresas.id','=','empresa_numeracion_facturaciones.empresa_id')
+            ->join('cotizacion_documento','cotizacion_documento.empresa_id','=','empresas.id')
+            ->join('nota_electronica','nota_electronica.documento_id','=','cotizacion_documento.id')
+            ->when($nota->tipo_nota, function ($query, $request) {
+                if ($request == '1') {
+                    return $query->where('empresa_numeracion_facturaciones.tipo_comprobante',131);
+                }else{
+                    return $query->where('empresa_numeracion_facturaciones.tipo_comprobante',130);
+                }
+            })
+            ->where('empresa_numeracion_facturaciones.empresa_id',$nota->empresa_id)
+            //->where('nota_electronica.sunat',"1")
+            ->select('nota_electronica.*','empresa_numeracion_facturaciones.*')
+            ->orderBy('nota_electronica.correlativo','DESC')
+            ->get();
 
-        $serie_comprobantes = DB::table('empresa_numeracion_facturaciones')
-                            ->join('empresas','empresas.id','=','empresa_numeracion_facturaciones.empresa_id')
-                            ->join('cotizacion_documento','cotizacion_documento.empresa_id','=','empresas.id')
-                            ->join('nota_electronica','nota_electronica.documento_id','=','cotizacion_documento.id')
-                            ->when($nota->tipo_nota, function ($query, $request) {
-                                if ($request == '1') {
-                                    return $query->where('empresa_numeracion_facturaciones.tipo_comprobante',134);
-                                }else{
-                                    return $query->where('empresa_numeracion_facturaciones.tipo_comprobante',133);
-                                }
-                            })
-                            ->where('empresa_numeracion_facturaciones.empresa_id',$nota->empresa_id)
-                            ->where('nota_electronica.sunat',"1")
-                            ->select('nota_electronica.*','empresa_numeracion_facturaciones.*')
-                            ->orderBy('nota_electronica.correlativo','DESC')
-                            ->get();
 
-
-        if (count($serie_comprobantes) == 0) {
-            //OBTENER EL DOCUMENTO INICIADO
-            $nota->correlativo = $numeracion->numero_iniciar;
-            $nota->serie = $numeracion->serie;
-            $nota->update();
-
-            //ACTUALIZAR LA NUMERACION (SE REALIZO EL INICIO)
-            self::actualizarNumeracion($numeracion);
-            return $nota->correlativo;
-
-        }else{
-            //NOTA ES NUEVO EN SUNAT
-            if($nota->sunat != '1' ){
-                $ultimo_comprobante = $serie_comprobantes->first();
-                $nota->correlativo = $ultimo_comprobante->correlativo+1;
+            if (count($serie_comprobantes) == 0) {
+                //OBTENER EL DOCUMENTO INICIADO
+                $nota->correlativo = $numeracion->numero_iniciar;
                 $nota->serie = $numeracion->serie;
                 $nota->update();
 
                 //ACTUALIZAR LA NUMERACION (SE REALIZO EL INICIO)
                 self::actualizarNumeracion($numeracion);
                 return $nota->correlativo;
+
+            }else{
+                //NOTA ES NUEVO EN SUNAT
+                if($nota->sunat != '1' ){
+                    $ultimo_comprobante = $serie_comprobantes->first();
+                    $nota->correlativo = $ultimo_comprobante->correlativo+1;
+                    $nota->serie = $numeracion->serie;
+                    $nota->update();
+
+                    //ACTUALIZAR LA NUMERACION (SE REALIZO EL INICIO)
+                    self::actualizarNumeracion($numeracion);
+                    return $nota->correlativo;
+                }
             }
         }
-
-
+        else
+        {
+            return $nota->correlativo;
+        }
     }
 
     public function actualizarNumeracion($numeracion)
@@ -681,8 +720,8 @@ class NotaController extends Controller
                 }else{
 
                     //COMO SUNAT NO LO ADMITE VUELVE A SER 0
-                    $nota->correlativo = null;
-                    $nota->serie = null;
+                    // $nota->correlativo = null;
+                    // $nota->serie = null;
                     $nota->sunat = '2';
                     $nota->update();
 

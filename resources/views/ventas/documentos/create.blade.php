@@ -259,6 +259,7 @@
                                 </div>
 
 
+                                <input type="checkbox" id="igv_check" name="igv_check" class="d-none" checked>
                                 <!-- OBTENER TIPO DE CLIENTE -->
                                 <input type="hidden" class="form-control" name="" id="tipo_cliente">
                                 <!-- OBTENER DATOS DEL PRODUCTO -->
@@ -748,11 +749,11 @@
                 // sumaTotal()
             @else
                 if ($("#igv_check").prop('checked')) {
-                $('#igv').attr('disabled', false)
-                $('#igv_requerido').addClass("required")
+                    $('#igv').attr('disabled', false)
+                    $('#igv_requerido').addClass("required")
                 } else {
-                $('#igv').attr('disabled', true)
-                $('#igv_requerido').removeClass("required")
+                    $('#igv').attr('disabled', true)
+                    $('#igv_requerido').removeClass("required")
                 }
             @endif
 
@@ -1170,57 +1171,6 @@
 
     }
 
-    /*$('#enviar_documento').submit(function(e) {
-        e.preventDefault();
-        var correcto = validarFecha()
-
-        if (correcto == false) {
-
-            Swal.fire({
-                title: 'Opción Guardar',
-                text: "¿Seguro que desea guardar cambios?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: "#1ab394",
-                confirmButtonText: 'Si, Confirmar',
-                cancelButtonText: "No, Cancelar",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    var tipo = validarTipo()
-
-                    if (tipo == false) {
-                        cargarProductos();
-                        //CARGAR DATOS TOTAL
-                        $('#monto_sub_total').val($('#subtotal').text())
-                        $('#monto_total_igv').val($('#igv_monto').text())
-                        $('#monto_total').val($('#total').text())
-
-                        document.getElementById("moneda").disabled = false;
-                        document.getElementById("observacion").disabled = false;
-                        document.getElementById("fecha_documento_campo").disabled = false;
-                        document.getElementById("fecha_atencion_campo").disabled = false;
-                        document.getElementById("empresa_id").disabled = false;
-                        document.getElementById("cliente_id").disabled = false;
-                        //HABILITAR EL CARGAR PAGINA
-                        $('#asegurarCierre').val(2)
-                        this.submit();
-                    }
-
-
-                } else if (
-                    result.dismiss === Swal.DismissReason.cancel
-                ) {
-                    swalWithBootstrapButtons.fire(
-                        'Cancelado',
-                        'La Solicitud se ha cancelado.',
-                        'error'
-                    )
-                }
-            })
-        }
-
-    })*/
-
     $('#btn_grabar').click(function(e) {
     //$('#enviar_documento').submit(function(e) {
         e.preventDefault();
@@ -1544,51 +1494,6 @@
             if (value.data == "") {
                 toastr.error("No hay ninguna apertura de caja");
             } else {
-                /*Swal.fire({
-                    title: 'Opción Guardar',
-                    text: "¿Seguro que desea guardar cambios?",
-                    icon: 'question',
-                    customClass: {
-                        container: 'my-swal'
-                    },
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ab394",
-                    confirmButtonText: 'Si, Confirmar',
-                    cancelButtonText: "No, Cancelar",
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        var tipo = validarTipo();
-
-                        if (tipo == false) {
-                            cargarProductos();
-                            //CARGAR DATOS TOTAL
-                            $('#monto_sub_total').val($('#subtotal').text())
-                            $('#monto_total_igv').val($('#igv_monto').text())
-                            $('#monto_total').val($('#total').text())
-
-                            document.getElementById("moneda").disabled = false;
-                            document.getElementById("observacion").disabled = false;
-                            document.getElementById("fecha_documento_campo").disabled = false;
-                            document.getElementById("fecha_atencion_campo").disabled = false;
-                            document.getElementById("empresa_id").disabled = false;
-                            document.getElementById("cliente_id").disabled = false;
-                            //HABILITAR EL CARGAR PAGINA
-                            $('#asegurarCierre').val(2)
-                            $('#enviar_documento').submit();
-                        }
-
-
-                    } else if (
-                        result.dismiss === Swal.DismissReason.cancel
-                    ) {
-                        swalWithBootstrapButtons.fire(
-                            'Cancelado',
-                            'La Solicitud se ha cancelado.',
-                            'error'
-                        )
-                    }
-                })*/
-
                 let envio_ok = true;
 
                 var tipo = validarTipo();

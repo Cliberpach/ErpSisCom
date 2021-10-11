@@ -21,9 +21,11 @@
         </a>
     </div>
     <div class="col-12 col-md-2">
+       @if($documento->sunat === '1')
         <a href="{{ route('ventas.notas.create', array('documento_id' => $documento->id, 'nota' => '0')) }}" class="btn btn-block btn-w-m btn-primary m-t-md">
             <i class="fa fa-plus-square"></i> Nota de crédito
         </a>
+       @endif
     </div>
 </div>
 

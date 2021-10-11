@@ -54,5 +54,12 @@ class Detalle extends Model
             $kardex->save();
             
         });
+
+        static::updated(function(Detalle $detalle){
+
+            $documento = Documento::find($detalle->documento_id);
+            $detalles = Detalle::where('documento_id',$detalle->documento_id)->where('estado','ACTIVO')->get();
+                        
+        });
     }
 }

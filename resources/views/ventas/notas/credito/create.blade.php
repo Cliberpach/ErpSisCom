@@ -638,95 +638,108 @@
     $('#enviar_documento').submit(function (e) {
         e.preventDefault();
 
-        cargarProductos();
-        let formDocumento = document.getElementById('enviar_documento');
-        let formData = new FormData(formDocumento);
+        let enviar = true;
+        let total =  convertFloat($('#total_nuevo').val());
 
-        var object = {};
-        formData.forEach(function(value, key){
-            object[key] = value;
-        });
+        if(total <= 0)
+        {
+            enviar = false;
+            toastr.error('El monto total de la Nota de Crédito debe ser mayor que 0.')
+        }
 
-        console.log(object);
+        if(enviar)
+        {
+            cargarProductos();
+            let formDocumento = document.getElementById('enviar_documento');
+            let formData = new FormData(formDocumento);
 
-        //var json = JSON.stringify(object);
+            var object = {};
+            formData.forEach(function(value, key){
+                object[key] = value;
+            });
 
-        var datos = object;
-        var init = {
-            // el método de envío de la información será POST
-            method: "POST",
-            headers: { // cabeceras HTTP
-                // vamos a enviar los datos en formato JSON
-                'Content-Type': 'application/json'
-            },
-            // el cuerpo de la petición es una cadena de texto
-            // con los datos en formato JSON
-            body: JSON.stringify(datos) // convertimos el objeto a texto
-        };
+            console.log(object);
 
-        var url = '{{ route("ventas.notas.store") }}';
-        var textAlert = "¿Seguro que desea guardar cambios?";
-        Swal.fire({
-            title: 'Opción Guardar',
-            text: textAlert,
-            icon: 'question',
-            customClass: {
-                container: 'my-swal'
-            },
-            showCancelButton: true,
-            confirmButtonColor: "#1ab394",
-            confirmButtonText: 'Si, Confirmar',
-            cancelButtonText: "No, Cancelar",
-            showLoaderOnConfirm: true,
-            allowOutsideClick: false,
-            preConfirm: (login) => {
-                return fetch(url,init)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(response.statusText)
-                        }
-                        return response.json()
-                    })
-                    .catch(error => {
-                        Swal.showValidationMessage(
-                            `Ocurrió un error`
-                        );
-                    })
-            },
-            allowOutsideClick: () => !Swal.isLoading()
-        }).then((result) => {
-            if (result.value !== undefined && result.isConfirmed) {
-                if(result.value.errors)
-                {
-                    let mensaje = sHtmlErrores(result.value.data.mensajes);
-                    toastr.error(mensaje);
+            //var json = JSON.stringify(object);
+
+            var datos = object;
+            var init = {
+                // el método de envío de la información será POST
+                method: "POST",
+                headers: { // cabeceras HTTP
+                    // vamos a enviar los datos en formato JSON
+                    'Content-Type': 'application/json'
+                },
+                // el cuerpo de la petición es una cadena de texto
+                // con los datos en formato JSON
+                body: JSON.stringify(datos) // convertimos el objeto a texto
+            };
+
+            var url = '{{ route("ventas.notas.store") }}';
+            var textAlert = "¿Seguro que desea guardar cambios?";
+            Swal.fire({
+                title: 'Opción Guardar',
+                text: textAlert,
+                icon: 'question',
+                customClass: {
+                    container: 'my-swal'
+                },
+                showCancelButton: true,
+                confirmButtonColor: "#1ab394",
+                confirmButtonText: 'Si, Confirmar',
+                cancelButtonText: "No, Cancelar",
+                showLoaderOnConfirm: true,
+                allowOutsideClick: false,
+                preConfirm: (login) => {
+                    return fetch(url,init)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(response.statusText)
+                            }
+                            return response.json()
+                        })
+                        .catch(error => {
+                            Swal.showValidationMessage(
+                                `Ocurrió un error`
+                            );
+                        })
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.value !== undefined && result.isConfirmed) {
+                    if(result.value.errors)
+                    {
+                        let mensaje = sHtmlErrores(result.value.data.mensajes);
+                        toastr.error(mensaje);
+                    }
+                    else if(result.value.success)
+                    {
+                        toastr.success('Nota de crédito creada!','Exito')
+
+                        let id = result.value.nota_id;
+                        let url_open_pdf = '{{ route("ventas.notas.show", ":id")}}';
+                        url_open_pdf = url_open_pdf.replace(':id',id);
+                        window.open(url_open_pdf, "Comprobante SISCOM", "width=900, height=600");
+
+                        location = "{{route('ventas.notas', $documento->id)}}";
+                    }
+                    else
+                    {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: '¡'+ result.value.mensaje +'!',
+                            customClass: {
+                                container: 'my-swal'
+                            },
+                            showConfirmButton: false,
+                            timer: 2500
+                        });
+                    }
                 }
-                else if(result.value.success)
-                {
-                    toastr.success('Nota de crédito creada!','Exito')
+            });
 
-                    let id = result.value.nota_id;
-                    /*let url_open_pdf = '{{ route("ventas.notas.show", ":id")}}';
-                    url_open_pdf = url_open_pdf.replace(':id',id);
-                    window.open(url_open_pdf, "Comprobante SISCOM", "width=900, height=600");*/
-
-                    location = "{{route('ventas.notas',$documento->id)}}";
-                }
-                else
-                {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: '¡'+ result.value.mensaje +'!',
-                        customClass: {
-                            container: 'my-swal'
-                        },
-                        showConfirmButton: false,
-                        timer: 2500
-                    });
-                }
-            }
-        });
+        }
     });
 
 </script>

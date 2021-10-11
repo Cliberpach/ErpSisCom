@@ -20,7 +20,7 @@ class CreateNotaElectronicaDetalleTable extends Migration
 
             $table->string('codProducto');
             $table->string('unidad');
-            $table->string('descripcion');
+            $table->longText('descripcion');
             $table->unsignedInteger('cantidad');
 
             $table->unsignedDecimal('mtoBaseIgv', 15, 2);
