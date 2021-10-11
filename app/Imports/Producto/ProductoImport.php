@@ -27,7 +27,7 @@ class ProductoImport implements ToCollection,WithHeadingRow,WithValidation
     public function collection(Collection $collection)
     {
         foreach ($collection as $row){
-            if($row['nombre']!=null && Producto::where('nombre',$row['nombre'])->count()==0){
+            if($row['nombre']!=null && Producto::where('nombre',$row['nombre'])->where('estado','ACTIVO')->count()==0){
                 $producto = new Producto();
                 $producto->nombre = $row['nombre'];
                 $producto->marca_id =Marca::where('marca',$row['marcas'])->first()->id;
