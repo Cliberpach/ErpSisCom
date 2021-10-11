@@ -86,7 +86,7 @@ class ProductoExport implements fromArray, WithHeadings, ShouldAutoSize, WithEve
                     ]
 
                 );
-                for ($j = 2; $j < 100; $j++) {
+                for ($j = 2; $j < 1000; $j++) {
                     $validation = $event->sheet->getCell('A' . $j)->getDataValidation();
                     $validation->setType(DataValidation::TYPE_LIST);
                     $validation->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION);
