@@ -71,6 +71,11 @@ class LoteProducto extends Model
         });
 
         static::updated(function(LoteProducto $loteProducto){
+            if($loteProducto->cantidad === 0)
+            {
+                $loteProducto->estado = '0';
+                $loteProducto->update();
+            }
             //RECORRER DETALLE NOTAS
             $cantidadProductos = LoteProducto::where('producto_id',$loteProducto->producto_id)->where('estado','1')->sum('cantidad');
             //ACTUALIZAR EL STOCK DEL PRODUCTO

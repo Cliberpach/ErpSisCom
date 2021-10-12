@@ -28,13 +28,12 @@ class CreateCotizacionesTable extends Migration
             $table->unsignedDecimal('sub_total', 15, 2);
             $table->unsignedDecimal('total_igv', 15, 2);
             $table->unsignedDecimal('total', 15, 2);
-            $table->unsignedInteger('user_id');
             $table->string('igv_check',2)->nullable();
             $table->char('igv',3)->nullable();
 
             $table->string('moneda');
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->enum('estado',['VIGENTE','ATENDIDA', 'ANULADO', 'VENCIDA'])->default('VIGENTE');
             $table->timestamps();
         });

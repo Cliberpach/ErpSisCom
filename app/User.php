@@ -5,12 +5,10 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;
-
+use App\Permission\Traits\UserTrait;
 class User extends Authenticatable
 {
-    use Notifiable;
-    use HasRoles;
+    use Notifiable, UserTrait;
 
     protected $fillable = [
         'usuario', 'email', 'password','nombre_imagen','ruta_imagen','colaborador_id'

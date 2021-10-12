@@ -163,5 +163,12 @@
 </li>
 
 <li class="@yield('seguridad-active')">
-    <a href="#"><i class="fa fa-key"></i> <span class="nav-label">Seguridad</span></a>
+    <a href="#"><i class="fa fa-key"></i> <span class="nav-label">Seguridad</span><span
+        class="fa arrow"></span></a>
+    <ul class="nav nav-second-level collapse">
+        <li class="@yield('users-active')"><a
+                href="{{ route('user.index') }}">Usuarios</a></li>
+        <li class="@yield('roles-active')"><a href="#">Roles</a>
+        </li>
+    </ul>
 </li>

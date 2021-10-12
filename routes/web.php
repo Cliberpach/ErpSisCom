@@ -58,6 +58,17 @@ function(){
         Route::get('getTable','Mantenimiento\Tabla\GeneralController@getTable')->name('getTable');
         Route::put('update', 'Mantenimiento\Tabla\GeneralController@update')->name('mantenimiento.tabla.general.update');
     });
+    //Users
+    Route::prefix('users')->group(function() {
+        Route::get('/', 'Seguridad\UserController@index')->name('user.index');
+        Route::get('destroy/{id}', 'Seguridad\UserController@destroy')->name('user.destroy');
+        Route::get('create', 'Seguridad\UserController@create')->name('user.create');
+        Route::post('store', 'Seguridad\UserController@store')->name('user.store');
+        Route::get('edit/{id}','Seguridad\UserController@edit')->name('user.edit');
+        Route::put('update', 'Seguridad\UserController@update')->name('user.update');
+        Route::get('show/{id}','Seguridad\UserController@show')->name('user.show');
+
+    });
     //Tabla Detalle
     Route::prefix('mantenimiento/tablas/detalles')->group(function() {
         Route::get('index/{id}', 'Mantenimiento\Tabla\DetalleController@index')->name('mantenimiento.tabla.detalle.index');

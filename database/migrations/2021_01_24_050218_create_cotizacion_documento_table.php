@@ -53,8 +53,7 @@ class CreateCotizacionDocumentoTable extends Migration
             $table->string('numero_doc')->nullable();
 
             $table->BigInteger('cotizacion_venta')->nullable();
-            $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->mediumText('observacion')->nullable();
             $table->enum('estado',['VIGENTE','PENDIENTE','ADELANTO','CONCRETADA','ANULADO','PAGADA'])->default('VIGENTE');
 

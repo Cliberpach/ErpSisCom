@@ -48,6 +48,12 @@ class DetalleNotaSalidad extends Model
             $lote_producto = LoteProducto::findOrFail($detalle->lote_id);
             $lote_productocantidad = $lote_producto->cantidad - $detalle->cantidad;
             $lote_productocantidad_logica = $lote_producto->cantidad - $detalle->cantidad;
+            
+            if($lote_producto->cantidad - $detalle->cantidad === 0)
+            {
+                $lote_producto->estado = '0';
+                $lote_producto->upadate();
+            }
             DB::update('update lote_productos set cantidad= ?,cantidad_logica = ? where id = ?', [$lote_productocantidad,$lote_productocantidad_logica,$detalle->lote_id]);
 
              //RECORRER DETALLE NOTAS
