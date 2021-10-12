@@ -21,7 +21,7 @@
         </a>
     </div>
     <div class="col-12 col-md-2">
-       @if($documento->sunat === '1')
+       @if($documento->sunat === '1' && docValido($documento->id))
         <a href="{{ route('ventas.notas.create', array('documento_id' => $documento->id, 'nota' => '0')) }}" class="btn btn-block btn-w-m btn-primary m-t-md">
             <i class="fa fa-plus-square"></i> Nota de crédito
         </a>
@@ -284,44 +284,9 @@
 
     function detalle(id) {
 
-        Swal.fire({
-            title: "Opción Detalle",
-            text: "¿Seguro que desea generar detalle de la nota?",
-            showCancelButton: true,
-            icon: 'info',
-            confirmButtonColor: "#1ab394",
-            confirmButtonText: 'Si, Confirmar',
-            cancelButtonText: "No, Cancelar",
-        }).then((result) => {
-            if (result.value) {
-                
-                var url = '{{ route("ventas.notas.show", ":id")}}';
-                url = url.replace(':id',id);
-
-                window.location.href = url
-
-                Swal.fire({
-                    title: '¡Cargando!',
-                    type: 'info',
-                    text: 'Generando Detalle',
-                    showConfirmButton: false,
-                    onBeforeOpen: () => {
-                        Swal.showLoading()
-                    }
-                })
-
-            } else if (
-                /* Read more about handling dismissals below */
-                result.dismiss === Swal.DismissReason.cancel
-            ) {
-                swalWithBootstrapButtons.fire(
-                    'Cancelado',
-                    'La Solicitud se ha cancelado.',
-                    'error'
-                )
-            }
-        })
-
+        var url = '{{ route("ventas.notas.show", ":id")}}';
+        url = url.replace(':id',id);
+        window.open(url, "Comprobante SISCOM", "width=900, height=600")
     }
 
     function enviarSunat(id) {

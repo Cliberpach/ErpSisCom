@@ -30,6 +30,9 @@ use App\Ventas\TipoPago;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Mantenimiento\Tabla\Detalle as TablaDetalle;
+use App\Ventas\Documento\Detalle as DocumentoDetalle;
+use App\Ventas\Documento\Documento as DocumentoDocumento;
+
 // TABLAS-DETALLES
 
 if (!function_exists('tipos_moneda')) {
@@ -185,6 +188,41 @@ if (!function_exists('vendedores')) {
         return Vendedor::cursor()->filter(function ($vendedor) {
             return $vendedor->persona_trabajador->persona->estado == "ACTIVO" ? true : false;
         });
+    }
+}
+
+// DOCUMENTO VALIDO PARA NOTA DE CRÉDITO
+if (!function_exists('docValido')) {
+    function docValido($id)
+    {
+        $documento = DocumentoDocumento::find($id);
+        $detalles = DocumentoDetalle::where('documento_id', $id)->get();
+        $cont = 0 ;
+        
+        if($documento->sunat === '2')
+        {
+            return false;
+        }
+
+        foreach($detalles as $detalle)
+        {
+            if($detalle->cantidad === $detalle->detalles->sum('cantidad'))
+            {
+                $cont = $cont + 1;
+            }
+        }
+
+        if(count($detalles) === $cont)
+        {
+            
+            $documento->sunat = '2';
+            $documento->update();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 }
 

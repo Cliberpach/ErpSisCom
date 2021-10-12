@@ -53,5 +53,10 @@ class Nota extends Model
         'estado',
     ];
 
+    public function documento()
+    {
+        return $this->belongsTo('App\Ventas\Documento\Documento','documento_id');
+    }
+
 
 }

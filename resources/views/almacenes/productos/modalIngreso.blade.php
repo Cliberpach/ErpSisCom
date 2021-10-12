@@ -17,7 +17,7 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label class="required">Cantidad</label>
-                                <input type="text" class="form-control" name="cantidad" id="cantidad_fast" required placeholder="Ingrese cantidad" onkeypress="return isNumber(event)">
+                                <input type="number" min="1" class="form-control" name="cantidad" id="cantidad_fast" required placeholder="Ingrese cantidad" onkeypress="return isNumber(event)">
                                 <input type="hidden" class="form-control" name="producto_id" id="producto_id_fast" required placeholder="Ingrese producto_id" onkeypress="return isNumber(event)">
                             </div>
                         </div>

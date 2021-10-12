@@ -22,6 +22,7 @@ class CreateNotaElectronicaDetalleTable extends Migration
             $table->string('unidad');
             $table->longText('descripcion');
             $table->unsignedInteger('cantidad');
+            $table->unsignedInteger('detalle_id')->nullable();
 
             $table->unsignedDecimal('mtoBaseIgv', 15, 2);
             $table->unsignedDecimal('porcentajeIgv', 15, 2);

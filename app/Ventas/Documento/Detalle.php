@@ -26,6 +26,11 @@ class Detalle extends Model
         'estado'
     ];
 
+    public function detalles()
+    {
+        return $this->hasMany('App\Ventas\NotaDetalle','detalle_id','id');
+    }
+
     public function documento()
     {
         return $this->belongsTo('App\Ventas\Documento\Documento');
@@ -53,13 +58,6 @@ class Detalle extends Model
             $kardex->stock = $detalle->lote->producto->stock - $detalle->cantidad;
             $kardex->save();
             
-        });
-
-        static::updated(function(Detalle $detalle){
-
-            $documento = Documento::find($detalle->documento_id);
-            $detalles = Detalle::where('documento_id',$detalle->documento_id)->where('estado','ACTIVO')->get();
-                        
         });
     }
 }

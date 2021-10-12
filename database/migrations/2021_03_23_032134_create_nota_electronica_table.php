@@ -62,6 +62,9 @@ class CreateNotaElectronicaTable extends Migration
             $table->string('guia_tipoDoc')->nullable();
             $table->string('guia_nroDoc')->nullable();
 
+            $table->longText('ruta_qr')->nullable();
+            $table->longText('hash')->nullable();
+
             //LEYENDA
             $table->string('code');
             $table->mediumText('value');

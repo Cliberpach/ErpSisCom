@@ -238,9 +238,7 @@ class ComprobanteController extends Controller
                     }else{
 
                         //COMO SUNAT NO LO ADMITE VUELVE A SER 0 
-                        $documento->correlativo = null;
-                        $documento->serie = null;
-                        $documento->sunat = '2';
+                        $documento->sunat = '0';
                         $documento->update(); 
                         
                         if ($json_sunat->sunatResponse->error) {

@@ -432,9 +432,7 @@ class GuiaController extends Controller
                     }else{
 
                         //COMO SUNAT NO LO ADMITE VUELVE A SER 0 
-                        $guia->correlativo = null;
-                        $guia->serie = null;
-                        $guia->sunat = '2';
+                        $guia->sunat = '0';
                         $guia->update(); 
                         
                         if ($json_sunat->sunatResponse->error) {
@@ -617,7 +615,7 @@ class GuiaController extends Controller
                 }else{
 
                     //COMO SUNAT NO LO ADMITE VUELVE A SER 0 
-                    $guia->sunat = '2';
+                    $guia->sunat = '0';
                     $guia->update(); 
                     
                     if ($json_sunat->sunatResponse->error) {

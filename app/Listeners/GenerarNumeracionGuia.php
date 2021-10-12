@@ -35,12 +35,12 @@ class GenerarNumeracionGuia
                             ->join('guias_remision','guias_remision.documento_id','=','cotizacion_documento.id')
                             ->where('empresa_numeracion_facturaciones.tipo_comprobante',132)
                             ->where('empresa_numeracion_facturaciones.empresa_id',$guia->documento->empresa_id)
-                            ->where('guias_remision.sunat',"1")
+                            //->where('guias_remision.sunat',"1")
                             ->select('guias_remision.*','empresa_numeracion_facturaciones.*')
                             ->orderBy('guias_remision.correlativo','DESC')
                             ->get();
 
-        if (count($serie_comprobantes) == 0) {
+        if (count($serie_comprobantes) == 1) {
             //OBTENER EL DOCUMENTO INICIADO 
             $guia->correlativo = $numeracion->numero_iniciar;
             $guia->serie = $numeracion->serie;

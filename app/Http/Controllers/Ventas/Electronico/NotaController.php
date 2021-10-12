@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Ventas\Electronico;
 use App\Almacenes\LoteProducto;
 use App\Almacenes\Producto;
 use App\Http\Controllers\Controller;
+use App\Mantenimiento\Empresa\Empresa;
 use App\Mantenimiento\Empresa\Numeracion;
 use App\Ventas\Documento\Detalle;
 use App\Ventas\Documento\Documento;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Luecano\NumeroALetras\NumeroALetras;
 use Yajra\DataTables\Facades\DataTables;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class NotaController extends Controller
 {
@@ -77,14 +79,17 @@ class NotaController extends Controller
         $coleccion = collect();
         foreach($detalles as $item)
         {
-            $coleccion->push([
-                'id' => $item->id,
-                'cantidad' => $item->cantidad,
-                'descripcion' => $item->lote->producto->nombre,
-                'precio_unitario' => $item->precio_nuevo,
-                'importe_venta' => $item->valor_venta,
-                'editable' => 0
-            ]);
+            if($item->cantidad - $item->detalles->sum('cantidad') > 0)
+            {
+                $coleccion->push([
+                    'id' => $item->id,
+                    'cantidad' => $item->cantidad - $item->detalles->sum('cantidad'),
+                    'descripcion' => $item->lote->producto->nombre,
+                    'precio_unitario' => $item->precio_nuevo,
+                    'importe_venta' => $item->valor_venta,
+                    'editable' => 0
+                ]);
+            }
         }
         //return DataTables::of($coleccion)->make(true);
 
@@ -146,6 +151,8 @@ class NotaController extends Controller
 
             $documento = Documento::findOrFail($request->get('documento_id'));
 
+            $igv = $documento->igv ? $documento->igv : 18;
+
             $nota = new Nota();
             $nota->documento_id = $documento->id;
             $nota->tipDocAfectado = $documento->tipoDocumento();
@@ -193,6 +200,7 @@ class NotaController extends Controller
                         $lote = LoteProducto::findOrFail($detalle->lote_id);
                         NotaDetalle::create([
                             'nota_id' => $nota->id,
+                            'detalle_id' => $detalle->id,
                             'codProducto' => $lote->producto->codigo,
                             'unidad' => $lote->producto->getMedida(),
                             'descripcion' => $lote->producto->nombre.' - '.$lote->codigo,
@@ -209,17 +217,6 @@ class NotaController extends Controller
                             'mtoPrecioUnitario' => $producto->precio_unitario,
                         ]);
 
-                        if ($detalle->cantidad - $producto->cantidad > 0)
-                        {
-                            $detalle->cantidad = $detalle->cantidad - $producto->cantidad;
-                            $detalle->update();
-                        }
-                        else
-                        {
-                            $detalle->estado = 'ANULADO';
-                            $detalle->update();
-                        }
-
                         $lote->cantidad = $lote->cantidad + $producto->cantidad;
                         $lote->cantidad_logica = $lote->cantidad_logica + $producto->cantidad;
                         $lote->update();
@@ -231,6 +228,7 @@ class NotaController extends Controller
                     $lote = LoteProducto::findOrFail($detalle->lote_id);
                     NotaDetalle::create([
                         'nota_id' => $nota->id,
+                        'detalle_id' => $detalle->id,
                         'codProducto' => $lote->producto->codigo,
                         'unidad' => $lote->producto->getMedida(),
                         'descripcion' => $lote->producto->nombre.' - '.$lote->codigo,
@@ -247,24 +245,11 @@ class NotaController extends Controller
                         'mtoPrecioUnitario' => $producto->precio_unitario,
                     ]);
 
-                    if ($detalle->cantidad - $producto->cantidad > 0)
-                    {
-                        $detalle->cantidad = $detalle->cantidad - $producto->cantidad;
-                        $detalle->update();
-                    }
-                    else
-                    {
-                        $detalle->estado = 'ANULADO';
-                        $detalle->update();
-                    }
-
                     $lote->cantidad = $lote->cantidad + $producto->cantidad;
                     $lote->cantidad_logica = $lote->cantidad_logica + $producto->cantidad;
                     $lote->update();
 
                     $documento->sunat = '2';
-                    $documento->serie = null;
-                    $documento->correlativo = null;
                     $documento->update();
                 }
             }
@@ -348,7 +333,8 @@ class NotaController extends Controller
 
     public function show($id)
     {
-        $nota = Nota::findOrFail($id);
+        $nota = Nota::with(['documento'])->findOrFail($id);
+        $empresa = Empresa::first();
         $detalles = NotaDetalle::where('nota_id',$id)->get();
         //ARREGLO COMPROBANTE
         $arreglo_nota = array(
@@ -367,7 +353,6 @@ class NotaController extends Controller
                 "address" => array(
                     "direccion" => $nota->direccion_fiscal_empresa,
                 )),
-
 
             "client" => array(
                 "tipoDoc" =>  $nota->cod_tipo_documento_cliente,
@@ -389,13 +374,61 @@ class NotaController extends Controller
 
         $nota_json= json_encode($arreglo_nota);
         $data = pdfNotaapi($nota_json);
-        $name = $nota->id.'.pdf';
-        $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'notas'.DIRECTORY_SEPARATOR.$name);
-        if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'notas'))) {
-            mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'notas'));
+        
+        $name = $nota->serie.'-'.$nota->correlativo.'.pdf';
+        $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantessiscom'.DIRECTORY_SEPARATOR.'notas'.DIRECTORY_SEPARATOR.$name);
+        if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantessiscom'.DIRECTORY_SEPARATOR.'notas'))) {
+            mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantessiscom'.DIRECTORY_SEPARATOR.'notas'));
         }
-        file_put_contents($pathToFile, $data);
-        return response()->file($pathToFile);
+
+        if($nota->ruta_qr === null)
+        {
+            /*************************************** */
+            $arreglo_qr = array(
+                "ruc" => $nota->ruc_empresa,
+                "tipo" => $nota->tipoDoc,
+                "serie" => $nota->serie,
+                "numero" => $nota->correlativo,
+                "emision" => self::obtenerFecha($nota->fechaEmision),
+                "igv" => 18,
+                "total" => floatval($nota->mtoImpVenta),
+                "clienteTipo" => $nota->cod_tipo_documento_cliente,
+                "clienteNumero" => $nota->documento_cliente
+            );
+
+            $data_qr = generarQrApi(json_encode($arreglo_qr), $nota->empresa_id);
+
+            $name_qr = $nota->serie."-".$nota->correlativo.'.svg';
+
+            $pathToFile_qr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs_nota'.DIRECTORY_SEPARATOR.$name_qr);
+
+            if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs_nota'))) {
+                mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs_nota'));
+            }
+
+            file_put_contents($pathToFile_qr, $data_qr);
+
+            $nota->ruta_qr = 'public/qrs_nota/'.$name_qr;
+            $nota->update();
+            /*************************************** */
+        }
+
+        //file_put_contents($pathToFile, $data);
+        //return response()->file($pathToFile);
+        $legends = self::obtenerLeyenda($nota);
+        $legends = json_encode($legends,true);
+        $legends = json_decode($legends,true);
+
+        $pdf = PDF::loadview('ventas.notas.impresion.comprobante_normal_nuevo',[
+            'nota' => $nota,
+            'detalles' => $detalles,
+            'moneda' => $nota->tipoMoneda,
+            'empresa' => $empresa,
+            "legends" =>  $legends,
+            ])->setPaper('a4')->setWarnings(false);
+        
+        $pdf->save(public_path().'/storage/comprobantessiscom/notas/'.$name);
+        return $pdf->stream($name);
     }
 
     public function obtenerCorrelativo($nota, $numeracion)
@@ -420,10 +453,10 @@ class NotaController extends Controller
             ->get();
 
 
-            if (count($serie_comprobantes) == 0) {
+            if (count($serie_comprobantes) === 1) {
                 //OBTENER EL DOCUMENTO INICIADO
                 $nota->correlativo = $numeracion->numero_iniciar;
-                $nota->serie = $numeracion->serie;
+                $nota->serie = $nota->tipDocAfectado === '03' ? 'BB01' : 'FF01';//$numeracion->serie;
                 $nota->update();
 
                 //ACTUALIZAR LA NUMERACION (SE REALIZO EL INICIO)
@@ -435,7 +468,7 @@ class NotaController extends Controller
                 if($nota->sunat != '1' ){
                     $ultimo_comprobante = $serie_comprobantes->first();
                     $nota->correlativo = $ultimo_comprobante->correlativo+1;
-                    $nota->serie = $numeracion->serie;
+                    $nota->serie = $nota->tipDocAfectado === '03' ? 'BB01' : 'FF01';//$numeracion->serie;
                     $nota->update();
 
                     //ACTUALIZAR LA NUMERACION (SE REALIZO EL INICIO)
@@ -501,7 +534,7 @@ class NotaController extends Controller
                             "tipoDoc" => $nota->tipoDoc,
                             "fechaEmision" => self::obtenerFecha($nota->fechaEmision),
                             "tipoMoneda" => $nota->tipoMoneda,
-                            "serie" => $existe->get('numeracion')->serie,
+                            "serie" => $nota->tipDocAfectado === '03' ? 'BB01' : 'FF01',//$existe->get('numeracion')->serie,
                             "correlativo" => $nota->correlativo,
                             "company" => array(
                                 "ruc" => $nota->ruc_empresa,
@@ -529,10 +562,10 @@ class NotaController extends Controller
                             "legends" =>  self::obtenerLeyenda($nota),
                         );
                         //OBTENER JSON DEL COMPROBANTE EL CUAL SE ENVIARA A SUNAT
-
                         $data = enviarNotaapi(json_encode($arreglo_nota));
+
                         //RESPUESTA DE LA SUNAT EN JSON
-                        $json_sunat = json_decode($data);
+                        $json_sunat = json_decode($data);                        
 
                         if ($json_sunat->sunatResponse->success == true) {
 
@@ -547,7 +580,35 @@ class NotaController extends Controller
                                 mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'.DIRECTORY_SEPARATOR.'nota'));
                             }
 
+                            /*************************************** */
+                            $arreglo_qr = array(
+                                "ruc" => $nota->ruc_empresa,
+                                "tipo" => $nota->tipoDoc,
+                                "serie" => $nota->serie,
+                                "numero" => $nota->correlativo,
+                                "emision" => self::obtenerFecha($nota->fechaEmision),
+                                "igv" => 18,
+                                "total" => floatval($nota->mtoImpVenta),
+                                "clienteTipo" => $nota->cod_tipo_documento_cliente,
+                                "clienteNumero" => $nota->documento_cliente
+                            );
+
+                            $data_qr = generarQrApi(json_encode($arreglo_qr), $nota->empresa_id);
+
+                            $name_qr = $nota->serie."-".$nota->correlativo.'.svg';
+
+                            $pathToFile_qr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs_nota'.DIRECTORY_SEPARATOR.$name_qr);
+
+                            if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs_nota'))) {
+                                mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs_nota'));
+                            }
+
+                            file_put_contents($pathToFile_qr, $data_qr);
+                            /*************************************** */
+
                             file_put_contents($pathToFile, $data_comprobante);
+                            $nota->hash = $json_sunat->hash;
+                            $nota->ruta_qr = 'public/qrs_nota/'.$name_qr;
                             $nota->nombre_comprobante_archivo = $name;
                             $nota->ruta_comprobante_archivo = 'public/sunat/nota/'.$name;
                             $nota->update();
@@ -572,9 +633,7 @@ class NotaController extends Controller
                         }else{
 
                             //COMO SUNAT NO LO ADMITE VUELVE A SER 0
-                            //$nota->correlativo = null;
-                            //$nota->serie = null;
-                            $nota->sunat = '2';
+                            $nota->sunat = '0';
                             $nota->update();
 
                             if ($json_sunat->sunatResponse->error) {
@@ -645,8 +704,7 @@ class NotaController extends Controller
     public function sunat_post($id)
     {
         try
-        {
-            
+        {            
             $nota = Nota::findOrFail($id);            
             $detalles = NotaDetalle::where('nota_id',$id)->get();
             if ($nota->sunat != '1') {
@@ -704,7 +762,35 @@ class NotaController extends Controller
                         mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'.DIRECTORY_SEPARATOR.'nota'));
                     }
 
+                    /*************************************** */
+                    $arreglo_qr = array(
+                        "ruc" => $nota->ruc_empresa,
+                        "tipo" => $nota->tipoDoc,
+                        "serie" => $nota->serie,
+                        "numero" => $nota->correlativo,
+                        "emision" => self::obtenerFecha($nota->fechaEmision),
+                        "igv" => 18,
+                        "total" => floatval($nota->mtoImpVenta),
+                        "clienteTipo" => $nota->cod_tipo_documento_cliente,
+                        "clienteNumero" => $nota->documento_cliente
+                    );
+
+                    $data_qr = generarQrApi(json_encode($arreglo_qr), $nota->empresa_id);
+
+                    $name_qr = $nota->serie."-".$nota->correlativo.'.svg';
+
+                    $pathToFile_qr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs_nota'.DIRECTORY_SEPARATOR.$name_qr);
+
+                    if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs_nota'))) {
+                        mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs_nota'));
+                    }
+
+                    file_put_contents($pathToFile_qr, $data_qr);
+                    /*************************************** */
+
                     file_put_contents($pathToFile, $data_comprobante);
+                    $nota->hash = $json_sunat->hash;
+                    $nota->ruta_qr = 'public/qrs_nota/'.$name_qr;
                     $nota->nombre_comprobante_archivo = $name;
                     $nota->ruta_comprobante_archivo = 'public/sunat/nota/'.$name;
                     $nota->update();
@@ -722,7 +808,7 @@ class NotaController extends Controller
                     //COMO SUNAT NO LO ADMITE VUELVE A SER 0
                     // $nota->correlativo = null;
                     // $nota->serie = null;
-                    $nota->sunat = '2';
+                    $nota->sunat = '0';
                     $nota->update();
 
                     if ($json_sunat->sunatResponse->error) {

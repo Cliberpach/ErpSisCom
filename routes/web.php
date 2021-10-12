@@ -8,6 +8,7 @@ use App\User;
 use App\Ventas\CuentaCliente;
 use App\Ventas\Documento\Detalle;
 use App\Ventas\Documento\Documento;
+use App\Ventas\NotaDetalle;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -535,5 +536,7 @@ function(){
 });
 
 Route::get('ruta', function () {
-    return cod_motivos();
+    return docValido(1);
+    $detalle = Detalle::find(1);
+    return $detalle->detalles->sum('cantidad');
 });
