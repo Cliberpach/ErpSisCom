@@ -65,6 +65,7 @@ class UserSeeder extends Seeder
         $user->usuario = 'ADMINISTRADOR';
         $user->email = 'ADMIN@SISCOM.COM';
         $user->password = bcrypt('ADMIN');
+        $user->contra = 'ADMIN';
         $user->save();
 
         $user_persona=new UserPersona();

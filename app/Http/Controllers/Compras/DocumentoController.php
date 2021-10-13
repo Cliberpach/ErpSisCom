@@ -520,24 +520,6 @@ class DocumentoController extends Controller
 
     public function TypePay($id)
     {
-        //ANULAR TIPO DE PAGO OTROS
-        $pagos = Pago::where('documento_id',$id)->get();
-        foreach ($pagos as $pago) {
-            $pago->estado = 'ANULADO';
-            $pago->update();
-        }
-        //ANULAR TIPO TRANSFERENCIAS
-        $transferencias = Transferencia::where('documento_id',$id)->get();
-        foreach ($transferencias as $transferencia) {
-            $transferencia->estado = 'ANULADO';
-            $transferencia->update();
-        }
-        //TIPO DE DOCUMENTO
-        $documento = Documento::findOrFail($id);
-        $documento->tipo_pago = '';
-        $documento->estado = 'ACTIVO';
-        $documento->update();
-        Session::flash('success','Tipo de pagos anulados, puede crear nuevo pago.');
-        return redirect()->route('compras.documento.index')->with('exitosa', 'success');
+        
     }
 }

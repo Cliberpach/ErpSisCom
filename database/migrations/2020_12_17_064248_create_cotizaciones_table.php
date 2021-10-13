@@ -33,7 +33,9 @@ class CreateCotizacionesTable extends Migration
 
             $table->string('moneda');
 
-            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            //$table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->enum('estado',['VIGENTE','ATENDIDA', 'ANULADO', 'VENCIDA'])->default('VIGENTE');
             $table->timestamps();
         });

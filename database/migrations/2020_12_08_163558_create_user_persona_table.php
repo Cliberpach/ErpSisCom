@@ -15,8 +15,8 @@ class CreateUserPersonaTable extends Migration
     {
         Schema::create('user_persona', function (Blueprint $table) {
             $table->id();
-            //$table->unsignedInteger('user_id');
-            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedInteger('persona_id');
             $table->foreign('persona_id')->references('id')->on('personas')->onDelete('cascade');
             $table->timestamps();
