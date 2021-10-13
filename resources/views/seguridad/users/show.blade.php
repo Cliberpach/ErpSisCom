@@ -106,10 +106,12 @@
                                            class="btn btn-w-m btn-default">
                                             <i class="fa fa-arrow-left"></i> Regresar
                                         </a>
+                                        @can('haveaccess', 'user.edit')
                                         <a href="{{route('user.edit',$user->id)}}" id="btn_guardar"
-                                           class="btn btn-w-m btn-primary">
-                                            <i class="fa fa-pencil"></i> Editar
-                                        </a>
+                                            class="btn btn-w-m btn-primary">
+                                             <i class="fa fa-pencil"></i> Editar
+                                         </a>
+                                        @endcan
                                         </a>
                                     </div>
                                 </div>

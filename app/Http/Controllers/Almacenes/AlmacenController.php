@@ -13,10 +13,11 @@ class AlmacenController extends Controller
 {
     public function index()
     {
-        
+        $this->authorize('haveaccess','almacen.index');
         return view('almacenes.almacen.index');
     }
     public function getRepository(){
+        
         return datatables()->query(
             DB::table('almacenes')
             ->select('almacenes.*', 
@@ -27,6 +28,7 @@ class AlmacenController extends Controller
     }
     public function store(Request $request){
         
+        $this->authorize('haveaccess','almacen.index');
         $data = $request->all();
 
         $rules = [
@@ -58,6 +60,7 @@ class AlmacenController extends Controller
 
     public function update(Request $request){
         
+        $this->authorize('haveaccess','almacen.index');
         $data = $request->all();
 
         $rules = [
@@ -91,6 +94,7 @@ class AlmacenController extends Controller
     public function destroy($id)
     {
         
+        $this->authorize('haveaccess','almacen.index');
         $almacen = Almacen::findOrFail($id);
         $almacen->estado = 'ANULADO';
         $almacen->update();

@@ -34,7 +34,7 @@ class NotaIngresoController extends Controller
      */
     public function index()
     {
-
+        $this->authorize('haveaccess','nota_ingreso.index');
         return view('almacenes.nota_ingresos.index');
     }
     public function gettable()
@@ -50,7 +50,7 @@ class NotaIngresoController extends Controller
      */
     public function create()
     {
-
+        $this->authorize('haveaccess','nota_ingreso.index');
         $fecha_hoy = Carbon::now()->toDateString();
         $fecha = Carbon::createFromFormat('Y-m-d', $fecha_hoy);
         $fecha = str_replace("-", "", $fecha);
@@ -88,6 +88,7 @@ class NotaIngresoController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('haveaccess','nota_ingreso.index');
         $fecha_hoy = Carbon::now()->toDateString();
         $fecha = Carbon::createFromFormat('Y-m-d', $fecha_hoy);
         $fecha = str_replace("-", "", $fecha);
@@ -228,6 +229,8 @@ class NotaIngresoController extends Controller
      */
     public function edit($id)
     {
+        $this->authorize('haveaccess','nota_ingreso.index');
+
         $fecha_hoy = Carbon::now()->toDateString();
         $fecha = Carbon::createFromFormat('Y-m-d', $fecha_hoy);
         $fecha = str_replace("-", "", $fecha);
@@ -278,7 +281,7 @@ class NotaIngresoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //   return $request;
+        $this->authorize('haveaccess','nota_ingreso.index');
         $data = $request->all();
 
         $rules = [
@@ -352,7 +355,7 @@ class NotaIngresoController extends Controller
      */
     public function destroy($id)
     {
-
+        $this->authorize('haveaccess','nota_ingreso.index');
         $notaingreso = NotaIngreso::findOrFail($id);
         $notaingreso->estado = "ANULADO";
         $notaingreso->save();

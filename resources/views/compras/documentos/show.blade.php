@@ -107,9 +107,9 @@
                         <br>
                         <span>{{$nombre_completo}}</span>
                         <br>
-                        <span>{{$documento->usuario->empleado->persona->telefono_movil}}</span>
+                        <span>{{$documento->usuario->user->persona->telefono_movil}}</span>
                         <br>
-                        <a href="mailto:{{$documento->usuario->empleado->persona->correo_electronico}}">{{$documento->usuario->empleado->persona->correo_electronico}}</a>
+                        <a href="mailto:{{$documento->usuario->user->persona->correo_electronico}}">{{$documento->usuario->user->persona->correo_electronico}}</a>
 
                     </div>
                 </div>

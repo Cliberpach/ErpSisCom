@@ -203,8 +203,8 @@ $(document).ready(function() {
 
                         "<li><a class='dropdown-item' onclick='eliminar(" + data.id +
                         ")' title='Eliminar'><b><i class='fa fa-trash'></i> Eliminar</a></b></li>" +
-                        "<li class='dropdown-divider'></li>" +
-                        "<li><a class='dropdown-item' onclick='pagar(" +data.orden_compra+","+data.id+","+data.tipo_pago+  ")'  title='Pagar'><b><i class='fa fa-money'></i> Pagar</a></b></li>"
+                        "<li class='dropdown-divider d-none'></li>" +
+                        "<li class='d-none'><a class='dropdown-item' onclick='pagar(" +data.orden_compra+","+data.id+","+data.tipo_pago+  ")'  title='Pagar'><b><i class='fa fa-money'></i> Pagar</a></b></li>"
                         
                     "</ul></div>"
                 }

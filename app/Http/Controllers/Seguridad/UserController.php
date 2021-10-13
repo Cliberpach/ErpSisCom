@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mantenimiento\Persona\Persona;
 use App\Permission\Model\Role;
 use App\User;
+use App\UserPersona;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -84,17 +85,21 @@ class UserController extends Controller
             ]);
         }
 
-        $user = new User($arrayDatos);
+        $user = new User();
 
         $password = strtoupper($request->password);
 
         $user->usuario = strtoupper($request->get('usuario'));
         $user->email = strtoupper($request->get('email'));
-        $user->colaborador_id = $request->get('colaborador_id');
         $user->password = bcrypt($password);
         $user->contra = $password;
 
         $user->save();
+
+        $user_persona = new UserPersona();
+        $user_persona->user_id = $user->id;
+        $user_persona->persona_id = $request->get('colaborador_id');
+        $user_persona->save();
 
         if($request->get('role'))
         {
@@ -111,7 +116,7 @@ class UserController extends Controller
         crearRegistro($user, $descripcion , $gestion);
 
         Session::flash('success','Usuario creado.');
-        return redirect()->route('seguridad.user.index')->with('guardar', 'success');
+        return redirect()->route('user.index')->with('guardar', 'success');
     }
 
     public function show($id)
@@ -209,6 +214,76 @@ class UserController extends Controller
         }
 
         return view('seguridad.users.edit',compact('roles','role_user','user','colaboradores'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::find($id);
+        
+        $this->authorize('view',[$user,['user.edit','userown.edit']]);
+
+        $request->validate([
+            'usuario' => 'required|max:50|unique:users,usuario,'.$user->id,
+            'email' => 'required|max:50|unique:users,email,'.$user->id
+        ]);
+
+        if($request->password !== $request->confirm_password)
+        {
+            //Session::flash('success','Usuario creado.');
+            return back()->with([
+                'password' => $request->password ,
+                'confirm_password' => $request->confirm_password,
+                'mpassword' => 'Contraseñas distintas',
+                'usuario' => $request->get('usuario'),
+                'colaborador_id' => $request->get('colaborador_id'),
+                'email' => $request->get('email'),
+                'role' => $request->get('role'),
+            ]);
+        }
+
+        $password = strtoupper($request->password);
+
+        $user->usuario = strtoupper($request->usuario);
+        $user->email = strtoupper($request->email);
+        $user->password = bcrypt($password);
+        $user->contra = $password;
+        $user->update();
+
+        $user_persona = UserPersona::find($user->colaborador->id);
+        $user_persona->user_id = $user->id;
+        $user_persona->persona_id = $request->get('colaborador_id');
+        $user_persona->update();
+
+        if($request->get('role'))
+        {
+            $user->roles()->sync($request->get('role'));
+        }
+        else
+        {
+            $user->roles()->sync([]);
+        }
+
+        //Registro de actividad
+        $descripcion = "SE MODIFICÓ EL USUARIO CON EL NOMBRE: ". $user->usuario;
+        $gestion = "USUARIOS";
+        modificarRegistro($user, $descripcion , $gestion);
+        Session::flash('success','Usuario Modificado.');
+        return redirect()->route('user.index')->with('modificar', 'success');
+    }
+
+    public function destroy($id)
+    {
+        $this->authorize('haveaccess','user.delete');
+        $user = User::find($id);
+        //Registro de actividad
+        $descripcion = "SE ELIMINÓ EL USUARIO CON EL NOMBRE: ". $user->usuario;
+        $gestion = "USUARIOS";
+        eliminarRegistro($user, $descripcion , $gestion);
+
+        $user->estado = 'ANULADO';
+        $user->delete();
+        Session::flash('success','Usuario eliminado');
+        return redirect()->route('user.index')->with('eliminar', 'success');
     }
 
 }

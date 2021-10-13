@@ -28,11 +28,12 @@ class DocumentoController extends Controller
 {
     public function index()
     {
-
+        $this->authorize('haveaccess','documento_compra.index');
         return view('compras.documentos.index');
     }
 
     public function getDocument(){
+        $this->authorize('haveaccess','documento_compra.index');
         $documentos = Documento::where('estado','!=','ANULADO')->get();
         $coleccion = collect([]);
         foreach($documentos as $documento){
@@ -119,6 +120,7 @@ class DocumentoController extends Controller
 
     public function create(Request $request)
     {
+        $this->authorize('haveaccess','documento_compra.index');
         $orden = '';
         $detalles = '';
         if($request->get('orden')){
@@ -162,6 +164,7 @@ class DocumentoController extends Controller
     }
 
     public function store(Request $request){
+        $this->authorize('haveaccess','documento_compra.index');
         $productosJSON = $request->get('productos_tabla');
         $productotabla = json_decode($productosJSON[0]);
 
@@ -240,30 +243,10 @@ class DocumentoController extends Controller
         }
         // TRANSFERRIR PAGOS DE LA ORDEN SI EXISTEN
         if($request->get('orden_id')){
-            $pagos =  ComprasPago::where('orden_id',$request->get('orden_id'))->where('estado','ACTIVO')->get();
+            
             $documento = Documento::findOrFail($documento->id);
             $documento->tipo_pago =  "1";
             $documento->update();
-            if (count($pagos) > 0) {
-                foreach ($pagos as $pago) {
-                    Transferencia::create([
-                        'documento_id' => $documento->id,
-                        'id_banco_proveedor' => $pago->id_banco_proveedor,
-                        'id_banco_empresa' => $pago->id_banco_empresa,
-                        'ruta_archivo' => $pago->ruta_archivo,
-                        'nombre_archivo' => $pago->nombre_archivo,
-                        'fecha_pago' => $pago->fecha_pago,
-                        'monto' => $pago->monto,
-                        'moneda' => $pago->moneda,
-                        'moneda_empresa' => $pago->moneda_empresa,
-                        'moneda_proveedor' => $pago->moneda_proveedor,
-                        'tipo_cambio' => $pago->tipo_cambio,
-                        'cambio' => $pago->cambio,
-                        'observacion' => $pago->observacion,
-                        'estado' => $pago->estado,
-                    ]);
-                }
-            }
         }
         //Registro de actividad
         $descripcion = "SE AGREGÓ EL DOCUMENTO DE COMPRA CON LA FECHA DE EMISION: ". Carbon::parse($documento->fecha_emision)->format('d/m/y');
@@ -277,6 +260,7 @@ class DocumentoController extends Controller
 
     public function edit($id)
     {
+        $this->authorize('haveaccess','documento_compra.index');
         $empresas = Empresa::where('estado','ACTIVO')->get();
         $detalles = DocumentoDetalle::where('documento_id',$id)->get();
         $proveedores = Proveedor::where('estado','ACTIVO')->get();
@@ -300,7 +284,9 @@ class DocumentoController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
+        $this->authorize('haveaccess','documento_compra.index');
         $data = $request->all();
         $rules = [
             'fecha_emision'=> 'required',
@@ -396,6 +382,7 @@ class DocumentoController extends Controller
 
     public function destroy($id)
     {
+        $this->authorize('haveaccess','documento_compra.index');
         $documento = Documento::findOrFail($id);
         $documento->estado = 'ANULADO';
         $documento->update();
@@ -425,8 +412,9 @@ class DocumentoController extends Controller
 
     public function show($id)
     {
+        $this->authorize('haveaccess','documento_compra.index');
         $documento = Documento::findOrFail($id);
-        $nombre_completo = $documento->usuario->empleado->persona->apellido_paterno.' '.$documento->usuario->empleado->persona->apellido_materno.' '.$documento->usuario->empleado->persona->nombres;
+        $nombre_completo = $documento->usuario->user->persona->apellido_paterno.' '.$documento->usuario->user->persona->apellido_materno.' '.$documento->usuario->user->persona->nombres;
         $detalles = DocumentoDetalle::where('documento_id',$id)->get();
         $presentaciones = presentaciones();
         $subtotal = 0;
@@ -468,9 +456,10 @@ class DocumentoController extends Controller
 
     public function report($id)
     {
+        $this->authorize('haveaccess','documento_compra.index');
         ini_set("max_execution_time", 60000);
         $documento = Documento::findOrFail($id);
-        $nombre_completo = $documento->usuario->empleado->persona->apellido_paterno.' '.$documento->usuario->empleado->persona->apellido_materno.' '.$documento->usuario->empleado->persona->nombres;
+        $nombre_completo = $documento->usuario->user->persona->apellido_paterno.' '.$documento->usuario->user->persona->apellido_materno.' '.$documento->usuario->user->persona->nombres;
         $detalles = DocumentoDetalle::where('documento_id',$id)->get();
         $subtotal = 0;
         $igv = '';

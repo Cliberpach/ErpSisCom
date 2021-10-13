@@ -27,12 +27,12 @@ class OrdenController extends Controller
 {
     public function index()
     {
-        
+        $this->authorize('haveaccess','orden.index');
         return view('compras.ordenes.index');
     }
 
     public function getOrder(){
-
+        $this->authorize('haveaccess','orden.index');
         //Cambiar a estado pendiente si la fecha de la de hoy
         DB::table('ordenes')->where('estado','!=','ANULADO')
         ->where('estado','!=','CONCRETADA')
@@ -138,6 +138,7 @@ class OrdenController extends Controller
 
     public function create(Request $request)
     {
+        $this->authorize('haveaccess','orden.index');
         $empresas = Empresa::where('estado','ACTIVO')->get();
         $proveedores = Proveedor::where('estado','ACTIVO')->get();
         $productos = Producto::where('estado','ACTIVO')->get();
@@ -160,6 +161,7 @@ class OrdenController extends Controller
     
     public function edit($id)
     {
+        $this->authorize('haveaccess','orden.index');
         $empresas = Empresa::where('estado','ACTIVO')->get();
         $detalles = Detalle::where('orden_id',$id)->get();        
         $proveedores = Proveedor::where('estado','ACTIVO')->get();
@@ -207,7 +209,7 @@ class OrdenController extends Controller
 
     public function store(Request $request){
 
-        //return $request;
+        $this->authorize('haveaccess','orden.index');
         
         $data = $request->all();
         $rules = [
@@ -280,6 +282,7 @@ class OrdenController extends Controller
     }
 
     public function update(Request $request, $id){
+        $this->authorize('haveaccess','orden.index');
         $data = $request->all();
         $rules = [
             'fecha_emision'=> 'required',
@@ -403,7 +406,7 @@ class OrdenController extends Controller
 
     public function destroy($id)
     {
-
+        $this->authorize('haveaccess','orden.index');
         $documento = Documento::where('orden_compra',$id)->where('estado','!=','ANULADO')->first();
         if ($documento) {
             $id_eliminar = $id;
@@ -472,7 +475,7 @@ class OrdenController extends Controller
     public function show($id)
     {
         $orden = Orden::findOrFail($id);
-        $nombre_completo = $orden->usuario->empleado->persona->apellido_paterno.' '.$orden->usuario->empleado->persona->apellido_materno.' '.$orden->usuario->empleado->persona->nombres;
+        $nombre_completo = $orden->usuario->user->persona->apellido_paterno.' '.$orden->usuario->user->persona->apellido_materno.' '.$orden->usuario->user->persona->nombres;
         $detalles = Detalle::where('orden_id',$id)->get(); 
         $presentaciones = presentaciones(); 
         $subtotal = 0; 
@@ -525,7 +528,7 @@ class OrdenController extends Controller
     public function report($id)
     {
         $orden = Orden::findOrFail($id);
-        $nombre_completo = $orden->usuario->empleado->persona->apellido_paterno.' '.$orden->usuario->empleado->persona->apellido_materno.' '.$orden->usuario->empleado->persona->nombres;
+        $nombre_completo = $orden->usuario->user->persona->apellido_paterno.' '.$orden->usuario->user->persona->apellido_materno.' '.$orden->usuario->user->persona->nombres;
         $detalles = Detalle::where('orden_id',$id)->get();
         $subtotal = 0; 
         $igv = '';
@@ -574,7 +577,7 @@ class OrdenController extends Controller
     public function email($id)
     {
         $orden = Orden::findOrFail($id);
-        $nombre_completo = $orden->usuario->empleado->persona->apellido_paterno.' '.$orden->usuario->empleado->persona->apellido_materno.' '.$orden->usuario->empleado->persona->nombres;
+        $nombre_completo = $orden->usuario->user->persona->apellido_paterno.' '.$orden->usuario->user->persona->apellido_materno.' '.$orden->usuario->user->persona->nombres;
         $detalles = Detalle::where('orden_id',$id)->get();
         $subtotal = 0; 
         $igv = '';

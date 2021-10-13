@@ -20,12 +20,13 @@ class ProductoController extends Controller
 {
     public function index()
     {
-
+        $this->authorize('haveaccess','producto.index');
         return view('almacenes.productos.index');
     }
 
     public function getTable()
     {
+        $this->authorize('haveaccess','producto.index');
         $productos = Producto::where('estado','ACTIVO')->orderBy('id', 'desc')->get();
         $coleccion = collect([]);
         foreach($productos as $producto) {
@@ -45,6 +46,7 @@ class ProductoController extends Controller
 
     public function create()
     {
+        $this->authorize('haveaccess','producto.index');
         $marcas = Marca::where('estado', 'ACTIVO')->get();
         $almacenes = Almacen::where('estado', 'ACTIVO')->get();
         $categorias = Categoria::where('estado', 'ACTIVO')->get();
@@ -53,6 +55,7 @@ class ProductoController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('haveaccess','producto.index');
         $data = $request->all();
         $rules = [
             // 'codigo' => ['string', 'max:50', Rule::unique('productos','codigo')->where(function ($query) {
@@ -146,6 +149,7 @@ class ProductoController extends Controller
 
     public function edit($id)
     {
+        $this->authorize('haveaccess','producto.index');
         $producto = Producto::findOrFail($id);
         $marcas = Marca::where('estado', 'ACTIVO')->get();
         $clientes = TipoCliente::where('estado','ACTIVO')->where('producto_id',$id)->get();
@@ -162,7 +166,7 @@ class ProductoController extends Controller
 
     public function update(Request $request, $id)
     {
-
+        $this->authorize('haveaccess','producto.index');
         $data = $request->all();
         $rules = [
             // 'codigo' => ['required','string', 'max:50', Rule::unique('productos','codigo')->where(function ($query) {
@@ -263,6 +267,7 @@ class ProductoController extends Controller
 
     public function show($id)
     {
+        $this->authorize('haveaccess','producto.index');
         $producto = Producto::findOrFail($id);
         $clientes = TipoCliente::where('estado','ACTIVO')->where('producto_id',$id)->get();
         return view('almacenes.productos.show', [
@@ -273,6 +278,7 @@ class ProductoController extends Controller
 
     public function destroy($id)
     {
+        $this->authorize('haveaccess','producto.index');
         $producto = Producto::findOrFail($id);
         $producto->estado = 'ANULADO';
         $producto->update();

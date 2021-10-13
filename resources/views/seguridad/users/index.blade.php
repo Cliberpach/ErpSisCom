@@ -16,9 +16,12 @@
         </ol>
     </div>
     <div class="col-lg-2 col-xs-12">
+        @can('haveaccess', 'user.create')
         <a class="btn btn-block btn-w-m btn-primary m-t-md" href="{{route('user.create')}}">
             <i class="fa fa-plus-square"></i> Añadir nuevo
         </a>
+        @endcan
+        
     </div>
 </div>
 

@@ -111,9 +111,9 @@
                         <br>
                         <span>{{$nombre_completo}}</span>
                         <br>
-                        <span>{{$orden->usuario->empleado->persona->telefono_movil}}</span>
+                        <span>{{$orden->usuario->user->persona->telefono_movil}}</span>
                         <br>
-                        <a href="mailto:{{$orden->usuario->empleado->persona->correo_electronico}}">{{$orden->usuario->empleado->persona->correo_electronico}}</a>
+                        <a href="mailto:{{$orden->usuario->user->persona->correo_electronico}}">{{$orden->usuario->user->persona->correo_electronico}}</a>
 
                     </div>
                 </div>

@@ -45,7 +45,7 @@ class CreateEmpresasTable extends Migration
 
             // Facturacion Electronica
             $table->enum('estado_fe',['0','1'])->default('0');
-
+            $table->enum('condicion',['0','1'])->default('0');
 
             $table->timestamps();
         });

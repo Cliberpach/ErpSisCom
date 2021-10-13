@@ -2,8 +2,8 @@
 
 @section('content')
 
-@section('administrar-active', 'active')
-@section('rol-active', 'active')
+@section('seguridad-active', 'active')
+@section('roles-active', 'active')
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10 col-md-10">

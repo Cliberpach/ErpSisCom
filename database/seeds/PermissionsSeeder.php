@@ -127,7 +127,7 @@ class PermissionsSeeder extends Seeder
         //Lote Produco permission
         
         Permission::create([
-            'name'  => 'Consulta lote producto',
+            'name'  => 'Consulta Lote Producto',
             'slug'=>'lote_producto.index',
             'description'=>'El usuario puede acceder a la consulta de Lote Productos'
         ]);

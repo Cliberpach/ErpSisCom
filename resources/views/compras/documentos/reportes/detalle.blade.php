@@ -485,8 +485,8 @@
 
             <div class="to">CONTACTO:</div>
             <h2 class="name">{{$nombre_completo}}</h2>
-            <div class="address">{{$documento->usuario->empleado->persona->telefono_movil}}</div>
-            <div class="email"><a href="mailto:{{$documento->usuario->empleado->persona->correo_electronico}}">{{$documento->usuario->empleado->persona->correo_electronico}}</a></div>
+            <div class="address">{{$documento->usuario->user->persona->telefono_movil}}</div>
+            <div class="email"><a href="mailto:{{$documento->usuario->user->persona->correo_electronico}}">{{$documento->usuario->user->persona->correo_electronico}}</a></div>
         </div>
 
 

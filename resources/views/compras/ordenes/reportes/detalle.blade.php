@@ -484,8 +484,8 @@ footer {
 
             <div class="to">CONTACTO:</div>
             <h2 class="name">{{$nombre_completo}}</h2>
-            <div class="address">{{$orden->usuario->empleado->persona->telefono_movil}}</div>
-            <div class="email"><a href="mailto:{{$orden->usuario->empleado->persona->correo_electronico}}">{{$orden->usuario->empleado->persona->correo_electronico}}</a></div>
+            <div class="address">{{$orden->usuario->colaborador->persona->telefono_movil}}</div>
+            <div class="email"><a href="mailto:{{$orden->usuario->colaborador->persona->correo_electronico}}">{{$orden->usuario->user->persona->correo_electronico}}</a></div>
         </div>
 
 

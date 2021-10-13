@@ -244,7 +244,7 @@ $(document).ready(function() {
                         "<li class='dropdown-divider'></li>" +
                         "<li><a class='dropdown-item' onclick='enviado(" + data.id +
                         ")' title='Ordenes Enviadas'><b><i class='fa fa-send'></i> Enviados</a></b></li>" +
-                        "<li><a class='dropdown-item' href='"+url_pago+"' title='Pagos'><b><i class='fa fa-money'></i> Pagos</a></b></li>" +
+                        "<li class='d-none'><a class='dropdown-item' href='"+url_pago+"' title='Pagos'><b><i class='fa fa-money'></i> Pagos</a></b></li>" +
                         "<li><a class='dropdown-item' onclick='documento("+data.id+")' title='Documento'><b><i class='fa fa-file'></i> Documento</a></b></li>" +
                         "<li><a class='dropdown-item' onclick='concretada(" + data.id +
                         ")' title='Concretada'><b><i class='fa fa-check'></i> Concretada</a></b></li>"

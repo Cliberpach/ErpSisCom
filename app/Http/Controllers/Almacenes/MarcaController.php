@@ -14,7 +14,7 @@ class MarcaController extends Controller
 {
     public function index()
     {
-        actualizarStockLotes();
+        $this->authorize('haveaccess','marca.index');
         return view('almacenes.marcas.index');
     }
 
@@ -35,7 +35,7 @@ class MarcaController extends Controller
     }
 
     public function store(Request $request){
-
+        $this->authorize('haveaccess','marca.index');
         $data = $request->all();
 
         $rules = [
@@ -65,7 +65,7 @@ class MarcaController extends Controller
     }
 
     public function update(Request $request){
-
+        $this->authorize('haveaccess','marca.index');
         $data = $request->all();
 
         $rules = [
@@ -97,7 +97,7 @@ class MarcaController extends Controller
 
     public function destroy($id)
     {
-
+        $this->authorize('haveaccess','marca.index');
         $marca = Marca::findOrFail($id);
         $marca->estado = 'ANULADO';
         $marca->update();

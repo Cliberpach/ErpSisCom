@@ -17,11 +17,12 @@ class ProveedorController extends Controller
 {
     public function index()
     {
-        
+        $this->authorize('haveaccess','proveedor.index');
         return view('compras.proveedores.index');
     }
 
     public function getProvider(){
+        $this->authorize('haveaccess','proveedor.index');
         $proveedores = DB::table('proveedores')->select('proveedores.*')->where('estado','ACTIVO')->get();
         $coleccion = collect([]);
         foreach($proveedores as $proveedor){
@@ -62,8 +63,8 @@ class ProveedorController extends Controller
         ]);
     }
 
-    public function store(Request $request){
-
+    public function store(Request $request){        
+        $this->authorize('haveaccess','proveedor.index');
         $data = $request->all();
         $rules = [
             'tipo_documento' => 'required',
@@ -248,6 +249,7 @@ class ProveedorController extends Controller
     public function destroy($id)
     {
         
+        $this->authorize('haveaccess','proveedor.index');
         $proveedor = Proveedor::findOrFail($id);
         $proveedor->estado = 'ANULADO';
         $proveedor->update();
@@ -264,6 +266,7 @@ class ProveedorController extends Controller
 
     public function show($id)
     {
+        $this->authorize('haveaccess','proveedor.index');
         $banco = Banco::where('proveedor_id',$id)
         ->where('estado','ACTIVO')
         ->get();
@@ -277,6 +280,7 @@ class ProveedorController extends Controller
 
     public function edit($id)
     {
+        $this->authorize('haveaccess','proveedor.index');
         $proveedor = Proveedor::findOrFail($id);
         $banco = Banco::where('proveedor_id',$id)
         ->where('estado','ACTIVO')
@@ -297,6 +301,7 @@ class ProveedorController extends Controller
     }
 
     public function update(Request $request, $id){
+        $this->authorize('haveaccess','proveedor.index');
 
         $data = $request->all();
         $rules = [

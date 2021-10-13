@@ -14,7 +14,7 @@ class CategoriaController extends Controller
 {
     public function index()
     {
-        
+        $this->authorize('haveaccess','categoria.index');
         return view('almacenes.categorias.index');
     }
 
@@ -34,7 +34,7 @@ class CategoriaController extends Controller
     }
 
     public function store(Request $request){
-        
+        $this->authorize('haveaccess','categoria.index');
         $data = $request->all();
 
         $rules = [
@@ -61,7 +61,7 @@ class CategoriaController extends Controller
     }
 
     public function update(Request $request){
-        
+        $this->authorize('haveaccess','categoria.index');
         $data = $request->all();
 
         $rules = [
@@ -91,7 +91,7 @@ class CategoriaController extends Controller
     
     public function destroy($id)
     {
-        
+        $this->authorize('haveaccess','categoria.index');
         $categoria = Categoria::findOrFail($id);
         $categoria->estado = 'ANULADO';
         $categoria->update();

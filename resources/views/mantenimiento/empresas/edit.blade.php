@@ -230,6 +230,21 @@
 
                                                         </div>
 
+                                                        <div class="form-group">
+                                                            <label class="required">Condicion: </label>
+
+                                                            <select class="select2_form form-control {{ $errors->has('condicion') ? ' is-invalid' : '' }}" name="condicion" required>
+                                                                <option value="0" {{old('condicion') ? (old('condicion') == $empresa->condicion ? "selected" : "") : ($empresa->condicion == "0" ? "selected" : "")}}>PDF DE PRUEBA</option>
+                                                                <option value="1" {{old('condicion') ? (old('condicion') == $empresa->condicion ? "selected" : "") : ($empresa->condicion == "1" ? "selected" : "")}}>PDF PERSONALIZADO</option>
+                                                            </select>
+
+                                                            @if ($errors->has('condicion'))
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $errors->first('codicion') }}</strong>
+                                                            </span>
+                                                            @endif
+                                                        </div>
+
 
 
                                                     </div>

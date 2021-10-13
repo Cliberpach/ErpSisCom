@@ -65,10 +65,24 @@ function(){
         Route::get('create', 'Seguridad\UserController@create')->name('user.create');
         Route::post('store', 'Seguridad\UserController@store')->name('user.store');
         Route::get('edit/{id}','Seguridad\UserController@edit')->name('user.edit');
-        Route::put('update', 'Seguridad\UserController@update')->name('user.update');
+        Route::put('update/{id}', 'Seguridad\UserController@update')->name('user.update');
         Route::get('show/{id}','Seguridad\UserController@show')->name('user.show');
 
     });
+
+    //Roles
+    Route::prefix('roles')->group(function() {
+        Route::get('/', 'Seguridad\RoleController@index')->name('role.index');
+        Route::get('destroy/{id}', 'Seguridad\RoleController@destroy')->name('role.destroy');
+        Route::get('create', 'Seguridad\RoleController@create')->name('role.create');
+        Route::post('store', 'Seguridad\RoleController@store')->name('role.store');
+        Route::get('edit/{id}','Seguridad\RoleController@edit')->name('role.edit');
+        Route::put('update/{id}', 'Seguridad\RoleController@update')->name('role.update');
+        Route::get('show/{id}','Seguridad\RoleController@show')->name('role.show');
+        Route::get('getTable','Seguridad\RoleController@getTable')->name('role.getTable');
+
+    });
+
     //Tabla Detalle
     Route::prefix('mantenimiento/tablas/detalles')->group(function() {
         Route::get('index/{id}', 'Mantenimiento\Tabla\DetalleController@index')->name('mantenimiento.tabla.detalle.index');

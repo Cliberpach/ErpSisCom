@@ -340,6 +340,7 @@ class EmpresaController extends Controller
             'facebook' => 'nullable',
             'instagram' => 'nullable',
             'estado_fe' => 'nullable',
+            'condicion' => 'required',
             'logo' => 'image|mimetypes:image/jpeg,image/png,image/jpg|max:40000',
             'soap_usuario' => 'required_if:estado_fe,==,1',
             'soap_password' => 'required_if:estado_fe,==,1',
@@ -365,6 +366,7 @@ class EmpresaController extends Controller
             'telefono.numeric' => 'El campo Teléfono es obligatorio.',
             'celular.numeric' => 'El campo Celular es obligatorio.',
             'estado.required' => 'El campo Estado es obligatorio.',
+            'condicion.required' => 'El campo Condición es obligatorio.',
             'soap_usuario.required_if' => 'El campo Soap Usuario es obligatorio.',
             'soap_password.required_if' => 'El campo Soap Contraseña es obligatorio.',
 
@@ -381,6 +383,7 @@ class EmpresaController extends Controller
         $empresa->telefono = $request->get('telefono');
         $empresa->celular = $request->get('celular');
         $empresa->correo = $request->get('correo');
+        $empresa->condicion = $request->get('condicion');
 
        
         if($request->hasFile('logo')){

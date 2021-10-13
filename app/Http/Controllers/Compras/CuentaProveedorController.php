@@ -16,9 +16,11 @@ use Yajra\DataTables\Facades\DataTables;
 class CuentaProveedorController extends Controller
 {
     public function index() {
+        $this->authorize('haveaccess','cuenta_proveedor.index');
         return view('compras.cuentaProveedor.index');
     }
     public function getTable() {
+        $this->authorize('haveaccess','cuenta_proveedor.index');
         $datos=array();
         $cuentaProveedor=CuentaProveedor::get();
         foreach ($cuentaProveedor as $key => $value) {
@@ -35,8 +37,9 @@ class CuentaProveedorController extends Controller
         }
         return DataTables::of($datos)->toJson();
     }
-    public function getDatos(Request $request) {
-
+    public function getDatos(Request $request) 
+    {
+        $this->authorize('haveaccess','cuenta_proveedor.index');
         $cuenta=CuentaProveedor::findOrFail($request->id);
         return array(
             "id"=>$cuenta->id,
@@ -50,8 +53,10 @@ class CuentaProveedorController extends Controller
             "detalle"=>CuentaProveedor::findOrFail($request->id)->detallePago
         );
     }
+
     public function consulta(Request $request)
     {
+        $this->authorize('haveaccess','cuenta_proveedor.index');
         $cuentas = DB::table('cuenta_proveedor')
         ->join('compra_documentos', 'compra_documentos.id', '=', 'cuenta_proveedor.compra_documento_id')
         ->join('proveedores', 'proveedores.id', '=', 'compra_documentos.proveedor_id')
@@ -72,6 +77,7 @@ class CuentaProveedorController extends Controller
     }
     public function detallePago(Request $request)
     {
+        $this->authorize('haveaccess','cuenta_proveedor.index');
         $cuentaProveedor=CuentaProveedor::findOrFail($request->id);
         if($request->pago=="A CUENTA")
         {
@@ -180,6 +186,7 @@ class CuentaProveedorController extends Controller
 
     public function reporte($id)
     {
+        $this->authorize('haveaccess','cuenta_proveedor.index');
         $cuenta = CuentaProveedor::findOrFail($id);
         $proveedor = $cuenta->documento->proveedor;
         $empresa = Empresa::first();
@@ -193,6 +200,7 @@ class CuentaProveedorController extends Controller
     }
     public function imagen($id)
     {
+        $this->authorize('haveaccess','cuenta_proveedor.index');
         $detalle = DetalleCuentaProveedor::find($id);
         $ruta = storage_path().'/app/'.$detalle->ruta_imagen;
         return response()->download($ruta);

@@ -26,74 +26,104 @@
             control</span></a>
 </li>
 
+@can('restore', [Auth::user(),['caja.index','movimiento_nota.index','egreso.index']])
 <li class="@yield('caja-chica-active')">
     <a href="#"><i class="fa fa-archive"></i> <span class="nav-label">Caja Chica</span><span
             class="fa arrow"></span></a>
     <ul class="nav nav-second-level collapse">
-        <li class="@yield('caja-active')"><a href="{{ route('Caja.index') }}"><i class="fa fa-archive"></i>Cajas</a>
-        </li>
-        <li class="@yield('caja-movimiento-active')"><a href="{{ route('Caja.Movimiento.index') }}"><i
-                    class="fa fa-registered"></i> Apertura y Cierre Caja</a></li>
-        <li class="@yield('egreso-active')"> <a href="{{ route('Egreso.index') }}"><i class="fa fa-arrow-right"></i>
-                <span class="nav-label">Egreso</span></a></li>
+        @can('haveaccess', 'caja.index')
+        <li class="@yield('caja-active')"><a href="{{ route('Caja.index') }}"><i class="fa fa-archive"></i>Cajas</a></li>
+        @endcan
+        @can('haveaccess', 'movimiento_nota.index')
+        <li class="@yield('caja-movimiento-active')"><a href="{{ route('Caja.Movimiento.index') }}"><i class="fa fa-registered"></i> Apertura y Cierre Caja</a></li>  
+        @endcan
+        @can('haveaccess', 'egreso.index')
+        <li class="@yield('egreso-active')"> <a href="{{ route('Egreso.index') }}"><i class="fa fa-arrow-right"></i> Egreso</a></li>
+        @endcan
     </ul>
 </li>
+@endcan
 
+@can('restore', [Auth::user(),['proveedor.index','orden.index','documento_compra.index']])
 <li class="@yield('compras-active')">
     <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Compras</span><span
             class="fa arrow"></span></a>
     <ul class="nav nav-second-level collapse">
+        @can('haveaccess', 'proveedor.index')
         <li class="@yield('proveedor-active')"><a href="{{ route('compras.proveedor.index') }}">Proveedores</a></li>
+        @endcan
+        @can('haveaccess', 'orden.index')
         <li class="@yield('orden-compra-active')"><a href="{{ route('compras.orden.index') }}">Orden Compra</a></li>
-        <li class="@yield('documento-active')"><a href="{{ route('compras.documento.index') }}">Doc. Compra</a>
-
+        @endcan
+        @can('haveaccess', 'documento_compra.index')
+        <li class="@yield('documento-active')"><a href="{{ route('compras.documento.index') }}">Doc. Compra</a></li>
+        @endcan
+    </ul>
 </li>
-</ul>
-</li>
+@endcan
 
+@can('restore', [Auth::user(),['cliente.index','cotizacion.index','documento_venta.index','guia.index']])
 <li class="@yield('ventas-active')">
     <a href="#"><i class="fa fa-signal"></i> <span class="nav-label">Ventas</span><span
             class="fa arrow"></span></a>
     <ul class="nav nav-second-level collapse">
+        @can('haveaccess', 'cliente.index')
         <li class="@yield('clientes-active')"><a href="{{ route('ventas.cliente.index') }}">Clientes</a></li>
-        <li class="@yield('cotizaciones-active')"><a href="{{ route('ventas.cotizacion.index') }}">Cotizaciones</a>
-        </li>
+        @endcan
+        @can('haveaccess', 'cotizacion.index')
+        <li class="@yield('cotizaciones-active')"><a href="{{ route('ventas.cotizacion.index') }}">Cotizaciones</a></li>
+        @endcan
+        @can('haveaccess', 'documento_venta.index')
         <li class="@yield('documento-active')"><a href="{{ route('ventas.documento.index') }}">Doc. Venta</a></li>
-        <li class="@yield('guias-remision-active')"><a href="{{ route('ventas.guiasremision.index') }}">Guias de
-                Remision</a></li>
+        @endcan
+        @can('haveaccess', 'guia.index')
+        <li class="@yield('guias-remision-active')"><a href="{{ route('ventas.guiasremision.index') }}">Guias de Remision</a></li>
+        @endcan
     </ul>
 </li>
+@endcan
 
+@can('restore', [Auth::user(),['almacen.index','categoria.index','marca.index','producto.index','nota_ingreso.index','nota_salida.index']])
 <li class="@yield('almacenes-active')">
     <a href="#"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">Almacén</span><span
             class="fa arrow"></span></a>
     <ul class="nav nav-second-level collapse">
+        @can('haveaccess', 'almacen.index')
         <li class="@yield('almacen-active')"><a href="{{ route('almacenes.almacen.index') }}">Almacén</a></li>
+        @endcan
+        @can('haveaccess', 'categoria.index')
         <li class="@yield('categoria-active')"><a href="{{ route('almacenes.categorias.index') }}">Categoria</a></li>
+        @endcan
+        @can('haveaccess', 'marca.index')
         <li class="@yield('marca-active')"><a href="{{ route('almacenes.marcas.index') }}">Marca</a></li>
+        @endcan
+        @can('haveaccess', 'producto.index')
         <li class="@yield('producto-active')"><a href="{{ route('almacenes.producto.index') }}">Producto</a></li>
-        <li class="@yield('nota_ingreso-active')"><a href="{{ route('almacenes.nota_ingreso.index') }}">Nota
-                Ingreso</a></li>
-        <li class="@yield('nota_salidad-active')"><a href="{{ route('almacenes.nota_salidad.index') }}">Nota
-                Salida</a>
-        </li>
+        @endcan
+        @can('haveaccess', 'nota_ingreso.index')
+        <li class="@yield('nota_ingreso-active')"><a href="{{ route('almacenes.nota_ingreso.index') }}">Nota Ingreso</a></li>
+        @endcan
+        @can('haveaccess', 'nota_salida.index')
+        <li class="@yield('nota_salidad-active')"><a href="{{ route('almacenes.nota_salidad.index') }}">Nota Salida</a></li>
+        @endcan
     </ul>
 </li>
+@endcan
 
+@can('restore', [Auth::user(),['cuenta_proveedor.index','cuenta_cliente.index']])
 <li class="@yield('cuentas-active')">
     <a href="#"><i class="fa fa-money"></i> <span class="nav-label">Cuentas </span><span
             class="fa arrow"></span></a>
     <ul class="nav nav-second-level collapse">
-        <li class="@yield('cuenta-proveedor-active')">
-            <a href="{{ route('cuentaProveedor.index') }}"><span
-                    class="nav-label">Proveedor</span></a>
-        </li>
-        <li class="@yield('cuenta-cliente-active')">
-            <a href="{{ route('cuentaCliente.index') }}"><span
-                    class="nav-label">Cliente</span></a>
-        </li>
+        @can('haveaccess', 'cuenta_proveedor.index')
+        <li class="@yield('cuenta-proveedor-active')"><a href="{{ route('cuentaProveedor.index') }}"><span class="nav-label">Proveedor</span></a></li>
+        @endcan
+        @can('haveaccess', 'cuenta_cliente.index')
+        <li class="@yield('cuenta-cliente-active')"><a href="{{ route('cuentaCliente.index') }}"><span class="nav-label">Cliente</span></a></li>
+        @endcan
     </ul>
 </li>
+@endcan
 
 <li class="@yield('consulta-active')">
     <a href="#"><i class="fa fa-question-circle"></i> <span class="nav-label">Consulta </span><span
@@ -147,28 +177,39 @@
 </li>
 
 
+@can('restore', [Auth::user(),['colaborador.index','vendedor.index','empresa.index','tabla.index']])
 <li class="@yield('mantenimiento-active')">
     <a href="#"><i class="fa fa-cogs"></i> <span class="nav-label">Mantenimento</span><span
             class="fa arrow"></span></a>
     <ul class="nav nav-second-level collapse">
-        <li class="@yield('colaboradores-active')"><a
-                href="{{ route('mantenimiento.colaborador.index') }}">Colaboradores</a></li>
-        <li class="@yield('vendedores-active')"><a href="{{ route('mantenimiento.vendedor.index') }}">Vendedores</a>
-        </li>
-        <li class="@yield('empresas-active')"><a href="{{ route('mantenimiento.empresas.index') }}">Empresas</a>
-        </li>
-        <li class="@yield('tablas-active')"><a href="{{ route('mantenimiento.tabla.general.index') }}">Tablas
-                Generales</a></li>
+        @can('haveaccess', 'colaborador.index')
+        <li class="@yield('colaboradores-active')"><a href="{{ route('mantenimiento.colaborador.index') }}">Colaboradores</a></li>
+        @endcan
+        @can('haveaccess', 'vendedor.index')            
+        <li class="@yield('vendedores-active')"><a href="{{ route('mantenimiento.vendedor.index') }}">Vendedores</a></li>
+        @endcan
+        @can('haveaccess', 'empresa.index')
+        <li class="@yield('empresas-active')"><a href="{{ route('mantenimiento.empresas.index') }}">Empresas</a></li>
+        @endcan
+        @can('haveaccess', 'tabla.index')
+        <li class="@yield('tablas-active')"><a href="{{ route('mantenimiento.tabla.general.index') }}">Tablas Generales</a></li> 
+        @endcan
     </ul>
 </li>
+@endcan
 
+@can('restore', [Auth::user(),['user.index','role.index']])
 <li class="@yield('seguridad-active')">
     <a href="#"><i class="fa fa-key"></i> <span class="nav-label">Seguridad</span><span
         class="fa arrow"></span></a>
     <ul class="nav nav-second-level collapse">
-        <li class="@yield('users-active')"><a
-                href="{{ route('user.index') }}">Usuarios</a></li>
-        <li class="@yield('roles-active')"><a href="#">Roles</a>
-        </li>
+        @can('haveaccess', 'user.index')
+        <li class="@yield('users-active')"><a href="{{ route('user.index') }}">Usuarios</a></li>
+        @endcan
+        @can('haveaccess', 'role.index')
+        <li class="@yield('roles-active')"><a href="{{ route('role.index') }}">Roles</a></li>
+        @endcan
     </ul>
 </li>
+ 
+@endcan

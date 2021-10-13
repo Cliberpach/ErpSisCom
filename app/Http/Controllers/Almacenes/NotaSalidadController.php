@@ -28,14 +28,15 @@ class NotaSalidadController extends Controller
      */
     public function index()
     {
-        
+        $this->authorize('haveaccess','nota_salida.index');
         return view('almacenes.nota_salidad.index');
     }
     public function gettable()
     {
-      $data=DB::table("nota_salidad as n")
-      ->select('n.*',)->where('n.estado','ACTIVO')->get();
-      return DataTables::of($data)->make(true);
+        $this->authorize('haveaccess','nota_salida.index');
+        $data=DB::table("nota_salidad as n")
+        ->select('n.*',)->where('n.estado','ACTIVO')->get();
+        return DataTables::of($data)->make(true);
     }
 
 
@@ -46,7 +47,7 @@ class NotaSalidadController extends Controller
      */
     public function create()
     {
-        
+        $this->authorize('haveaccess','nota_salida.index');
         $fecha_hoy = Carbon::now()->toDateString();
         $fecha=Carbon::createFromFormat('Y-m-d', $fecha_hoy);
         $fecha=str_replace("-", "", $fecha);
@@ -72,7 +73,7 @@ class NotaSalidadController extends Controller
      */
     public function store(Request $request)
     {
-        //return $request;
+        $this->authorize('haveaccess','nota_salida.index');
         $data = $request->all();
 
         $rules = [
@@ -140,7 +141,7 @@ class NotaSalidadController extends Controller
      */
     public function edit($id)
     {
-        
+        $this->authorize('haveaccess','nota_salida.index');
         $notasalidad=NotaSalidad::findOrFail($id);
         $data=array();
         $detallenotasalidad=DB::table('detalle_nota_salidad')->where('nota_salidad_id',$notasalidad->id)->get();
@@ -176,6 +177,7 @@ class NotaSalidadController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->authorize('haveaccess','nota_salida.index');
          $data = $request->all();
 
          $rules = [
@@ -248,6 +250,7 @@ class NotaSalidadController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorize('haveaccess','nota_salida.index');
         $notasalidad = NotaSalidad::findOrFail($id);
         $notasalidad->estado="ANULADO";
         $notasalidad->save();
@@ -264,6 +267,7 @@ class NotaSalidadController extends Controller
 
     public function getLot()
     {
+        $this->authorize('haveaccess','nota_salida.index');
         return datatables()->query(
             DB::table('lote_productos')
             ->join('productos_clientes','productos_clientes.producto_id','=','lote_productos.producto_id')

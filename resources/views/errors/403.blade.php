@@ -1,7 +1,7 @@
 @extends('layout') @section('content')
 
-    <div class="middle-box text-center animated fadeInDown">
-        <h1>403</h1>
+    <div class="middle-box text-center animated fadeInDown align-items-center">
+        <h2>NO AUTORIZADO</h2>
         <h3 class="font-bold">Usuario no autorizado</h3>
 
         <div class="error-desc">
