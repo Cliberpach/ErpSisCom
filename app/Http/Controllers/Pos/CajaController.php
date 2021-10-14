@@ -25,6 +25,7 @@ class CajaController extends Controller
 
     public function index()
     {
+        $this->authorize('haveaccess','caja.index');
         return view('pos.Cajas.index');
     }
     public function getCajas()
@@ -44,7 +45,8 @@ class CajaController extends Controller
         return DataTables::of($datos)->toJson();
     }
     public function store(Request $request)
-    {
+    {        
+        $this->authorize('haveaccess','caja.index');
         $caja = new Caja();
         $caja->nombre = $request->nombre;
         $caja->save();
@@ -65,7 +67,8 @@ class CajaController extends Controller
         return redirect()->route('Caja.index');
     }
     public function indexMovimiento()
-    {
+    {        
+        $this->authorize('haveaccess','movimiento_caja.index');
         return view('pos.MovimientoCaja.indexMovimiento');
     }
     public function getMovimientosCajas()
@@ -84,11 +87,13 @@ class CajaController extends Controller
         }
         return DataTables::of($datos)->toJson();
     }
+
     public function estadoCaja(Request $request)
     {
         $caja = Caja::findOrFail($request->id);
         return $caja->estado_caja == "ABIERTA" ? 'true' : 'false';
     }
+
     public function aperturaCaja(Request $request)
     {
         $movimiento = new MovimientoCaja();
@@ -103,6 +108,7 @@ class CajaController extends Controller
         $caja->save();
         return redirect()->route('Caja.Movimiento.index');
     }
+
     public function cerrarCaja(Request $request)
     {
         $movimiento = MovimientoCaja::findOrFail($request->movimiento_id);
@@ -115,6 +121,7 @@ class CajaController extends Controller
         $caja->save();
         return redirect()->route('Caja.Movimiento.index');
     }
+
     public function cajaDatosCierre(Request $request)
     {
         $movimiento = MovimientoCaja::findOrFail($request->id);
@@ -133,6 +140,7 @@ class CajaController extends Controller
             "saldo" => ($movimiento->monto_inicial + $ingresos) - $egresos
         );
     }
+
     public function verificarEstadoUser(Request $request)
     {
         try
@@ -182,6 +190,7 @@ class CajaController extends Controller
             ]);
         }
     }
+    
     public function reporteMovimiento($id)
     {
         $movimiento=MovimientoCaja::findOrFail($id);

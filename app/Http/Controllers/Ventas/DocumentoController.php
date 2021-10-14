@@ -36,7 +36,8 @@ use Luecano\NumeroALetras\NumeroALetras;
 class DocumentoController extends Controller
 {
     public function index()
-    {
+    {        
+        $this->authorize('haveaccess','documento_venta.index');
         return view('ventas.documentos.index');
     }
 
@@ -90,6 +91,7 @@ class DocumentoController extends Controller
 
     public function create(Request $request)
     {
+        $this->authorize('haveaccess','documento_venta.index');
         $empresas = Empresa::where('estado', 'ACTIVO')->get();
         $clientes = Cliente::where('estado', 'ACTIVO')->get();
         $fecha_hoy = Carbon::now()->toDateString();
@@ -294,6 +296,7 @@ class DocumentoController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('haveaccess','documento_venta.index');
         ini_set("max_execution_time", 60000);
         try{
             
@@ -600,7 +603,7 @@ class DocumentoController extends Controller
 
     public function destroy($id)
     {
-
+        $this->authorize('haveaccess','documento_venta.index');
         $documento = Documento::findOrFail($id);
         $documento->estado = 'ANULADO';
         $documento->update();
@@ -629,7 +632,7 @@ class DocumentoController extends Controller
 
     public function show($id)
     {
-
+        $this->authorize('haveaccess','documento_venta.index');
         $documento = Documento::findOrFail($id);
         $nombre_completo = $documento->user->persona->apellido_paterno.' '.$documento->user->persona->apellido_materno.' '.$documento->user->persona->nombres;
         $detalles = Detalle::where('documento_id',$id)->get();
@@ -695,15 +698,10 @@ class DocumentoController extends Controller
             'total' => $decimal_total,
             ])->setPaper('a4')->setWarnings(false);
         return $pdf->stream();
-
-
-
-
     }
 
     public function TypePay($id)
     {
-
         DB::table('cotizacion_documento_pago_detalle_cajas')
             ->join('cotizacion_documento_pagos','cotizacion_documento_pagos.id','=','cotizacion_documento_pago_detalle_cajas.pago_id')
             ->join('cotizacion_documento_pago_cajas','cotizacion_documento_pago_cajas.id','=','cotizacion_documento_pago_detalle_cajas.caja_id')
@@ -724,43 +722,6 @@ class DocumentoController extends Controller
         Session::flash('success','Tipo de pagos anulados, puede crear nuevo pago.');
         return redirect()->route('ventas.documento.index')->with('exitosa', 'success');
     }
-
-    // public function obtenerLeyenda($documento)
-    // {
-    //     $formatter = new NumeroALetras();
-    //     $convertir = $formatter->toInvoice($documento->total, 2, 'SOLES');
-    //     //CREAR LEYENDA DEL COMPROBANTE
-    //     $arrayLeyenda = Array();
-    //     $arrayLeyenda[] = array(
-    //         "code" => "1000",
-    //         "value" => $convertir
-    //     );
-    //     return $arrayLeyenda;
-    // }
-
-    // public function obtenerProductos($id)
-    // {
-    //     $detalles = Detalle::where('documento_id',$id)->get();
-    //     $arrayProductos = Array();
-    //     for($i = 0; $i < count($detalles); $i++){
-
-    //         $arrayProductos[] = array(
-    //             "codProducto" => $detalles[$i]->codigo_producto,
-    //             "unidad" => $detalles[$i]->unidad,
-    //             "descripcion"=> $detalles[$i]->nombre_producto.' - '.$detalles[$i]->codigo_lote,
-    //             "cantidad" => (float)$detalles[$i]->cantidad,
-    //             "mtoValorUnitario" => (float)($detalles[$i]->precio_nuevo / 1.18),
-    //             "mtoValorVenta" => (float)($detalles[$i]->valor_venta / 1.18),
-    //             "mtoBaseIgv" => (float)($detalles[$i]->valor_venta / 1.18),
-    //             "porcentajeIgv" => 18,
-    //             "igv" => (float)($detalles[$i]->valor_venta - ($detalles[$i]->valor_venta / 1.18)),
-    //             "tipAfeIgv" => 10,
-    //             "totalImpuestos" =>  (float)($detalles[$i]->valor_venta - ($detalles[$i]->valor_venta / 1.18)),
-    //             "mtoPrecioUnitario" => (float)$detalles[$i]->precio_nuevo
-    //         );
-    //     }
-    //     return $arrayProductos;
-    // }
 
     public function obtenerFecha($documento)
     {

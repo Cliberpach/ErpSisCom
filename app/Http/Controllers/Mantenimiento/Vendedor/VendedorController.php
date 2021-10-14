@@ -20,6 +20,7 @@ class VendedorController extends Controller
 {
     public function index()
     {
+        $this->authorize('haveaccess','vendedor.index');
         return view('mantenimiento.vendedores.index');
     }
 
@@ -46,11 +47,13 @@ class VendedorController extends Controller
 
     public function create()
     {
+        $this->authorize('haveaccess','vendedor.index');
         return view('mantenimiento.vendedores.create');
     }
 
     public function store(Request $request)
     {
+        $this->authorize('haveaccess','vendedor.index');
         $data = $request->all();
 
         $rules = [
@@ -140,6 +143,7 @@ class VendedorController extends Controller
 
     public function edit($id)
     {
+        $this->authorize('haveaccess','vendedor.index');
         $vendedor = Vendedor::findOrFail($id);
         return view('mantenimiento.vendedores.edit', [
             'vendedor' => $vendedor
@@ -148,6 +152,7 @@ class VendedorController extends Controller
 
     public function update(Request $request, $id)
     {
+        $this->authorize('haveaccess','vendedor.index');
         $data = $request->all();
 
         $vendedor = Vendedor::findOrFail($id);
@@ -248,6 +253,7 @@ class VendedorController extends Controller
 
     public function show($id)
     {
+        $this->authorize('haveaccess','vendedor.index');
         $vendedor = Vendedor::findOrFail($id);
         return view('mantenimiento.vendedores.show', [
             'vendedor' => $vendedor
@@ -256,6 +262,7 @@ class VendedorController extends Controller
 
     public function destroy($id)
     {
+        $this->authorize('haveaccess','vendedor.index');
         DB::transaction(function () use ($id) {
 
             $vendedor = Vendedor::findOrFail($id);

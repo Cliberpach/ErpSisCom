@@ -19,6 +19,7 @@ class ColaboradorController extends Controller
 {
     public function index()
     {
+        $this->authorize('haveaccess','colaborador.index');
         return view('mantenimiento.colaboradores.index');
     }
 
@@ -45,11 +46,13 @@ class ColaboradorController extends Controller
 
     public function create()
     {
+        $this->authorize('haveaccess','colaborador.index');
         return view('mantenimiento.colaboradores.create');
     }
 
     public function store(Request $request)
-    {
+    {        
+        $this->authorize('haveaccess','colaborador.index');
         $data = $request->all();
         $rules = [
             'tipo_documento' => 'required',
@@ -138,6 +141,7 @@ class ColaboradorController extends Controller
 
     public function edit($id)
     {
+        $this->authorize('haveaccess','colaborador.index');
         $colaborador = Colaborador::findOrFail($id);
         return view('mantenimiento.colaboradores.edit', [
             'colaborador' => $colaborador
@@ -146,6 +150,7 @@ class ColaboradorController extends Controller
 
     public function update(Request $request, $id)
     {
+        $this->authorize('haveaccess','colaborador.index');
         $data = $request->all();
         $colaborador = Colaborador::findOrFail($id);
         $rules = [
@@ -253,10 +258,11 @@ class ColaboradorController extends Controller
 
     public function destroy($id)
     {
+        $this->authorize('haveaccess','colaborador.index');
         DB::transaction(function() use ($id) {
 
             $colaborador= Colaborador::findOrFail($id);
-            $persona=$colaborador->persona_trabajador->persona;
+            $persona=$colaborador->persona;
             $persona->estado = 'ANULADO';
             $persona->update();
 
