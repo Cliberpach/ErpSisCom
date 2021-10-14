@@ -16,7 +16,7 @@ class ModificarFacturacionEmpresa
 
         if ($numeraciontabla) {
 
-            $numeraciones = Numeracion::where('empresa_id', $event->empresa->id)->get();
+            $numeraciones = Numeracion::where('empresa_id', $event->empresa->id)->where('estado','ACTIVO')->get();
             foreach ($numeraciones as $numeracion) {
                 $numeracion->estado= "ANULADO";
                 $numeracion->update();

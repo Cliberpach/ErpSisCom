@@ -333,7 +333,17 @@ class DocumentoController extends Controller
 
 
             ];
-            Validator::make($data, $rules, $message)->validate();
+
+
+            $validator =  Validator::make($data, $rules, $message);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'errors' => true,
+                    'data' => array('mensajes' => $validator->getMessageBag()->toArray())
+                ]);
+
+            }
 
             $documento = new Documento();
             $documento->fecha_documento = $request->get('fecha_documento_campo');
@@ -409,28 +419,16 @@ class DocumentoController extends Controller
             $detalle->mcaja_id = movimientoUser()->id;
             $detalle->save();
 
-            if((int)$documento->tipo_venta === 127 || (int)$documento->tipo_venta === 128)
+            $envio_prev = self::sunat($documento->id);
+            if(!$envio_prev['success'])
             {
-                $envio = self::sunat($documento->id);
-                /*if(!$envio['success'])
-                {
-                    DB::rollBack();
-                    foreach ($productotabla as $producto) {
-                        $lote = LoteProducto::findOrFail($producto->producto_id);
-                        $lote->cantidad_logica =  $lote->cantidad_logica + $producto->cantidad;
-                        $lote->update();
-                    }
-                    Session::flash('error',$envio['mensaje']);
-                    return back()->with('sunat_error', 'error');
-                }*/
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'mensaje'=> $envio_prev['mensaje']
+                ]);
             }
-            else
-            {
-                if(empty($documento->correlativo))
-                {
-                    event(new DocumentoNumeracion($documento));
-                }
-            }
+            
 
             $documento = Documento::find($documento->id);
             $documento->nombre_comprobante_archivo = $documento->serie.'-'.$documento->correlativo.'.pdf';
@@ -1093,41 +1091,16 @@ class DocumentoController extends Controller
             if($existe[0]){
                 if ($existe[0]->get('existe') == true) {
                     return array('success' => true,'mensaje' => 'Documento validado.');
-                }else{
-                    // Session::flash('error','Tipo de Comprobante no registrado en la empresa.');
-                    // return redirect()->route('ventas.documento.index')->with('sunat_existe', 'error');
-                    $errorVenta = new ErrorVenta();
-                    $errorVenta->documento_id = $documento->id;
-                    $errorVenta->tipo = 'sunat-existe';
-                    $errorVenta->descripcion = 'Error al crear serie y correlativo';
-                    $errorVenta->ecxepcion = 'Tipo de Comprobante no registrado en la empresa.';
-                    $errorVenta->save();
-    
+                }else{    
                     return array('success' => false, 'mensaje' => 'Tipo de Comprobante no registrado en la empresa.');
                 }
             }else{
-                // Session::flash('error','Empresa sin parametros para emitir comprobantes electronicos.');
-                // return redirect()->route('ventas.documento.index');
-                $errorVenta = new ErrorVenta();
-                $errorVenta->documento_id = $documento->id;
-                $errorVenta->tipo = 'sunat-existe';
-                $errorVenta->descripcion = 'Error al crear serie y correlativo';
-                $errorVenta->ecxepcion = 'Empresa sin parametros para emitir comprobantes electronicos.';
-                $errorVenta->save();
                 return array('success' => false, 'mensaje' => 'Empresa sin parametros para emitir comprobantes electronicos.');
             }
         }
         catch(Exception $e)
         {
-            $documento = Documento::findOrFail($id);
-
-            $errorVenta = new ErrorVenta();
-            $errorVenta->documento_id = $documento->id;
-            $errorVenta->tipo = 'sunat-existe';
-            $errorVenta->descripcion = 'Error crear serie y correlativo';
-            $errorVenta->ecxepcion = $e->getMessage();
-            $errorVenta->save();
-            return array('success' => false, 'mensaje' => $e->getMessage());
+            return array('success' => false,'mensaje' => $e->getMessage());
         }
 
     }

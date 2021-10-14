@@ -1578,7 +1578,12 @@
                         allowOutsideClick: () => !Swal.isLoading()
                     }).then((result) => {
                         if (result.value !== undefined && result.isConfirmed) {
-                            if(result.value.success)
+                            if(result.value.errors)
+                            {
+                                let mensaje = sHtmlErrores(result.value.data.mensajes);
+                                toastr.error(mensaje);
+                            }
+                            else if(result.value.success)
                             {
                                 toastr.success('¡Documento de venta creado!','Exito')
 
