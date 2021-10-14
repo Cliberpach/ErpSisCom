@@ -323,6 +323,7 @@
                     </td>
                     <td style="width: 40%;">
                         <table class="tbl-total text-uppercase">
+                            @if($documento->tipo_venta != 129)
                             <tr>
                                 <td style="text-align:left; padding: 5px;"><p class="m-0 p-0">Sub Total: S/.</p></td>
                                 <td style="text-align:right; padding: 5px;"><p class="p-0 m-0">{{ number_format($documento->sub_total, 2) }}</p></td>
@@ -331,6 +332,7 @@
                                 <td style="text-align:left; padding: 5px;"><p class="p-0 m-0">IGV {{$documento->igv}}%: S/.</p></td>
                                 <td style="text-align:right; padding: 5px;"><p class="p-0 m-0">{{ number_format($documento->total_igv, 2) }}</p></td>
                             </tr>
+                            @endif
                             <tr>
                                 <td style="text-align:left; padding: 5px;"><p class="p-0 m-0">Total a pagar: S/.</p></td>
                                 <td style="text-align:right; padding: 5px;"><p class="p-0 m-0">{{ number_format($documento->total, 2) }}</p></td>
