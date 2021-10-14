@@ -26,7 +26,7 @@
             control</span></a>
 </li>
 
-@can('restore', [Auth::user(),['caja.index','movimiento_nota.index','egreso.index']])
+@can('restore', [Auth::user(),['caja.index','movimiento_caja.index','egreso.index']])
 <li class="@yield('caja-chica-active')">
     <a href="#"><i class="fa fa-archive"></i> <span class="nav-label">Caja Chica</span><span
             class="fa arrow"></span></a>
@@ -34,7 +34,7 @@
         @can('haveaccess', 'caja.index')
         <li class="@yield('caja-active')"><a href="{{ route('Caja.index') }}"><i class="fa fa-archive"></i>Cajas</a></li>
         @endcan
-        @can('haveaccess', 'movimiento_nota.index')
+        @can('haveaccess', 'movimiento_caja.index')
         <li class="@yield('caja-movimiento-active')"><a href="{{ route('Caja.Movimiento.index') }}"><i class="fa fa-registered"></i> Apertura y Cierre Caja</a></li>  
         @endcan
         @can('haveaccess', 'egreso.index')

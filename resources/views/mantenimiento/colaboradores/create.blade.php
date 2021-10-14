@@ -91,7 +91,7 @@
                         <span class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </span>
-                        <input type="text" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control {{ $errors->has('fecha_nacimiento') ? ' is-invalid' : '' }}" value="{{old('fecha_nacimiento')}}" autocomplete="off" readonly required >
+                        <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control {{ $errors->has('fecha_nacimiento') ? ' is-invalid' : '' }}" value="{{old('fecha_nacimiento')}}" autocomplete="off" required >
                     </div>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12">
@@ -268,7 +268,7 @@
                         <span class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </span>
-                        <input type="text" id="fecha_inicio_actividad" name="fecha_inicio_actividad" class="form-control {{ $errors->has('fecha_inicio_actividad') ? ' is-invalid' : '' }}" value="{{old('fecha_inicio_actividad')}}" readonly required>
+                        <input type="date" id="fecha_inicio_actividad" name="fecha_inicio_actividad" class="form-control {{ $errors->has('fecha_inicio_actividad') ? ' is-invalid' : '' }}" value="{{old('fecha_inicio_actividad')}}" required>
                     </div>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12" id="fecha_fin_actividad">
@@ -277,7 +277,7 @@
                         <span class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </span>
-                        <input type="text" id="fecha_fin_actividad" name="fecha_fin_actividad" class="form-control {{ $errors->has('fecha_fin_actividad') ? ' is-invalid' : '' }}" value="{{old('fecha_fin_actividad')}}" readonly >
+                        <input type="date" id="fecha_fin_actividad" name="fecha_fin_actividad" class="form-control {{ $errors->has('fecha_fin_actividad') ? ' is-invalid' : '' }}" value="{{old('fecha_fin_actividad')}}">
                     </div>
                 </div>
             </div>
@@ -288,7 +288,7 @@
                         <span class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </span>
-                        <input type="text" id="fecha_inicio_planilla" name="fecha_inicio_planilla" class="form-control {{ $errors->has('fecha_inicio_planilla') ? ' is-invalid' : '' }}" value="{{old('fecha_inicio_planilla')}}" readonly >
+                        <input type="date" id="fecha_inicio_planilla" name="fecha_inicio_planilla" class="form-control {{ $errors->has('fecha_inicio_planilla') ? ' is-invalid' : '' }}" value="{{old('fecha_inicio_planilla')}}">
                     </div>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12" id="fecha_fin_planilla">
@@ -297,7 +297,7 @@
                         <span class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </span>
-                        <input type="text" id="fecha_fin_planilla" name="fecha_fin_planilla" class="form-control {{ $errors->has('fecha_fin_planilla') ? ' is-invalid' : '' }}" value="{{old('fecha_fin_planilla')}}" readonly >
+                        <input type="date" id="fecha_fin_planilla" name="fecha_fin_planilla" class="form-control {{ $errors->has('fecha_fin_planilla') ? ' is-invalid' : '' }}" value="{{old('fecha_fin_planilla')}}">
                     </div>
                 </div>
             </div>
@@ -505,52 +505,7 @@
             });
 
             $("#correo_electronico").on('change', validarEmail);
-
-            $('#fecha_nacimiento .input-group.date').datepicker({
-                todayBtn: "linked",
-                keyboardNavigation: false,
-                forceParse: false,
-                autoclose: true,
-                language: 'es',
-                format: "dd/mm/yyyy"
-            });
-
-            $('#fecha_inicio_actividad .input-group.date').datepicker({
-                todayBtn: "linked",
-                keyboardNavigation: false,
-                forceParse: false,
-                autoclose: true,
-                language: 'es',
-                format: "dd/mm/yyyy"
-            });
-
-            $('#fecha_fin_actividad .input-group.date').datepicker({
-                todayBtn: "linked",
-                keyboardNavigation: false,
-                forceParse: false,
-                autoclose: true,
-                language: 'es',
-                format: "dd/mm/yyyy"
-            });
-
-            $('#fecha_inicio_planilla .input-group.date').datepicker({
-                todayBtn: "linked",
-                keyboardNavigation: false,
-                forceParse: false,
-                autoclose: true,
-                language: 'es',
-                format: "dd/mm/yyyy"
-            });
-
-            $('#fecha_fin_planilla .input-group.date').datepicker({
-                todayBtn: "linked",
-                keyboardNavigation: false,
-                forceParse: false,
-                autoclose: true,
-                language: 'es',
-                format: "dd/mm/yyyy"
-            });
-
+            
         })
 
         function setLongitudDocumento() {
@@ -594,8 +549,12 @@
                 }
             }).done(function (result){
                 if (result.existe) {
-                    toastr.error('El DNI ingresado ya se encuentra registrado para un colaborador','Error');
+                    toastr.error('El DNI ingresado ya se encuentra registrado en la empresa (Vendedor o Colaborador)','Error');
                     $('#documento').focus();
+                    $('#estado_documento').val('SIN VERIFICAR')
+                    $('#nombres').val('')
+                    $('#apellido_paterno').val('')
+                    $('#apellido_materno').val('')
                 } else {
                     if (tipo_documento === "DNI") {
                         if (documento.length === 8) {

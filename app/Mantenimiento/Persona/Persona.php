@@ -34,21 +34,18 @@ class Persona extends Model
         'estado_documento',
         'estado'
     ];
-    // public function colaborador() {
-    //     return $this->hasOne(Colaborador::class,'persona_id');
-    // }
+    public function colaborador() {
+        return $this->hasOne(Colaborador::class,'persona_id');
+    }
 
-    // public function vendedor()
-    // {
-    //     return $this->hasOne(Vendedor::class,'persona_id');
-    // }
+    public function vendedor()
+    {
+        return $this->hasOne(Vendedor::class,'persona_id');
+    }
+    
     public function user_persona()
     {
         return $this->hasOne(UserPersona::class,'persona_id');
-    }
-    public function persona_trabajador()
-    {
-        return $this->hasOne(PersonaTrabajador::class,'persona_id');
     }
 
     public function getDocumento(): string

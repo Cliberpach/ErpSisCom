@@ -15,8 +15,31 @@ class CreateVendedoresTable extends Migration
     {
         Schema::create('vendedores', function (Blueprint $table) {
             $table->Increments('id');
-            $table->unsignedInteger('persona_trabajador_id');
-            $table->foreign('persona_trabajador_id')->references('id')->on('persona_trabajador')->onDelete('cascade');
+            $table->unsignedInteger('persona_id');
+            $table->foreign('persona_id')->references('id')->on('personas')->onDelete('cascade');
+            $table->string('area');
+            $table->string('profesion');
+            $table->string('cargo');
+            $table->string('telefono_referencia')->nullable();
+            $table->string('contacto_referencia')->nullable();
+            $table->string('grupo_sanguineo')->nullable();
+            $table->text('alergias')->nullable();
+            $table->unsignedTinyInteger('numero_hijos')->nullable();
+            $table->unsignedDecimal('sueldo', 15,2);
+            $table->unsignedDecimal('sueldo_bruto', 15,2);
+            $table->unsignedDecimal('sueldo_neto', 15,2);
+            $table->string('moneda_sueldo');
+            $table->string('tipo_banco')->nullable();
+            $table->string('numero_cuenta', 20)->nullable();
+            $table->date('fecha_inicio_actividad')->nullable();
+            $table->date('fecha_fin_actividad')->nullable();
+            $table->date('fecha_inicio_planilla')->nullable();
+            $table->date('fecha_fin_planilla')->nullable();
+            $table->string('ruta_imagen')->nullable();
+            $table->string('nombre_imagen')->nullable();
+            $table->string('comision')->nullable();
+            $table->string('moneda_comision')->nullable();
+            $table->enum('estado',['ACTIVO','ANULADO'])->default('ACTIVO');
             $table->timestamps();
         });
     }

@@ -34,10 +34,12 @@ class Orden extends Model
     {
         return $this->belongsTo('App\Mantenimiento\Empresa\Empresa');
     }
+
     public function proveedor()
     {
         return $this->belongsTo('App\Compras\Proveedor');
     }
+
     public function usuario()
     {
         return $this->belongsTo('App\User','usuario_id');

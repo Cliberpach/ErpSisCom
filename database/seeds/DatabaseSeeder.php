@@ -63,27 +63,23 @@ class DatabaseSeeder extends Seeder
         $persona->estado_documento = '';
         $persona->save();
 
-        $personaTrabajador = new PersonaTrabajador();
-        $personaTrabajador->persona_id = $persona->id;
-        $personaTrabajador->area = 'COMERCIAL';
-        $personaTrabajador->profesion = 'INGENIERO(A) DE SISTEMAS';
-        $personaTrabajador->cargo = 'ASISTENTE DE CONTABILIDAD';
-        $personaTrabajador->telefono_referencia = '';
-        $personaTrabajador->contacto_referencia = '';
-        $personaTrabajador->grupo_sanguineo = '';
-        $personaTrabajador->alergias = '';
-        $personaTrabajador->numero_hijos = 0;
-        $personaTrabajador->sueldo = 1000;
-        $personaTrabajador->sueldo_bruto = 1000;
-        $personaTrabajador->sueldo_neto = 1000;
-        $personaTrabajador->moneda_sueldo = 'SOLES';
-        $personaTrabajador->fecha_inicio_actividad = '2020-04-02';
-        $personaTrabajador->tipo_banco = '';
-        $personaTrabajador->numero_cuenta = '';
-        $personaTrabajador->save();
-
         $vendedor = new Vendedor();
-        $vendedor->persona_trabajador_id = $personaTrabajador->id;
+        $vendedor->persona_id = $persona->id;
+        $vendedor->area = 'COMERCIAL';
+        $vendedor->profesion = 'INGENIERO(A) DE SISTEMAS';
+        $vendedor->cargo = 'ASISTENTE DE CONTABILIDAD';
+        $vendedor->telefono_referencia = '';
+        $vendedor->contacto_referencia = '';
+        $vendedor->grupo_sanguineo = '';
+        $vendedor->alergias = '';
+        $vendedor->numero_hijos = 0;
+        $vendedor->sueldo = 1000;
+        $vendedor->sueldo_bruto = 1000;
+        $vendedor->sueldo_neto = 1000;
+        $vendedor->moneda_sueldo = 'SOLES';
+        $vendedor->fecha_inicio_actividad = '2020-04-02';
+        $vendedor->tipo_banco = '';
+        $vendedor->numero_cuenta = '';
         $vendedor->save();
     }
 }

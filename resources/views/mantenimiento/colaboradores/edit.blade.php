@@ -37,7 +37,7 @@
                         @foreach (tipos_documento() as $tipo_documento)
                             @if ($tipo_documento->simbolo != 'RUC')
                                 <option value="{{ $tipo_documento->simbolo }}"
-                                    {{ old('tipo_documento', $colaborador->persona_trabajador->persona->tipo_documento) == $tipo_documento->simbolo ? 'selected' : '' }}>
+                                    {{ old('tipo_documento', $colaborador->persona->tipo_documento) == $tipo_documento->simbolo ? 'selected' : '' }}>
                                     {{ $tipo_documento->descripcion }}</option>
                             @endif
                         @endforeach
@@ -48,7 +48,7 @@
                     <div class="input-group">
                         <input type="text" id="documento" name="documento"
                             class="form-control {{ $errors->has('documento') ? ' is-invalid' : '' }}"
-                            value="{{ old('documento', $colaborador->persona_trabajador->persona->documento) }}" maxlength="8"
+                            value="{{ old('documento', $colaborador->persona->documento) }}" maxlength="8"
                             onkeypress="return isNumber(event)" required onchange="cambiaDocumento();">
                         <span class="input-group-append"><a style="color:white" onclick="consultarDocumento()"
                                 class="btn btn-primary"><i class="fa fa-search"></i> Reniec</a></span>
@@ -67,7 +67,7 @@
                     <label class="___class_+?22___">Estado: </label>
                     <input type="text" id="estado_documento"
                         class="form-control text-center {{ $errors->has('estado_documento') ? ' is-invalid' : '' }}"
-                        name="estado_documento" value="{{ $colaborador->persona_trabajador->persona->estado_documento }}"
+                        name="estado_documento" value="{{ $colaborador->persona->estado_documento }}"
                         onkeyup="return mayus(this)" disabled>
                     @if ($errors->has('estado_documento'))
                         <span class="invalid-feedback" role="alert">
@@ -81,21 +81,21 @@
                     <label class="required">Nombre(s)</label>
                     <input type="text" id="nombres" name="nombres"
                         class="form-control {{ $errors->has('nombres') ? ' is-invalid' : '' }}"
-                        value="{{ old('nombres', $colaborador->persona_trabajador->persona->nombres) }}" maxlength="100"
+                        value="{{ old('nombres', $colaborador->persona->nombres) }}" maxlength="100"
                         onkeyup="return mayus(this)" required>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12">
                     <label class="required">Apellido paterno</label>
                     <input type="text" id="apellido_paterno" name="apellido_paterno"
                         class="form-control {{ $errors->has('apellido_paterno') ? ' is-invalid' : '' }}"
-                        value="{{ old('apellido_paterno', $colaborador->persona_trabajador->persona->apellido_paterno) }}"
+                        value="{{ old('apellido_paterno', $colaborador->persona->apellido_paterno) }}"
                         onkeyup="return mayus(this)" maxlength="100" required>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12">
                     <label class="required">Apellido materno</label>
                     <input type="text" id="apellido_materno" name="apellido_materno"
                         class="form-control {{ $errors->has('apellido_materno') ? ' is-invalid' : '' }}"
-                        value="{{ old('apellido_materno', $colaborador->persona_trabajador->persona->apellido_materno) }}"
+                        value="{{ old('apellido_materno', $colaborador->persona->apellido_materno) }}"
                         onkeyup="return mayus(this)" maxlength="100" required>
                 </div>
             </div>
@@ -106,10 +106,9 @@
                         <span class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </span>
-                        <input type="text" id="fecha_nacimiento" name="fecha_nacimiento"
+                        <input type="date" id="fecha_nacimiento" name="fecha_nacimiento"
                             class="form-control {{ $errors->has('fecha_nacimiento') ? ' is-invalid' : '' }}"
-                            value="{{ old('fecha_nacimiento', getFechaFormato($colaborador->persona_trabajador->persona->fecha_nacimiento, 'd/m/Y')) }}"
-                            readonly required>
+                            value="{{ old('fecha_nacimiento', $colaborador->persona->fecha_nacimiento) }}" required>
                     </div>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12">
@@ -118,7 +117,7 @@
                         <div class="col-sm-6 col-xs-6">
                             <div class="radio">
                                 <input type="radio" name="sexo" id="sexo_hombre" value="H"
-                                    {{ $colaborador->persona_trabajador->persona->sexo == 'H' ? 'checked' : '' }}>
+                                    {{ $colaborador->persona->sexo == 'H' ? 'checked' : '' }}>
                                 <label for="sexo_hombre">
                                     Hombre
                                 </label>
@@ -127,7 +126,7 @@
                         <div class="col-sm-6 col-xs-6">
                             <div class="radio">
                                 <input type="radio" name="sexo" id="sexo_mujer" value="M"
-                                    {{ $colaborador->persona_trabajador->persona->sexo == 'M' ? 'checked' : '' }}>
+                                    {{ $colaborador->persona->sexo == 'M' ? 'checked' : '' }}>
                                 <label for="sexo_mujer">
                                     Mujer
                                 </label>
@@ -142,7 +141,7 @@
                         <option></option>
                         @foreach (estados_civiles() as $estado_civil)
                             <option value="{{ $estado_civil->simbolo }}"
-                                {{ old('estado_civil', $colaborador->persona_trabajador->persona->estado_civil) == $estado_civil->simbolo ? 'selected' : '' }}>
+                                {{ old('estado_civil', $colaborador->persona->estado_civil) == $estado_civil->simbolo ? 'selected' : '' }}>
                                 {{ $estado_civil->descripcion }}</option>
                         @endforeach
                     </select>
@@ -166,7 +165,7 @@
                         <option></option>
                         @foreach (departamentos() as $departamento)
                             <option value="{{ $departamento->id }}"
-                                {{ old('departamento', $colaborador->persona_trabajador->persona->departamento_id) == $departamento->id ? 'selected' : '' }}>
+                                {{ old('departamento', $colaborador->persona->departamento_id) == $departamento->id ? 'selected' : '' }}>
                                 {{ $departamento->nombre }}</option>
                         @endforeach
                     </select>
@@ -177,9 +176,9 @@
                         class="select2_form form-control {{ $errors->has('provincia') ? ' is-invalid' : '' }}"
                         style="width: 100%">
                         <option></option>
-                        @foreach (getProvinciasByDepartamento($colaborador->persona_trabajador->persona->departamento_id) as $provincia)
+                        @foreach (getProvinciasByDepartamento($colaborador->persona->departamento_id) as $provincia)
                             <option value="{{ $provincia->id }}"
-                                {{ old('provincia', $colaborador->persona_trabajador->persona->provincia_id) == $provincia->id ? 'selected' : '' }}>
+                                {{ old('provincia', $colaborador->persona->provincia_id) == $provincia->id ? 'selected' : '' }}>
                                 {{ $provincia->nombre }}</option>
                         @endforeach
                     </select>
@@ -190,9 +189,9 @@
                         class="select2_form form-control {{ $errors->has('distrito') ? ' is-invalid' : '' }}"
                         style="width: 100%">
                         <option></option>
-                        @foreach (getDistritosByProvincia($colaborador->persona_trabajador->persona->provincia_id) as $distrito)
+                        @foreach (getDistritosByProvincia($colaborador->persona->provincia_id) as $distrito)
                             <option value="{{ $distrito->id }}"
-                                {{ old('distrito', $colaborador->persona_trabajador->persona->distrito_id) == $distrito->id ? 'selected' : '' }}>
+                                {{ old('distrito', $colaborador->persona->distrito_id) == $distrito->id ? 'selected' : '' }}>
                                 {{ $distrito->nombre }}</option>
                         @endforeach
                     </select>
@@ -203,7 +202,7 @@
                     <label class="required">Dirección completa</label>
                     <input type="text" id="direccion" name="direccion"
                         class="form-control {{ $errors->has('direccion') ? ' is-invalid' : '' }}"
-                        value="{{ old('direccion', $colaborador->persona_trabajador->persona->direccion) }}" maxlength="191"
+                        value="{{ old('direccion', $colaborador->persona->direccion) }}" maxlength="191"
                         onkeyup="return mayus(this)" required>
                 </div>
             </div>
@@ -213,21 +212,21 @@
                     <label class="required">Correo electrónico</label>
                     <input type="correo_electronico" id="correo_electronico" name="correo_electronico"
                         class="form-control {{ $errors->has('correo_electronico') ? ' is-invalid' : '' }}"
-                        value="{{ old('correo_electronico', $colaborador->persona_trabajador->persona->correo_electronico) }}" maxlength="100"
+                        value="{{ old('correo_electronico', $colaborador->persona->correo_electronico) }}" maxlength="100"
                         onkeyup="return mayus(this)" required>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12">
                     <label class="required">Teléfono móvil</label>
                     <input type="text" id="telefono_movil" name="telefono_movil"
                         class="form-control {{ $errors->has('telefono_movil') ? ' is-invalid' : '' }}"
-                        value="{{ old('telefono_movil', $colaborador->persona_trabajador->persona->telefono_movil) }}"
+                        value="{{ old('telefono_movil', $colaborador->persona->telefono_movil) }}"
                         onkeypress="return isNumber(event)" maxlength="9" required>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12">
                     <label>Teléfono fijo</label>
                     <input type="text" id="telefono_fijo" name="telefono_fijo"
                         class="form-control {{ $errors->has('telefono_fijo') ? ' is-invalid' : '' }}"
-                        value="{{ old('telefono_fijo', $colaborador->persona_trabajador->persona->telefono_fijo) }}"
+                        value="{{ old('telefono_fijo', $colaborador->persona->telefono_fijo) }}"
                         onkeypress="return isNumber(event)" maxlength="10">
                 </div>
             </div>
@@ -236,13 +235,13 @@
                     <label>Correo Corporativo</label>
                     <input type="text" id="correo_corporativo" name="correo_corporativo"
                         class="form-control {{ $errors->has('correo_corporativo') ? ' is-invalid' : '' }}"
-                        value="{{ old('correo_corporativo',$colaborador->persona_trabajador->persona->correo_corporativo) }}" required>
+                        value="{{ old('correo_corporativo',$colaborador->persona->correo_corporativo) }}" required>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12">
                     <label >Telefono de Trabajo</label>
                     <input type="text" id="telefono_trabajo" name="telefono_trabajo"
                         class="form-control {{ $errors->has('telefono_trabajo') ? ' is-invalid' : '' }}"
-                        value="{{ old('telefono_trabajo',$colaborador->persona_trabajador->persona->telefono_trabajo) }}" required>
+                        value="{{ old('telefono_trabajo',$colaborador->persona->telefono_trabajo) }}" required>
                 </div>
             </div>
             <div class="row">
@@ -263,7 +262,7 @@
                         <option></option>
                         @foreach (areas() as $area)
                             <option value="{{ $area->simbolo }}"
-                                {{ old('area', $colaborador->persona_trabajador->area) == $area->simbolo ? 'selected' : '' }}>
+                                {{ old('area', $colaborador->area) == $area->simbolo ? 'selected' : '' }}>
                                 {{ $area->descripcion }}</option>
                         @endforeach
                     </select>
@@ -276,7 +275,7 @@
                         <option></option>
                         @foreach (profesiones() as $profesion)
                             <option value="{{ $profesion->simbolo }}"
-                                {{ old('profesion', $colaborador->persona_trabajador->profesion) == $profesion->simbolo ? 'selected' : '' }}>
+                                {{ old('profesion', $colaborador->profesion) == $profesion->simbolo ? 'selected' : '' }}>
                                 {{ $profesion->descripcion }}</option>
                         @endforeach
                     </select>
@@ -289,7 +288,7 @@
                         <option></option>
                         @foreach (cargos() as $cargo)
                             <option value="{{ $cargo->simbolo }}"
-                                {{ old('cargo', $colaborador->persona_trabajador->cargo) == $cargo->simbolo ? 'selected' : '' }}>
+                                {{ old('cargo', $colaborador->cargo) == $cargo->simbolo ? 'selected' : '' }}>
                                 {{ $cargo->descripcion }}</option>
                         @endforeach
                     </select>
@@ -300,21 +299,21 @@
                     <label class="required">Sueldo</label>
                     <input type="text" id="sueldo" name="sueldo"
                         class="form-control {{ $errors->has('sueldo') ? ' is-invalid' : '' }}"
-                        value="{{ old('sueldo', $colaborador->persona_trabajador->sueldo) }}" maxlength="15"
+                        value="{{ old('sueldo', $colaborador->sueldo) }}" maxlength="15"
                         onkeypress="return filterFloat(event,this);" required>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12">
                     <label class="required">Sueldo bruto</label>
                     <input type="text" id="sueldo_bruto" name="sueldo_bruto"
                         class="form-control {{ $errors->has('sueldo_bruto') ? ' is-invalid' : '' }}"
-                        value="{{ old('sueldo_bruto', $colaborador->persona_trabajador->sueldo_bruto) }}"
+                        value="{{ old('sueldo_bruto', $colaborador->sueldo_bruto) }}"
                         onkeypress="return filterFloat(event,this);" maxlength="15" required>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12">
                     <label class="required">Sueldo neto</label>
                     <input type="text" id="sueldo_neto" name="sueldo_neto"
                         class="form-control {{ $errors->has('sueldo_neto') ? ' is-invalid' : '' }}"
-                        value="{{ old('sueldo_neto', $colaborador->persona_trabajador->sueldo_neto) }}"
+                        value="{{ old('sueldo_neto', $colaborador->sueldo_neto) }}"
                         onkeypress="return filterFloat(event,this);" maxlength="15" required>
                 </div>
             </div>
@@ -327,7 +326,7 @@
                         <option></option>
                         @foreach (tipos_moneda() as $moneda)
                             <option value="{{ $moneda->simbolo }}"
-                                {{ old('moneda_sueldo', $colaborador->persona_trabajador->moneda_sueldo) == $moneda->simbolo ? 'selected' : '' }}>
+                                {{ old('moneda_sueldo', $colaborador->moneda_sueldo) == $moneda->simbolo ? 'selected' : '' }}>
                                 {{ $moneda->descripcion }}</option>
                         @endforeach
                     </select>
@@ -340,7 +339,7 @@
                         <option></option>
                         @foreach (bancos() as $banco)
                             <option value="{{ $banco->simbolo }}"
-                                {{ old('tipo_banco', $colaborador->persona_trabajador->tipo_banco) == $banco->simbolo ? 'selected' : '' }}>
+                                {{ old('tipo_banco', $colaborador->tipo_banco) == $banco->simbolo ? 'selected' : '' }}>
                                 {{ $banco->descripcion }}</option>
                         @endforeach
                     </select>
@@ -349,7 +348,7 @@
                     <label>Número de cuenta</label>
                     <input type="text" id="numero_cuenta" name="numero_cuenta"
                         class="form-control {{ $errors->has('numero_cuenta') ? ' is-invalid' : '' }}"
-                        value="{{ old('numero_cuenta', $colaborador->persona_trabajador->numero_cuenta) }}" maxlength="20"
+                        value="{{ old('numero_cuenta', $colaborador->numero_cuenta) }}" maxlength="20"
                         onkeypress="return isNumber(event)" onkeyup="return mayus(this)">
                 </div>
             </div>
@@ -360,10 +359,9 @@
                         <span class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </span>
-                        <input type="text" id="fecha_inicio_actividad" name="fecha_inicio_actividad"
+                        <input type="date" id="fecha_inicio_actividad" name="fecha_inicio_actividad"
                             class="form-control {{ $errors->has('fecha_inicio_actividad') ? ' is-invalid' : '' }}"
-                            value="{{ old('fecha_inicio_actividad', getFechaFormato($colaborador->persona_trabajador->fecha_inicio_actividad, 'd/m/Y')) }}"
-                            readonly required>
+                            value="{{ old('fecha_inicio_actividad', $colaborador->fecha_inicio_actividad) }}" required>
                     </div>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12" id="fecha_fin_actividad">
@@ -372,10 +370,9 @@
                         <span class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </span>
-                        <input type="text" id="fecha_fin_actividad" name="fecha_fin_actividad"
+                        <input type="date" id="fecha_fin_actividad" name="fecha_fin_actividad"
                             class="form-control {{ $errors->has('fecha_fin_actividad') ? ' is-invalid' : '' }}"
-                            value="{{ old('fecha_fin_actividad', !empty($colaborador->persona_trabajador->fecha_fin_actividad) ? getFechaFormato($colaborador->persona_trabajador->fecha_fin_actividad, 'd/m/Y') : '') }}"
-                            readonly>
+                            value="{{ old('fecha_fin_actividad', !empty($colaborador->fecha_fin_actividad) ? $colaborador->fecha_fin_actividad : '') }}">
                     </div>
                 </div>
             </div>
@@ -386,10 +383,9 @@
                         <span class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </span>
-                        <input type="text" id="fecha_inicio_planilla" name="fecha_inicio_planilla"
+                        <input type="date" id="fecha_inicio_planilla" name="fecha_inicio_planilla"
                             class="form-control {{ $errors->has('fecha_inicio_planilla') ? ' is-invalid' : '' }}"
-                            value="{{ old('fecha_inicio_planilla', !empty($colaborador->persona_trabajador->fecha_inicio_planilla) ? getFechaFormato($colaborador->persona_trabajador->fecha_inicio_planilla, 'd/m/Y') : '') }}"
-                            readonly>
+                            value="{{ old('fecha_inicio_planilla', !empty($colaborador->fecha_inicio_planilla) ? $colaborador->fecha_inicio_planilla : '') }}">
                     </div>
                 </div>
                 <div class="form-group col-lg-4 col-xs-12" id="fecha_fin_planilla">
@@ -398,10 +394,9 @@
                         <span class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </span>
-                        <input type="text" id="fecha_fin_planilla" name="fecha_fin_planilla"
+                        <input type="date" id="fecha_fin_planilla" name="fecha_fin_planilla"
                             class="form-control {{ $errors->has('fecha_fin_planilla') ? ' is-invalid' : '' }}"
-                            value="{{ old('fecha_fin_planilla', !empty($colaborador->persona_trabajador->fecha_fin_planilla) ? getFechaFormato($colaborador->persona_trabajador->fecha_fin_planilla, 'd/m/Y') : '') }}"
-                            readonly>
+                            value="{{ old('fecha_fin_planilla', !empty($colaborador->fecha_fin_planilla) ? $colaborador->fecha_fin_planilla : '') }}">
                     </div>
                 </div>
             </div>
@@ -421,14 +416,14 @@
                             <label>Teléfono de referencia</label>
                             <input type="text" id="telefono_referencia" name="telefono_referencia"
                                 class="form-control {{ $errors->has('telefono_referencia') ? ' is-invalid' : '' }}"
-                                value="{{ old('telefono_referencia', $colaborador->persona_trabajador->telefono_referencia) }}" maxlength="50"
+                                value="{{ old('telefono_referencia', $colaborador->telefono_referencia) }}" maxlength="50"
                                 onkeyup="return mayus(this)">
                         </div>
                         <div class="form-group col-lg-6 col-xs-12">
                             <label>Contacto de referencia</label>
                             <input type="text" id="contacto_referencia" name="contacto_referencia"
                                 class="form-control {{ $errors->has('contacto_referencia') ? ' is-invalid' : '' }}"
-                                value="{{ old('contacto_referencia', $colaborador->persona_trabajador->contacto_referencia) }}"
+                                value="{{ old('contacto_referencia', $colaborador->contacto_referencia) }}"
                                 maxlength="191" onkeyup="return mayus(this)">
                         </div>
                     </div>
@@ -437,7 +432,7 @@
                             <label>Número de hijos</label>
                             <input type="text" id="numero_hijos" name="numero_hijos"
                                 class="form-control {{ $errors->has('numero_hijos') ? ' is-invalid' : '' }}"
-                                value="{{ old('numero_hijos', $colaborador->persona_trabajador->numero_hijos) }}"
+                                value="{{ old('numero_hijos', $colaborador->numero_hijos) }}"
                                 onkeypress="return isNumber(event)" maxlength="2">
                         </div>
                         <div class="form-group col-lg-6 col-xs-12">
@@ -448,7 +443,7 @@
                                 <option></option>
                                 @foreach (grupos_sanguineos() as $grupo_sanguineo)
                                     <option value="{{ $grupo_sanguineo->simbolo }}"
-                                        {{ old('grupo_sanguineo', $colaborador->persona_trabajador->grupo_sanguineo) == $grupo_sanguineo->simbolo ? 'selected' : '' }}>
+                                        {{ old('grupo_sanguineo', $colaborador->grupo_sanguineo) == $grupo_sanguineo->simbolo ? 'selected' : '' }}>
                                         {{ $grupo_sanguineo->descripcion }} ({{ $grupo_sanguineo->simbolo }})
                                     </option>
                                 @endforeach
@@ -460,8 +455,8 @@
                             <label>Alergias</label>
                             <textarea type="text" id="alergias" name="alergias"
                                 class="form-control {{ $errors->has('alergias') ? ' is-invalid' : '' }}"
-                                value="{{ old('alergias', $colaborador->persona_trabajador->alergias) }}" rows="3"
-                                onkeyup="return mayus(this)">{{ old('alergias', $colaborador->persona_trabajador->alergias) }}</textarea>
+                                value="{{ old('alergias', $colaborador->alergias) }}" rows="3"
+                                onkeyup="return mayus(this)">{{ old('alergias', $colaborador->alergias) }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -476,7 +471,7 @@
                                         accept="image/*" src="{{ Storage::url($colaborador->ruta_imagen) }}">
                                     <label for="imagen" id="ruta_imagen"
                                         class="custom-file-label selected {{ $errors->has('ruta_imagen') ? ' is-invalid' : '' }}">
-                                        @if ($colaborador->nombre_imagen) {{ $colaborador->persona_trabajador->nombre_imagen }} @else Seleccionar @endif
+                                        @if ($colaborador->nombre_imagen) {{ $colaborador->nombre_imagen }} @else Seleccionar @endif
                                     </label>
                                     @if ($errors->has('imagen'))
                                         <span class="invalid-feedback" role="alert">
@@ -499,7 +494,7 @@
                                             <img class="logo"
                                                 src="{{ Storage::url($colaborador->ruta_imagen) }}" alt="">
                                             <input id="url_logo" name="url_logo" type="hidden"
-                                                value="{{ $colaborador->persona_trabajador->ruta_imagen }}">
+                                                value="{{ $colaborador->ruta_imagen }}">
                                         @else
                                             <img class="logo"
                                                 src="{{ asset('storage/empresas/logos/default.png') }}" alt="">
@@ -644,51 +639,6 @@
         });
 
         $("#correo_electronico").on('change', validarEmail);
-
-        $('#fecha_nacimiento .input-group.date').datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: false,
-            autoclose: true,
-            language: 'es',
-            format: "dd/mm/yyyy"
-        });
-
-        $('#fecha_inicio_actividad .input-group.date').datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: false,
-            autoclose: true,
-            language: 'es',
-            format: "dd/mm/yyyy"
-        });
-
-        $('#fecha_fin_actividad .input-group.date').datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: false,
-            autoclose: true,
-            language: 'es',
-            format: "dd/mm/yyyy"
-        });
-
-        $('#fecha_inicio_planilla .input-group.date').datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: false,
-            autoclose: true,
-            language: 'es',
-            format: "dd/mm/yyyy"
-        });
-
-        $('#fecha_fin_planilla .input-group.date').datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: false,
-            autoclose: true,
-            language: 'es',
-            format: "dd/mm/yyyy"
-        });
 
     })
 

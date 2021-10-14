@@ -45,9 +45,9 @@
                                     <th class="text-center">EMISION</th>
                                     <th class="text-center">TIPO</th>
                                     <th class="text-center">PROVEEDOR</th>
+                                    <th class="text-center">MODO</th>
                                     <th class="text-center">MONTO</th>
-                                    <th class="text-center">TRANSFERENCIA</th>
-                                    <th class="text-center">OTROS</th>
+                                    <th class="text-center">A CUENTA</th>
                                     <th class="text-center">SALDO</th>
                                     <th class="text-center">ESTADO</th>
                                     <th class="text-center">ACCIONES</th>
@@ -143,18 +143,18 @@ $(document).ready(function() {
                 className: "text-left"
             },
             {
+                data: 'modo',
+                className: "text-left"
+            },
+            {
                 data: 'total',
                 className: "text-center"
             },
             {
-                data: 'transferencia',
+                data: 'acuenta',
                 className: "text-center"
             },
 
-            {
-                data: 'otros',
-                className: "text-center"
-            },
             {
                 data: 'saldo',
                 className: "text-center"

@@ -186,7 +186,7 @@ if (!function_exists('vendedores')) {
     function vendedores()
     {
         return Vendedor::cursor()->filter(function ($vendedor) {
-            return $vendedor->persona_trabajador->persona->estado == "ACTIVO" ? true : false;
+            return $vendedor->persona->estado == "ACTIVO" ? true : false;
         });
     }
 }
@@ -975,8 +975,7 @@ if (!function_exists('cajas')) {
 if (!function_exists('colaboradoresDisponibles')) {
     function colaboradoresDisponibles()
     {
-        $colaboradores = Colaborador::join('persona_trabajador as pt', 'pt.id', '=', 'colaboradores.persona_trabajador_id')
-            ->join('personas as p', 'p.id', '=', 'pt.id')
+        $colaboradores = Colaborador::join('personas as p', 'p.id', '=', 'colaboradores.id')
             //->join('movimiento_caja as mc','mc.colaborador_id','!=','colaboradores.id')
             // ->select('colaboradores.id','p.nombres','p.apellido_paterno','p.apellido_materno')
             ->where('p.estado', 'ACTIVO')

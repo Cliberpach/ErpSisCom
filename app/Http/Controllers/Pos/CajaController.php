@@ -140,6 +140,9 @@ class CajaController extends Controller
                 if (MovimientoCaja::where('colaborador_id', $user->user->persona->persona->persona_trabajador->colaborador->id)->count() != 0) {
                     $mensaje = true;
                 }
+                else{
+                    $mensaje = false;
+                }
             }
         }
         return $mensaje;

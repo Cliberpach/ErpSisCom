@@ -114,9 +114,9 @@
                         <br>
                         <span>{{$nombre_completo}}</span>
                         <br>
-                        <span>{{$cotizacion->user->empleado->persona->telefono_movil}}</span>
+                        <span>{{$cotizacion->user->persona->telefono_movil}}</span>
                         <br>
-                        <a href="mailto:{{$cotizacion->user->empleado->persona->correo_electronico}}">{{$cotizacion->user->empleado->persona->correo_electronico}}</a>
+                        <a href="mailto:{{$cotizacion->user->persona->correo_electronico}}">{{$cotizacion->user->persona->correo_electronico}}</a>
 
                     </div>
                 </div>

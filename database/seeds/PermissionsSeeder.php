@@ -108,14 +108,6 @@ class PermissionsSeeder extends Seeder
             'description'=>'El usuario puede acceder al mantenedor de Categorias'
         ]);
 
-        //Almacenes permission
-        
-        Permission::create([
-            'name'  => 'Mantenedor Almacén',
-            'slug'=>'almacen.index',
-            'description'=>'El usuario puede acceder al mantenedor de Almacenes'
-        ]);
-
         //Kardex producto permission
         
         Permission::create([
@@ -151,7 +143,7 @@ class PermissionsSeeder extends Seeder
         //Nota Ingreso permission
         
         Permission::create([
-            'name'  => 'Mantenedor NotaS de Ingreso',
+            'name'  => 'Mantenedor Notas de Ingreso',
             'slug'=>'nota_ingreso.index',
             'description'=>'El usuario puede acceder al mantenedor de Notas de Ingreso'
         ]);
@@ -159,7 +151,7 @@ class PermissionsSeeder extends Seeder
         //Nota Salida permission
         
         Permission::create([
-            'name'  => 'Mantenedor NotaS DE Salida',
+            'name'  => 'Mantenedor Notas de Salida',
             'slug'=>'nota_salida.index',
             'description'=>'El usuario puede acceder al mantenedor de Notas de Salida'
         ]);
@@ -170,14 +162,6 @@ class PermissionsSeeder extends Seeder
             'name'  => 'Mantenedor Tipos de Cliente',
             'slug'=>'tipo_cliente.index',
             'description'=>'El usuario puede acceder al mantenedor de Tipos de Cliente'
-        ]);
-
-        //Compra permission
-        
-        Permission::create([
-            'name'  => 'Mantenedor Compras',
-            'slug'=>'compra.index',
-            'description'=>'El usuario puede acceder al mantenedor de Compras'
         ]);
 
         //Orden compra permission
@@ -284,6 +268,14 @@ class PermissionsSeeder extends Seeder
             'description'=>'El usuario puede acceder al mantenedor de Notas de Salida'
         ]);
 
+        //Egreso permission
+        
+        Permission::create([
+            'name'  => 'Mantenedor Egresos',
+            'slug'=>'egreso.index',
+            'description'=>'El usuario puede acceder al mantenedor de Egresos'
+        ]);
+
         //Documento Venta permission
         
         Permission::create([
@@ -296,7 +288,7 @@ class PermissionsSeeder extends Seeder
         
         Permission::create([
             'name'  => 'Mantenedor Cuentas Cliente',
-            'slug'=>'nota_salida.index',
+            'slug'=>'cuenta_cliente.index',
             'description'=>'El usuario puede acceder al mantenedor de Cuentas Cliente'
         ]);
 
@@ -304,7 +296,7 @@ class PermissionsSeeder extends Seeder
         
         Permission::create([
             'name'  => 'Mantenedor Guias de Remision',
-            'slug'=>'nota_salida.index',
+            'slug'=>'guia.index',
             'description'=>'El usuario puede acceder al mantenedor de Guias de Remision'
         ]);
 
@@ -312,7 +304,7 @@ class PermissionsSeeder extends Seeder
         
         Permission::create([
             'name'  => 'Mantenedor Notas Electronicas',
-            'slug'=>'nota_salida.index',
+            'slug'=>'nota_electronica.index',
             'description'=>'El usuario puede acceder al mantenedor de Notas Electronicas'
         ]);
     }

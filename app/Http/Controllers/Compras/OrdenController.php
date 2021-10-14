@@ -85,28 +85,9 @@ class OrdenController extends Controller
                 $decimal_total = number_format($subtotal, 2, '.', '');
             }
 
-            //Pagos a cuenta
-            $pagos = DB::table('pagos')
-            ->join('ordenes','pagos.orden_id','=','ordenes.id')
-            ->select('pagos.*','ordenes.moneda as moneda_orden')
-            ->where('pagos.orden_id','=',$orden->id)
-            ->where('pagos.estado','!=','ANULADO')
-            ->get();
-
 
             // CALCULAR ACUENTA EN MONEDA
             $acuenta = 0;
-            $soles = 0;
-            
-            foreach($pagos as $pago){
-                $acuenta = $acuenta + $pago->monto;
-                if ($pago->moneda_orden == "SOLES") {
-                    $soles = $soles + $pago->monto;
-                }else{
-                    $soles = $soles + $pago->cambio;
-                }
-                
-            }
 
             //CALCULAR SALDO
             $saldo = $decimal_total - $acuenta;
@@ -127,9 +108,6 @@ class OrdenController extends Controller
                 'fecha_entrega' =>  Carbon::parse($orden->fecha_entrega)->format( 'd/m/Y'), 
                 'estado' => $orden->estado,
                 'total' => $tipo_moneda.' '.number_format($decimal_total, 2, '.', ''),
-                'acuenta' => $tipo_moneda.' '.number_format($acuenta, 2, '.', ''),
-                'acuenta_soles' => 'S/. '.number_format($soles, 2, '.', ''),
-                'saldo' => $tipo_moneda.' '.number_format($saldo, 2, '.', ''),
             ]);
         }
   

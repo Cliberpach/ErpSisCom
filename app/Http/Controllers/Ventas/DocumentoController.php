@@ -296,8 +296,8 @@ class DocumentoController extends Controller
     {
         ini_set("max_execution_time", 60000);
         try{
+            
             DB::beginTransaction();
-
             $data = $request->all();
 
             $rules = [
@@ -712,15 +712,6 @@ class DocumentoController extends Controller
             // //ANULAR
             ->where('cotizacion_documento_pagos.estado','!=','ANULADO')
             ->update(['cotizacion_documento_pago_cajas.estado' => 'ANULADO']);
-
-
-
-        //ANULAR TIPO TRANSFERENCIAS
-        $transferencias = Transferencia::where('documento_id',$id)->get();
-        foreach ($transferencias as $transferencia) {
-            $transferencia->estado = 'ANULADO';
-            $transferencia->update();
-        }
 
 
 

@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Barryvdh\DomPDF\Facade as PDF;
+use App\Mantenimiento\Tabla\Detalle as TablaDetalle;
 
 class DocumentoController extends Controller
 {
@@ -45,11 +46,13 @@ class DocumentoController extends Controller
             foreach($detalles as $detalle){
                 $subtotal = ($detalle->cantidad * $detalle->precio) + $subtotal;
             }
+
             foreach(tipos_moneda() as $moneda){
                 if ($moneda->descripcion == $documento->moneda) {
                     $tipo_moneda= $moneda->simbolo;
                 }
             }
+
             if (!$documento->igv) {
                 $igv = $subtotal * 0.18;
                 $total = $subtotal + $igv;
@@ -61,34 +64,26 @@ class DocumentoController extends Controller
                 $decimal_total = number_format($subtotal, 2, '.', '');
             }
             //TIPO DE PAGO (OTROS)
-            //$otros = calcularMontosAcuentaDocumentos($documento->id);
-            //Pagos a cuenta
-            $pagos = DB::table('compra_documento_transferencia')
-            ->join('compra_documentos','compra_documento_transferencia.documento_id','=','compra_documentos.id')
-            ->select('compra_documento_transferencia.*','compra_documentos.moneda as moneda_orden')
-            ->where('compra_documento_transferencia.documento_id','=',$documento->id)
-            ->where('compra_documento_transferencia.estado','!=','ANULADO')
-            ->get();
+            
             // CALCULAR ACUENTA EN MONEDA
             $acuenta = 0;
-            $soles = 0;
-            foreach($pagos as $pago){
-                $acuenta = $acuenta + $pago->monto;
-                if ($pago->moneda_orden == "SOLES") {
-                    $soles = $soles + $pago->monto;
-                }else{
-                    $soles = $soles + $pago->cambio;
-                }
-            }
             $saldo = 0;
-            if ($documento->tipo_pago == '1') {
-                $saldo = $decimal_total - $acuenta;
-            }else{
-                 $saldo = $decimal_total;
+
+            if($documento->cuenta)
+            {
+
+                $efectivo = $documento->cuenta->detallePago->sum('efectivo');
+                $importe = $documento->cuenta->detallePago->sum('importe');
+                $acuenta = $efectivo + $importe;
             }
+            else
+            {
+                $acuenta = $decimal_total;
+            }
+
+
+            $saldo = $decimal_total - $acuenta;
             //CALCULAR SALDO
-            // $saldo = $decimal_total - $acuenta;
-            //CAMBIAR ESTADO DE LA ORDEN A PAGADA
             if ($saldo == 0.0) {
                 $documento->estado = "PAGADA";
                 $documento->update();
@@ -96,6 +91,8 @@ class DocumentoController extends Controller
                 $documento->estado = "PENDIENTE";
                 $documento->update();
             }
+            $modo = TablaDetalle::where('descripcion',$documento->modo_compra)->first();
+
             $coleccion->push([
                 'id' => $documento->id,
                 'tipo' => $documento->tipo_compra,
@@ -106,13 +103,11 @@ class DocumentoController extends Controller
                 'igv' =>  $documento->igv,
                 'orden_compra' =>  $documento->orden_compra,
                 'subtotal' => $tipo_moneda.' '.number_format($subtotal, 2, '.', ''),
-                // 'fecha_entrega' =>  Carbon::parse($documento->fecha_entrega)->format( 'd/m/Y'),
                 'estado' => $documento->estado,
-               // 'otros' => $tipo_moneda.' '.number_format($otros, 2, '.', ''),
-                'otros' => $tipo_moneda,
                 'saldo' => $tipo_moneda.' '.number_format($saldo, 2, '.', ''),
-                'transferencia' => $tipo_moneda.' '.number_format($acuenta, 2, '.', ''),
+                'acuenta' => $tipo_moneda.' '.number_format($acuenta, 2, '.', ''),
                 'total' => $tipo_moneda.' '.number_format($decimal_total, 2, '.', ''),
+                'modo' => $modo->simbolo,
             ]);
         }
         return DataTables::of($coleccion)->toJson();
@@ -218,7 +213,7 @@ class DocumentoController extends Controller
         $documento->tipo_compra = $request->get('tipo_compra');
         $documento->orden_compra = $request->get('orden_id');
         $documento->save();
-        $idd=$documento->id;
+
         $numero_doc = $documento->id;
         $documento->numero_doc = 'COMPRA-'.$numero_doc;
         $documento->update();

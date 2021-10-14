@@ -34,7 +34,7 @@
                                 <tr>
                                     
                                     <th colspan="3" class="text-center">FECHAS</th>
-                                    <th colspan="6" class="text-center">ORDEN DE COMPRA</th>
+                                    <th colspan="3" class="text-center">ORDEN DE COMPRA</th>
                                     <th colspan="1" class="text-center"></th>
 
                                 </tr>
@@ -44,9 +44,6 @@
                                     <th class="text-center">ENTREGA</th>
                                     <th class="text-center">PROVEEDOR</th>
                                     <th class="text-center">MONTO</th>
-                                    <th class="text-center">A CUENTA</th>
-                                    <th class="text-center">A CUENTA (S/.)</th>
-                                    <th class="text-center">SALDO</th>
                                     <th class="text-center">ESTADO</th>
                                     <th class="text-center">ACCIONES</th>
                                 </tr>
@@ -174,22 +171,6 @@ $(document).ready(function() {
                 data: 'total',
                 className: "text-center"
             },
-
-            {
-                data: 'acuenta',
-                className: "text-center"
-            },
-
-            {
-                data: 'acuenta_soles',
-                className: "text-center"
-            },
-
-            {
-                data: 'saldo',
-                className: "text-center"
-            },
-
 
             {
                 data: null,
