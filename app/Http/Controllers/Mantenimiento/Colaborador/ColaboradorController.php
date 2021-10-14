@@ -267,7 +267,7 @@ class ColaboradorController extends Controller
             $persona->update();
 
             //Registro de actividad
-            $descripcion = "SE ELIMINÓ EL COLABORADOR CON EL NOMBRE: ". $colaborador->persona_trabajador->persona->nombres.' '.$colaborador->persona_trabajador->persona->apellido_paterno.' '.$colaborador->persona_trabajador->persona->apellido_materno;
+            $descripcion = "SE ELIMINÓ EL COLABORADOR CON EL NOMBRE: ". $colaborador->persona->nombres.' '.$colaborador->persona->apellido_paterno.' '.$colaborador->persona->apellido_materno;
             $gestion = "colaboradores";
             eliminarRegistro($colaborador, $descripcion , $gestion);
 
