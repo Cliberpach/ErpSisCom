@@ -181,6 +181,7 @@
                     @endforeach
                 </tbody>
                 <tfoot>
+                   @if($documento->tipo_venta != 129)
                     <tr>
                         <th colspan="4" style="text-align:right">Sub Total: S/.</th>
                         <th style="text-align:right">{{ number_format($documento->sub_total, 2) }}</th>
@@ -189,6 +190,7 @@
                         <th colspan="4" style="text-align:right">IGV: S/.</th>
                         <th style="text-align:right">{{ number_format($documento->total_igv, 2) }}</th>
                     </tr>
+                   @endif
                     <tr>
                         <th colspan="4" style="text-align:right">Total a pagar: S/.</th>
                         <th style="text-align:right">{{ number_format($documento->total, 2) }}</th>
