@@ -1026,7 +1026,7 @@ if (!function_exists('movimientoUser')) {
             if ($consulta->count() !== 0) {
                 return $consulta->first();
             } else {
-                $consulta = MovimientoCaja::where('estado_movimiento', 'APERTURA')->first();
+                return MovimientoCaja::where('estado_movimiento', 'APERTURA')->first();
             }
         } else {
             return MovimientoCaja::where('colaborador_id', Auth::user()->user->persona->colaborador->id)->first();
