@@ -34,7 +34,9 @@ class ProductoImport implements ToCollection,WithHeadingRow,WithValidation
                 $producto->almacen_id = Almacen::where('descripcion',$row['almacenes'])->first()->id;
                 $producto->categoria_id = Categoria::where('descripcion',$row['categorias'])->first()->id;
                 $medida=explode('-',$row['unidadmedida']);
-                $producto->medida =Detalle::where('simbolo',$medida[0])->where('descripcion',$medida[1])->first()->id;
+                $m = Detalle::where('simbolo',$medida[0])->where('descripcion',$medida[1])->first();
+                $m_aux = Detalle::where('simbolo','NIU')->where('descripcion','UNIDAD (BIENES)')->first();
+                $producto->medida = $m ? $m->id : $m_aux->id;
                 $producto->peso_producto = $row['peso'];
                 $producto->stock_minimo = $row['stockminimo'];
                 $producto->precio_venta_minimo = $row['precioventaminimo'];
