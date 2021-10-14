@@ -40,7 +40,5 @@ class ModificarFacturacionEmpresa
                 $numeracion->update();
             }
         }
-
-
     }
 }

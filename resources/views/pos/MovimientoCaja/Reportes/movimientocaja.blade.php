@@ -246,7 +246,7 @@
                 <tr>
                     <td style="padding-left: 5px;">Colaborador</td>
                     <td>:</td>
-                    <td>{{ $movimiento->Colaborador->persona_trabajador->persona->apellido_paterno . ' ' . $movimiento->Colaborador->persona_trabajador->persona->apellido_materno . ' ' . $movimiento->Colaborador->persona_trabajador->persona->nombres }}
+                    <td>{{ $movimiento->Colaborador->persona->apellido_paterno . ' ' . $movimiento->Colaborador->persona->apellido_materno . ' ' . $movimiento->Colaborador->persona->nombres }}
                     </td>
                     {{-- <td>{{ getFechaFormato( $documento->fecha_documento ,'d/m/Y')}}</td> --}}
                 </tr>
