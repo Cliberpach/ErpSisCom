@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
 class VendedorController extends Controller
@@ -54,7 +55,9 @@ class VendedorController extends Controller
 
         $rules = [
             'tipo_documento' => 'required',
-            'documento' => 'required|unique:personas,documento',
+            'documento' => ['required', Rule::unique('personas','documento')->where(function ($query) {
+                $query->whereIn('estado',["ACTIVO"]);
+            })],
             'nombres' => 'required',
             'apellido_paterno' => 'required',
             'apellido_materno' => 'required',
@@ -150,7 +153,9 @@ class VendedorController extends Controller
         $vendedor = Vendedor::findOrFail($id);
         $rules = [
             'tipo_documento' => 'required',
-            'documento' => 'required|unique:personas,documento,'.$vendedor->persona->id,
+            'documento' => ['required', Rule::unique('personas','documento')->where(function ($query) {
+                $query->whereIn('estado',["ACTIVO"]);
+            })->ignore($vendedor->persona->id)],
             'nombres' => 'required',
             'apellido_paterno' => 'required',
             'apellido_materno' => 'required',

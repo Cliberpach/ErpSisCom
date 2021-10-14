@@ -1029,7 +1029,7 @@ if (!function_exists('movimientoUser')) {
                 $consulta = MovimientoCaja::where('estado_movimiento', 'APERTURA')->first();
             }
         } else {
-            return MovimientoCaja::where('colaborador_id', Auth::user()->user->persona->persona->persona_trabajador->colaborador->id)->first();
+            return MovimientoCaja::where('colaborador_id', Auth::user()->user->persona->colaborador->id)->first();
         }
     }
 }

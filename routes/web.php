@@ -4,6 +4,7 @@ use App\Almacenes\Kardex;
 use App\Almacenes\LoteProducto;
 use App\Http\Controllers\Almacenes\NotaSalidadController;
 use App\Mantenimiento\Empresa\Empresa;
+use App\Pos\MovimientoCaja;
 use App\User;
 use App\Ventas\CuentaCliente;
 use App\Ventas\Documento\Detalle;
@@ -561,7 +562,7 @@ function(){
 });
 
 Route::get('ruta', function () {
-    return docValido(1);
+    return Auth::user()->user->persona->colaborador->id;
     $detalle = Detalle::find(1);
     return $detalle->detalles->sum('cantidad');
 });

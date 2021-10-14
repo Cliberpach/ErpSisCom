@@ -3,7 +3,6 @@
 namespace App\Mantenimiento\Colaborador;
 
 use App\Mantenimiento\Persona\Persona;
-use App\PersonaTrabajador;
 use Illuminate\Database\Eloquent\Model;
 
 class Colaborador extends Model

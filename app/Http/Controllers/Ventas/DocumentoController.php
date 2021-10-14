@@ -631,7 +631,7 @@ class DocumentoController extends Controller
     {
 
         $documento = Documento::findOrFail($id);
-        $nombre_completo = $documento->user->empleado->persona->apellido_paterno.' '.$documento->user->empleado->persona->apellido_materno.' '.$documento->user->empleado->persona->nombres;
+        $nombre_completo = $documento->user->persona->apellido_paterno.' '.$documento->user->persona->apellido_materno.' '.$documento->user->persona->nombres;
         $detalles = Detalle::where('documento_id',$id)->get();
         //TOTAL EN LETRAS
         $formatter = new NumeroALetras();

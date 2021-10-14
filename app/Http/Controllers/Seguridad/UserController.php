@@ -55,7 +55,7 @@ class UserController extends Controller
         $rules = [
             'usuario' => 'required',
             'email' => ['required', Rule::unique('users','email')->where(function ($query) {
-                $query->whereIn('estado',["ACTIVO"]);
+                $query->whereIn('estado',["ACTIVO","ANULADO"]);
             })],
             'password' => 'required'
         ];
@@ -249,7 +249,7 @@ class UserController extends Controller
         $user->contra = $password;
         $user->update();
 
-        $user_persona = UserPersona::find($user->colaborador->id);
+        $user_persona = UserPersona::find($user->user->id);
         $user_persona->user_id = $user->id;
         $user_persona->persona_id = $request->get('colaborador_id');
         $user_persona->update();
@@ -281,7 +281,7 @@ class UserController extends Controller
         eliminarRegistro($user, $descripcion , $gestion);
 
         $user->estado = 'ANULADO';
-        $user->delete();
+        $user->update();
         Session::flash('success','Usuario eliminado');
         return redirect()->route('user.index')->with('eliminar', 'success');
     }

@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Pos;
 use App\Http\Controllers\Controller;
 use App\Mantenimiento\Colaborador\Colaborador;
 use App\Mantenimiento\Empresa\Empresa;
+use App\Mantenimiento\Persona\Persona;
 use App\Pos\Caja;
 use App\Pos\MovimientoCaja;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +18,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use Barryvdh\DomPDF\Facade as PDF;
+use Exception;
+
 class CajaController extends Controller
 {
 
@@ -123,7 +127,7 @@ class CajaController extends Controller
         return array(
             "caja" => $movimiento->caja->nombre,
             "monto_inicial" => $movimiento->monto_inicial,
-            "colaborador" => $colaborador->persona_trabajador->persona->apellido_paterno . " " . $colaborador->persona_trabajador->persona->apellido_paterno . " " . $colaborador->persona_trabajador->persona->nombre,
+            "colaborador" => $colaborador->persona->apellido_paterno . " " . $colaborador->persona->apellido_paterno . " " . $colaborador->persona->nombre,
             "egresos" => $egresos,
             "ingresos" => $ingresos,
             "saldo" => ($movimiento->monto_inicial + $ingresos) - $egresos
@@ -131,21 +135,52 @@ class CajaController extends Controller
     }
     public function verificarEstadoUser(Request $request)
     {
-        $mensaje = false;
-        $user = Auth::user();
-        if (MovimientoCaja::where('estado_movimiento', 'APERTURA')->count() != 0) {
-            if ($user->usuario == 'ADMINISTRADOR') {
-                $mensaje = true;
-            } else {
-                if (MovimientoCaja::where('colaborador_id', $user->user->persona->persona->persona_trabajador->colaborador->id)->count() != 0) {
-                    $mensaje = true;
-                }
-                else{
-                    $mensaje = false;
+        try
+        {
+            if (MovimientoCaja::where('estado_movimiento', 'APERTURA')->count() != 0) {
+                if (Auth::user()->usuario == 'ADMINISTRADOR') {
+                    return response()->json([
+                        'success' => true
+                    ]);
+                } else {
+                    if(Auth::user()->user->persona->colaborador)
+                    {
+                        if (MovimientoCaja::where('colaborador_id',Auth::user()->user->persona->colaborador->id)->count() != 0) {
+                            return response()->json([                            
+                                'success' => true
+                            ]);
+                        }
+                        else{
+                            return response()->json([   
+                                'success' => false,
+                                'mensaje' => 'No tienes ninguna apertura de caja disponible'
+                            ]);
+                        }
+                    }
+                    else
+                    {
+                        return response()->json([   
+                            'success' => false,
+                            'mensaje' => 'No eres un colaborador por favor registrarte como colaborador'
+                        ]);
+                    }
                 }
             }
+            else
+            {
+                return response()->json([                    
+                    'success' => false,
+                    'mensaje' => 'No tienes ninguna apertura de caja disponible'
+                ]);
+            }
         }
-        return $mensaje;
+        catch(Exception $e)
+        {
+            return response()->json([                
+                'success' => false,
+                'mensaje' => $e->getMessage()
+            ]);
+        }
     }
     public function reporteMovimiento($id)
     {

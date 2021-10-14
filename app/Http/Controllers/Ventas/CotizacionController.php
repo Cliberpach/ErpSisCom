@@ -58,7 +58,6 @@ class CotizacionController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        return $data;
         $rules = [
             'empresa' => 'required',
             'cliente' => 'required',

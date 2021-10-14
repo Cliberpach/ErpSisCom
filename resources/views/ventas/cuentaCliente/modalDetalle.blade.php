@@ -90,7 +90,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="" class="required">Cantidad</label>
-                                        <input type="text" name="cantidad" id="cantidad" value="0.00" class="form-control" onkeypress="return filterFloat(event, this);" readonly required>
+                                        <input type="number" min="1" name="cantidad" id="cantidad" value="0.00" class="form-control" onkeypress="return filterFloat(event, this);" readonly required>
                                     </div>
                                     <div class="form-group">
                                         <label for="">Observacion</label>
@@ -108,7 +108,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label required">Modo de pago</label>
                                         <select name="modo_pago" id="modo_pago" class="select2_form form-control"
-                                            onchange="changeModoPago(this)">
+                                            onchange="changeModoPago(this)" required>
                                             <option></option>
                                             @foreach (modos_pago() as $modo)
                                                 <option value="{{ $modo->id }}">
@@ -193,12 +193,22 @@
 
             var efectivo_venta = $("#efectivo_venta").val();
             var importe_venta = $("#importe_venta").val();
-            var cantidad = parseFloat(efectivo_venta)+parseFloat(importe_venta);
+            var cantidad = parseFloat(efectivo_venta) + parseFloat(importe_venta);
             var modo_pago = $("#modo_pago").val();
 
+            let correcto = true;
             if (pago.length == 0 || fecha.length == 0 || fecha.length == 0 || cantidad.length == 0) {
+                correcto = false;
                 toastr.error('Ingrese todo los datos');
-            } else {
+            } 
+
+            if(cantidad < 1)
+            {
+                correcto = false;
+                toastr.error('El monto de pago debe ser mayor a 0.');
+            }
+
+            if(correcto) {
                 if (saldo == 0) {
                     toastr.error("Ya esta cancelado");
                 } else {
@@ -215,10 +225,15 @@
                         }
                     }
 
-                    if (enviar) {
-
-                        this.submit();
-                    }
+                    axios.get("{{ route('Caja.movimiento.verificarestado') }}").then((value) => {
+                        if (value.data == "") {
+                            toastr.error("No hay ninguna apertura de caja");
+                        } else {
+                            if (enviar) {
+                                this.submit();
+                            }
+                        }
+                    })
                 }
             }
 

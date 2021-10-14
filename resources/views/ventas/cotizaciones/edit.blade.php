@@ -141,7 +141,7 @@
                                             <option value=""></option>
                                             @foreach (vendedores() as $vendedor)
                                                 <option value="{{ $vendedor->id }}" {{$cotizacion->vendedor_id==null? '' :($cotizacion->vendedor_id==$vendedor->id ? 'selected' : '')}}>
-                                                    {{ $vendedor->persona_trabajador->persona->apellido_paterno . ' ' . $vendedor->persona_trabajador->persona->apellido_materno . ' ' . $vendedor->persona_trabajador->persona->nombres }}
+                                                    {{ $vendedor->persona->apellido_paterno . ' ' . $vendedor->persona->apellido_materno . ' ' . $vendedor->persona->nombres }}
                                                 </option>
                                             @endforeach
                                         </select>

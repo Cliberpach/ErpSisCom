@@ -1348,5 +1348,26 @@ class TablaDetalleSeeder extends Seeder
         $detalle->editable = 1;
         $detalle->save();
 
+        $tipo = new TipoPago();
+        $tipo->descripcion = "EFECTIVO";
+        $tipo->simbolo = 'EFECTIVO';
+        $tipo->estado = 'ACTIVO';
+        $tipo->editable = 1;
+        $tipo->save();
+
+        $tipo = new TipoPago();
+        $tipo->descripcion = "TRANSFERENCIA";
+        $tipo->simbolo = "TRANSFERENCIA";
+        $tipo->estado = 'ACTIVO';
+        $tipo->editable = 1;
+        $tipo->save();
+
+        $tipo = new TipoPago();
+        $tipo->descripcion = "YAPE/PLIN";
+        $tipo->simbolo = "YAPE/PLIN";
+        $tipo->estado = 'ACTIVO';
+        $tipo->editable = 1;
+        $tipo->save();
+
     }
 }

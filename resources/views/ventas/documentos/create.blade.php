@@ -1491,8 +1491,9 @@
     function enviarVenta()
     {
         axios.get("{{ route('Caja.movimiento.verificarestado') }}").then((value) => {
-            if (value.data == "") {
-                toastr.error("No hay ninguna apertura de caja");
+            let data = value.data;
+            if (!data.success) {
+                toastr.error(data.mensaje);
             } else {
                 let envio_ok = true;
 
