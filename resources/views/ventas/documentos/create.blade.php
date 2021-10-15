@@ -476,6 +476,7 @@
 
 <script>
 
+    //PRUEBA
     var clientes_global = [];
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
