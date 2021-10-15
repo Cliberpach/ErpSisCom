@@ -106,7 +106,11 @@
     <body>
         <div class="cabecera">
             <div class="logo">
+                @if($empresa->ruta_logo)
                 <img src="{{ base_path() . '/storage/app/'.$empresa->ruta_logo }}" class="img-fluid">
+                @else
+                <img class="logo" src="{{ base_path() . 'storage/empresas/logos/default.png' }}">
+                @endif  
             </div>
             <div class="empresa">
                 <p class="m-0 p-0 text-uppercase nombre-empresa">{{ DB::table('empresas')->count() == 0 ? 'SISCOM ' : DB::table('empresas')->first()->razon_social }}</p>
