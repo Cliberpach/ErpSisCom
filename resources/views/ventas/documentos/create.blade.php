@@ -827,31 +827,6 @@
             llegarDatos();
             sumaTotal();
             $('#asegurarCierre').val(1);
-            /*Swal.fire({
-                title: 'Opción Agregar',
-                text: "¿Seguro que desea agregar Producto?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: "#1ab394",
-                confirmButtonText: 'Si, Confirmar',
-                cancelButtonText: "No, Cancelar",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    llegarDatos();
-                    sumaTotal();
-                    $('#asegurarCierre').val(1);
-                } else if (
-                    // Read more about handling dismissals below
-                    result.dismiss === Swal.DismissReason.cancel
-                ) {
-                    swalWithBootstrapButtons.fire(
-                        'Cancelado',
-                        'La Solicitud se ha cancelado.',
-                        'error'
-                    )
-                }
-            })*/
-
         }
     })
 
@@ -1654,6 +1629,7 @@
 <script>
     window.onbeforeunload = function() {
         //DEVOLVER CANTIDADES
+        console.log($('#asegurarCierre').val())
         if ($('#asegurarCierre').val() == 1) {
             devolverCantidades()
         }
