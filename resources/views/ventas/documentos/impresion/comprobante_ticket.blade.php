@@ -109,7 +109,7 @@
                 @if($empresa->ruta_logo)
                 <img src="{{ base_path() . '/storage/app/'.$empresa->ruta_logo }}" class="img-fluid">
                 @else
-                <img src="{{ base_path() . '/storage/empresas/logos/default.png' }}" class="img-fluid">
+                <img src="{{ base_path() . '/img/default.png' }}" class="img-fluid">
                 @endif  
             </div>
             <div class="empresa">
