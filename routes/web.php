@@ -419,20 +419,20 @@ function(){
 
     //Caja
     Route::prefix('caja')->group(function () {
-        Route::get('/index','Pos\Cajacontroller@index')->name('Caja.index');
-        Route::get('/getCajas','Pos\Cajacontroller@getCajas')->name('Caja.getCajas');
-        Route::post('/store','Pos\Cajacontroller@store')->name('Caja.store');
-        Route::post('/update/{id}','Pos\Cajacontroller@update')->name('Caja.update');
-        Route::get('/destroy/{id}','Pos\Cajacontroller@destroy')->name('Caja.destroy');
+        Route::get('/index','Pos\CajaController@index')->name('Caja.index');
+        Route::get('/getCajas','Pos\CajaController@getCajas')->name('Caja.getCajas');
+        Route::post('/store','Pos\CajaController@store')->name('Caja.store');
+        Route::post('/update/{id}','Pos\CajaController@update')->name('Caja.update');
+        Route::get('/destroy/{id}','Pos\CajaController@destroy')->name('Caja.destroy');
         //-------------------------Movimientos de Caja -------------------------
         Route::get('index/movimiento','Pos\CajaController@indexMovimiento')->name('Caja.Movimiento.index');
         Route::get('getMovimientosCajas','Pos\CajaController@getMovimientosCajas')->name('Caja.get_movimientos_cajas');
-        Route::post('aperturaCaja','Pos\Cajacontroller@aperturaCaja')->name('Caja.apertura');
-        Route::post('cerrarCaja','Pos\Cajacontroller@cerrarCaja')->name('Caja.cerrar');
-        Route::get('estadoCaja','Pos\Cajacontroller@estadoCaja')->name('Caja.estado');
-        Route::get('cajaDatosCierre','Pos\Cajacontroller@cajaDatosCierre')->name('Caja.datos.cierre');
-        Route::get('verificarEstadoUser','Pos\Cajacontroller@verificarEstadoUser')->name('Caja.movimiento.verificarestado');
-        Route::get('repoteMovimiento/{id}','Pos\Cajacontroller@reporteMovimiento')->name('Caja.reporte.movimiento');
+        Route::post('aperturaCaja','Pos\CajaController@aperturaCaja')->name('Caja.apertura');
+        Route::post('cerrarCaja','Pos\CajaController@cerrarCaja')->name('Caja.cerrar');
+        Route::get('estadoCaja','Pos\CajaController@estadoCaja')->name('Caja.estado');
+        Route::get('cajaDatosCierre','Pos\CajaController@cajaDatosCierre')->name('Caja.datos.cierre');
+        Route::get('verificarEstadoUser','Pos\CajaController@verificarEstadoUser')->name('Caja.movimiento.verificarestado');
+        Route::get('repoteMovimiento/{id}','Pos\CajaController@reporteMovimiento')->name('Caja.reporte.movimiento');
     });
     Route::prefix('egreso')->group(function () {
         Route::get('index','EgresoController@index')->name('Egreso.index');

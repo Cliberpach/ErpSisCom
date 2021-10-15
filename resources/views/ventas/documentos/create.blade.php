@@ -1465,13 +1465,7 @@
 
     function enviarVenta()
     {
-        $.ajax({
-            type: 'GET',
-            url: "{{ route('Caja.movimiento.verificarestado') }}",
-        }).done(function(response) {
-            console.log(response);
-        });
-        /*axios.get("{{ route('Caja.movimiento.verificarestado') }}").then((value) => {
+        axios.get("{{ route('Caja.movimiento.verificarestado') }}").then((value) => {
             let data = value.data;
             if (!data.success) {
                 toastr.error(data.mensaje);
@@ -1594,7 +1588,7 @@
                     });
                 }
             }
-        })*/
+        })
     }
 
     //ERRORES DEVOLUCIONES
