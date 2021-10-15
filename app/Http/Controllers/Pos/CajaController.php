@@ -178,7 +178,7 @@ class CajaController extends Controller
             {
                 return response()->json([                    
                     'success' => false,
-                    'mensaje' => 'No tienes ninguna apertura de caja disponible'
+                    'mensaje' => 'No hay ninguna apertura de caja disponible'
                 ]);
             }
         }
