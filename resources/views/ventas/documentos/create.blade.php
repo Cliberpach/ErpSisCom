@@ -1538,7 +1538,7 @@
 
                                 $('#asegurarCierre').val(2);
 
-                                location = "{{ route('ventas.documento.index') }}";
+                                //location = "{{ route('ventas.documento.index') }}";
                             }
                             else
                             {
