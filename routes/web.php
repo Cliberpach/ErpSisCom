@@ -68,7 +68,6 @@ function(){
         Route::get('edit/{id}','Seguridad\UserController@edit')->name('user.edit');
         Route::put('update/{id}', 'Seguridad\UserController@update')->name('user.update');
         Route::get('show/{id}','Seguridad\UserController@show')->name('user.show');
-
     });
 
     //Roles
