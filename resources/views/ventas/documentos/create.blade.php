@@ -1374,37 +1374,6 @@
     }
 
     function obtenerClientes() {
-        /*if ($('#tipo_venta_id').val() != '') {
-            $.ajax({
-                dataType: 'json',
-                url: '{{ route('ventas.customers') }}',
-                type: 'post',
-                data: {
-                    '_token': $('input[name=_token]').val(),
-                    'tipo_id': $('#tipo_venta').val()
-                },
-                success: function(data) {
-                    if (data.clientes.length > 0) {
-                        $('#cliente_id').val($('#cliente_id option:first-child').val()).trigger('change');
-                        $('#cliente_id').prop("disabled", false);
-                        var clientes = '<option value="" selected disabled >SELECCIONAR</option>'
-                        for (var i = 0; i < data.clientes.length; i++)
-                            clientes += '<option value="' + data.clientes[i].id + '">' + data.clientes[i]
-                            .tipo_documento + ': ' + data.clientes[i].documento + ' - ' + data.clientes[i]
-                            .nombre + '</option>';
-
-                    } else {
-                        $('#cliente_id').val($('#cliente_id option:first-child').val()).trigger('change');
-                        $('#cliente_id').prop("disabled", true);
-                        toastr.error('Clientes no encontrados.', 'Error');
-                    }
-
-                    $("#cliente_id").html(clientes);
-                    $('#tipo_cliente_documento').val(data.tipo);
-                },
-            })
-        }*/
-
         clientes_global = [];
         $("#cliente_id").empty().trigger('change');
         $.ajax({
@@ -1565,7 +1534,7 @@
                                 let id = result.value.documento_id;
                                 var url_open_pdf = '{{ route("ventas.documento.comprobante", ":id")}}';
                                 url_open_pdf = url_open_pdf.replace(':id',id+'-100');
-                                window.open(url_open_pdf, "Comprobante SISCOM", "width=900, height=600");
+                                window.open(url_open_pdf,'Comprobante SISCOM','location=1, status=1, scrollbars=1,width=900, height=600');
 
                                 $('#asegurarCierre').val(2);
 
