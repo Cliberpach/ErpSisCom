@@ -566,7 +566,6 @@
     function obtenerProducto(id) {
         // Consultamos nuestra BBDD
         var url = '{{ route('almacenes.producto.productoDescripcion', ':id') }}';
-        console.log(url)
         url = url.replace(':id', id);
         $.ajax({
             dataType: 'json',
@@ -791,7 +790,7 @@
             precio_nuevo: precio_nuevo,
             precio_inicial: precio_inicial
         }
-        console.log(detalle);
+        
         agregarTabla(detalle);
     }
 
