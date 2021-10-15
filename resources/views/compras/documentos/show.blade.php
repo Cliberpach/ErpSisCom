@@ -18,7 +18,7 @@
     </div>
     <div class="col-lg-4">
         <div class="title-action">
-            <button onclick="modificar({{ $documento->orden_compra != '' ? 1 : 0 }},{{$documento->id}})" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> Editar</button>
+            <button onclick="modificar({{ $documento->orden_compra ? 0 : 1 }},{{$documento->id}})" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> Editar</button>
             <a href="{{route('compras.documento.reporte', $documento->id)}}" target="_blank" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf-o "></i> Reporte </a>
         </div>
     </div>

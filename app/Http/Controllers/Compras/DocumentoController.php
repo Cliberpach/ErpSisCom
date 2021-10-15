@@ -409,6 +409,7 @@ class DocumentoController extends Controller
     {
         $this->authorize('haveaccess','documento_compra.index');
         $documento = Documento::findOrFail($id);
+        return $documento;
         $nombre_completo = $documento->usuario->user->persona->apellido_paterno.' '.$documento->usuario->user->persona->apellido_materno.' '.$documento->usuario->user->persona->nombres;
         $detalles = DocumentoDetalle::where('documento_id',$id)->get();
         $presentaciones = presentaciones();
