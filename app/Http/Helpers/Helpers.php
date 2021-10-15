@@ -1037,8 +1037,8 @@ if (!function_exists('MovimientoCajaIngresos')) {
     function cuadreMovimientoCajaIngresos(MovimientoCaja $movimiento)
     {
         $totalIngresos = 0;
-        foreach ($movimiento->detalleMovimientoVentas as $key => $item) {
-            if ($item->forma_pago == 160) {
+        foreach ($movimiento->detalleMovimientoVentas as $item) {
+            if ($item->documento->forma_pago == 160) {
                 if ($item->documento->tipo_pago_id == 1) {
                     $totalIngresos = $totalIngresos + $item->documento->importe;
                 } else {
@@ -1046,6 +1046,7 @@ if (!function_exists('MovimientoCajaIngresos')) {
                 }
             }
         }
+
         foreach ($movimiento->detalleCuentaCliente as $item) {
             $totalIngresos = $totalIngresos  + $item->efectivo;
         }

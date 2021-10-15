@@ -247,9 +247,15 @@ class PermissionsSeeder extends Seeder
         //Movimiento Caja permission
         
         Permission::create([
-            'name'  => 'Mantenedor Movimientos Caja',
+            'name'  => 'Listar Movimientos Caja',
             'slug'=>'movimiento_caja.index',
             'description'=>'El usuario puede acceder al mantenedor de Movimientos Caja'
+        ]);
+
+        Permission::create([
+            'name'  => 'Aperturar Caja',
+            'slug'=>'movimiento_caja.create',
+            'description'=>'El usuario puede aperturar Caja'
         ]);
 
         //Cliente permission

@@ -562,7 +562,6 @@ function(){
 });
 
 Route::get('ruta', function () {
-    return Auth::user()->user->persona->colaborador->id;
-    $detalle = Detalle::find(1);
-    return $detalle->detalles->sum('cantidad');
+    $movimiento = MovimientoCaja::find(1);
+    return cuadreMovimientoCajaIngresos($movimiento);
 });
