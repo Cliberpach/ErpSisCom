@@ -83,7 +83,16 @@ class Documento extends Model
         });
 
         static::updated(function(Documento $documento){
-            if(empty($documento->cuenta))
+            if($documento->cuenta)
+            {
+                $cuenta_proveedor = $documento->cuenta;
+                $cuenta_proveedor->compra_documento_id = $documento->id;
+                $cuenta_proveedor->fecha_doc = $documento->fecha_emision;
+                $cuenta_proveedor->saldo = $documento->total;
+                $cuenta_proveedor->acta = 'DOCUMENTO COMPRA';
+                $cuenta_proveedor->upadate();                
+            }
+            else
             {
                 $modo = TablaDetalle::where('descripcion',$documento->modo_compra)->first();
                 if($modo->simbolo === 'CREDITO' || $modo->simbolo === 'credito' || $modo->simbolo === 'CRÉDITO' || $modo->simbolo === 'crédito')
@@ -95,15 +104,6 @@ class Documento extends Model
                     $cuenta_proveedor->acta = 'DOCUMENTO COMPRA';
                     $cuenta_proveedor->save();
                 }
-            }
-            else
-            {
-                $cuenta_proveedor = $documento->cuenta;
-                $cuenta_proveedor->compra_documento_id = $documento->id;
-                $cuenta_proveedor->fecha_doc = $documento->fecha_emision;
-                $cuenta_proveedor->saldo = $documento->total;
-                $cuenta_proveedor->acta = 'DOCUMENTO COMPRA';
-                $cuenta_proveedor->upadate();
             }
         });
 
