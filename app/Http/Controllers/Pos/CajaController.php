@@ -153,7 +153,7 @@ class CajaController extends Controller
                 } else {
                     if(Auth::user()->user->persona->colaborador)
                     {
-                        if (MovimientoCaja::where('colaborador_id',Auth::user()->user->persona->colaborador->id)->count() != 0) {
+                        if (MovimientoCaja::where('colaborador_id',Auth::user()->user->persona->colaborador->id)->where('estado_movimiento', 'APERTURA')->count() != 0) {
                             return response()->json([                            
                                 'success' => true
                             ]);

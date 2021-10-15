@@ -446,32 +446,11 @@ class DocumentoController extends Controller
                 $vp = self::venta_comprobante($documento->id);
                 $ve = self::venta_email($documento->id);
                 Session::flash('success','Documento de venta creado.');
-                //return redirect()->route('ventas.documento.index')->with('documento_id', $documento->id);
 
                 return response()->json([
                     'success' => true,
                     'documento_id'=> $documento->id
                 ]);
-
-                /*if(!$envio_['success'])
-                {
-                    DB::rollBack();
-                    foreach ($productotabla as $producto) {
-                        $lote = LoteProducto::findOrFail($producto->producto_id);
-                        $lote->cantidad_logica =  $lote->cantidad_logica + $producto->cantidad;
-                        $lote->update();
-                    }
-                    Session::flash('error',$envio_['mensaje']);
-                    return back()->with('sunat_error', 'error');
-                }
-                else
-                {
-                    DB::commit();
-                    $vp = self::venta_comprobante($documento->id);
-                    $ve = self::venta_email($documento->id);
-                    Session::flash('success','Documento de venta creado.');
-                    return redirect()->route('ventas.documento.index')->with('documento_id', $documento->id);
-                }*/
             }
             else{
                 DB::commit();
