@@ -34,7 +34,7 @@
 
                 <div class="ibox-content">
                     <input type="hidden" id='asegurarCierre' >
-                    <form action="{{route('almacenes.nota_salidad.store')}}" method="POST" id="enviar_ingresos">
+                    <form action="{{route('almacenes.nota_salidad.store')}}" method="POST" id="enviar_nota_salida">
                         {{csrf_field()}}
 
                        
@@ -47,7 +47,7 @@
                                 </div>
                             	<div class="form-group row">
                                    
-                                        <input type="hidden" id="numero" name="numero" class="form-control" value="{{$ngenerado}}" >
+                                    <input type="hidden" id="numero" name="numero" class="form-control" value="{{$ngenerado}}" >
                                     <div class="col-sm-4"  id="fecha">
                                         <label>Fecha</label>
                                         <div class="input-group date">
@@ -228,11 +228,17 @@ $(".select2_form").select2({
 });
 
 
-$('#enviar_ingreso_mercaderia').submit(function(e) {
+$('#enviar_nota_salida').submit(function(e) {
     e.preventDefault();
-    var correcto = validarFecha()
-
-    if (correcto == false) {
+    let correcto = true;
+    cargarDetalle();
+    let detalles = JSON.parse($('#notadetalle_tabla').val());
+    if (detalles.length < 1) {
+        correcto = false;
+        toastr.error('El documento de venta debe tener almenos un producto de salida.');
+    }
+    console.log(detalles.length);
+    if (correcto) {
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
                 confirmButton: 'btn btn-success',
@@ -255,7 +261,6 @@ $('#enviar_ingreso_mercaderia').submit(function(e) {
                 $('#asegurarCierre').val(2)
                 this.submit();
             } else if (
-                /* Read more about handling dismissals below */
                 result.dismiss === Swal.DismissReason.cancel
             ) {
                 swalWithBootstrapButtons.fire(
@@ -266,7 +271,6 @@ $('#enviar_ingreso_mercaderia').submit(function(e) {
             }
         })
     }
-
 })
 
 
@@ -367,9 +371,6 @@ $(document).on('click', '#borrar_detalle', function(event) {
             )
         }
     })
-
-
-
 });
 
 
@@ -590,7 +591,6 @@ function buscarProducto(id) {
     });
     return existe
 }
-
 </script>
 <script>
     window.onbeforeunload = function () { 
