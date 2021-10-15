@@ -18,7 +18,7 @@
     </div>
     <div class="col-lg-4">
         <div class="title-action">
-            <button onclick="modificar({{$documento->orden_compra}},{{$documento->id}})" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> Editar</button>
+            <button onclick="modificar({{ $documento->orden_compra ? true : false }},{{$documento->id}})" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> Editar</button>
             <a href="{{route('compras.documento.reporte', $documento->id)}}" target="_blank" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf-o "></i> Reporte </a>
         </div>
     </div>
@@ -429,7 +429,37 @@
 @push('scripts')
 <script>
     function modificar(orden,id) {
-        toastr.error('ok')
+        if (orden) {
+            toastr.error('El documento de compra fue generado por una orden (Opción "Editar" en orden de compra).', 'Error');
+        }else{
+            Swal.fire({
+                title: 'Opción Modificar',
+                text: "¿Seguro que desea modificar registro?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: "#1ab394",
+                confirmButtonText: 'Si, Confirmar',
+                cancelButtonText: "No, Cancelar",
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    //Ruta Modificar
+                    var url_editar = '{{ route("compras.documento.edit", ":id")}}';
+                    url_editar = url_editar.replace(':id', id);
+                    location = url_editar;
+
+                } else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    swalWithBootstrapButtons.fire(
+                        'Cancelado',
+                        'La Solicitud se ha cancelado.',
+                        'error'
+                    )
+                }
+            })
+        }
     }
 
     function generarReporte() {
