@@ -429,37 +429,7 @@
 @push('scripts')
 <script>
     function modificar(orden,id) {
-        if (orden) {
-            toastr.error('El documento de compra fue generado por una orden (Opción "Editar" en orden de compra).', 'Error');
-        }else{
-            Swal.fire({
-                title: 'Opción Modificar',
-                text: "¿Seguro que desea modificar registro?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: "#1ab394",
-                confirmButtonText: 'Si, Confirmar',
-                cancelButtonText: "No, Cancelar",
-            }).then((result) => {
-                if (result.isConfirmed) {
-
-                    //Ruta Modificar
-                    var url_editar = '{{ route("compras.documento.edit", ":id")}}';
-                    url_editar = url_editar.replace(':id', id);
-                    location = url_editar;
-
-                } else if (
-                    /* Read more about handling dismissals below */
-                    result.dismiss === Swal.DismissReason.cancel
-                ) {
-                    swalWithBootstrapButtons.fire(
-                        'Cancelado',
-                        'La Solicitud se ha cancelado.',
-                        'error'
-                    )
-                }
-            })
-        }
+        toastr.error('ok')
     }
 
     function generarReporte() {
