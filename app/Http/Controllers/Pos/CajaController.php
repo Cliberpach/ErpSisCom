@@ -141,7 +141,7 @@ class CajaController extends Controller
         );
     }
 
-    public function verificarEstadoUser(Request $request)
+    public function verificarEstadoUser()
     {
         try
         {
