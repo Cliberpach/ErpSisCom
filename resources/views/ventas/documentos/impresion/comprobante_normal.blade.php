@@ -145,7 +145,9 @@
         <div class="cabecera">
             <div class="logo">
                 <div class="logo-img">
+                    @if($empresa->ruta_logo)
                     <img src="{{ base_path() . '/storage/app/'.$empresa->ruta_logo }}" class="img-fluid">
+                    @endif
                 </div>
             </div>
             <div class="empresa">
