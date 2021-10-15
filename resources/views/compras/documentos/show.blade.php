@@ -37,7 +37,7 @@
                                 <img src="{{Storage::url($documento->empresa->ruta_logo)}}" class="img-fluid m-b"
                                     width="190px" height="190px">
                                 @else
-                                <img src="{{asset('storage/empresas/logos/default.png')}}" class="img-fluid m-b"
+                                <img src="{{asset('img/default.png')}}" class="img-fluid m-b"
                                     width="190px" height="190px">
                                 @endif
                             </div>
@@ -446,7 +446,7 @@
                     //Ruta Modificar
                     var url_editar = '{{ route("compras.documento.edit", ":id")}}';
                     url_editar = url_editar.replace(':id', id);
-                    $(location).attr('href', url_editar);
+                    location = url_editar;
 
                 } else if (
                     /* Read more about handling dismissals below */
@@ -507,7 +507,4 @@
 
     }
 </script>
-
-
-
 @endpush
