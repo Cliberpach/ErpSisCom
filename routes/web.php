@@ -573,6 +573,7 @@ function(){
 });
 
 Route::get('ruta', function () {
+    //https://www.oratlas.com/lector-online-de-texto
     $movimiento = MovimientoCaja::find(1);
     return cuadreMovimientoCajaIngresos($movimiento);
 });
