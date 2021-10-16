@@ -45,6 +45,19 @@ class DetalleNotaSalidad extends Model
                 'producto_id'=> $detalle->producto_id,
             ]);
 
+            //KARDEX
+            $kardex = new Kardex();
+            $kardex->origen = 'SALIDA';
+            $kardex->numero_doc = $detalle->nota_ingreso->numero;
+            $kardex->fecha = $detalle->nota_ingreso->fecha;
+            $kardex->cantidad = $detalle->cantidad;            
+            $kardex->producto_id = $detalle->producto_id;
+            $kardex->descripcion = $detalle->nota->destino;
+            $kardex->precio = $detalle->producto->precio_venta_minimo;
+            $kardex->importe = $detalle->producto->precio_venta_minimo * $detalle->cantidad;
+            $kardex->stock = $detalle->producto->stock;
+            $kardex->save();
+
             $lote_producto = LoteProducto::findOrFail($detalle->lote_id);
             $lote_productocantidad = $lote_producto->cantidad - $detalle->cantidad;
             $lote_productocantidad_logica = $lote_producto->cantidad - $detalle->cantidad;

@@ -551,6 +551,18 @@ function(){
 
     });
 
+
+    // Cosultas - Kardex - Salida -Ventas
+    Route::prefix('consultas/kardex/salidas')->group(function(){
+
+        Route::get('index-V', 'Consultas\Kardex\SalidaController@ventas')->name('consultas.kardex.ventas.index');
+        Route::post('getTableVentas','Consultas\Kardex\SalidaController@getTableVentas')->name('consultas.kardex.ventas.getTable');
+
+        Route::get('index-N', 'Consultas\Kardex\SalidaController@notas')->name('consultas.kardex.notas.index');
+        Route::post('getTableNotas','Consultas\Kardex\SalidaController@getTableNotas')->name('consultas.kardex.notas.getTable');
+
+    });
+
     // Cosultas - Caja - Utilidad
     Route::prefix('consultas/caja/utilidad')->group(function(){
 

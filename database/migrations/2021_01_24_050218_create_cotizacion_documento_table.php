@@ -60,6 +60,7 @@ class CreateCotizacionDocumentoTable extends Migration
             $table->enum('estado',['VIGENTE','PENDIENTE','ADELANTO','CONCRETADA','ANULADO','PAGADA'])->default('VIGENTE');
 
             $table->enum('sunat',['0','1','2'])->default('0');
+            $table->enum('envio_sunat',['0','1'])->default('0');
             $table->BigInteger('correlativo')->nullable();
             $table->string('serie')->nullable();
 

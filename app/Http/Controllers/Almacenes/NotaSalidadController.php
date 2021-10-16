@@ -130,7 +130,34 @@ class NotaSalidadController extends Controller
      */
     public function show($id)
     {
-        //
+        $this->authorize('haveaccess','nota_salida.index');
+        $notasalidad=NotaSalidad::findOrFail($id);
+        $data=array();
+        $detallenotasalidad=DB::table('detalle_nota_salidad')->where('nota_salidad_id',$notasalidad->id)->get();
+        foreach($detallenotasalidad as $fila)
+        {
+            $lote = LoteProducto::find($fila->lote_id);
+            $producto =Producto::find($fila->producto_id);
+            array_push($data,array(
+                    'producto_id'=>$fila->producto_id,
+                    'codigo'=>$producto->codigo,
+                    'cantidad'=>$fila->cantidad,
+                    'lote'=>$lote->codigo_lote,
+                    'producto'=>$producto->nombre,
+                    'costo' => $lote->detalle_compra ? $lote->detalle_compra->precio : 0.00,
+                    'precio'=> $producto->precio_venta_minimo,
+                    'lote_id' => $fila->lote_id
+            ));
+        }
+        $origenes=  General::find(28)->detalles;
+        $destinos=  General::find(29)->detalles;
+        $lotes=DB::table('lote_productos')->get();
+        $usuarios=User::get();
+        $productos=Producto::where('estado','ACTIVO')->get();
+        return view('almacenes.nota_salidad.show',[
+        "origenes"=>$origenes,'destinos'=>$destinos,
+       'usuarios'=>$usuarios,
+        'productos'=>$productos,'lotes'=>$lotes,'notasalidad'=>$notasalidad,'detalle'=>json_encode($data)]);
     }
 
     /**

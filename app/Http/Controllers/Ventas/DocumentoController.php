@@ -317,6 +317,7 @@ class DocumentoController extends Controller
                 'igv' => 'required_if:igv_check,==,on|numeric|digits_between:1,3',
 
             ];
+
             $message = [
                 'fecha_documento_campo.required' => 'El campo Fecha de Emisión es obligatorio.',
                 'tipo_venta.required' => 'El campo tipo de venta es obligatorio.',
@@ -442,7 +443,11 @@ class DocumentoController extends Controller
             if((int)$documento->tipo_venta === 127 || (int)$documento->tipo_venta === 128)
             {
                 DB::commit();
-                $envio_ = self::sunat_valida($documento->id);
+                if($request->envio_sunat)
+                {
+                    $envio_ = self::sunat_valida($documento->id);
+                    $documento->envio_sunat = '1';
+                }
                 $vp = self::venta_comprobante($documento->id);
                 $ve = self::venta_email($documento->id);
                 Session::flash('success','Documento de venta creado.');

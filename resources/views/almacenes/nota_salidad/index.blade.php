@@ -113,8 +113,12 @@ $(document).ready(function() {
                     var url_editar = '{{ route("almacenes.nota_salidad.edit", ":id")}}';
                     url_editar = url_editar.replace(':id', data.id);
 
-                    return "<div class='btn-group' style='text-transform:capitalize;'><button data-toggle='dropdown' class='btn btn-primary btn-sm  dropdown-toggle'><i class='fa fa-bars'></i></button><ul class='dropdown-menu'>" +
+                    var url_detalles = '{{ route("almacenes.nota_salidad.show", ":id")}}';
+                    url_detalles = url_detalles.replace(':id', data.id);
 
+                    return "<div class='btn-group' style='text-transform:capitalize;'><button data-toggle='dropdown' class='btn btn-primary btn-sm  dropdown-toggle'><i class='fa fa-bars'></i></button><ul class='dropdown-menu'>" +
+                        "<li><a class='dropdown-item' href='" + url_detalles +
+                        "' title='Detalles' ><b><i class='fa fa-eye'></i> Detalles</a></b></li>" +
                         "<li><a class='dropdown-item' href='" + url_editar +
                         "' title='Modificar' ><b><i class='fa fa-edit'></i> Modificar</a></b></li>" +
                         "<li><a class='dropdown-item' onclick='eliminar(" + data.id +

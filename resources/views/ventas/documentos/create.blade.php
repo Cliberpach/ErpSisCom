@@ -215,29 +215,39 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group select-required">
-                                    <label class="required">Cliente: @if (empty($cotizacion))<button type="button" class="btn btn-outline btn-primary" onclick="modalCliente()">Registrar</button>@endif</label>
-                                    <input type="hidden" name="tipo_cliente_documento" id="tipo_cliente_documento">
-                                    <input type="hidden" name="tipo_cliente_2" id="tipo_cliente_2" value='1'>
-                                    @if (!empty($cotizacion))
-                                        <select
-                                            class="select2_form form-control input-required {{ $errors->has('cliente_id') ? ' is-invalid' : '' }}"
-                                            style="text-transform: uppercase; width:100%"
-                                            value="{{ old('cliente_id', $cotizacion->cliente_id) }}" name="cliente_id" id="cliente_id"
-                                            disabled>
-                                            <option></option>
-                                            @foreach ($clientes as $cliente)
-                                                <option value="{{ $cliente->id }}" @if (old('cliente_id', $cotizacion->cliente_id) == $cliente->id){{ 'selected' }}@endif >{{ $cliente->getDocumento() }} - {{ $cliente->nombre }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    @else
-                                        <select class="select2_form form-control input-required {{ $errors->has('cliente_id') ? ' is-invalid' : '' }}"
-                                            style="text-transform: uppercase; width:100%" value="{{ old('cliente_id') }}" name="cliente_id"
-                                            id="cliente_id" required onchange="obtenerTipocliente(this.value)"> <!-- disabled -->
-                                            <option></option>
-                                        </select>
-                                    @endif
+                                <div class="form-group row align-items-end">
+                                    <div class="col-12 col-md-6 select-required">
+                                        <label class="required">Cliente: @if (empty($cotizacion))<button type="button" class="btn btn-outline btn-primary" onclick="modalCliente()">Registrar</button>@endif</label>
+                                        <input type="hidden" name="tipo_cliente_documento" id="tipo_cliente_documento">
+                                        <input type="hidden" name="tipo_cliente_2" id="tipo_cliente_2" value='1'>
+                                        @if (!empty($cotizacion))
+                                            <select
+                                                class="select2_form form-control input-required {{ $errors->has('cliente_id') ? ' is-invalid' : '' }}"
+                                                style="text-transform: uppercase; width:100%"
+                                                value="{{ old('cliente_id', $cotizacion->cliente_id) }}" name="cliente_id" id="cliente_id"
+                                                disabled>
+                                                <option></option>
+                                                @foreach ($clientes as $cliente)
+                                                    <option value="{{ $cliente->id }}" @if (old('cliente_id', $cotizacion->cliente_id) == $cliente->id){{ 'selected' }}@endif >{{ $cliente->getDocumento() }} - {{ $cliente->nombre }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        @else
+                                            <select class="select2_form form-control input-required {{ $errors->has('cliente_id') ? ' is-invalid' : '' }}"
+                                                style="text-transform: uppercase; width:100%" value="{{ old('cliente_id') }}" name="cliente_id"
+                                                id="cliente_id" required onchange="obtenerTipocliente(this.value)"> <!-- disabled -->
+                                                <option></option>
+                                            </select>
+                                        @endif
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="checkbox">
+                                            <input type="checkbox" name="envio_sunat" id="envio_sunat" value="1">
+                                            <label for="envio_sunat" title="Enviar ahora">
+                                                Enviar a sunat
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="form-group d-none">
