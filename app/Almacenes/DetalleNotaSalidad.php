@@ -52,7 +52,7 @@ class DetalleNotaSalidad extends Model
             $kardex->fecha = $detalle->nota_ingreso->fecha;
             $kardex->cantidad = $detalle->cantidad;            
             $kardex->producto_id = $detalle->producto_id;
-            $kardex->descripcion = $detalle->nota->destino;
+            $kardex->descripcion = $detalle->nota_salidad->destino;
             $kardex->precio = $detalle->producto->precio_venta_minimo;
             $kardex->importe = $detalle->producto->precio_venta_minimo * $detalle->cantidad;
             $kardex->stock = $detalle->producto->stock;

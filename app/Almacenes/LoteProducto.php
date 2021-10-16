@@ -48,6 +48,16 @@ class LoteProducto extends Model
         return $this->hasOne('App\Compras\Documento\Detalle','lote_id','id');
     }
 
+    public function detalle_venta()
+    {
+        return $this->hasOne('App\Ventas\Documento\Detalle','lote_id','id');
+    }
+
+    public function detalle_salida()
+    {
+        return $this->hasOne('App\Almacenes\DetalleNotaSalidad','lote_id','id');
+    }
+
     public function documento_compra()
     {
         return $this->belongsTo('App\Compras\Documento\Documento','documento_compra_id','id');
