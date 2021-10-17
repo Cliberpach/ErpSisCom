@@ -97,10 +97,6 @@ $(document).ready(function() {
             {
                 "targets": [2],
                 className: "text-center",
-            },
-            {
-                "targets": [3],
-                className: "text-center",
             }
         ],
 

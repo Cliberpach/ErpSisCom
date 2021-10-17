@@ -76,7 +76,7 @@
     uppy.on('upload-success', (file, response) => {
         var resultado = response.body;
         console.log(resultado);
-        if(resultado.length==0)
+        if(resultado.length == 0)
         {
             toastr.success('Exito','Success');
             location.reload();

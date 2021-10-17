@@ -48,8 +48,8 @@ class DetalleNotaSalidad extends Model
             //KARDEX
             $kardex = new Kardex();
             $kardex->origen = 'SALIDA';
-            $kardex->numero_doc = $detalle->nota_ingreso->numero;
-            $kardex->fecha = $detalle->nota_ingreso->fecha;
+            $kardex->numero_doc = $detalle->nota_salidad->numero;
+            $kardex->fecha = $detalle->nota_salidad->fecha;
             $kardex->cantidad = $detalle->cantidad;            
             $kardex->producto_id = $detalle->producto_id;
             $kardex->descripcion = $detalle->nota_salidad->destino;
