@@ -384,15 +384,16 @@ class NotaIngresoController extends Controller
             $failures = $e->failures();
 
             foreach ($failures as $failure) {
-                array_push($data, array(
-                    "fila" => $failure->row(),
-                    "atributo" => $failure->attribute(),
-                    "error" => $failure->errors()
-                ));
+                
             }
             array_push($data, array("excel" => $datos));
         } catch (Exception $er) {
             Log::info($er);
+            array_push($data, array(
+                    "fila" => 0,
+                    "atributo" => 'none',
+                    "error" => $er->getMessage()
+            ));
         }
 
         return json_encode($data);
