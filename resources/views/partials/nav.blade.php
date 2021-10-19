@@ -134,6 +134,7 @@
             <ul class="nav nav-third-level">
                 <li class="@yield('consulta-ventas-cotizacion-active')"><a href="{{ route('consultas.ventas.cotizacion.index') }}">Cotización</a></li>
                 <li class="@yield('consulta-ventas-documento-active')"><a href="{{ route('consultas.ventas.documento.index') }}">Doc. Venta</a></li>
+                <li class="@yield('consulta-ventas-documento-no-active')"><a href="{{ route('consultas.ventas.documento.no.index') }}">No enviados</a></li>
             </ul>
         </li>
         <li class="@yield('consulta-compras-active')">

@@ -49,8 +49,8 @@
                         style="text-transform:uppercase">
                             <thead>
                                 <tr>
-                                    <th class="text-center" style="width: 20%">CLIENTE</th>
-                                    <th class="text-center" style="width: 20%">TIPO</th>
+                                    <th class="text-center" style="width: 15%">CLIENTE</th>
+                                    <th class="text-center" style="width: 10%">TIPO</th>
                                     <th class="text-center" style="width: 10%"># DOC</th>
                                     <th class="text-center" style="width: 10%">FECHA</th>
                                     <th class="text-center" style="width: 5%">MONTO</th>
@@ -58,6 +58,9 @@
                                     <th class="text-center" style="width: 5%">EFECT.</th>
                                     <th class="text-center" style="width: 5%">TRANSF.</th>
                                     <th class="text-center" style="width: 5%">YAPE/PLIN</th>
+                                    <th class="text-center" style="width: 5%">ESTADO</th>
+                                    <th class="text-center" style="width: 5%">VISTA</th>
+                                    <th class="text-center" style="width: 5%">SUNAT</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -65,26 +68,64 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="5"  class="text-right">EFECTIVO</td>
-                                    <td colspan="4" class="text-right" id="efectivo"></td>
+                                    <td colspan="6"  class="text-right">EFECTIVO</td>
+                                    <td colspan="6" class="text-right" id="efectivo"></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="5"  class="text-right">TRANSFERENCIA</td>                                    
-                                    <td colspan="4" class="text-right" id="transferencia"></td>
+                                    <td colspan="6"  class="text-right">TRANSFERENCIA</td>                                    
+                                    <td colspan="6" class="text-right" id="transferencia"></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="5"  class="text-right">YAPE/PLIN</td>      
-                                    <td colspan="4" class="text-right" id="yape_plin"></td>
+                                    <td colspan="6"  class="text-right">YAPE/PLIN</td>      
+                                    <td colspan="6" class="text-right" id="yape_plin"></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="5"  class="text-right">TOTAL</td>      
-                                    <td colspan="4" class="text-right" id="total"></td>
+                                    <td colspan="6"  class="text-right">TOTAL</td>      
+                                    <td colspan="6" class="text-right" id="total"></td>
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal inmodal" id="modal_descargas_pdf" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title descarga-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-6 text-center">
+                        <div class="form-group">
+                            <button class="btn btn-info file-pdf"><i class="fa fa-file-pdf-o"></i></button><br>
+                            <b>Descargar A4</b>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 text-center">
+                        <div class="form-group">
+                            <button class="btn btn-info file-ticket"><i class="fa fa-file-o"></i></button><br>
+                            <b>Descargar Ticket</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-times"></i> Cancelar</button>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -181,23 +222,6 @@ function initTable()
         });
     }
 
-    /*$.ajax({
-        dataType : 'json',
-        type : 'post',
-        url : '{{ route('consultas.ventas.documento.getTable') }}',
-        data : {'_token' : $('input[name=_token]').val(), 'fecha_desde' : fecha_desde, 'fecha_hasta' : fecha_hasta}
-    }).done(function (result){
-        if (result.success) {
-            ventas = [];
-            ventas = result.ventas;
-            loadTable();
-        }
-        else
-        {
-            ventas = []
-            loadTable();
-        }
-    });*/
     return false;
 }
 
@@ -241,7 +265,58 @@ function loadTable()
             {data: 'forma_pago',name:'forma_pago', className: "letrapequeña"},
             {data: 'efectivo',name:'efectivo', className: "letrapequeña"},
             {data: 'transferencia',name:'transferencia', className: "letrapequeña"},
-            {data: 'otros',name:'otros', className: "letrapequeña"},
+            {data: 'otros',name:'otros', className: "letrapequeña"},            
+            {
+                data: null,
+                className: "letrapequeña",
+                render: function(data) {
+                    switch (data.estado) {
+                        case "PENDIENTE":
+                            return "<span class='badge badge-warning' d-block>" + data.estado +
+                                "</span>";
+                            break;
+                        case "PAGADA":
+                            return "<span class='badge badge-danger' d-block>" + data.estado +
+                                "</span>";
+                            break;
+                        case "ADELANTO":
+                            return "<span class='badge badge-success' d-block>" + data.estado +
+                                "</span>";
+                            break;
+                        case "DEVUELTO":
+                            return "<span class='badge badge-warning' d-block>" + data.estado +
+                                "</span>";
+                            break;
+                        default:
+                            return "<span class='badge badge-success' d-block>" + data.estado +
+                                "</span>";
+                    }
+                },
+            },            
+            {
+                data: null,
+                className: "letrapequeña",
+                render: function(data) {
+                    return "<button class='btn btn-info btn-pdf mb-1' title='Detalle'>PDF</button>" +
+                        "<button class='btn btn-info' onclick='xmlElectronico(" +data.id+ ")' title='Detalle'>XML</button>"
+                }
+            },
+            {
+                data: null,
+                className: "letrapequeña",
+                render: function(data) {
+                    switch (data.sunat) {
+                        case "1":
+                            return "<span class='badge badge-primary' d-block>ACEPTADO</span>";
+                            break;
+                        case "2":
+                            return "<span class='badge badge-danger' d-block>NULA</span>";
+                            break;
+                        default:
+                            return "<span class='badge badge-success' d-block>REGISTRADO</span>";
+                    }
+                },
+            },
         ],
         "language": {
                     "url": "{{asset('Spanish.json')}}"
@@ -251,6 +326,118 @@ function loadTable()
 
     });
     return false;
+}
+
+$(".dataTables-orden").on('click','.btn-pdf',function(){
+    var data = $(".dataTables-orden").dataTable().fnGetData($(this).closest('tr'));
+    let fn_pdf = 'comprobanteElectronico(' + data.id + ')';
+    let fn_ticket = 'comprobanteElectronicoTicket(' + data.id + ')';
+    $('.descarga-title').html(data.serie + '-' + data.correlativo);
+    $('.file-pdf').attr('onclick',fn_pdf);
+    $('.file-ticket').attr('onclick',fn_ticket);
+    $('#modal_descargas_pdf').modal('show');
+});
+
+function cambiarEstado(id) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger',
+        },
+        buttonsStyling: false
+    })
+
+    Swal.fire({
+        title: "Opción devolución",
+        text: "¿Seguro que desea devolver esta venta, se devolvera el total de productos?",
+        showCancelButton: true,
+        icon: 'info',
+        confirmButtonColor: "#1ab394",
+        confirmButtonText: 'Si, Confirmar',
+        cancelButtonText: "No, Cancelar",
+        // showLoaderOnConfirm: true,
+    }).then((result) => {
+        if (result.value) {
+            
+            var url = '{{ route("ventas.documento.sunat", ":id")}}';
+            url = url.replace(':id',id);
+
+            window.location.href = url
+
+            Swal.fire({
+                title: '¡Cargando!',
+                type: 'info',
+                text: 'Devolviendo productos',
+                showConfirmButton: false,
+                onBeforeOpen: () => {
+                    Swal.showLoading()
+                }
+            })
+
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            swalWithBootstrapButtons.fire(
+                'Cancelado',
+                'La Solicitud se ha cancelado.',
+                'error'
+            )
+        }
+    })
+
+}
+
+function comprobanteElectronico(id) {
+    var url = '{{ route("ventas.documento.comprobante", ":id")}}';
+    url = url.replace(':id',id+'-100');
+    window.open(url, "Comprobante SISCOM", "width=900, height=600")
+}
+
+function comprobanteElectronicoTicket(id) {
+    var url = '{{ route("ventas.documento.comprobante", ":id")}}';
+    url = url.replace(':id',id+'-80');    
+    window.open(url, "Comprobante SISCOM", "width=900, height=600");
+}
+
+function xmlElectronico(id) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger',
+        },
+        buttonsStyling: false
+    });
+
+    Swal.fire({
+        title: "Opción XML",
+        text: "¿Seguro que desea obtener el documento de venta en xml?",
+        showCancelButton: true,
+        icon: 'info',
+        confirmButtonColor: "#1ab394",
+        confirmButtonText: 'Si, Confirmar',
+        cancelButtonText: "No, Cancelar",
+        // showLoaderOnConfirm: true,
+    }).then((result) => {
+        if (result.value) {
+            
+            var url = '{{ route("ventas.documento.xml", ":id")}}';
+            url = url.replace(':id',id);
+
+            window.location.href = url
+
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            swalWithBootstrapButtons.fire(
+                'Cancelado',
+                'La Solicitud se ha cancelado.',
+                'error'
+            )
+        }
+    })
+
 }
 </script>
 @endpush

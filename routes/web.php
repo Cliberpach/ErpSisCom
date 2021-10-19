@@ -10,6 +10,7 @@ use App\Ventas\CuentaCliente;
 use App\Ventas\Documento\Detalle;
 use App\Ventas\Documento\Documento;
 use App\Ventas\NotaDetalle;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -407,7 +408,7 @@ function(){
 
     //NOTAS DE CREDITO / DEBITO
     Route::prefix('notas/electronicos')->group(function(){
-        Route::get('index/{id}', 'Ventas\Electronico\NotaController@index')->name('ventas.notas');
+        Route::get('index', 'Ventas\Electronico\NotaController@index')->name('ventas.notas');
         Route::get('create', 'Ventas\Electronico\NotaController@create')->name('ventas.notas.create');
         Route::post('store', 'Ventas\Electronico\NotaController@store')->name('ventas.notas.store');
         Route::get('getNotes/{id}','Ventas\Electronico\NotaController@getNotes')->name('ventas.getNotes');
@@ -479,11 +480,19 @@ function(){
         Route::post('proveedor','ImportExcelController@uploadproveedor')->name('ImportExcel.uploadproveedor');
     });
 
-    // Cosultas - Ventas - Documentosz
+    // Cosultas - Ventas - Documentos
     Route::prefix('consultas/ventas/documentos')->group(function(){
 
         Route::get('index', 'Consultas\Ventas\DocumentoController@index')->name('consultas.ventas.documento.index');
         Route::post('getTable','Consultas\Ventas\DocumentoController@getTable')->name('consultas.ventas.documento.getTable');
+
+    });
+
+    // Cosultas - Ventas - Documentos - NO
+    Route::prefix('consultas/ventas/documentos-no')->group(function(){
+
+        Route::get('index', 'Consultas\Ventas\NoEnviadosController@index')->name('consultas.ventas.documento.no.index');
+        Route::post('getTable','Consultas\Ventas\NoEnviadosController@getTable')->name('consultas.ventas.documento.no.getTable');
 
     });
 
@@ -574,6 +583,6 @@ function(){
 
 Route::get('ruta', function () {
     //https://www.oratlas.com/lector-online-de-texto
-    $movimiento = MovimientoCaja::find(1);
-    return cuadreMovimientoCajaIngresos($movimiento);
+    $dif = (int)(8-9);
+    return $dif;
 });

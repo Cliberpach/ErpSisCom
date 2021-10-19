@@ -79,8 +79,7 @@ class CuentaClienteController extends Controller
 
     public function detallePago(Request $request, $id)
     {
-        try{
-            DB::beginTransaction();
+        DB::beginTransaction();
             $CuentaCliente = CuentaCliente::findOrFail($id);
             if($request->pago == "A CUENTA")
             {
@@ -113,13 +112,13 @@ class CuentaClienteController extends Controller
                 }
             }
             else{
-                $cliente = $CuentaCliente->documento->cliente;
+                $cliente = $CuentaCliente->documento->clienteEntidad;
                 $cuentasFaltantes = CuentaCliente::where('estado','PENDIENTE')->get();
                 $cantidadRecibida = $request->cantidad;
                 $cantidadRecibidaEfectivo=$request->efectivo_venta;
                 $cantidadRecibidaImporte=$request->importe_venta;
                 foreach ($cuentasFaltantes as $key => $cuenta) {
-                    if($cuenta->documento->cliente->id == $cliente->id && $cantidadRecibida != 0)
+                    if($cliente->id == $cliente->id && $cantidadRecibida != 0)
                     {
                         $detallepago = new DetalleCuentaCliente();
                         $detallepago->mcaja_id = movimientoUser()->id;
@@ -138,44 +137,73 @@ class CuentaClienteController extends Controller
                             {
                                 $detallepago->efectivo = 0;
                                 $detallepago->importe = $cantidadRecibidaImporte;
+                                $detallepago->monto = $cantidadRecibida;
                                 $cuenta->saldo = $cuenta->saldo - $cantidadRecibida;
                                 $cantidadRecibidaImporte = 0;
+                                
+                                $cantidadRecibida = $cantidadRecibidaEfectivo + $cantidadRecibidaImporte;
                             }
                             else
                             {
                                 $detallepago->efectivo = $cantidadRecibidaEfectivo;
                                 $detallepago->importe = $cantidadRecibidaImporte;
-                                $cuenta->sald = $cuenta->saldo - $cantidadRecibida;
+                                $detallepago->monto = $cantidadRecibida;
+                                $cuenta->saldo = $cuenta->saldo - $cantidadRecibida;
                                 $cantidadRecibidaEfectivo = 0;
                                 $cantidadRecibidaImporte = 0;
+                                
+                                $cantidadRecibida = $cantidadRecibidaEfectivo + $cantidadRecibidaImporte;
                             }
                         }
                         else{
-                            // $detallepago->monto = $cuenta->saldo;
-                            // $cantidadRecibida = $cantidadRecibida - $cuenta->saldo;
-                            // $cuenta->saldo = 0;
                             if($cantidadRecibidaEfectivo == 0)
-                            {   $detallepago->efectivo  = 0;
+                            {   
+                                $importe = 0;
+                                if($cantidadRecibidaImporte > $cuenta->saldo)
+                                {
+                                    $importe = $cantidadRecibidaImporte - $cuenta->saldo;
+                                }else
+                                {
+                                    $importe = $cantidadRecibidaImporte;
+                                }
+
+                                $detallepago->efectivo  = $cantidadRecibidaEfectivo;
                                 $detallepago->importe = $cuenta->saldo;
-                                $cantidadRecibidaImporte = $cantidadRecibidaImporte - $cuenta->saldo;
+                                $detallepago->monto = $cuenta->saldo;
+                                $cantidadRecibidaImporte = $importe;
+                                $cantidadRecibida = $cantidadRecibidaEfectivo + $cantidadRecibidaImporte;
+                                $cuenta->saldo = 0;
                             }
                             else
                             {
-                                if($cuenta->saldo > $cantidadRecibidaEfectivo)
+                                if($cantidadRecibidaImporte == 0)
                                 {
-
-                                    $detallepago->efectivo = $cantidadRecibidaEfectivo;
-                                    $detallepago->importe = $cuenta->saldo - $detallepago->efectivo;
-                                    $cantidadRecibidaEfectivo = 0;
-                                    $cantidadRecibidaImporte = $cantidadRecibidaImporte - $detallepago->importe;
+                                    $efectivo = 0;
+                                    if($cantidadRecibidaEfectivo > $cuenta->saldo)
+                                    {
+                                        $efectivo = $cantidadRecibidaEfectivo - $cuenta->saldo;
+                                    }else
+                                    {
+                                        $efectivo = $cantidadRecibidaEfectivo;
+                                    }
+                                    $detallepago->efectivo  = $efectivo;
+                                    $detallepago->importe = $cantidadRecibidaImporte;
+                                    $detallepago->monto = $cuenta->saldo;
+                                    $cantidadRecibidaEfectivo = $cantidadRecibidaEfectivo - $efectivo;
+                                    
+                                    $cantidadRecibida = $cantidadRecibidaEfectivo + $cantidadRecibidaImporte;
                                 }
-                                else{
+                                else
+                                {
                                     $detallepago->efectivo = $cantidadRecibidaEfectivo;
-                                    $detallepago->importe = 0;
-                                    $cantidadRecibidaEfectivo = $cantidadRecibidaEfectivo-$cuenta->saldo;
+                                    $detallepago->importe = $cuenta->saldo - $cantidadRecibidaEfectivo;
+                                    $detallepago->monto = $detallepago->efectivo + $detallepago->importe;
+                                    $cantidadRecibidaImporte =  $cantidadRecibidaImporte - ($cuenta->saldo - $cantidadRecibidaEfectivo);                                    
+                                    $cantidadRecibidaEfectivo = 0;
+                                    $cantidadRecibida = $cantidadRecibidaEfectivo + $cantidadRecibidaImporte;
                                 }
                             }
-                            $cuenta->saldo=0;
+                            $cuenta->saldo = 0;
                         }
 
                         $detallepago->update();
@@ -199,13 +227,6 @@ class CuentaClienteController extends Controller
             DB::commit();
             Session::flash('success', 'Pago agregado correctamene');
             return redirect()->route('cuentaCliente.index');
-        }
-        catch(Exception $e)
-        {
-            DB::rollBack();
-            Session::flash('error', $e->getMessage());
-            return redirect()->route('cuentaCliente.index');
-        }
     }
 
     public function reporte($id)

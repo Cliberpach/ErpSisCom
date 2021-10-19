@@ -45,6 +45,8 @@ class DocumentoController extends Controller
 
         $documentos = Documento::where('estado','!=','ANULADO')->orderBy('id', 'desc')->get();
         $coleccion = collect([]);
+
+        $hoy = Carbon::now();
         foreach($documentos as $documento){
 
             $transferencia = 0.00;
@@ -66,9 +68,13 @@ class DocumentoController extends Controller
                 }
             }
 
+            $fecha_v = $documento->created_at;
+            $diff =  $fecha_v->diffInDays($hoy);
+
             $coleccion->push([
                 'id' => $documento->id,
                 'tipo_venta' => $documento->nombreTipo(),
+                'tipo_venta_id' => $documento->tipo_venta,
                 'tipo_pago' => $documento->tipo_pago,
                 'numero_doc' =>  $documento->serie.'-'.$documento->correlativo,
                 'serie' => $documento->serie,
@@ -83,6 +89,7 @@ class DocumentoController extends Controller
                 'efectivo' => 'S/. '.number_format($efectivo, 2, '.', ''),
                 'transferencia' => 'S/. '.number_format($transferencia, 2, '.', ''),
                 'total' => 'S/. '.number_format($documento->total, 2, '.', ''),
+                'dias' => (int)(7 - $diff < 0 ? 0  : 7 - $diff)
             ]);
         }
 

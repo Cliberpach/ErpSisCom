@@ -50,6 +50,7 @@ class DocumentoController extends Controller
             $coleccion->push([
                 'id' => $documento->id,
                 'tipo_venta' => $documento->nombreTipo(),
+                'tipo_venta_id' => $documento->tipo_venta,
                 'forma_pago' => $documento->formaPago(),
                 'cliente' => $documento->clienteEntidad->nombre,
                 'tipo_pago' => $documento->tipo_pago,

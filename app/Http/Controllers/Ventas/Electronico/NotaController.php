@@ -24,10 +24,19 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class NotaController extends Controller
 {
-    public function index($id)
+    public function index(Request $request)
     {
-        $documento = Documento::find($id);
+        return $request;
+        if($request->nota_venta)
+        {
+            $documento = Documento::find($request->id);
+            $nota_venta = true;
+            return view('ventas.notas.index',compact('documento','nota_venta'));
+        }
+
+        $documento = Documento::find($request->id);
         return view('ventas.notas.index',compact('documento'));
+        
     }
 
     public function getNotes($id)
@@ -71,6 +80,28 @@ class NotaController extends Controller
             ]);
         }
     }
+
+    public function create_dev(Request $request)
+    {
+        $documento = Documento::findOrFail($request->documento_id);
+        $fecha_hoy = Carbon::now()->toDateString();
+        $productos = Producto::where('estado', 'ACTIVO')->get();
+        //NOTAS
+        //CREDITO -> 0
+        //DEBITO -> 1
+        $nota_venta = 1;
+        if($request->nota === '0')
+        {
+            return view('ventas.notas.credito.create',[
+                'documento' => $documento,
+                'fecha_hoy' => $fecha_hoy,
+                'productos' => $productos,
+                'nota_venta' => $nota_venta,
+                'tipo_nota' => '0'
+            ]);
+        }
+    }
+
 
     public function getDetalles($id)
     {

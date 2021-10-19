@@ -57,7 +57,7 @@ class CreateCotizacionDocumentoTable extends Migration
             $table->unsignedInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->mediumText('observacion')->nullable();
-            $table->enum('estado',['VIGENTE','PENDIENTE','ADELANTO','CONCRETADA','ANULADO','PAGADA'])->default('VIGENTE');
+            $table->enum('estado',['VIGENTE','PENDIENTE','ADELANTO','CONCRETADA','ANULADO','PAGADA','DEVUELTO'])->default('VIGENTE');
 
             $table->enum('sunat',['0','1','2'])->default('0');
             $table->enum('envio_sunat',['0','1'])->default('0');
@@ -66,10 +66,6 @@ class CreateCotizacionDocumentoTable extends Migration
 
             $table->string('ruta_comprobante_archivo')->nullable();
             $table->string('nombre_comprobante_archivo')->nullable();
-
-
-
-
             $table->timestamps();
         });
     }

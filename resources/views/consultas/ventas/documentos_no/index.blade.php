@@ -1,10 +1,11 @@
 @extends('layout') @section('content')
 
-@section('ventas-active', 'active')
-@section('documento-active', 'active')
+@section('consulta-active', 'active')
+@section('consulta-ventas-active', 'active')
+@section('consulta-ventas-documento-no-active', 'active')
 
 <div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-lg-10 col-md-10">
+    <div class="col-lg-12 col-md-12">
        <h2  style="text-transform:uppercase"><b>Listado de Documentos de Venta</b></h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -15,24 +16,36 @@
             </li>
         </ol>
     </div>
-    <div class="col-lg-2 col-md-2">
-        <a class="btn btn-block btn-w-m btn-primary m-t-md" href="{{route('ventas.documento.create')}}">
-            <i class="fa fa-plus-square"></i> Añadir nuevo
-        </a>
-    </div>
-</div>
-
-<div>
-    <a id="nueva_ventana" class="d-none" target="_blank"></a>
 </div>
 
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
+        <div class="col-12">
+            <div class="row align-items-end">
+                <div class="col-12 col-md-5">
+                    <div class="form-group">
+                        <label for="fecha_desde">Fecha desde</label>
+                        <input type="date" id="fecha_desde" class="form-control">
+                    </div>
+                </div>
+                <div class="col-12 col-md-5">
+                    <div class="form-group">
+                        <label for="fecha_desde">Fecha hasta</label>
+                        <input type="date" id="fecha_hasta" class="form-control">
+                    </div>
+                </div>
+                <div class="col-12 col-md-2">
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-block" onclick="initTable()"><i class="fa fa-refresh"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-content">
                     <div class="table-responsive">
-                        <table class="table dataTables-documento table-striped table-bordered table-hover" style="text-transform:uppercase">
+                        <table class="table dataTables-orden table-striped table-bordered table-hover" style="text-transform:uppercase">
                             <thead>
                                 <tr>
                                     
@@ -129,9 +142,81 @@
 
 <script>
 $(document).ready(function() {
-
+    var ventas = [];
     // DataTables
-    $('.dataTables-documento').DataTable({
+    initTable();
+
+    tablaDatos = $('.dataTables-enviados').DataTable();
+
+});
+
+function initTable()
+{
+    let verificar = true;
+    var fecha_desde = $('#fecha_desde').val();
+    var fecha_hasta = $('#fecha_hasta').val();
+    if (fecha_desde !== '' && fecha_desde !== null && fecha_hasta == '') {
+        verificar = false;
+        toastr.error('Ingresar fecha hasta');
+    }
+
+    if (fecha_hasta !== '' && fecha_hasta !== null && fecha_desde == '') {
+        verificar = false;
+        toastr.error('Ingresar fecha desde');
+    }
+
+    if (fecha_desde > fecha_hasta && fecha_hasta !== '' && fecha_desde !== '') {
+        verificar = false;
+        toastr.error('Fecha desde debe ser menor que fecha hasta');
+    }
+
+    if(verificar)
+    {
+        let timerInterval;
+        Swal.fire({
+            title: 'Cargando...',
+            icon: 'info',
+            customClass: {
+                container: 'my-swal'
+            },
+            timer: 10,
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+                Swal.stopTimer();
+                $.ajax({
+                    dataType : 'json',
+                    type : 'post',
+                    url : '{{ route('consultas.ventas.documento.no.getTable') }}',
+                    data : {'_token' : $('input[name=_token]').val(), 'fecha_desde' : fecha_desde, 'fecha_hasta' : fecha_hasta},
+                    success: function(response) {
+                        if (response.success) {
+                            ventas = [];
+                            ventas = response.ventas;
+                            loadTable();
+                            timerInterval = 0;
+                            Swal.resumeTimer();
+                            //console.log(colaboradores);
+                        } else {
+                            Swal.resumeTimer();
+                            ventas = [];
+                            loadTable();
+                        }
+                    }
+                });
+            },
+            willClose: () => {
+                clearInterval(timerInterval)
+            }
+        });
+    }
+    return false;
+}
+
+function loadTable()
+{
+    $('.dataTables-orden').dataTable().fnDestroy();
+    $('.dataTables-orden').DataTable({
         "dom": '<"html5buttons"B>lTfgitp',
         "buttons": [{
                 extend: 'excelHtml5',
@@ -158,7 +243,7 @@ $(document).ready(function() {
         "bInfo": true,
         "bAutoWidth": false,
         "processing": true,
-        "ajax": "{{ route('ventas.getDocument')}}",
+        "data": ventas,
         "columns": [
             //DOCUMENTO DE VENTA
             {
@@ -238,10 +323,6 @@ $(document).ready(function() {
                         case "ADELANTO":
                             return "<span class='badge badge-success' d-block>" + data.estado +
                                 "</span>";
-                            break;                        
-                        case "DEVUELTO":
-                            return "<span class='badge badge-warning' d-block>" + data.estado +
-                                "</span>";
                             break;
                         default:
                             return "<span class='badge badge-success' d-block>" + data.estado +
@@ -283,11 +364,8 @@ $(document).ready(function() {
                     var url_detalle = '{{ route("ventas.documento.show", ":id")}}';
                     url_detalle = url_detalle.replace(':id', data.id);
 
-                    var url_nota = '{{ route("ventas.notas", array("id" => ":id")) }}';
+                    var url_nota = '{{ route("ventas.notas", ":id")}}';
                     url_nota = url_nota.replace(':id', data.id);
-
-                    var url_devolucion = '{{ route("ventas.notas", array("id" => ":id", "nota_venta" => 1))}}';
-                    url_devolucion = url_devolucion.replace(':id', data.id);
 
                     let cadena = "";
 
@@ -300,13 +378,7 @@ $(document).ready(function() {
                     {
                         cadena = cadena  +
                         "<button type='button' class='btn btn-sm btn-info m-1' onclick='guia(" +data.id+ ")'  title='Guia Remisión'><i class='fa fa-file'></i> Guia</button>"
-                        + "<a class='btn btn-sm btn-warning m-1 d-none' href='"+ url_nota +"'  title='Notas'><i class='fa fa-file-o'></i> Notas</a>" ;
-                    }
-
-                    if(data.tipo_venta_id == 129)
-                    {
-                        cadena = cadena
-                        + "<a class='btn btn-sm btn-warning m-1 d-none' href='"+ url_devolucion +"'  title='Devoluciones'><i class='fa fa-file-o'></i> Devoluciones</a>" ;
+                        + "<a class='btn btn-sm btn-warning m-1' href='"+ url_nota +"'  title='Notas'><i class='fa fa-file-o'></i> Notas</a>" ;
                     }
 
                     if(data.sunat === '2')
@@ -321,29 +393,16 @@ $(document).ready(function() {
             }
 
         ],
-        "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-            if (aData.sunat == 0 && aData.tipo_venta_id != 129) {
-                $('td', nRow).css('background-color', '#D6EAF8');
-                // $('td', nRow).css('color', '#2980B9');
-                // $('td', nRow).css('font-weight', 'bold');
-            }
-            if (aData.sunat == 1 && aData.tipo_venta_id != 129) {
-                $('td', nRow).css('background-color', '#D1F2EB');
-                // $('td', nRow).css('color', '#2980B9');
-                // $('td', nRow).css('font-weight', 'bold');
-            }
-        },
         "language": {
             "url": "{{asset('Spanish.json')}}"
         },
         "order": [],
     });
-    tablaDatos = $('.dataTables-enviados').DataTable();
+    return false;
+}
 
-});
-
-$(".dataTables-documento").on('click','.btn-pdf',function(){
-    var data = $(".dataTables-documento").dataTable().fnGetData($(this).closest('tr'));
+$(".dataTables-orden").on('click','.btn-pdf',function(){
+    var data = $(".dataTables-orden").dataTable().fnGetData($(this).closest('tr'));
     let fn_pdf = 'comprobanteElectronico(' + data.id + ')';
     let fn_ticket = 'comprobanteElectronicoTicket(' + data.id + ')';
     $('.descarga-title').html(data.serie + '-' + data.correlativo);
@@ -351,48 +410,6 @@ $(".dataTables-documento").on('click','.btn-pdf',function(){
     $('.file-ticket').attr('onclick',fn_ticket);
     $('#modal_descargas_pdf').modal('show');
 });
-
-//Controlar Error
-$.fn.DataTable.ext.errMode = 'throw';
-
-const swalWithBootstrapButtons = Swal.mixin({
-    customClass: {
-        confirmButton: 'btn btn-success',
-        cancelButton: 'btn btn-danger',
-    },
-    buttonsStyling: false
-})
-
-
-function eliminar(id) {
-
-    Swal.fire({
-        title: 'Opción Eliminar',
-        text: "¿Seguro que desea guardar cambios?",
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: "#1ab394",
-        confirmButtonText: 'Si, Confirmar',
-        cancelButtonText: "No, Cancelar",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            //Ruta Eliminar
-            var url_eliminar = '{{ route("ventas.documento.destroy", ":id")}}';
-            url_eliminar = url_eliminar.replace(':id', id);
-            $(location).attr('href', url_eliminar);
-
-        } else if (
-            /* Read more about handling dismissals below */
-            result.dismiss === Swal.DismissReason.cancel
-        ) {
-            swalWithBootstrapButtons.fire(
-                'Cancelado',
-                'La Solicitud se ha cancelado.',
-                'error'
-            )
-        }
-    })
-}
 
 function modificar(cotizacion,id) {
     if (cotizacion) {
@@ -464,16 +481,6 @@ function xmlElectronico(id) {
             url = url.replace(':id',id);
 
             window.location.href = url
-
-            // Swal.fire({
-            //     title: '¡Cargando!',
-            //     type: 'info',
-            //     text: 'Generando XML',
-            //     showConfirmButton: false,
-            //     onBeforeOpen: () => {
-            //         Swal.showLoading()
-            //     }
-            // })
 
         } else if (
             /* Read more about handling dismissals below */
@@ -589,17 +596,5 @@ function enviarSunat(id , sunat) {
     })
 @endif
 
-@if(Session::has('documento_id'))
-    let doc = '{{ Session::get("documento_id")}}';
-    let id = doc+'-100';
-
-    console.log(id);
-
-    var url = '{{ route("ventas.documento.comprobante", ":id")}}';
-    url = url.replace(':id', id);
-    // $('#nueva_ventana').attr('href',url);
-    // document.getElementById('nueva_ventana').click;
-    window.open(url, "Comprobante SISCOM", "width=900, height=600")
-@endif
 </script>
 @endpush
