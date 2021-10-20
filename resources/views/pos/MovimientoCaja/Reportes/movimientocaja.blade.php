@@ -250,7 +250,7 @@
                 <tr>
                     <td style="padding-left: 5px;">Colaborador</td>
                     <td>:</td>
-                    <td>{{ $movimiento->Colaborador->persona->apellido_paterno . ' ' . $movimiento->Colaborador->persona->apellido_materno . ' ' . $movimiento->Colaborador->persona->nombres }}
+                    <td>{{ $movimiento->colaborador->persona->apellido_paterno . ' ' . $movimiento->colaborador->persona->apellido_materno . ' ' . $movimiento->Colaborador->persona->nombres }}
                     </td>
                     {{-- <td>{{ getFechaFormato( $documento->fecha_documento ,'d/m/Y')}}</td> --}}
                 </tr>
@@ -291,7 +291,7 @@
                             <td style="text-align: center; border-right: 2px solid #52BE80">
                                 {{ $ventas->documento->nombreDocumento() }}</td>
                             <td style="text-align: center; border-right: 2px solid #52BE80">
-                                {{ $ventas->documento->serie }}</td>
+                                {{ $ventas->documento->serie.'-'.$ventas->documento->correlativo }}</td>
                             <td style="text-align: center; border-right: 2px solid #52BE80">
                                 {{ $ventas->documento->clienteEntidad->nombre }}</td>
                             <td style="text-align: center; border-right: 2px solid #52BE80">
@@ -315,15 +315,13 @@
                                 <td style="text-align: center; border-right: 2px solid #52BE80">
                                     {{ $ventas->documento->efectivo }}</td>
                             @endif
-
-
                         </tr>
                     @else
                         @foreach ($ventas->documento->cuenta->detalles as $cuentaCliente)
                             <td style="text-align: center; border-right: 2px solid #52BE80">
                                 {{ $ventas->documento->nombreDocumento() }}</td>
                             <td style="text-align: center; border-right: 2px solid #52BE80">
-                                {{ $ventas->documento->serie }}</td>
+                                {{ $ventas->documento->serie.'-'.$ventas->documento->correlativo }}</td>
                             <td style="text-align: center; border-right: 2px solid #52BE80">
                                 {{ $ventas->documento->clienteEntidad->nombre }}</td>
                             <td style="text-align: center; border-right: 2px solid #52BE80">
@@ -440,7 +438,7 @@
                                 <p class="m-0 p-0">Monto INICIAL:</p>
                             </td>
                             <td style="text-align:right; padding: 5px;">
-                                <p class="p-0 m-0">{{ $movimiento->monto_inicial }}</p>
+                                <p class="p-0 m-0">{{ number_format($movimiento->monto_inicial, 2) }}</p>
                             </td>
                         </tr>
                         <tr>
@@ -448,7 +446,7 @@
                                 <p class="p-0 m-0">Ingresos:</p>
                             </td>
                             <td style="text-align:right; padding: 5px;">
-                                <p class="p-0 m-0">{{ cuadreMovimientoCajaIngresos($movimiento) }}</p>
+                                <p class="p-0 m-0">{{ number_format(cuadreMovimientoCajaIngresos($movimiento), 2) }}</p>
                             </td>
                         </tr>
                         <tr>
@@ -456,7 +454,7 @@
                                 <p class="p-0 m-0">Egresos:</p>
                             </td>
                             <td style="text-align:right; padding: 5px;">
-                                <p class="p-0 m-0">{{ cuadreMovimientoCajaEgresos($movimiento) }}</p>
+                                <p class="p-0 m-0">{{ number_format(cuadreMovimientoCajaEgresos($movimiento), 2) }}</p>
                             </td>
                         </tr>
                         <tr>
@@ -465,7 +463,7 @@
                             </td>
                             <td style="text-align:right; padding: 5px;">
                                 <p class="p-0 m-0">
-                                    {{ $movimiento->monto_inicial + cuadreMovimientoCajaIngresos($movimiento) - cuadreMovimientoCajaEgresos($movimiento) }}
+                                    {{ number_format($movimiento->monto_inicial + cuadreMovimientoCajaIngresos($movimiento) - cuadreMovimientoCajaEgresos($movimiento), 2) }}
                                 </p>
                             </td>
                         </tr>

@@ -50,8 +50,8 @@
                                 <tr>
                                     
                                     <th colspan="2" class="text-center"></th>
-                                    <th colspan="6" class="text-center">DOCUMENTO DE VENTA</th>
-                                    <th colspan="2" class="text-center">FORMAS DE PAGO</th>
+                                    <th colspan="5" class="text-center">DOCUMENTO DE VENTA</th>
+                                    <th colspan="3" class="text-center">FORMAS DE PAGO</th>
                                     <th colspan="4" class="text-center"></th>
 
                                 </tr>
@@ -245,13 +245,11 @@ function loadTable()
         "processing": true,
         "data": ventas,
         "columns": [
-            //DOCUMENTO DE VENTA
             {
                 data: 'cotizacion_venta',
                 className: "text-center letrapequeña",
                 visible: false
             },
-
             {
                 data: null,
                 className: "text-center letrapequeña",
@@ -264,27 +262,22 @@ function loadTable()
                 }
                 
             },
-
             {
                 data: 'numero_doc',
                 className: "text-center letrapequeña",
             },
-
             {
                 data: 'fecha_documento',
                 className: "text-center letrapequeña"
-            },
-            
+            },            
             {
                 data: 'tipo_venta',
                 className: "text-center letrapequeña",
             },
-
             {
                 data: 'cliente',
                 className: "text-left letrapequeña"
             },
-
             {
                 data: 'total',
                 className: "text-center letrapequeña"
@@ -293,7 +286,6 @@ function loadTable()
                 data: 'transferencia',
                 className: "text-center letrapequeña"
             },
-
             {
                 data: 'otros',
                 className: "text-center letrapequeña"
@@ -330,7 +322,6 @@ function loadTable()
                     }
                 },
             },
-
             {
                 data: null,
                 className: "text-center letrapequeña",
@@ -354,34 +345,33 @@ function loadTable()
                     return "<button class='btn btn-info btn-pdf mb-1' title='Detalle'>PDF</button>" +
                         "<button class='btn btn-info' onclick='xmlElectronico(" +data.id+ ")' title='Detalle'>XML</button>"
                 }
-            },
-            
+            },            
             {
                 data: null,
                 className: "text-center letrapequeña",
                 render: function(data) {
                     //Ruta Detalle
-                    var url_detalle = '{{ route("ventas.documento.show", ":id")}}';
-                    url_detalle = url_detalle.replace(':id', data.id);
+                    var url_edit = '{{ route("consultas.ventas.documento.no.edit", ":id")}}';
+                    url_edit = url_edit.replace(':id', data.id);
 
                     var url_nota = '{{ route("ventas.notas", ":id")}}';
                     url_nota = url_nota.replace(':id', data.id);
 
-                    let cadena = "";
+                    let cadena = "<a href='"+url_edit+"'  class='btn btn-sm btn-secondary m-1 btn-rounded d-none'  title='Editar'><i class='fa fa-pencil'></i> Editar</a>";
 
                     if(data.sunat === '0' && data.dias > 0 && data.tipo_venta_id != 129)
                     {
-                        cadena = cadena + "<button type='button' class='btn btn-sm btn-success m-1' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><i class='fa fa-send'></i> Sunat</button>";
+                        cadena = cadena + "<button type='button' class='btn btn-sm btn-success m-1 d-none' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><i class='fa fa-send'></i> Sunat</button>";
                     }
                     
-                    if(data.sunat === '1')
+                    if(data.sunat == '1')
                     {
                         cadena = cadena  +
-                        "<button type='button' class='btn btn-sm btn-info m-1' onclick='guia(" +data.id+ ")'  title='Guia Remisión'><i class='fa fa-file'></i> Guia</button>"
-                        + "<a class='btn btn-sm btn-warning m-1' href='"+ url_nota +"'  title='Notas'><i class='fa fa-file-o'></i> Notas</a>" ;
+                        "<button type='button' class='btn btn-sm btn-info m-1 d-none' onclick='guia(" +data.id+ ")'  title='Guia Remisión'><i class='fa fa-file'></i> Guia</button>"
+                        + "<a class='btn btn-sm btn-warning m-1 d-none' href='"+ url_nota +"'  title='Notas'><i class='fa fa-file-o'></i> Notas</a>" ;
                     }
 
-                    if(data.sunat === '2')
+                    if(data.sunat == '2')
                     {
                         cadena = cadena +                        
                         "<button type='button' class='btn btn-sm btn-danger m-1 d-none' onclick='eliminar(" + data.id + ")' title='Eliminar'><i class='fa fa-trash'></i> Eliminar</button>";

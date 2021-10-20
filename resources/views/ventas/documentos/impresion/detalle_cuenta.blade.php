@@ -212,6 +212,7 @@
                 </div>
             </div>
         </div><br>
+        @if($empresa->condicion == 1)
         <div class="logos-empresas">
             <div class="logo-empresa">
                 <img src="{{ public_path() . '/img/cifarelli_1.jpg' }}" class="img-logo">
@@ -221,7 +222,7 @@
             </div>
             <div class="logo-empresa">
                 <img src="{{ public_path() . '/img/motosierra.jpg' }}" class="img-logo">
-            </div>            
+            </div>
             <div class="logo-empresa">
                 <img src="{{ public_path() . '/img/mochila.jpg' }}" class="img-logo">
             </div>
@@ -235,6 +236,7 @@
                 <img src="{{ public_path() . '/img/llaves.jpg' }}" class="img-logo">
             </div>
         </div><br>
+        @endif
         <div class="informacion">
             <table class="tbl-informacion">
                 <tbody style="padding-top: 5px; padding-bottom: 5px;">

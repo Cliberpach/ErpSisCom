@@ -487,7 +487,7 @@
                                                             id="producto_id" onchange="cargarPresentacion(this)">
                                                             <option></option>
                                                             @foreach ($productos as $producto)
-                                                            <option value="{{$producto->id}}">{{$producto->nombre}}
+                                                            <option value="{{$producto->id}}">{{$producto->nombre}} - {{$producto->codigo_barra}}
                                                             </option>
                                                             @endforeach
                                                         </select>

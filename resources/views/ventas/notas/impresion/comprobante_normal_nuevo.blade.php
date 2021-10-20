@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>NOTA DE CRÉDITO</title>
+        <title>@if(isset($nota_venta)) NOTA DE DEVOLUCIÓN @else NOTA DE CRÉDITO @endif</title>
         <link rel="icon" href="{{ base_path() . '/img/siscom.ico' }}" />
         <style>
             body {
@@ -205,13 +205,14 @@
                     <div class="numero-documento">
                         <p class="m-0 p-0 text-uppercase ruc-empresa">RUC {{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->ruc }}</p>
                         <div class="nombre-documento">
-                            <p class="m-0 p-0 text-uppercase">NOTA DE CRÉDITO ELECTRÓNICA</p>
+                            <p class="m-0 p-0 text-uppercase">@if(isset($nota_venta)) NOTA DE DEVOLUCIÓN @else NOTA DE CRÉDITO ELECTRÓNICA @endif</p>
                         </div>
-                        <p class="m-0 p-0 text-uppercase">{{$nota->serie.'-'.$nota->correlativo}}</p>
+                        <p class="m-0 p-0 text-uppercase">@if(isset($nota_venta)){{'NOTA-'.$nota->id}}@else{{$nota->serie.'-'.$nota->correlativo}}@endif</p>
                     </div>
                 </div>
             </div>
         </div><br>
+        @if($empresa->condicion == 1)
         <div class="logos-empresas">
             <div class="logo-empresa">
                 <img src="{{ public_path() . '/img/cifarelli_1.jpg' }}" class="img-logo">
@@ -235,6 +236,7 @@
                 <img src="{{ public_path() . '/img/llaves.jpg' }}" class="img-logo">
             </div>
         </div><br>
+        @endif
         <div class="informacion">
             <table class="tbl-informacion">
                 <tbody style="padding-top: 5px; padding-bottom: 5px;">
@@ -251,7 +253,7 @@
                     <tr>
                         <td style="padding-left: 5px;">Tipo Doc. Ref.</td>
                         <td>:</td>
-                        <td>{{ $nota->tipDocAfectado === '03' ? 'BOLETA' : 'FACTURA' }}</td>
+                        <td>@if(isset($nota_venta)) NOTA VENTA @else{{ $nota->tipDocAfectado === '03' ? 'BOLETA' : 'FACTURA' }}@endif</td>
                     </tr>
                     <tr>
                         <td style="padding-left: 5px;">Tipo moneda</td>
@@ -327,6 +329,7 @@
                     </td>
                     <td style="width: 40%;font-size: 14px">
                         <table class="tbl-total text-uppercase">
+                            @if($nota->documento->tipo_venta != 129)
                             <tr>
                                 <td style="text-align:left; padding: 5px;"><p class="m-0 p-0">Sub Total: S/.</p></td>
                                 <td style="text-align:right; padding: 5px;"><p class="p-0 m-0">{{ number_format($nota->mtoOperGravadas, 2) }}</p></td>
@@ -335,6 +338,7 @@
                                 <td style="text-align:left; padding: 5px;"><p class="p-0 m-0">IGV {{$nota->documento->igv }}%: S/.</p></td>
                                 <td style="text-align:right; padding: 5px;"><p class="p-0 m-0">{{ number_format($nota->mtoIGV, 2) }}</p></td>
                             </tr>
+                            @endif
                             <tr>
                                 <td style="text-align:left; padding: 5px;"><p class="p-0 m-0">Total a pagar: S/.</p></td>
                                 <td style="text-align:right; padding: 5px;"><p class="p-0 m-0">{{ number_format($nota->mtoImpVenta, 2) }}</p></td>

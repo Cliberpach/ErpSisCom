@@ -4,13 +4,13 @@
 @section('documento-active', 'active')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-12 col-md-8">
-       <h2  style="text-transform:uppercase"><b>Listado de Notas de Credito / Debito</b></h2>
+       <h2  style="text-transform:uppercase"><b>Listado de Notas de @if(isset($nota_venta)) Devoluciones @else Credito / Debito @endif</b></h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('home')}}">Panel de Control</a>
             </li>
             <li class="breadcrumb-item active">
-                <strong>Notas de credito y debito</strong>
+                <strong>Notas de @if(isset($nota_venta)) devoluciones @else credito / debito @endif</strong>
             </li>
         </ol>
     </div>
@@ -24,6 +24,11 @@
        @if($documento->sunat === '1' && docValido($documento->id))
         <a href="{{ route('ventas.notas.create', array('documento_id' => $documento->id, 'nota' => '0')) }}" class="btn btn-block btn-w-m btn-primary m-t-md">
             <i class="fa fa-plus-square"></i> Nota de crédito
+        </a>
+       @endif
+       @if($documento->tipo_venta === '129' && docValido($documento->id))
+        <a href="{{ route('ventas.notas.create', array('documento_id' => $documento->id, 'nota' => '0','nota_venta' => 1)) }}" class="btn btn-block btn-w-m btn-primary m-t-md">
+            <i class="fa fa-plus-square"></i> Nota
         </a>
        @endif
     </div>
@@ -243,18 +248,38 @@
                     className: "text-center",
                     render: function(data) {
                         //Ruta Detalle
-                        var url_detalle = '{{ route("ventas.documento.show", ":id")}}';
+
+                        let url_detalle = '{{ route("ventas.notas_dev.show", ":id")}}'
+                        if(data.tipo_venta != 129){
+                            url_detalle = '{{ route("ventas.notas.show", ":id")}}';
+                        }
+
                         url_detalle = url_detalle.replace(':id', data.id);
 
-                        return "<div class='btn-group' style='text-transform:capitalize;'><button data-toggle='dropdown' class='btn btn-primary btn-sm  dropdown-toggle'><i class='fa fa-bars'></i></button><ul class='dropdown-menu'>" +
-                        
-                            "<li><a class='dropdown-item' target='_blank' onclick='detalle(" +data.id+ ")' title='Detalle'><b><i class='fa fa-eye'></i> Detalle</a></b></li>" +
-                            "<li><a class='dropdown-item' onclick='eliminar(" + data.id + ")' title='Eliminar'><b><i class='fa fa-trash'></i> Eliminar</a></b></li>" +
+                        let cadena = "<div class='btn-group' style='text-transform:capitalize;'><button data-toggle='dropdown' class='btn btn-primary btn-sm  dropdown-toggle'><i class='fa fa-bars'></i></button><ul class='dropdown-menu'>" ;
+
+                        if(data.tipo_venta != 129)
+                        {
+                            cadena = cadena +
+                            "<li><a class='dropdown-item' target='_blank' onclick='detalle(" +data.id+ ")' title='Detalle'><b><i class='fa fa-eye'></i> Detalle</a></b></li>";
+                        }
+                        else
+                        {
+                            cadena = cadena +
+                            "<li><a class='dropdown-item' target='_blank' onclick='detalle_dev(" +data.id+ ")' title='Detalle'><b><i class='fa fa-eye'></i> Detalle</a></b></li>";
+                        }
+
+                        if(data.tipo_venta != 129) 
+                        {
+                            cadena = cadena + "<li class='d-none'><a class='dropdown-item' onclick='eliminar(" + data.id + ")' title='Eliminar'><b><i class='fa fa-trash'></i> Eliminar</a></b></li>" + 
                             "<li class='dropdown-divider'></li>" +
-                            "<li><a class='dropdown-item' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-file'></i> Enviar Sunat</a></b></li>" +
+                            "<li><a class='dropdown-item' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><b><i class='fa fa-file'></i> Enviar Sunat</a></b></li>";
+                        }
                         
                             
-                        "</ul></div>"
+                        cadena = cadena + "</ul></div>";
+
+                        return cadena;
                     }
                 }
 
@@ -285,6 +310,12 @@
     function detalle(id) {
 
         var url = '{{ route("ventas.notas.show", ":id")}}';
+        url = url.replace(':id',id);
+        window.open(url, "Comprobante SISCOM", "width=900, height=600")
+    }
+
+    function detalle_dev(id) {
+        var url = '{{ route("ventas.notas_dev.show", ":id")}}';
         url = url.replace(':id',id);
         window.open(url, "Comprobante SISCOM", "width=900, height=600")
     }

@@ -3,11 +3,8 @@
 namespace App\Compras\Documento;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Compras\Documento\Detalle;
-use App\Compras\Articulo;
 use App\Compras\CuentaProveedor;
 use App\Mantenimiento\Tabla\Detalle as TablaDetalle;
-use App\Movimientos\MovimientoAlmacen;
 
 class Documento extends Model
 {
@@ -46,10 +43,12 @@ class Documento extends Model
     {
         return $this->belongsTo('App\Mantenimiento\Empresa\Empresa');
     }
+
     public function proveedor()
     {
         return $this->belongsTo('App\Compras\Proveedor');
     }
+
     public function usuario()
     {
         return $this->belongsTo('App\User','usuario_id');
@@ -73,9 +72,7 @@ class Documento extends Model
             {
                 $cuenta_proveedor = new CuentaProveedor();
                 $cuenta_proveedor->compra_documento_id = $documento->id;
-                // $cuenta_proveedor->numero_doc = $documento->numero_doc;
                 $cuenta_proveedor->fecha_doc = $documento->fecha_emision;
-                // $cuenta_proveedor->monto = $documento->total;
                 $cuenta_proveedor->saldo = $documento->total;
                 $cuenta_proveedor->acta = 'DOCUMENTO COMPRA';
                 $cuenta_proveedor->save();
@@ -85,12 +82,12 @@ class Documento extends Model
         static::updated(function(Documento $documento){
             if($documento->cuenta)
             {
-                $cuenta_proveedor = $documento->cuenta;
+                $cuenta_proveedor = CuentaProveedor::find($documento->cuenta->id);
                 $cuenta_proveedor->compra_documento_id = $documento->id;
                 $cuenta_proveedor->fecha_doc = $documento->fecha_emision;
                 $cuenta_proveedor->saldo = $documento->total;
                 $cuenta_proveedor->acta = 'DOCUMENTO COMPRA';
-                $cuenta_proveedor->upadate();                
+                $cuenta_proveedor->update();                
             }
             else
             {

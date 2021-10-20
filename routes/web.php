@@ -408,12 +408,14 @@ function(){
 
     //NOTAS DE CREDITO / DEBITO
     Route::prefix('notas/electronicos')->group(function(){
-        Route::get('index', 'Ventas\Electronico\NotaController@index')->name('ventas.notas');
+        Route::get('index/{id}', 'Ventas\Electronico\NotaController@index')->name('ventas.notas');
+        Route::get('index_dev/{id}', 'Ventas\Electronico\NotaController@index_dev')->name('ventas.notas_dev');
         Route::get('create', 'Ventas\Electronico\NotaController@create')->name('ventas.notas.create');
         Route::post('store', 'Ventas\Electronico\NotaController@store')->name('ventas.notas.store');
         Route::get('getNotes/{id}','Ventas\Electronico\NotaController@getNotes')->name('ventas.getNotes');
         Route::get('getDetalles/{id}','Ventas\Electronico\NotaController@getDetalles')->name('ventas.getDetalles');
         Route::get('show/{id}','Ventas\Electronico\NotaController@show')->name('ventas.notas.show');
+        Route::get('show_dev/{id}','Ventas\Electronico\NotaController@show_dev')->name('ventas.notas_dev.show');
         Route::get('sunat/{id}','Ventas\Electronico\NotaController@sunat')->name('ventas.notas.sunat');
     });
 
@@ -493,6 +495,16 @@ function(){
 
         Route::get('index', 'Consultas\Ventas\NoEnviadosController@index')->name('consultas.ventas.documento.no.index');
         Route::post('getTable','Consultas\Ventas\NoEnviadosController@getTable')->name('consultas.ventas.documento.no.getTable');
+        Route::get('edit/{id}','Consultas\Ventas\NoEnviadosController@edit')->name('consultas.ventas.documento.no.edit');
+        Route::post('update/{id}','Consultas\Ventas\NoEnviadosController@update')->name('consultas.ventas.documento.no.update');
+
+        Route::get('getLot','Consultas\Ventas\NoEnviadosController@getLot')->name('consultas.ventas.documento.no.getLot');
+        Route::post('cantidad/', 'Consultas\Ventas\NoEnviadosController@quantity')->name('consultas.ventas.documento.no.cantidad');
+        Route::post('devolver/cantidad', 'Consultas\Ventas\NoEnviadosController@returnQuantity')->name('consultas.ventas.documento.no.devolver.cantidades');
+        Route::post('devolver/cantidadedit', 'Consultas\Ventas\NoEnviadosController@returnQuantityEdit')->name('consultas.ventas.documento.no.devolver.cantidadesedit');
+        Route::post('devolver/lotesinicio', 'Consultas\Ventas\NoEnviadosController@returnQuantityLoteInicio')->name('consultas.ventas.documento.no.devolver.lotesinicio');
+        Route::post('obtener/lote', 'Consultas\Ventas\NoEnviadosController@returnLote')->name('consultas.ventas.documento.no.obtener.lote');
+        Route::post('update/lote', 'Consultas\Ventas\NoEnviadosController@updateLote')->name('consultas.ventas.documento.no.update.lote');
 
     });
 

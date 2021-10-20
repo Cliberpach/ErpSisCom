@@ -296,7 +296,7 @@
                                                     id="producto_id">
                                                     <option></option>
                                                     @foreach ($productos as $producto)
-                                                    <option value="{{$producto->id}}">{{$producto->nombre}}
+                                                    <option value="{{$producto->id}}">{{$producto->nombre}} - {{$producto->codigo_barra}}
                                                     </option>
                                                     @endforeach
                                                 </select>

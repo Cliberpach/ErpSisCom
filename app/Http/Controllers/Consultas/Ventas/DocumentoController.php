@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Ventas\Documento\Documento;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
 
 class DocumentoController extends Controller
 {

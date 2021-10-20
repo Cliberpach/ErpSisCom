@@ -234,8 +234,8 @@ class NotaSalidadController extends Controller
          $notasalidad->usuario=Auth()->user()->usuario;
          $notasalidad->update();
 
-         $articulosJSON = $request->get('notadetalle_tabla');
-         $notatabla = json_decode($articulosJSON[0]);
+         $productosJSON = $request->get('notadetalle_tabla');
+         $notatabla = json_decode($productosJSON[0]);
          if($notatabla != "")
          {
              DetalleNotaSalidad::where('nota_salidad_id',$notasalidad->id)->delete();

@@ -197,7 +197,7 @@ class CajaController extends Controller
         $empresa = Empresa::first();
         $pdf = PDF::loadview('pos.MovimientoCaja.Reportes.movimientocaja',[
             'movimiento' => $movimiento,
-            'empresa'=>$empresa
+            'empresa' => $empresa
             ])->setPaper('a4')->setWarnings(false);
         return $pdf->stream();
     }

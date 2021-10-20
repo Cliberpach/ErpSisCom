@@ -52,7 +52,7 @@
                             <input type="text" class="form-control" value="0.00" id="descuento_dev" onkeypress="return filterFloat(event, this);" readonly required>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row @if($documento->tipo_venta == '129') d-none @endif">
                         <div class="col-12 col-md-6">
                             <label class="required">IGV 18%</label>
                         </div>

@@ -327,7 +327,8 @@ $(document).ready(function() {
     var t = $('.dataTables-ingreso').DataTable();
         for (var i = 0; i < detalle.length; i++) {
         t.row.add([
-                detalle[i].producto_id,'',
+                detalle[i].producto_id,
+                '',
                 detalle[i].cantidad,
                 detalle[i].producto+"-"+detalle[i].lote,
                 detalle[i].producto_id,
@@ -517,14 +518,6 @@ $(document).on('click', '.btn-edit', function(event) {
             toastr.warning('Ocurrió un error porfavor recargar la pagina.')
         } 
     });
-
-    // $('#modal_editar_detalle #indice').val(table.row($(this).parents('tr')).index());
-    // $('#modal_editar_detalle #cantidad').val(data[2]);
-    // $('#modal_editar_detalle #producto_lote').val(data[3]);
-    // $("#modal_editar_detalle #producto").val(data[4]);
-    // $("#modal_editar_detalle #lote").val(data[5])
-    // $('#modal_editar_detalle').data("abierto","1")
-    // $('#modal_editar_detalle').modal('show'); 
 });
 
 function agregarTabla($detalle) {

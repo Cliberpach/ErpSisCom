@@ -24,18 +24,18 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class NotaController extends Controller
 {
-    public function index(Request $request)
+    public function index($id)
     {
-        return $request;
-        if($request->nota_venta)
-        {
-            $documento = Documento::find($request->id);
-            $nota_venta = true;
-            return view('ventas.notas.index',compact('documento','nota_venta'));
-        }
-
-        $documento = Documento::find($request->id);
+        $documento = Documento::find($id);
         return view('ventas.notas.index',compact('documento'));
+        
+    }
+
+    public function index_dev($id)
+    {
+        $documento = Documento::find($id);
+        $nota_venta = true;
+        return view('ventas.notas.index',compact('documento','nota_venta'));
         
     }
 
@@ -48,6 +48,7 @@ class NotaController extends Controller
 
             $coleccion->push([
                 'id' => $nota->id,
+                'tipo_venta' => $nota->documento->tipo_venta,
                 'documento_afectado' => $nota->numDocfectado,
                 'fecha_emision' =>  Carbon::parse($nota->fecha_emision)->format( 'd/m/Y'),
                 'numero-sunat' =>  $nota->serie.'-'.$nota->correlativo,
@@ -72,36 +73,29 @@ class NotaController extends Controller
         //DEBITO -> 1
         if($request->nota === '0')
         {
-            return view('ventas.notas.credito.create',[
-                'documento' => $documento,
-                'fecha_hoy' => $fecha_hoy,
-                'productos' => $productos,
-                'tipo_nota' => '0'
-            ]);
+            if( $request->nota_venta)
+            {
+                $nota_venta = true;
+                return view('ventas.notas.credito.create',[
+                    'documento' => $documento,
+                    'fecha_hoy' => $fecha_hoy,
+                    'productos' => $productos,
+                    'nota_venta' => $nota_venta,
+                    'tipo_nota' => '0'
+                ]);
+            }
+            else
+            {
+                return view('ventas.notas.credito.create',[
+                    'documento' => $documento,
+                    'fecha_hoy' => $fecha_hoy,
+                    'productos' => $productos,
+                    'tipo_nota' => '0'
+                ]);
+            }
+            
         }
     }
-
-    public function create_dev(Request $request)
-    {
-        $documento = Documento::findOrFail($request->documento_id);
-        $fecha_hoy = Carbon::now()->toDateString();
-        $productos = Producto::where('estado', 'ACTIVO')->get();
-        //NOTAS
-        //CREDITO -> 0
-        //DEBITO -> 1
-        $nota_venta = 1;
-        if($request->nota === '0')
-        {
-            return view('ventas.notas.credito.create',[
-                'documento' => $documento,
-                'fecha_hoy' => $fecha_hoy,
-                'productos' => $productos,
-                'nota_venta' => $nota_venta,
-                'tipo_nota' => '0'
-            ]);
-        }
-    }
-
 
     public function getDetalles($id)
     {
@@ -207,7 +201,7 @@ class NotaController extends Controller
             $nota->cliente =  $documento->cliente;
 
             $nota->sunat = '0';
-            $nota->tipo_nota = $request->get('tipo_nota'); //0 -> DEBITO
+            $nota->tipo_nota = $request->get('tipo_nota'); //0 -> CREDITO
 
             $nota->mtoOperGravadas = $request->get('sub_total_nuevo');
             $nota->mtoIGV = $request->get('total_igv_nuevo');
@@ -292,20 +286,32 @@ class NotaController extends Controller
 
             $envio_prev = self::sunat_prev($nota->id);
 
-            if(!$envio_prev['success'])
+            if(!isset($request->nota_venta))
             {
-                DB::rollBack();
-                return response()->json([
-                    'success' => false,
-                    'mensaje'=> $envio_prev['mensaje']
-                ]);
+                if(!$envio_prev['success'])
+                {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'mensaje'=> $envio_prev['mensaje']
+                    ]);
+                }
             }
 
             DB::commit();
-            $envio_post = self::sunat_post($nota->id);
+            if(!isset($request->nota_venta))
+            {
+                $envio_post = self::sunat_post($nota->id);
+            }
 
+            $text = 'Nota de crédito creada.';
 
-            Session::flash('success','Nota de crédito creada.');
+            if(isset($request->nota_venta))
+            {
+                $text = 'Nota de devolución creada.';
+            }
+
+            Session::flash('success', $text);
             return response()->json([
                 'success' => true,
                 'nota_id'=> $nota->id
@@ -456,6 +462,31 @@ class NotaController extends Controller
             'moneda' => $nota->tipoMoneda,
             'empresa' => $empresa,
             "legends" =>  $legends,
+            ])->setPaper('a4')->setWarnings(false);
+        
+        $pdf->save(public_path().'/storage/comprobantessiscom/notas/'.$name);
+        return $pdf->stream($name);
+    }
+
+    public function show_dev($id)
+    {
+        $nota = Nota::with(['documento'])->findOrFail($id);
+        $empresa = Empresa::first();
+        $detalles = NotaDetalle::where('nota_id',$id)->get();
+        
+        $legends = self::obtenerLeyenda($nota);
+        $legends = json_encode($legends,true);
+        $legends = json_decode($legends,true);
+
+        $name = 'NOTA-'.$nota->id;
+
+        $pdf = PDF::loadview('ventas.notas.impresion.comprobante_normal_nuevo',[
+            'nota' => $nota,
+            'detalles' => $detalles,
+            'moneda' => $nota->tipoMoneda,
+            'empresa' => $empresa,
+            "legends" =>  $legends,
+            "nota_venta" => 1,
             ])->setPaper('a4')->setWarnings(false);
         
         $pdf->save(public_path().'/storage/comprobantessiscom/notas/'.$name);

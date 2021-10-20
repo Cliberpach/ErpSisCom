@@ -37,8 +37,8 @@
                                 <tr>
                                     
                                     <th colspan="2" class="text-center"></th>
-                                    <th colspan="6" class="text-center">DOCUMENTO DE VENTA</th>
-                                    <th colspan="2" class="text-center">FORMAS DE PAGO</th>
+                                    <th colspan="5" class="text-center">DOCUMENTO DE VENTA</th>
+                                    <th colspan="4" class="text-center">FORMAS DE PAGO</th>
                                     <th colspan="4" class="text-center"></th>
 
                                 </tr>
@@ -283,10 +283,10 @@ $(document).ready(function() {
                     var url_detalle = '{{ route("ventas.documento.show", ":id")}}';
                     url_detalle = url_detalle.replace(':id', data.id);
 
-                    var url_nota = '{{ route("ventas.notas", array("id" => ":id")) }}';
+                    var url_nota = '{{ route("ventas.notas", ":id") }}';
                     url_nota = url_nota.replace(':id', data.id);
 
-                    var url_devolucion = '{{ route("ventas.notas", array("id" => ":id", "nota_venta" => 1))}}';
+                    var url_devolucion = '{{ route("ventas.notas_dev", ":id")}}';
                     url_devolucion = url_devolucion.replace(':id', data.id);
 
                     let cadena = "";
@@ -300,13 +300,13 @@ $(document).ready(function() {
                     {
                         cadena = cadena  +
                         "<button type='button' class='btn btn-sm btn-info m-1' onclick='guia(" +data.id+ ")'  title='Guia Remisión'><i class='fa fa-file'></i> Guia</button>"
-                        + "<a class='btn btn-sm btn-warning m-1 d-none' href='"+ url_nota +"'  title='Notas'><i class='fa fa-file-o'></i> Notas</a>" ;
+                        + "<a class='btn btn-sm btn-warning m-1' href='"+ url_nota +"'  title='Notas'><i class='fa fa-file-o'></i> Notas</a>" ;
                     }
 
                     if(data.tipo_venta_id == 129)
                     {
                         cadena = cadena
-                        + "<a class='btn btn-sm btn-warning m-1 d-none' href='"+ url_devolucion +"'  title='Devoluciones'><i class='fa fa-file-o'></i> Devoluciones</a>" ;
+                        + "<a class='btn btn-sm btn-warning m-1' href='"+ url_devolucion +"'  title='Devoluciones'><i class='fa fa-file-o'></i> Devoluciones</a>" ;
                     }
 
                     if(data.sunat === '2')

@@ -4,7 +4,7 @@
 @section('documento-active', 'active')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10 col-md-10">
-       <h2  style="text-transform:uppercase"><b>REGISTRAR NUEVA NOTA DE CRÉDITO</b></h2>
+       <h2  style="text-transform:uppercase"><b>REGISTRAR NUEVA NOTA DE @if(isset($nota_venta)) DEVOLUCIÓN @else CRÉDITO @endif</b></h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('home')}}">Panel de Control</a>
@@ -13,7 +13,7 @@
                 <a href="{{route('ventas.documento.index')}}">Documentos</a>
             </li>
             <li class="breadcrumb-item active">
-                <strong>Nota de crédito</strong>
+                <strong>Nota de @if(isset($nota_venta)) devoluciÓn @else crédito @endif</strong>
             </li>
         </ol>
     </div>
@@ -32,24 +32,37 @@
                         <input type="hidden" name="documento_id" value="{{old('documento_id', $documento->id)}}">
                         <input type="hidden" name="tipo_nota" value="{{ $tipo_nota }}">
                         <input type="hidden" name="productos_tabla" id="productos_tabla">
+                        @if(isset($nota_venta))
+                        <input type="hidden" name="nota_venta" id="nota_venta" value="1">
+                        @endif
                         <div class="row">
                             <div class="col-12 col-md-5 b-r">
                                 <div class="row">
                                     <div class="col-12">
-                                        <p style="text-transform:uppercase"><strong><i class="fa fa-caret-right"></i> Información de nota de crédito</strong></p>
+                                        <p style="text-transform:uppercase"><strong><i class="fa fa-caret-right"></i> Información de nota de @if(isset($nota_venta)) devolución @else crédito @endif</strong></p>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-12 col-md-5">
-                                        <label class="required">Tipo Nota de Crédito</label>
+                                        <label class="required">Tipo Nota de @if(isset($nota_venta)) DevoluciÓn @else Crédito @endif</label>
                                     </div>
                                     <div class="col-12 col-md-7">
+                                        @if(isset($nota_venta))
+                                        <select name="cod_motivo" id="cod_motivo" class="select2_form form-control" onchange="changeTipoNota(this)" disabled>
+                                            <option value=""></option>
+                                            @foreach(cod_motivos() as $item)
+                                                <option value="{{ $item->simbolo }}" {{$item->simbolo === '07' ? 'selected' : ''}}>{{ $item->descripcion }}</option>
+                                            @endforeach
+                                        </select>
+                                        <input type="hidden" name="cod_motivo" id="cod_motivo" value="07">
+                                        @else
                                         <select name="cod_motivo" id="cod_motivo" class="select2_form form-control" onchange="changeTipoNota(this)" required>
                                             <option value=""></option>
                                             @foreach(cod_motivos() as $item)
                                                 <option value="{{ $item->simbolo }}">{{ $item->descripcion }}</option>
                                             @endforeach
                                         </select>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -175,7 +188,7 @@
                                 </div>
                             </div>
                             <div class="col-12 col-md-4">
-                                <div class="form-group row">
+                                <div class="form-group row @if($documento->tipo_venta == '129') d-none @endif">
                                     <div class="col-12 col-md-6">
                                         <label class="required">Sub Total</label>
                                     </div>
@@ -183,7 +196,7 @@
                                         <input type="text" class="form-control" name="sub_total" id="sub_total" value="{{ $documento->sub_total }}" readonly>
                                     </div>
                                 </div>
-                                <div class="form-group row">
+                                <div class="form-group row @if($documento->tipo_venta == '129') d-none @endif">
                                     <div class="col-12 col-md-6">
                                         <label class="required">IGV {{$documento->igv }}%</label>
                                     </div>
@@ -207,7 +220,7 @@
                                     <div class="panel-heading">
                                         <div class="row">
                                             <div class="col-10">
-                                                <h4><b>Detalles de la nota de crédito</b></h4>
+                                                <h4><b>Detalles de la nota de @if(isset($nota_venta)) devolución @else crédito @endif</b></h4>
                                             </div>
                                             <div class="col-2 text-right">
                                                 <button type="button" class="btn btn-secondary btn-sm" onclick="actualizarData({{ $documento->id }})"><i class="fa fa-refresh"></i></button>
@@ -237,7 +250,7 @@
                                                 <div class="row">
                                                     <div class="col-12 col-md-8"></div>
                                                     <div class="col-12 col-md-4">
-                                                        <div class="form-group row">
+                                                        <div class="form-group row @if($documento->tipo_venta == '129') d-none @endif">
                                                             <div class="col-12 col-md-6">
                                                                 <label class="required">Sub Total</label>
                                                             </div>
@@ -245,7 +258,7 @@
                                                                 <input type="text" class="form-control" name="sub_total_nuevo" id="sub_total_nuevo" value="" readonly>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group row">
+                                                        <div class="form-group row @if($documento->tipo_venta == '129') d-none @endif">
                                                             <div class="col-12 col-md-6">
                                                                 <label class="required">IGV {{$documento->igv }}%</label>
                                                             </div>
@@ -279,11 +292,17 @@
                             <div class="col-md-6 text-right">
                                 <div class="row">
                                     <div class="col-12 col-md-6">
+                                        @if(isset($nota_venta))
+                                        <a href="{{route('ventas.notas_dev',$documento->id)}}" id="btn_cancelar"
+                                            class="btn btn-w-m btn-block btn-default">
+                                            <i class="fa fa-arrow-left"></i> Regresar
+                                        </a>
+                                        @else
                                         <a href="{{route('ventas.notas',$documento->id)}}" id="btn_cancelar"
                                             class="btn btn-w-m btn-block btn-default">
                                             <i class="fa fa-arrow-left"></i> Regresar
                                         </a>
-
+                                        @endif
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <button type="submit" class="btn btn-w-m btn-block btn-primary">
@@ -714,14 +733,25 @@
                     }
                     else if(result.value.success)
                     {
-                        toastr.success('Nota de crédito creada!','Exito')
-
                         let id = result.value.nota_id;
+                        @if(isset($nota_venta))                        
+                        toastr.success('Nota de devolución creada!','Exito')                                               
+                        let url_open_pdf = '{{ route("ventas.notas_dev.show", ":id")}}';
+                        url_open_pdf = url_open_pdf.replace(':id',id);
+                        window.open(url_open_pdf, "Comprobante SISCOM", "width=900, height=600");
+                        @else                        
+                        toastr.success('Nota de crédito creada!','Exito')                        
                         let url_open_pdf = '{{ route("ventas.notas.show", ":id")}}';
                         url_open_pdf = url_open_pdf.replace(':id',id);
                         window.open(url_open_pdf, "Comprobante SISCOM", "width=900, height=600");
+                        @endif
 
-                        location = "{{route('ventas.notas', $documento->id)}}";
+                        let ruta = "{{route('ventas.notas', $documento->id)}}"
+                        @if(isset($nota_venta))
+                        ruta = "{{route('ventas.notas_dev', $documento->id)}}";
+                        @endif
+
+                        location = ruta;
                     }
                     else
                     {
