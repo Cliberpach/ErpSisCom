@@ -105,7 +105,7 @@ $("#btn_editar_detalle").click(function() {
     {
         $.ajax({
             type : 'POST',
-            url : '{{ route('almacenes.nota_salidad.update.lote') }}',
+            url : '{{ route('ventas.documento.update.lote') }}',
             data : {
                 '_token' : $('input[name=_token]').val(),
                 'lote_id' : lote_id,
@@ -201,25 +201,6 @@ function actualizarTabla(i) {
                 descuento: pdescuento,
                 precio_nuevo: precio_nuevo,
             }
-
-    // let precio_inicial = convertFloat($('#precio_editar').val());
-    // let igv = 18;
-    // let igv_calculado = convertFloat(igv / 100);
-    // let valor_unitario = 0.00;
-    // let valor_venta = 0.00;
-    // let cantidad = convertFloat($('#cantidad_editar').val())
-    // valor_unitario = precio_unitario - (precio_unitario * igv_calculado);
-    // valor_venta = precio_unitario * cantidad;
-    // var detalle = {
-    //     producto_id: $('#producto_editar').val(),
-    //     unidad: $('#medida_editar').val(),
-    //     producto: $('#codigo_nombre_producto_editar').val(),
-    //     precio_unitario: precio_unitario,
-    //     valor_unitario: valor_unitario,
-    //     valor_venta: valor_venta,
-    //     cantidad: cantidad,
-    //     presentacion:  $('#presentacion_producto_editar').val(),
-    // }
     agregarTabla(detalle);
     sumaTotal()
 }

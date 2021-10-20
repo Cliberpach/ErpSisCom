@@ -70,7 +70,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="required">Destino</label>
-                                        <select name="destino" id="destino" class="form-control">
+                                        <select name="destino" id="destino" class="form-control" required>
                                             <option value="">Seleccionar Destino</option>
                                             @foreach ($destinos as $tabla)
                                                 <option {{ $notasalidad->destino == $tabla->descripcion ? 'selected' : '' }} value="{{$tabla->id}}">{{$tabla->descripcion}}</option>
@@ -556,7 +556,7 @@ function devolverCantidades() {
     $.ajax({
         dataType : 'json',
         type : 'post',
-        url : '{{ route('almacenes.nota_salidad.devolver.cantidadesedit') }}',
+        url : '{{ route('almacenes.nota_salidad.devolver.cantidades') }}',
         data : {
             '_token' : $('input[name=_token]').val(),
             'cantidades' :  $('#notadetalle_tabla').val(),
@@ -583,7 +583,7 @@ function devolverCantidades() {
                 let existe = false;
                 while(cont < newdetalles.length)
                 {
-                    if(newdetalles[cont].lote_id === element.lote_id)
+                    if(newdetalles[cont].lote_id == element.lote_id)
                     {
                         cont = newdetalles.length;
                         existe = true;
@@ -606,7 +606,6 @@ function devolverCantidades() {
                     data : {
                         '_token' : $('input[name=_token]').val(),
                         'cantidades' :  JSON.stringify(arr),
-                        'nota_id' : '{{ $notasalidad->id }}'
                     }
                 }).done(function (result){
                     console.log(result)

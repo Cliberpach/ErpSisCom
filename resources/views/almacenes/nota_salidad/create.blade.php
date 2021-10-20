@@ -71,7 +71,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="required">Destino</label>
-                                        <select name="destino" id="destino" class="form-control {{ $errors->has('destino') ? ' is-invalid' : '' }}">
+                                        <select name="destino" id="destino" class="form-control {{ $errors->has('destino') ? ' is-invalid' : '' }}" required>
                                             <option value="">Seleccionar Destino</option>
                                             @foreach ($destinos as $tabla)
                                                 <option {{ old('destino') == $tabla->id ? 'selected' : '' }} value="{{$tabla->id}}">{{$tabla->descripcion}}</option>

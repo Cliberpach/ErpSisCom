@@ -674,7 +674,7 @@ class NoEnviadosController extends Controller
         
             if($lote)
             {
-                $lote->cantidad_logica = ($lote->cantidad_logica + $cantidad_sum) - $cantidad_res;
+                $lote->cantidad_logica = $lote->cantidad_logica + ($cantidad_sum - $cantidad_res);
                 $lote->update();
                 DB::commit();
                 return response()->json([

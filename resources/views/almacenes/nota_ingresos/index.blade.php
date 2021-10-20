@@ -152,9 +152,8 @@ $(document).ready(function() {
 
                         "<li class='d-none'><a class='dropdown-item' href='" + url_editar +
                         "' title='Modificar' ><b><i class='fa fa-edit'></i> Modificar</a></b></li>" +
-                        "<li><a class='dropdown-item' onclick='eliminar(" + data.id +
+                        "<li class='d-none'><a class='dropdown-item' onclick='eliminar(" + data.id +
                         ")' title='Eliminar'><b><i class='fa fa-trash'></i> Eliminar</a></b></li>" +
-                        "<li class='dropdown-divider'></li>" +
                     "</ul></div>"
                 }
             }

@@ -358,27 +358,10 @@ function(){
         Route::post('obtener/lote', 'Ventas\DocumentoController@returnLote')->name('ventas.documento.obtener.lote');
         Route::post('update/lote', 'Ventas\DocumentoController@updateLote')->name('ventas.documento.update.lote');
 
-        //Pagos
-        Route::get('pagos/index/{id}', 'Ventas\Documentos\PagoController@index')->name('ventas.documentos.pago.index');
-        Route::get('pagos/getPay/{id}','Ventas\Documentos\PagoController@getPayDocument')->name('ventas.getPay.documentos');
-        Route::get('pagos/create/{id}', 'Ventas\Documentos\PagoController@create')->name('ventas.documentos.pago.create');
-        Route::post('pagos/store/', 'Ventas\Documentos\PagoController@store')->name('ventas.documentos.pago.store');
-        Route::get('pagos/destroy/{id}', 'Ventas\Documentos\PagoController@destroy')->name('ventas.documentos.pago.destroy');
-        Route::get('pagos/show/{id}', 'Ventas\Documentos\PagoController@show')->name('ventas.documentos.pago.show');
-        // Route::get('getBox/document/{id}', 'Compras\Documentos\PagoController@getBox')->name('compras.documentos.pago.getBox');
         Route::post('customers','Ventas\DocumentoController@customers')->name('ventas.customers');
         Route::post('customers-all','Ventas\DocumentoController@customers_all')->name('ventas.customers_all');
         Route::get('getLot/{id}','Ventas\DocumentoController@getLot')->name('ventas.getLot');
         Route::post('vouchersAvaible','Ventas\DocumentoController@vouchersAvaible')->name('ventas.vouchersAvaible');
-
-        //Pago Transferencia
-        Route::get('transferencia/pagos/index/{id}', 'Ventas\Documentos\TransferenciaController@index')->name('ventas.documentos.transferencia.pago.index');
-        Route::get('transferencia/getPay/{id}','Ventas\Documentos\TransferenciaController@getPay')->name('ventas.documentos.transferencia.getPay');
-        Route::get('transferencia/pagos/create/{id}', 'Ventas\Documentos\TransferenciaController@create')->name('ventas.documentos.transferencia.pago.create');
-        Route::post('transferencia/pagos/store/', 'Ventas\Documentos\TransferenciaController@store')->name('ventas.documentos.transferencia.pago.store');
-        Route::get('transferencia/pagos/destroy/', 'Ventas\Documentos\TransferenciaController@destroy')->name('ventas.documentos.transferencia.pago.destroy');
-        Route::get('transferencia/pagos/show/', 'Ventas\Documentos\TransferenciaController@show')->name('ventas.documentos.transferencia.pago.show');
-
     });
     //COMPROBANTES ELECTRONICOS
     Route::prefix('comprobantes/electronicos')->group(function(){

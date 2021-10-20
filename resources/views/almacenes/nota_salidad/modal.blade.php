@@ -66,7 +66,7 @@ $("#btn_editar").click(function() {
     let cantidad_res =  $('#modal_editar_detalle #cantidad').val();
     let cantidad_sum =  $('#modal_editar_detalle #cantidad_actual').val();
     let lote_id = $('#modal_editar_detalle #lote').val();
-
+    
     $.ajax({
         type : 'POST',
         url : '{{ route('almacenes.nota_salidad.update.lote') }}',

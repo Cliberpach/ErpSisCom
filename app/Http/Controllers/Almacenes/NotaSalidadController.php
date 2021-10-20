@@ -463,7 +463,44 @@ class NotaSalidadController extends Controller
         
             if($lote)
             {
-                $lote->cantidad_logica = ($lote->cantidad_logica + $cantidad_sum) - $cantidad_res;
+                $lote->cantidad_logica = $lote->cantidad_logica + ($cantidad_sum - $cantidad_res);
+                $lote->update();
+                DB::commit();
+                return response()->json([
+                    'success' => true,
+                    'lote' => $lote,
+                ]);
+            }
+            else{
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                ]);
+            }
+        }
+        catch(Exception $e)
+        {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+            ]);
+        }
+    }
+
+    //ACTUALIZAR LOTE E EDICION DE CANTIDAD
+    public function updateLoteEdit(Request $request)
+    {
+        try{
+            DB::beginTransaction();
+            $data = $request->all();
+            $lote_id = $data['lote_id'];         
+            $cantidad_sum = $data['cantidad_sum'];         
+            $cantidad_res = $data['cantidad_res'];         
+            $lote = LoteProducto::find($lote_id);
+        
+            if($lote)
+            {
+                $lote->cantidad_logica = $lote->cantidad_logica + ($cantidad_sum - $cantidad_res);
                 $lote->update();
                 DB::commit();
                 return response()->json([
