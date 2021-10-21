@@ -1029,7 +1029,7 @@ class DocumentoController extends Controller
 
     public function obtenerProductos($id)
     {
-        $detalles = Detalle::where('documento_id',$id)->get();
+        $detalles = Detalle::where('documento_id',$id)->where('estado','ACTIVO')->get();
         $arrayProductos = Array();
         for($i = 0; $i < count($detalles); $i++){
 
