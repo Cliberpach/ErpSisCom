@@ -480,6 +480,10 @@ class NotaController extends Controller
 
         $name = 'NOTA-'.$nota->id;
 
+        if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantessiscom'.DIRECTORY_SEPARATOR.'notas'))) {
+            mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantessiscom'.DIRECTORY_SEPARATOR.'notas'));
+        }
+
         $pdf = PDF::loadview('ventas.notas.impresion.comprobante_normal_nuevo',[
             'nota' => $nota,
             'detalles' => $detalles,

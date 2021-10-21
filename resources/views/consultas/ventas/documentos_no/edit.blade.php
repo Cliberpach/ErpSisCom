@@ -1401,7 +1401,7 @@
         if ($('#asegurarCierre').val() == 1) {
             devolverCantidades()
 
-            let detalles = JSON.parse($("#productos_detalle").val());
+            /*let detalles = JSON.parse($("#productos_detalle").val());
             let newdetalles = JSON.parse($("#productos_tabla").val());
             let arr = [];
             detalles.forEach(element => {
@@ -1438,7 +1438,7 @@
                 }).done(function (result){
                     console.log(result)
                 });
-            }
+            }*/
         }
 
     };

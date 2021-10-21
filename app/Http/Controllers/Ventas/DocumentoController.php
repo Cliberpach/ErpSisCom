@@ -597,7 +597,7 @@ class DocumentoController extends Controller
         $documento->estado = 'ANULADO';
         $documento->update();
 
-        $detalles = Detalle::where('documento_id',$id)->get();
+        $detalles = Detalle::where('documento_id',$id)->where('estado', 'ACTIVO')->get();
         foreach ($detalles as $detalle) {
             $lote = LoteProducto::find($detalle->lote_id);
             $cantidad = $lote->cantidad + $detalle->cantidad;
@@ -624,7 +624,7 @@ class DocumentoController extends Controller
         $this->authorize('haveaccess','documento_venta.index');
         $documento = Documento::findOrFail($id);
         $nombre_completo = $documento->user->persona->apellido_paterno.' '.$documento->user->persona->apellido_materno.' '.$documento->user->persona->nombres;
-        $detalles = Detalle::where('documento_id',$id)->get();
+        $detalles = Detalle::where('documento_id',$id)->where('estado', 'ACTIVO')->get();
         //TOTAL EN LETRAS
         $formatter = new NumeroALetras();
         $convertir = $formatter->toInvoice($documento->total, 2, 'SOLES');
@@ -642,8 +642,8 @@ class DocumentoController extends Controller
     public function report($id)
     {
         $documento = Documento::findOrFail($id);
-        $nombre_completo = $documento->usuario->empleado->persona->apellido_paterno.' '.$documento->usuario->empleado->persona->apellido_materno.' '.$documento->usuario->empleado->persona->nombres;
-        $detalles = Detalle::where('documento_id',$id)->get();
+        $nombre_completo = $documento->user->persona->apellido_paterno.' '.$documento->user->persona->apellido_materno.' '.$documento->user->persona->nombres;
+        $detalles = Detalle::where('documento_id',$id)->where('estado'. 'ACTIVO')->get();
         $subtotal = 0;
         $igv = '';
         $tipo_moneda = '';
