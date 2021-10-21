@@ -31,7 +31,7 @@ class CuentaClienteController extends Controller
                 "cliente"=>$value->documento->clienteEntidad->nombre,
                 "numero_doc"=>$value->documento->numero_doc,
                 "fecha_doc"=>$value->fecha_doc,
-                "monto"=>$value->documento->total,
+                "monto"=>$value->monto,
                 "acta"=>$value->acta,
                 "saldo"=>$value->saldo,
                 "estado"=>$value->estado

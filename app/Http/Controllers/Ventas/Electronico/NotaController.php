@@ -174,7 +174,7 @@ class NotaController extends Controller
 
             }
 
-            $documento = Documento::findOrFail($request->get('documento_id'));
+            $documento = Documento::find($request->get('documento_id'));
 
             $igv = $documento->igv ? $documento->igv : 18;
 

@@ -579,5 +579,7 @@ function(){
 Route::get('ruta', function () {
     //https://www.oratlas.com/lector-online-de-texto
     $dif = (int)(8-9);
-    return $dif;
+
+    $doc = Documento::find(2);
+    return $doc->cuenta;
 });
