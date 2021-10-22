@@ -51,6 +51,11 @@ class Documento extends Model
         return $this->hasMany('App\Ventas\Documento\Detalle','documento_id');
     }
 
+    public function notas()
+    {
+        return $this->hasMany('App\Ventas\Nota','documento_id');
+    }
+
 
     public function empresaEntidad()
     {

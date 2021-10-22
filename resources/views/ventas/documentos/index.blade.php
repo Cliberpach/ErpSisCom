@@ -322,15 +322,17 @@ $(document).ready(function() {
 
         ],
         "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-            if (aData.sunat == 0 && aData.tipo_venta_id != 129) {
+            /*if (aData.sunat == 0 && aData.tipo_venta_id != 129) {
                 $('td', nRow).css('background-color', '#D6EAF8');
-                // $('td', nRow).css('color', '#2980B9');
-                // $('td', nRow).css('font-weight', 'bold');
             }
+
             if (aData.sunat == 1 && aData.tipo_venta_id != 129) {
                 $('td', nRow).css('background-color', '#D1F2EB');
-                // $('td', nRow).css('color', '#2980B9');
-                // $('td', nRow).css('font-weight', 'bold');
+            }*/
+
+            if(aData.notas > 0)
+            {
+                $('td', nRow).css('background-color', '#FDEBD0');
             }
         },
         "language": {
