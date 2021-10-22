@@ -331,8 +331,7 @@ class NoEnviadosController extends Controller
         $clientes = Cliente::where('estado', 'ACTIVO')->get();
         $productos = Producto::where('estado', 'ACTIVO')->get();
         $documento = Documento::findOrFail($id);
-        $detalles = Detalle::where('documento_id',$id)->with(['lote','lote.producto'])->get();
-
+        $detalles = Detalle::where('documento_id',$id)->where('estado','ACTIVO')->with(['lote','lote.producto'])->get();
         return view('consultas.ventas.documentos_no.edit',[
             'documento' => $documento,
             'detalles' => $detalles,
@@ -578,42 +577,24 @@ class NoEnviadosController extends Controller
         $cantidades = $data['cantidades'];
         $productosJSON = $cantidades;
         $productotabla = json_decode($productosJSON);
-        $id = $data['nota_id'];
         $mensaje = '';
         foreach ($productotabla as $detalle) {
             //DEVOLVEMOS CANTIDAD AL LOTE Y AL LOTE LOGICO
             $lote = LoteProducto::findOrFail($detalle->lote_id);
-            //$cantidadmovimiento = DB::table("movimiento_nota")->where('lote_id',$lote->id)->where('producto_id',$lote->producto_id)->where('nota_id',$id)->where('movimiento','SALIDA')->first()->cantidad;
-            $movimiento = DB::table("movimiento_nota")->where('lote_id',$lote->id)->where('producto_id',$lote->producto_id)->where('nota_id',$id)->where('movimiento','SALIDA')->first();
-            if($movimiento)
+            if($detalle->detalle_id != 0)
             {
-                $cantidadmovimiento = $movimiento->cantidad;
-
-                if($cantidadmovimiento > $detalle->cantidad)
-                {
-                    $mover = $cantidadmovimiento - $detalle->cantidad;
-                    $lote->cantidad_logica = $lote->cantidad_logica - $mover;
-                }
-                else 
-                {
-                    $mover = $detalle->cantidad - $cantidadmovimiento;
-                    $lote->cantidad_logica = $lote->cantidad_logica + $mover;
-                }
-
-
-                
-                //$lote->cantidad =  $lote->cantidad_logica;
-                $lote->estado = '1';
-                $lote->update();
-            }
-            else{
-                $lote = LoteProducto::findOrFail($detalle->lote_id);
                 $lote->cantidad_logica = $lote->cantidad_logica + $detalle->cantidad;
-                //$lote->cantidad =  $lote->cantidad_logica;
-                $lote->estado = '1';
-                $lote->update();
-                $mensaje = 'Cantidad devuelta';
+            }else
+            {
+                $detalle_venta = Detalle::find($detalle->detalle_id);
+                if($detalle_venta)
+                {
+                    $lote->cantidad_logica = ($lote->cantidad_logica + $detalle->cantidad) - $detalle_venta->cantidad;
+                }
             }
+
+            $lote->update();
+            
             $mensaje = 'Cantidad devuelta';
         };
 
@@ -649,15 +630,15 @@ class NoEnviadosController extends Controller
 
         if($lote)
         {
-        return response()->json([
-            'success' => true,
-            'lote' => $lote,
-        ]);
+            return response()->json([
+                'success' => true,
+                'lote' => $lote,
+            ]);
         }
         else{
-        return response()->json([
-            'success' => false,
-        ]);
+            return response()->json([
+                'success' => false,
+            ]);
         }
     }
 
@@ -686,6 +667,7 @@ class NoEnviadosController extends Controller
                 DB::rollBack();
                 return response()->json([
                     'success' => false,
+                    'mensaje' => 'NO EXISTE'
                 ]);
             }
         }
@@ -694,6 +676,7 @@ class NoEnviadosController extends Controller
             DB::rollBack();
             return response()->json([
                 'success' => false,
+                'mensaje' => $e->getMessage()
             ]);
         }
     }

@@ -28,7 +28,6 @@ class NotaController extends Controller
     {
         $documento = Documento::find($id);
         return view('ventas.notas.index',compact('documento'));
-        
     }
 
     public function index_dev($id)

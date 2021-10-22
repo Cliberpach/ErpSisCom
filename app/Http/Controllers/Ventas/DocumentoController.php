@@ -599,11 +599,6 @@ class DocumentoController extends Controller
 
         $detalles = Detalle::where('documento_id',$id)->where('estado', 'ACTIVO')->get();
         foreach ($detalles as $detalle) {
-            $lote = LoteProducto::find($detalle->lote_id);
-            $cantidad = $lote->cantidad + $detalle->cantidad;
-            $lote->cantidad = $cantidad;
-            $lote->cantidad_logica = $cantidad;
-            $lote->update();
             //ANULAMOS EL DETALLE
             $detalle->estado = "ANULADO";
             $detalle->update();
@@ -1414,15 +1409,15 @@ class DocumentoController extends Controller
 
         if($lote)
         {
-        return response()->json([
-            'success' => true,
-            'lote' => $lote,
-        ]);
+            return response()->json([
+                'success' => true,
+                'lote' => $lote,
+            ]);
         }
         else{
-        return response()->json([
-            'success' => false,
-        ]);
+            return response()->json([
+                'success' => false,
+            ]);
         }
     }
 
