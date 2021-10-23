@@ -38,6 +38,8 @@ class Documento extends Model
         'forma_pago',
         'cotizacion_venta',
         'sunat',
+        'envio_sunat',
+        'getCdrResponse',
         'correlativo',
         'serie',
         'ruta_comprobante_archivo',

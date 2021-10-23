@@ -106,7 +106,7 @@ class NoEnviadosController extends Controller
 
     public function obtenerProductos($id)
     {
-        $detalles = Detalle::where('documento_id',$id)->get();
+        $detalles = Detalle::where('estado','ACTIVO')->where('documento_id',$id)->get();
         $arrayProductos = Array();
         for($i = 0; $i < count($detalles); $i++){
 
@@ -332,6 +332,12 @@ class NoEnviadosController extends Controller
         $productos = Producto::where('estado', 'ACTIVO')->get();
         $documento = Documento::findOrFail($id);
         $detalles = Detalle::where('documento_id',$id)->where('estado','ACTIVO')->with(['lote','lote.producto'])->get();
+        foreach($detalles as $detalle)
+        {
+            $lote = LoteProducto::find($detalle->lote_id);
+            $lote->cantidad_logica = $lote->cantidad_logica - $detalle->cantidad;
+            $lote->update();
+        }
         return view('consultas.ventas.documentos_no.edit',[
             'documento' => $documento,
             'detalles' => $detalles,
@@ -433,45 +439,63 @@ class NoEnviadosController extends Controller
             $documento->numero_doc = 'VENTA-'.$numero_doc;
             $documento->update();
             //Llenado de los articulos
-            $productosJSON = $request->get('productos_tabla[]');
+            $productosJSON = $request->get('productos_tabla');
             $productotabla = json_decode($productosJSON);
-            foreach ($productotabla as $producto) {
-                $lote = LoteProducto::findOrFail($producto->lote_id);
-                Detalle::create([
-                    'documento_id' => $documento->id,
-                    'lote_id' => $producto->lote_id, //LOTE
-                    'codigo_producto' => $lote->producto->codigo,
-                    'unidad' => $lote->producto->getMedida(),
-                    'nombre_producto' => $lote->producto->nombre,
-                    'codigo_lote' => $lote->codigo_lote,
-                    'cantidad' => $producto->cantidad,
-                    'precio_unitario' => $producto->precio_unitario,
-                    'precio_inicial' => $producto->precio_inicial,
-                    'precio_nuevo' => $producto->precio_nuevo,
-                    'dinero' => $producto->dinero,
-                    'descuento' => $producto->descuento,
-                    'valor_unitario' => $producto->valor_unitario,
-                    'valor_venta' => $producto->valor_venta,
-                ]);
 
-                $lote->cantidad =  $lote->cantidad - $producto->cantidad;
-                $lote->update();
+            $detalles = Detalle::where('estado', 'ACTIVO')->where('documento_id',$id)->get();
+            foreach($detalles as $item)
+            {
+                $item->estado = 'ANULADO';
+                $item->update();
             }
 
-            // $detalle = new DetalleMovimientoVentaCaja();
-            // $detalle->cdocumento_id = $documento->id;
-            // $detalle->mcaja_id = movimientoUser()->id;
-            // $detalle->save();
+            foreach ($productotabla as $producto) {
+                if($producto->detalle_id != 0)
+                {
+                    $lote = LoteProducto::findOrFail($producto->lote_id);
+                    $detalle = Detalle::find($producto->detalle_id);
+                    $detalle->codigo_producto = $lote->producto->codigo;
+                    $detalle->unidad = $lote->producto->getMedida();
+                    $detalle->nombre_producto = $lote->producto->nombre;
+                    $detalle->codigo_lote = $lote->codigo_lote;
+                    $detalle->cantidad = $producto->cantidad;
+                    $detalle->precio_unitario = $producto->precio_unitario;
+                    $detalle->precio_inicial = $producto->precio_inicial;
+                    $detalle->precio_nuevo = $producto->precio_nuevo;
+                    $detalle->dinero = $producto->dinero;
+                    $detalle->descuento = $producto->descuento;
+                    $detalle->valor_unitario = $producto->valor_unitario;
+                    $detalle->valor_venta = $producto->valor_venta;
+                    $detalle->estado = 'ACTIVO';
+                    $detalle->update();
 
-            // $envio_prev = self::sunat($documento->id);
-            // if(!$envio_prev['success'])
-            // {
-            //     DB::rollBack();
-            //     return response()->json([
-            //         'success' => false,
-            //         'mensaje'=> $envio_prev['mensaje']
-            //     ]);
-            // }
+                    $lote->cantidad =  $lote->cantidad - $producto->cantidad;
+                    $lote->update();
+                }
+                else
+                {
+                    $lote = LoteProducto::findOrFail($producto->lote_id);
+                    Detalle::create([
+                        'documento_id' => $documento->id,
+                        'lote_id' => $producto->lote_id, //LOTE
+                        'codigo_producto' => $lote->producto->codigo,
+                        'unidad' => $lote->producto->getMedida(),
+                        'nombre_producto' => $lote->producto->nombre,
+                        'codigo_lote' => $lote->codigo_lote,
+                        'cantidad' => $producto->cantidad,
+                        'precio_unitario' => $producto->precio_unitario,
+                        'precio_inicial' => $producto->precio_inicial,
+                        'precio_nuevo' => $producto->precio_nuevo,
+                        'dinero' => $producto->dinero,
+                        'descuento' => $producto->descuento,
+                        'valor_unitario' => $producto->valor_unitario,
+                        'valor_venta' => $producto->valor_venta,
+                    ]);
+
+                    $lote->cantidad =  $lote->cantidad - $producto->cantidad;
+                    $lote->update();
+                }
+            }
             
 
             $documento = Documento::find($documento->id);
@@ -498,7 +522,6 @@ class NoEnviadosController extends Controller
                 'mensaje'=> 'Ocurrio un error porfavor volver a intentar, si el error persiste comunicarse con el administrador del sistema.',
                 'excepcion' => $e->getMessage()
             ]);
-            //return redirect()->route('ventas.documento.index');
         }
     }
 
@@ -526,7 +549,7 @@ class NoEnviadosController extends Controller
     public function quantity(Request $request)
     {
         $data = $request->all();
-        $producto_id = $data['producto_id'];
+        $producto_id = $data['lote_id'];
         $cantidad = $data['cantidad'];
         $condicion = $data['condicion'];
         $mensaje = '';
@@ -642,17 +665,16 @@ class NoEnviadosController extends Controller
         }
     }
 
-    //ACTUALIZAR LOTE E EDICION DE CANTIDAD
     public function updateLote(Request $request)
     {
         try{
             DB::beginTransaction();
             $data = $request->all();
-            $lote_id = $data['lote_id'];         
-            $cantidad_sum = $data['cantidad_sum'];         
-            $cantidad_res = $data['cantidad_res'];         
+            $lote_id = $data['lote_id'];
+            $cantidad_sum = $data['cantidad_sum'];
+            $cantidad_res = $data['cantidad_res'];
             $lote = LoteProducto::find($lote_id);
-        
+
             if($lote)
             {
                 $lote->cantidad_logica = $lote->cantidad_logica + ($cantidad_sum - $cantidad_res);
@@ -667,7 +689,6 @@ class NoEnviadosController extends Controller
                 DB::rollBack();
                 return response()->json([
                     'success' => false,
-                    'mensaje' => 'NO EXISTE'
                 ]);
             }
         }
@@ -676,7 +697,6 @@ class NoEnviadosController extends Controller
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'mensaje' => $e->getMessage()
             ]);
         }
     }

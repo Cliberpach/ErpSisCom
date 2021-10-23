@@ -61,6 +61,7 @@ class CreateCotizacionDocumentoTable extends Migration
 
             $table->enum('sunat',['0','1','2'])->default('0');
             $table->enum('envio_sunat',['0','1'])->default('0');
+            $table->json('getCdrResponse')->nullable();
             $table->BigInteger('correlativo')->nullable();
             $table->string('serie')->nullable();
 

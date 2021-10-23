@@ -880,7 +880,7 @@
         $.ajax({
             dataType: 'json',
             type: 'post',
-            url: '{{ route('consultas.ventas.documento.no.devolver.cantidadesedit') }}',
+            url: '{{ route('consultas.ventas.documento.no.devolver.cantidades') }}',
             data: {
                 '_token': $('input[name=_token]').val(),
                 'cantidades': $('#productos_tabla').val(),
@@ -1167,6 +1167,7 @@
                 detalles[i].id,
             ]).draw(false);
         }
+        $('#asegurarCierre').val(1);
         //SUMATORIA TOTAL
         sumaTotal()
     }

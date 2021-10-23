@@ -580,6 +580,9 @@ Route::get('ruta', function () {
     //https://www.oratlas.com/lector-online-de-texto
     $dif = (int)(8-9);
 
-    $doc = Documento::find(2);
-    return $doc->cuenta;
+    $doc = Documento::find(3);
+    //$json_data = json_encode($doc->getCdrResponse,false);
+    //$json_data = json_decode($json_data, false);
+    $json_data = json_decode($doc->getCdrResponse, false);
+    return $json_data->code;
 });
