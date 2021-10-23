@@ -728,6 +728,7 @@ class DocumentoController extends Controller
             $cadena = explode('-',$value);
             $id = $cadena[0];
             $size = (int) $cadena[1];
+            $qr = self::qr_code($id);
             $documento = Documento::findOrFail($id);
             $detalles = Detalle::where('documento_id',$id)->where('estado','ACTIVO')->get();
             if((int)$documento->tipo_venta === 127 || (int)$documento->tipo_venta === 128)
@@ -1013,6 +1014,53 @@ class DocumentoController extends Controller
 
     }
 
+    public function qr_code($id)
+    {
+        try{
+            $documento = Documento::findOrFail($id);
+
+            if($documento->sunat == '1' && $documento->ruta_qr == null)
+            {
+                $arreglo_qr = array(
+                    "ruc" => $documento->ruc_empresa,
+                    "tipo" => $documento->tipoDocumento(),
+                    "serie" => $documento->serie,
+                    "numero" => $documento->correlativo,
+                    "emision" => self::obtenerFechaEmision($documento),
+                    "igv" => 18,
+                    "total" => (float)$documento->total,
+                    "clienteTipo" => $documento->tipoDocumentoCliente(),
+                    "clienteNumero" => $documento->documento_cliente
+                );
+
+                /********************************/
+                $data_qr = generarQrApi(json_encode($arreglo_qr), $documento->empresa_id);
+
+                $name_qr = $documento->serie."-".$documento->correlativo.'.svg';
+
+                $pathToFile_qr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'.DIRECTORY_SEPARATOR.$name_qr);
+
+                if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'))) {
+                    mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'));
+                }
+
+                file_put_contents($pathToFile_qr, $data_qr);
+
+                $documento->ruta_qr = 'public/qrs/'.$name_qr;
+                $documento->update();
+
+                return array('success' => true,'mensaje' => 'QR creado exitosamente');
+            }
+            else{
+                return array('success' => false,'mensaje' => 'Ya tiene QR');
+            }
+        }
+        catch(Exception $e)
+        {
+            return array('success' => false,'mensaje' => $e->getMessage());
+        }
+    }
+
     public function obtenerLeyenda($documento)
     {
         $formatter = new NumeroALetras();
@@ -1155,11 +1203,9 @@ class DocumentoController extends Controller
                     $documento->getCdrResponse = $respuesta_cdr;
 
                     $data_comprobante = generarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
-
                     $name = $documento->serie."-".$documento->correlativo.'.pdf';
 
                     $data_cdr = base64_decode($json_sunat->sunatResponse->cdrZip);
-
                     $name_cdr = 'R-'.$documento->serie."-".$documento->correlativo.'.zip';
 
                     if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'))) {

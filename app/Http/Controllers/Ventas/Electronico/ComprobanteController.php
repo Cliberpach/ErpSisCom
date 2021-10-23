@@ -171,7 +171,6 @@ class ComprobanteController extends Controller
                         $name = $documento->serie."-".$documento->correlativo.'.pdf';
 
                         $data_cdr = base64_decode($json_sunat->sunatResponse->cdrZip);
-
                         $name_cdr = 'R-'.$documento->serie."-".$documento->correlativo.'.zip';
 
                         if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'))) {
