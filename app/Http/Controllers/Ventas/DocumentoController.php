@@ -1020,7 +1020,7 @@ class DocumentoController extends Controller
         try{
             $documento = Documento::findOrFail($id);
 
-            if($documento->sunat == '1' && $documento->ruta_qr == null)
+            if($documento->sunat == '1')
             {
                 $arreglo_qr = array(
                     "ruc" => $documento->ruc_empresa,
