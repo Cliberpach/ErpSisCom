@@ -350,7 +350,7 @@ function(){
         Route::get('show/{id}','Ventas\DocumentoController@show')->name('ventas.documento.show');
         Route::get('reporte/{id}','Ventas\DocumentoController@report')->name('ventas.documento.reporte');
         Route::get('tipoPago/{id}','Ventas\DocumentoController@TypePay')->name('ventas.documento.tipo_pago.existente');
-        Route::get('comprobante/{id}','Ventas\DocumentoController@voucher')->name('ventas.documento.comprobante');
+        //Route::get('comprobante/{id}','Ventas\DocumentoController@voucher')->name('ventas.documento.comprobante');
         Route::get('xml/{id}','Ventas\DocumentoController@xml')->name('ventas.documento.xml');
 
         Route::post('cantidad', 'Ventas\DocumentoController@quantity')->name('ventas.documento.cantidad');
@@ -576,8 +576,11 @@ function(){
     });
 });
 
+Route::get('ventas/documentos/comprobante/{id}','Ventas\DocumentoController@voucher')->name('ventas.documento.comprobante');
+
 Route::get('ruta', function () {
     //https://www.oratlas.com/lector-online-de-texto
+    return '<h1>SISCOM</h1>';
     $dif = (int)(8-9);
 
     $doc = Documento::find(3);

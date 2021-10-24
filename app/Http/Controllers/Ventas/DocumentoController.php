@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Ventas\ErrorVenta;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Exception;
 use Illuminate\Support\Facades\Mail;
 //CONVERTIR DE NUMEROS A LETRAS
@@ -1051,7 +1052,28 @@ class DocumentoController extends Controller
 
                 return array('success' => true,'mensaje' => 'QR creado exitosamente');
             }
-            else{
+
+            if($documento->sunat == '0'){
+                $miQr = QrCode::
+                        format('svg')
+                        ->size(130)  //defino el tamaño
+                        ->backgroundColor(0, 0, 0) //defino el fondo
+                        ->color(255, 255, 255)
+                        ->margin(1)  //defino el margen
+                        ->generate($documento->ruc_empresa.'|'.$documento->tipoDocumento().'|'.$documento->serie.'|'.$documento->correlativo.'|'.$documento->total_igv.'|'.$documento->total.'|'.getFechaFormato( $documento->fecha_emision ,'d/m/Y'));
+
+                $name_qr = $documento->serie."-".$documento->correlativo.'.svg';
+
+                $pathToFile_qr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'.DIRECTORY_SEPARATOR.$name_qr);
+
+                if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'))) {
+                    mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'));
+                }
+
+                file_put_contents($pathToFile_qr, $miQr);
+
+                $documento->ruta_qr = 'public/qrs/'.$name_qr;
+                $documento->update();
                 return array('success' => false,'mensaje' => 'Ya tiene QR');
             }
         }
@@ -1404,7 +1426,8 @@ class DocumentoController extends Controller
             ->join('productos','productos.id','=','lote_productos.producto_id')
             ->join('categorias','categorias.id','=','productos.categoria_id')
             ->join('tabladetalles','tabladetalles.id','=','productos.medida')
-            ->select('lote_productos.*','productos.nombre','productos.codigo_barra','productos_clientes.cliente','productos_clientes.moneda','tabladetalles.simbolo as unidad_producto',
+            ->leftJoin('compra_documento_detalles','compra_documento_detalles.lote_id','=','lote_productos.id')
+            ->select('compra_documento_detalles.precio','lote_productos.*','productos.nombre','productos.codigo_barra','productos_clientes.cliente','productos_clientes.moneda','tabladetalles.simbolo as unidad_producto',
                     'productos_clientes.monto as precio_venta','categorias.descripcion as categoria', DB::raw('DATE_FORMAT(lote_productos.fecha_vencimiento, "%d/%m/%Y") as fecha_venci')) //DB::raw('DATE_FORMAT(lote_productos.fecha_vencimiento, "%d/%m/%Y") as fecha_venci')
             ->where('lote_productos.cantidad_logica','>',0)
             ->where('lote_productos.estado','1')

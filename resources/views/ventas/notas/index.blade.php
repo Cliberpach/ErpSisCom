@@ -101,6 +101,20 @@
                         </div>
                     </div>
                 </div>
+                <div class="row d-none">
+                    <div class="col-12 col-md-4">
+                        {{
+                            $miQr = QrCode::
+                                  // format('png')
+                                  size(200)  //defino el tamaño
+                                  ->backgroundColor(0, 0, 0) //defino el fondo
+                                  ->color(255, 255, 255)
+                                  ->margin(1)  //defino el margen
+                                  ->generate((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
+            "https" : "http") . "://" . $_SERVER['HTTP_HOST']."/ventas/documentos/comprobante/".$documento->id.'-100') /** genero el codigo qr **/
+                        }}
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-lg-12">

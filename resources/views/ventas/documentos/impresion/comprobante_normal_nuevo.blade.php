@@ -279,20 +279,20 @@
             <table class="tbl-detalles text-uppercase" cellpadding="8" cellspacing="0">
                 <thead>
                     <tr >
-                        <th style="text-align: center; border-right: 2px solid #52BE80;">CANT</th>
-                        <th style="text-align: center;border-right: 2px solid #52BE80">UM</th>
-                        <th style="text-align: center; border-right: 2px solid #52BE80">DESCRIPCIÓN</th>
-                        <th style="text-align: center; border-right: 2px solid #52BE80">P. UNIT.</th>
+                        <th style="text-align: left; border-right: 2px solid #52BE80;">CANT</th>
+                        <th style="text-align: left;border-right: 2px solid #52BE80">UM</th>
+                        <th style="text-align: left; border-right: 2px solid #52BE80">DESCRIPCIÓN</th>
+                        <th style="text-align: left; border-right: 2px solid #52BE80">P. UNIT.</th>
                         <th style="text-align: right">TOTAL</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($detalles as $item)
                     <tr>
-                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->cantidad }}</td>
-                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->unidad }}</td>
-                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->nombre_producto }}</td>
-                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->precio_nuevo }}</td>
+                        <td style="text-align: left; border-right: 2px solid #52BE80">{{ $item->cantidad }}</td>
+                        <td style="text-align: left; border-right: 2px solid #52BE80">{{ $item->unidad }}</td>
+                        <td style="text-align: left; border-right: 2px solid #52BE80">{{ $item->nombre_producto }}</td>
+                        <td style="text-align: left; border-right: 2px solid #52BE80">{{ $item->precio_nuevo }}</td>
                         <td style="text-align: right">{{ $item->valor_venta }}</td>
                     </tr>
                     @endforeach
