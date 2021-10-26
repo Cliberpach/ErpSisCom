@@ -3,7 +3,7 @@
 @section('documento-active', 'active')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-8">
-       <h2  style="text-transform:uppercase"><b>Detalle de la Orden de Compra: # {{$documento->id}}</b></h2>
+       <h2  style="text-transform:uppercase"><b>Detalle de Documento de Compra: # {{$documento->id}}</b></h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{route('home')}}">Panel de Control</a>
@@ -152,8 +152,8 @@
                                         </th>
                                     </tr>
                                     @endif
-                                    
-                                    
+
+
                                     <tr>
                                         <th class="text-left" style="width:20%">DIRECCION:</th>
                                         <th class="text-left" style="width:80%">

@@ -35,7 +35,7 @@
                         <table class="table dataTables-documento table-striped table-bordered table-hover" style="text-transform:uppercase">
                             <thead>
                                 <tr>
-                                    
+
                                     <th colspan="2" class="text-center"></th>
                                     <th colspan="5" class="text-center">DOCUMENTO DE VENTA</th>
                                     <th colspan="4" class="text-center">FORMAS DE PAGO</th>
@@ -43,7 +43,7 @@
 
                                 </tr>
                                 <tr>
-                                   
+
                                     <th style="display:none;"></th>
                                     <th class="text-center">C.O</th>
                                     <th class="text-center"># DOC</th>
@@ -137,7 +137,7 @@ $(document).ready(function() {
                 extend: 'excelHtml5',
                 text: '<i class="fa fa-file-excel-o"></i> Excel',
                 titleAttr: 'Excel',
-                title: 'Tablas Generales'
+                title: 'DOC_VENTAS'
             },
             {
                 titleAttr: 'Imprimir',
@@ -177,7 +177,7 @@ $(document).ready(function() {
                         return "<input type='checkbox' disabled>"
                     }
                 }
-                
+
             },
 
             {
@@ -189,10 +189,11 @@ $(document).ready(function() {
                 data: 'fecha_documento',
                 className: "text-center letrapequeña"
             },
-            
+
             {
                 data: 'tipo_venta',
                 className: "text-center letrapequeña",
+                visible: false
             },
 
             {
@@ -238,7 +239,7 @@ $(document).ready(function() {
                         case "ADELANTO":
                             return "<span class='badge badge-success' d-block>" + data.estado +
                                 "</span>";
-                            break;                        
+                            break;
                         case "DEVUELTO":
                             return "<span class='badge badge-warning' d-block>" + data.estado +
                                 "</span>";
@@ -274,7 +275,7 @@ $(document).ready(function() {
                         "<button class='btn btn-info' onclick='xmlElectronico(" +data.id+ ")' title='Detalle'>XML</button>"
                 }
             },
-            
+
             {
                 data: null,
                 className: "text-center letrapequeña",
@@ -295,7 +296,7 @@ $(document).ready(function() {
                     {
                         cadena = cadena + "<button type='button' class='btn btn-sm btn-success m-1' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><i class='fa fa-send'></i> Sunat</button>";
                     }
-                    
+
                     if(data.sunat === '1')
                     {
                         cadena = cadena  +
@@ -311,12 +312,12 @@ $(document).ready(function() {
 
                     if(data.sunat === '2')
                     {
-                        cadena = cadena +                        
+                        cadena = cadena +
                         "<button type='button' class='btn btn-sm btn-danger m-1 d-none' onclick='eliminar(" + data.id + ")' title='Eliminar'><i class='fa fa-trash'></i> Eliminar</button>";
                     }
 
                     return cadena;
-                        
+
                 }
             }
 
@@ -437,7 +438,7 @@ function comprobanteElectronico(id) {
 
 function comprobanteElectronicoTicket(id) {
     var url = '{{ route("ventas.documento.comprobante", ":id")}}';
-    url = url.replace(':id',id+'-80');    
+    url = url.replace(':id',id+'-80');
     window.open(url, "Comprobante SISCOM", "width=900, height=600");
 }
 
@@ -461,7 +462,7 @@ function xmlElectronico(id) {
         // showLoaderOnConfirm: true,
     }).then((result) => {
         if (result.value) {
-            
+
             var url = '{{ route("ventas.documento.xml", ":id")}}';
             url = url.replace(':id',id);
 
@@ -516,7 +517,7 @@ function  guia(id) {
                 'La Solicitud se ha cancelado.',
                 'error'
             )
-            
+
         }
     })
 }
@@ -541,7 +542,7 @@ function enviarSunat(id , sunat) {
         // showLoaderOnConfirm: true,
     }).then((result) => {
         if (result.value) {
-            
+
             var url = '{{ route("ventas.documento.sunat", ":id")}}';
             url = url.replace(':id',id);
 

@@ -43,7 +43,7 @@
             .numero-documento {
                 margin: 1px;
                 padding-top: 20px;
-                padding-bottom: 20px;                
+                padding-bottom: 20px;
                 border: 1px solid #8f8f8f;
             }
 
@@ -110,13 +110,13 @@
                 <img src="{{ base_path() . '/storage/app/'.$empresa->ruta_logo }}" class="img-fluid">
                 @else
                 <img src="{{ public_path() . '/img/default.png' }}" class="img-fluid">
-                @endif  
+                @endif
             </div>
             <div class="empresa">
                 <p class="m-0 p-0 text-uppercase nombre-empresa">{{ DB::table('empresas')->count() == 0 ? 'SISCOM ' : DB::table('empresas')->first()->razon_social }}</p>
                 <p class="m-0 p-0 text-uppercase ruc-empresa">RUC {{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->ruc }}</p>
                 <p class="m-0 p-0 text-uppercase direccion-empresa">{{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->direccion_fiscal }}</p>
-                
+
                 <p class="m-0 p-0 text-info-empresa">Central telefónica: {{ DB::table('empresas')->count() == 0 ? '-' : DB::table('empresas')->first()->celular }}</p>
                 <p class="m-0 p-0 text-info-empresa">Email: {{ DB::table('empresas')->count() == 0 ? '-' : DB::table('empresas')->first()->correo }}</p>
             </div><br>
@@ -166,11 +166,11 @@
             <table class="tbl-detalles text-uppercase" cellpadding="2" cellspacing="0">
                 <thead>
                     <tr >
-                        <th style="text-align: left">CANT</th>
-                        <th style="text-align: left">DESCRIPCIÓN</th>
-                        <th style="text-align: left">P. UNIT.</th>
-                        <th style="text-align: left">DESC.</th>
-                        <th style="text-align: right">TOTAL</th>
+                        <th style="text-align: left; width: 10%;">CANT</th>
+                        <th style="text-align: left; width: 55%;">DESCRIPCIÓN</th>
+                        <th style="text-align: left; width: 15%;">P.UNIT.</th>
+                        <th style="text-align: left; width: 10%;">DESC.</th>
+                        <th style="text-align: right; width: 10%;">TOTAL</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -214,7 +214,7 @@
                 </tr>
             </table>
         </div><br>
-        <div class="qr">            
+        <div class="qr">
             @if($documento->ruta_qr)
             <img src="{{ base_path() . '/storage/app/'.$documento->ruta_qr }}">
             @endif

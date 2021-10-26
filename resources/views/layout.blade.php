@@ -100,7 +100,7 @@
                     DEVELOPER <strong>SISCOM SAC</strong>
                 </div>
                 <div  onkeyup="return mayus(this)">
-                    <strong>Copyright</strong> AgroEnsancha Eirl &copy; 2020-2021
+                    <strong>Copyright</strong> SisCom SAC &copy; 2020-2021
                 </div>
             </div>
 
@@ -277,7 +277,7 @@
             Swal.fire({
                 icon: 'success',
                 title: '¡Búsqueda Exitosa!',
-                text: 'Datos ingresados.',                
+                text: 'Datos ingresados.',
                 customClass: {
                     container: 'my-swal'
                 },

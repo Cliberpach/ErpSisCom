@@ -82,7 +82,7 @@
                                             <span class="input-group-addon" >
                                                 <i class="fa fa-calendar"></i>
                                             </span>
-                                            
+
                                             @if (!empty($orden))
                                             <input type="text" id="fecha_entrega_campo" name="fecha_entrega"
                                                 class="form-control {{ $errors->has('fecha_entrega') ? ' is-invalid' : '' }}"
@@ -106,7 +106,7 @@
 
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group d-none">
                                     <label class="required">Empresa: </label>
 
                                         @if (!empty($orden))
@@ -134,7 +134,7 @@
                                         @endif
 
 
-                                    
+
                                 </div>
 
                                 <hr>
@@ -193,7 +193,7 @@
                                             </select>
                                         @endif
 
-                        
+
                                 </div>
 
                                 <div class="form-group">
@@ -241,8 +241,8 @@
 
 
                                     @endif
-                                
-                                
+
+
                                 </div>
 
 
@@ -254,7 +254,7 @@
                             <div class="col-sm-6">
 
                                 <div class="form-group row">
-                                    
+
                                     <div class="col-md-6">
                                         <label class="required">Modo de Compra: </label>
 
@@ -305,7 +305,7 @@
                                         style="text-transform: uppercase; width:100%" value="{{old('moneda',$orden->moneda)}}"
                                         name="moneda" id="moneda" disabled>
                                             <option></option>
-                                            
+
                                             @foreach ($monedas as $moneda)
                                             <option value="{{$moneda->descripcion}}" @if(old('moneda',$orden->moneda)==$moneda->descripcion ) {{'selected'}} @endif
                                                 >{{$moneda->simbolo.' - '.$moneda->descripcion}}</option>
@@ -315,12 +315,12 @@
                                                 <strong>{{ $errors->first('moneda') }}</strong>
                                             </span>
                                             @endif
-                                        </select> 
+                                        </select>
                                         @else
                                             <select
                                             class="select2_form form-control {{ $errors->has('moneda') ? ' is-invalid' : '' }}"
                                             style="text-transform: uppercase; width:100%" value="{{old('moneda')}}"
-                                            name="moneda" id="moneda" required>
+                                            name="moneda" id="moneda" onchange="cambioMoneda(this)" required>
                                                 <option></option>
                                             @foreach ($monedas as $moneda)
                                             <option value="{{$moneda->descripcion}}" @if(old('moneda')==$moneda->descripcion ) {{'selected'}} @endif
@@ -332,17 +332,17 @@
                                             </span>
                                             @endif
 
-                                            </select> 
+                                            </select>
 
                                         @endif
-                                    
-                                    
+
+
                                     </div>
 
 
-                                  
+
                                 </div>
-                                
+
                                 <div class="form-group row">
                                     <div class="col-md-6">
                                         <label class="required">Tipo: </label>
@@ -351,7 +351,7 @@
                                             style="text-transform: uppercase; width:100%" value="{{old('tipo_compra')}}"
                                             name="tipo_compra" id="tipo_compra" required onchange="activarNumero()">
                                             <option></option>
-                                            
+
                                                 @foreach (tipo_compra() as $modo)
                                                 <option value="{{$modo->descripcion}}" @if(old('tipo_compra')==$modo->
                                                     descripcion ) {{'selected'}} @endif
@@ -362,7 +362,7 @@
                                                     <strong>{{ $errors->first('tipo_compra') }}</strong>
                                                 </span>
                                                 @endif
-                                          
+
 
 
                                         </select>
@@ -371,17 +371,17 @@
                                     <div class="col-md-6">
                                         <label class="" id="numero_comprobante">Nº: </label>
                                         <input type="text" id="numero_tipo" name="numero_tipo" class="form-control {{ $errors->has('numero_tipo') ? ' is-invalid' : '' }}" value="{{old('numero_tipo')}}" disabled>
-                                        
+
                                         @if ($errors->has('numero_tipo'))
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $errors->first('tipo_compra') }}</strong>
                                         </span>
                                         @endif
 
-                                                                             
+
                                     </div>
 
-                                    
+
                                 </div>
 
                                 <div class="form-group row">
@@ -393,7 +393,7 @@
                                         @else
                                         <input type="text" id="tipo_cambio" name="tipo_cambio" class="form-control {{ $errors->has('tipo_cambio') ? ' is-invalid' : '' }}" value="{{old('tipo_cambio')}}" disabled>
                                         @endif
-                                        
+
                                         @if ($errors->has('tipo_cambio'))
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $errors->first('tipo_cambio') }}</strong>
@@ -439,7 +439,7 @@
                                     </div>
 
 
-                                    
+
                                 </div>
 
                                 <div class="form-group">
@@ -476,7 +476,7 @@
                                     </div>
                                     <div class="panel-body">
 
-                                        
+
                                         <div class="row">
                                             <div class="col-lg-6 col-xs-12 b-r">
                                                 <div class="form-group row">
@@ -547,7 +547,7 @@
                                                     </div>
                                                 </div>
 
-                                                    
+
 
                                                 <div class="form-group row">
                                                     <div class="col-lg-6 col-xs-12">
@@ -562,9 +562,9 @@
 
                                                 </div>
 
-                                                
 
-                                            
+
+
                                             </div>
 
 
@@ -572,7 +572,7 @@
 
                                         </div>
                                         <hr>
-                                        
+
                                         <div class="table-responsive">
                                             <table
                                                 class="table dataTables-orden-detalle table-striped table-bordered table-hover"
@@ -835,6 +835,24 @@
         return enviar
     }
 
+    function cambioMoneda(b)
+    {
+        if(b.value == 'DOLARES')
+        {
+            $.ajax({
+                dataType: 'json',
+                type: 'get',
+                url: '{{route("compras.orden.dolar")}}',
+            }).done(function(result) {
+                $('#tipo_cambio').val(result.venta);
+            });
+        }
+        else
+        {
+            $('#tipo_cambio').val('');
+        }
+    }
+
     $('#enviar_documento').submit(function(e) {
         e.preventDefault();
         var correcto = validarFecha()
@@ -867,14 +885,14 @@
                             document.getElementById("fecha_documento_campo").disabled = false;
                             document.getElementById("fecha_entrega_campo").disabled = false;
 
-                            this.submit();    
+                            this.submit();
                         }
 
                     @else
                         cargarproductos()
                         this.submit();
                     @endif
-                        
+
                 } else if (
                     /* Read more about handling dismissals below */
                     result.dismiss === Swal.DismissReason.cancel
@@ -900,7 +918,7 @@
                 $('.dataTables-orden-detalle tbody tr', row).eq(el).addClass('sinFlete');
                 flete = false
             }else{
-                
+
                 $('.dataTables-orden-detalle tbody tr', row).eq(el).removeClass('sinFlete');
             }
             if (row[6] == '') {
@@ -908,7 +926,7 @@
                 $('.dataTables-orden-detalle tbody tr', row).eq(el).addClass('sinFlete');
                 flete = false
             }else{
-                
+
                 $('.dataTables-orden-detalle tbody tr', row).eq(el).removeClass('sinFlete');
             }
 
@@ -917,7 +935,7 @@
                 $('.dataTables-orden-detalle tbody tr', row).eq(el).addClass('sinFlete');
                 flete = false
             }else{
-                
+
                 $('.dataTables-orden-detalle tbody tr', row).eq(el).removeClass('sinFlete');
             }
         });
@@ -925,17 +943,17 @@
     }
 
     @if (!empty($orden))
-        @if ($orden->estado == "PAGADA" ) 
+        @if ($orden->estado == "PAGADA" )
             document.getElementById("modo_compra").disabled = true;
             @foreach (modo_compra() as $modo)
-                @if ($modo->id == 52 ) 
+                @if ($modo->id == 52 )
                     $("#modo_compra").val("{{$modo->descripcion}}").trigger("change");
                 @endif
             @endforeach
         @else
             document.getElementById("modo_compra").disabled = true;
                 @foreach (modo_compra() as $modo)
-                    @if ($modo->id == 51 ) 
+                    @if ($modo->id == 51 )
                         $("#modo_compra").val("{{$modo->descripcion}}").trigger("change");
                     @endif
                 @endforeach
@@ -973,12 +991,12 @@
                             }
                         },
                         {
-                            "targets": [2],        
+                            "targets": [2],
                             className: "text-center",
                         },
                         {
                             "targets": [3],
-                        
+
                         },
                         {
                             "targets": [4],
@@ -1009,7 +1027,7 @@
                             className: "text-center",
                             visible: false
                         },
-                        
+
 
                     ],
 
@@ -1020,7 +1038,7 @@
 
         @if (!empty($orden))
 
-            @if ($orden->igv_check == '1') 
+            @if ($orden->igv_check == '1')
 
                 $('#igv').prop('disabled', false)
                 $("#igv_check").prop('checked',true)
@@ -1040,7 +1058,7 @@
                 }
             @endif
 
-            @if ($orden->moneda == "SOLES") 
+            @if ($orden->moneda == "SOLES")
                 $('#tipo_cambio').attr('disabled',true)
                 $("#tipo_cambio").attr("required", false);
                 $("#campo_tipo_cambio").removeClass("required")
@@ -1049,10 +1067,10 @@
                 $("#tipo_cambio").attr("required", true);
                 $("#campo_tipo_cambio").addClass("required")
             @endif
-            
 
 
-            @if ($detalles) 
+
+            @if ($detalles)
                 obtenerTabla()
                 sumaTotal()
             @endif
@@ -1091,19 +1109,19 @@
         $('#cantidad_editar').val(data[2]);
         //MOSTRAR TABLA SI ES INGRESO POR PRIMERA VEZ DEL LOTE
         if (data[9] == '' && data[8] != '') {
-            $('#modalLote').hide(); 
-            $('#editarLote').hide(); 
-            $('#editarRegistro').show(); 
+            $('#modalLote').hide();
+            $('#editarLote').hide();
+            $('#editarRegistro').show();
         }else{
-            if (data[9] != '1') { 
-                $('#modalLote').show(); 
-                $('#editarLote').show(); 
-                $('#editarRegistro').hide(); 
-            } else { 
-                $('#modalLote').hide(); 
-                $('#editarLote').hide(); 
-                $('#editarRegistro').show(); 
-            }   
+            if (data[9] != '1') {
+                $('#modalLote').show();
+                $('#editarLote').show();
+                $('#editarRegistro').hide();
+            } else {
+                $('#modalLote').hide();
+                $('#editarLote').hide();
+                $('#editarRegistro').show();
+            }
         }
 
         $('#modal_editar_orden').modal('show');
@@ -1264,7 +1282,7 @@
         $('#lote').removeClass("is-invalid")
         $('#error-lote').text('')
     }
-    //INGRESAR producto A DATATABLE 
+    //INGRESAR producto A DATATABLE
     function agregarTabla($detalle) {
         table.row.add([
             $detalle.producto_id,
@@ -1288,7 +1306,7 @@
             return ''
         }
     }
-    //CARGAR producto A UNA VARIABLE 
+    //CARGAR producto A UNA VARIABLE
     function cargarproductos() {
         var productos = [];
         var data = table.rows().data();
@@ -1306,14 +1324,14 @@
         });
         $('#productos_tabla').val(JSON.stringify(productos));
     }
-    //OBTENER EL producto POR SU ID 
+    //OBTENER EL producto POR SU ID
     function obtenerproducto(id) {
         var producto = "";
         $.ajax({
             url: '{{ route("getProducto", ":id") }}'.replace(':id', id),
-            async: false,  
+            async: false,
             success:function(data) {
-                producto = (data) ? data : toastr.error('El Producto no se encuentra en Base de Datos.', 'Error'); 
+                producto = (data) ? data : toastr.error('El Producto no se encuentra en Base de Datos.', 'Error');
             }
         });
         return producto;
@@ -1336,7 +1354,7 @@
         return presentacion;
     }
 
-    //producto Y LOTE DEBEN SER UNICOS 
+    //producto Y LOTE DEBEN SER UNICOS
     function buscarproducto(id) {
         var existe = false;
         table.rows().data().each(function(el, index) {
@@ -1358,7 +1376,7 @@
         });
         var igv = $('#igv').val()
         if (!igv) {
-            sinIgv(subtotal)   
+            sinIgv(subtotal)
         }else{
             conIgv(subtotal)
         }

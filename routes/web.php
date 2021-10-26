@@ -256,6 +256,7 @@ function(){
         Route::get('documento/{id}','Compras\OrdenController@document')->name('compras.orden.documento');
         Route::get('nuevodocumento/{id}','Compras\OrdenController@newdocument')->name('compras.orden.nuevodocumento');
         Route::get('confirmarEliminar/{id}','Compras\OrdenController@confirmDestroy')->name('compras.orden.confirmDestroy');
+        Route::get('dolar','Compras\OrdenController@dolar')->name('compras.orden.dolar');
 
         //Pagos
         Route::get('pagos/index/{id}', 'Compras\PagoController@index')->name('compras.pago.index');
@@ -580,6 +581,8 @@ Route::get('ventas/documentos/comprobante/{id}','Ventas\DocumentoController@vouc
 
 Route::get('ruta', function () {
     //https://www.oratlas.com/lector-online-de-texto
+
+    return precio_dolar();
     return '<h1>SISCOM</h1>';
     $dif = (int)(8-9);
 

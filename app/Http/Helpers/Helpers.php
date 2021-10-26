@@ -198,7 +198,7 @@ if (!function_exists('docValido')) {
         $documento = DocumentoDocumento::find($id);
         $detalles = DocumentoDetalle::where('documento_id', $id)->get();
         $cont = 0 ;
-        
+
         if($documento->sunat === '2')
         {
             return false;
@@ -214,7 +214,7 @@ if (!function_exists('docValido')) {
 
         if(count($detalles) === $cont)
         {
-            
+
             $documento->sunat = '2';
             $documento->update();
             return false;
@@ -1053,7 +1053,8 @@ if (!function_exists('MovimientoCajaIngresos')) {
         return $totalIngresos;
     }
 }
-if (!function_exists('MovimientoCajaEgresos')) {
+
+if (!function_exists('cuadreMovimientoCajaEgresos')) {
     function cuadreMovimientoCajaEgresos($movimiento)
     {
 
@@ -1072,3 +1073,26 @@ if (!function_exists('MovimientoCajaEgresos')) {
         return $totalEgresos;
     }
 }
+
+if (!function_exists('precio_dolar')) {
+    function precio_dolar()
+    {
+        $fecha =  Carbon::now()->toDateString();
+        $ctx = stream_context_create(array('http'=>
+            array(
+                'timeout' => 1200,  //1200 Seconds is 20 Minutes
+            )
+        ));
+        $data = file_get_contents("https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha=".$fecha,false,$ctx);
+        $infodata = json_decode($data,false);
+        return response()->json($infodata);
+    }
+}
+
+if (!function_exists('ventas_mensual')) {
+    function ventas_mensual()
+    {
+
+    }
+}
+

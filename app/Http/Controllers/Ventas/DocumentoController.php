@@ -37,7 +37,7 @@ use Luecano\NumeroALetras\NumeroALetras;
 class DocumentoController extends Controller
 {
     public function index()
-    {        
+    {
         $this->authorize('haveaccess','documento_venta.index');
         return view('ventas.documentos.index');
     }
@@ -310,7 +310,7 @@ class DocumentoController extends Controller
         $this->authorize('haveaccess','documento_venta.index');
         ini_set("max_execution_time", 60000);
         try{
-            
+
             DB::beginTransaction();
             $data = $request->all();
 
@@ -440,7 +440,7 @@ class DocumentoController extends Controller
                     'mensaje'=> $envio_prev['mensaje']
                 ]);
             }
-            
+
 
             $documento = Documento::find($documento->id);
             $documento->nombre_comprobante_archivo = $documento->serie.'-'.$documento->correlativo.'.pdf';
@@ -507,7 +507,7 @@ class DocumentoController extends Controller
             $documento = Documento::find($id);
             $detalles = Detalle::where('estado','ACTIVO')->where('documento_id',$id)->get();
             $empresa = Empresa::findOrFail($documento->empresa_id);
-            
+
             $legends = self::obtenerLeyenda($documento);
             $legends = json_encode($legends,true);
             $legends = json_decode($legends,true);
@@ -516,7 +516,7 @@ class DocumentoController extends Controller
                 mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantessiscom'));
             }
             $pdf_condicion = $empresa->condicion === '1' ? 'comprobante_normal_nuevo' : 'comprobante_normal';
-            
+
             PDF::loadview('ventas.documentos.impresion.'.$pdf_condicion,[
                 'documento' => $documento,
                 'detalles' => $detalles,
@@ -525,11 +525,11 @@ class DocumentoController extends Controller
                 "legends" =>  $legends,
                 ])->setPaper('a4')->setWarnings(false)
                 ->save(public_path().'/storage/comprobantessiscom/'.$documento->nombre_comprobante_archivo);
-            
+
             return array('success' => true,'mensaje' => 'Documento validado.');
         }
         catch(Exception $e)
-        {            
+        {
             $documento = Documento::find($id);
 
             $errorVenta = new ErrorVenta();
@@ -578,13 +578,13 @@ class DocumentoController extends Controller
                     });
                 }
             }
-            
+
             return array('success' => true,'mensaje' => 'Documento validado.');
         }
         catch(Exception $e)
         {
             $documento = Documento::find($id);
-            
+
             $errorVenta = new ErrorVenta();
             $errorVenta->documento_id = $documento->id;
             $errorVenta->tipo = 'email';
@@ -828,7 +828,7 @@ class DocumentoController extends Controller
                     $legends = json_decode($legends,true);
 
                     $detalles = Detalle::where('estado','ACTIVO')->where('documento_id', $documento->id)->get();
-                    
+
                     if($size === 80)
                     {
                         $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_ticket',[
@@ -1152,7 +1152,7 @@ class DocumentoController extends Controller
             if($existe[0]){
                 if ($existe[0]->get('existe') == true) {
                     return array('success' => true,'mensaje' => 'Documento validado.');
-                }else{    
+                }else{
                     return array('success' => false, 'mensaje' => 'Tipo de Comprobante no registrado en la empresa.');
                 }
             }else{
@@ -1239,7 +1239,7 @@ class DocumentoController extends Controller
                     }
 
                     $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'.DIRECTORY_SEPARATOR.$name);
-                    $pathToFile_cdr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'cdr'.DIRECTORY_SEPARATOR.$name_cdr);                     
+                    $pathToFile_cdr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'cdr'.DIRECTORY_SEPARATOR.$name_cdr);
 
                     file_put_contents($pathToFile, $data_comprobante);
                     file_put_contents($pathToFile_cdr, $data_cdr);
@@ -1427,7 +1427,7 @@ class DocumentoController extends Controller
             ->join('categorias','categorias.id','=','productos.categoria_id')
             ->join('tabladetalles','tabladetalles.id','=','productos.medida')
             ->leftJoin('compra_documento_detalles','compra_documento_detalles.lote_id','=','lote_productos.id')
-            ->select('compra_documento_detalles.precio','lote_productos.*','productos.nombre','productos.codigo_barra','productos_clientes.cliente','productos_clientes.moneda','tabladetalles.simbolo as unidad_producto',
+            ->select('compra_documento_detalles.precio_soles as precio','lote_productos.*','productos.nombre','productos.codigo_barra','productos_clientes.cliente','productos_clientes.moneda','tabladetalles.simbolo as unidad_producto',
                     'productos_clientes.monto as precio_venta','categorias.descripcion as categoria', DB::raw('DATE_FORMAT(lote_productos.fecha_vencimiento, "%d/%m/%Y") as fecha_venci')) //DB::raw('DATE_FORMAT(lote_productos.fecha_vencimiento, "%d/%m/%Y") as fecha_venci')
             ->where('lote_productos.cantidad_logica','>',0)
             ->where('lote_productos.estado','1')

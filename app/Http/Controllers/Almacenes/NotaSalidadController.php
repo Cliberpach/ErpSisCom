@@ -240,7 +240,7 @@ class NotaSalidadController extends Controller
          {
              DetalleNotaSalidad::where('nota_salidad_id',$notasalidad->id)->delete();
              foreach ($notatabla as $fila) {
-                
+
                 $lote_producto = LoteProducto::findOrFail($fila->lote_id);
                 $cantidadmovimiento = DB::table("movimiento_nota")->where('lote_id',$fila->lote_id)->where('producto_id',$fila->producto_id)->where('nota_id',$id)->where('movimiento','SALIDA')->first()->cantidad;
                 $cantidadmovimiento = $cantidadmovimiento ? $cantidadmovimiento : 0;
@@ -249,7 +249,7 @@ class NotaSalidadController extends Controller
                 $lote_producto->update();
 
                 MovimientoNota::where('lote_id',$fila->lote_id)->where('producto_id',$fila->producto_id)->where('nota_id',$id)->where('movimiento','SALIDA')->delete();
-                
+
                 DetalleNotaSalidad::create([
                     'nota_salidad_id' => $id,
                     'lote_id' => $fila->lote_id,
@@ -302,7 +302,7 @@ class NotaSalidadController extends Controller
             ->join('categorias','categorias.id','=','productos.categoria_id')
             ->join('tabladetalles','tabladetalles.id','=','productos.medida')
             ->leftJoin('compra_documento_detalles','compra_documento_detalles.lote_id','=','lote_productos.id')
-            ->select('compra_documento_detalles.precio','lote_productos.*','productos.nombre','productos.codigo_barra','productos_clientes.cliente','productos_clientes.moneda','tabladetalles.simbolo as unidad_producto',
+            ->select('compra_documento_detalles.precio_soles as precio','lote_productos.*','productos.nombre','productos.codigo_barra','productos_clientes.cliente','productos_clientes.moneda','tabladetalles.simbolo as unidad_producto',
                     'productos_clientes.monto as precio_venta','categorias.descripcion as categoria', DB::raw('DATE_FORMAT(lote_productos.fecha_vencimiento, "%d/%m/%Y") as fecha_venci')) //DB::raw('DATE_FORMAT(lote_productos.fecha_vencimiento, "%d/%m/%Y") as fecha_venci')
             ->where('lote_productos.cantidad_logica','>',0)
             ->where('lote_productos.estado','1')
@@ -384,14 +384,14 @@ class NotaSalidadController extends Controller
                     $mover = $cantidadmovimiento - $detalle->cantidad;
                     $lote->cantidad_logica = $lote->cantidad_logica - $mover;
                 }
-                else 
+                else
                 {
                     $mover = $detalle->cantidad - $cantidadmovimiento;
                     $lote->cantidad_logica = $lote->cantidad_logica + $mover;
                 }
 
 
-                
+
                 //$lote->cantidad =  $lote->cantidad_logica;
                 $lote->estado = '1';
                 $lote->update();
@@ -434,7 +434,7 @@ class NotaSalidadController extends Controller
     public function returnLote(Request $request)
     {
         $data = $request->all();
-        $lote_id = $data['lote_id'];         
+        $lote_id = $data['lote_id'];
         $lote = LoteProducto::find($lote_id);
 
         if($lote)
@@ -457,11 +457,11 @@ class NotaSalidadController extends Controller
         try{
             DB::beginTransaction();
             $data = $request->all();
-            $lote_id = $data['lote_id'];         
-            $cantidad_sum = $data['cantidad_sum'];         
-            $cantidad_res = $data['cantidad_res'];         
+            $lote_id = $data['lote_id'];
+            $cantidad_sum = $data['cantidad_sum'];
+            $cantidad_res = $data['cantidad_res'];
             $lote = LoteProducto::find($lote_id);
-        
+
             if($lote)
             {
                 $lote->cantidad_logica = $lote->cantidad_logica + ($cantidad_sum - $cantidad_res);
@@ -494,11 +494,11 @@ class NotaSalidadController extends Controller
         try{
             DB::beginTransaction();
             $data = $request->all();
-            $lote_id = $data['lote_id'];         
-            $cantidad_sum = $data['cantidad_sum'];         
-            $cantidad_res = $data['cantidad_res'];         
+            $lote_id = $data['lote_id'];
+            $cantidad_sum = $data['cantidad_sum'];
+            $cantidad_res = $data['cantidad_res'];
             $lote = LoteProducto::find($lote_id);
-        
+
             if($lote)
             {
                 $lote->cantidad_logica = $lote->cantidad_logica + ($cantidad_sum - $cantidad_res);

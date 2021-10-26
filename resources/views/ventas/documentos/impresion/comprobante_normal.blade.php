@@ -83,7 +83,7 @@
             .numero-documento {
                 margin: 1px;
                 padding-top: 20px;
-                padding-bottom: 20px;                
+                padding-bottom: 20px;
                 border: 1px solid #8f8f8f;
                 font-size: 14px;
             }
@@ -157,7 +157,7 @@
                     <p class="m-0 p-0 text-uppercase nombre-empresa">{{ DB::table('empresas')->count() == 0 ? 'SISCOM ' : DB::table('empresas')->first()->razon_social }}</p>
                     <p class="m-0 p-0 text-uppercase ruc-empresa">RUC {{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->ruc }}</p>
                     <p class="m-0 p-0 text-uppercase direccion-empresa">{{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->direccion_fiscal }}</p>
-                    
+
                     <p class="m-0 p-0 text-info-empresa">Central telefónica: {{ DB::table('empresas')->count() == 0 ? '-' : DB::table('empresas')->first()->celular }}</p>
                     <p class="m-0 p-0 text-info-empresa">Email: {{ DB::table('empresas')->count() == 0 ? '-' : DB::table('empresas')->first()->correo }}</p>
                 </div>
@@ -209,11 +209,11 @@
             <table class="tbl-detalles text-uppercase" cellpadding="5" cellspacing="0">
                 <thead>
                     <tr >
-                        <th style="text-align: left">CANT</th>
-                        <th style="text-align: left">DESCRIPCIÓN</th>
-                        <th style="text-align: left">P. UNIT.</th>
-                        <th style="text-align: left">DESC.</th>
-                        <th style="text-align: right">TOTAL</th>
+                        <th style="text-align: left; width: 10%;">CANT</th>
+                        <th style="text-align: left;  width: 60%;">DESCRIPCIÓN</th>
+                        <th style="text-align: left;  width: 10%;">P. UNIT.</th>
+                        <th style="text-align: left;  width: 10%;">DESC.</th>
+                        <th style="text-align: right;  width: 10%;">TOTAL</th>
                     </tr>
                 </thead>
                 <tbody>
