@@ -22,7 +22,7 @@ class Documento extends Model
         'direccion_cliente',
         'cliente',
         'cliente_id',
-    
+
         'moneda',
         'numero_doc',
         'fecha_documento',
@@ -43,7 +43,7 @@ class Documento extends Model
         'correlativo',
         'serie',
         'ruta_comprobante_archivo',
-        'nombre_comprobante_archivo'
+        'nombre_comprobante_archivo',
     ];
 
 
@@ -68,7 +68,7 @@ class Documento extends Model
     {
         return $this->belongsTo('App\Ventas\Cliente', 'cliente_id');
     }
-    
+
 
     public function user()
     {
@@ -156,7 +156,7 @@ class Documento extends Model
     public function cuenta()
     {
         return $this->hasOne('App\Ventas\CuentaCliente','cotizacion_documento_id');
-    } 
+    }
 
     protected static function booted()
     {

@@ -15,15 +15,15 @@ class ParametroController extends Controller
         // $resp = $request->json();
 
         $url = "https://apiperu.dev/api/ruc/".$ruc;
-        $client = new \GuzzleHttp\Client();
+        $client = new \GuzzleHttp\Client(['verify'=>false]);
         $token = 'c36358c49922c564f035d4dc2ff3492fbcfd31ee561866960f75b79f7d645d7d';
         $response = $client->get($url, [
             'headers' => [
-                        'Content-Type' => 'application/json', 
+                        'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                         'Authorization' => "Bearer {$token}"
                     ]
-        ]); 
+        ]);
         $estado = $response->getStatusCode();
         $data = $response->getBody()->getContents();
         // $arreglo = [
@@ -43,11 +43,11 @@ class ParametroController extends Controller
         // return $resp;
 
         $url = "https://apiperu.dev/api/dni/".$dni;
-            $client = new \GuzzleHttp\Client();
+            $client = new \GuzzleHttp\Client(['verify'=>false]);
             $token = 'c36358c49922c564f035d4dc2ff3492fbcfd31ee561866960f75b79f7d645d7d';
             $response = $client->get($url, [
                 'headers' => [
-                            'Content-Type' => 'application/json', 
+                            'Content-Type' => 'application/json',
                             'Accept' => 'application/json',
                             'Authorization' => "Bearer {$token}"
                         ]

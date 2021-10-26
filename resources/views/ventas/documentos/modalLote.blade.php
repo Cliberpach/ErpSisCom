@@ -20,7 +20,7 @@
                             <thead>
                             <tr>
                                 <th class="text-center"></th>
-                                <th class="text-center">PRODUCTO</th> 
+                                <th class="text-center">PRODUCTO</th>
                                 <th class="text-center">UNIME</th>
                                 <th class="text-center">LOTE</th>
                                 <th class="text-center">FECHA VENCE.</th>
@@ -72,7 +72,7 @@
     }
     #table_lotes tbody .fila_lote.selected {
         /* color: #151515 !important;*/
-        font-weight: 400; 
+        font-weight: 400;
         color: white !important;
         background-color: #18a689 !important;
         /* background-color: #CFCFCF !important; */
@@ -102,7 +102,7 @@
 
     @media only screen and (min-width: 428px) and (max-width: 1190px) {
         /* Para tables: */
-        #modal_lote div.dataTables_filter input { 
+        #modal_lote div.dataTables_filter input {
             width: 175% !important;
             display: inline-block !important;
         }
@@ -110,7 +110,7 @@
 
     @media only screen and (max-width: 428px) {
         /* Para celular: */
-        #modal_lote  div.dataTables_filter input { 
+        #modal_lote  div.dataTables_filter input {
             width: 100% !important;
             display: inline-block !important;
         }
@@ -118,7 +118,7 @@
 
     @media only screen and (min-width: 1190px) {
 
-        #modal_lote div.dataTables_filter input { 
+        #modal_lote div.dataTables_filter input {
             width: 363% !important;
             display: inline-block !important;
         }
@@ -140,9 +140,9 @@ function obtenerLotesproductos(tipo_cliente) {
     $(".dataTables-lotes").dataTable().fnDestroy();
     //INSTANCIAR DATATABLE
     var lotes = $('.dataTables-lotes').DataTable({
-        "dom": 
+        "dom":
                 "<'row'<'col-sm-12 col-md-12 col-lg-12'f>>" +
-                "<'row'<'col-sm-12'tr>>"+ 
+                "<'row'<'col-sm-12'tr>>"+
                 "<'row justify-content-between'<'col information-content p-0'i><''p>>",
 
         "bPaginate": true,
@@ -157,16 +157,17 @@ function obtenerLotesproductos(tipo_cliente) {
             {data: 'fecha_venci', className: "text-center", name:"lote_productos.fecha_vencimiento", sWidth: '5%' },
             {data: 'cantidad_logica', className: "text-center", name:"lote_productos.cantidad_logica", sWidth: '10%' },
             {data: 'codigo_barra', className: "text-center", name:"productos.codigo_barra", sWidth: '15%' },
-            {data: 'precio_venta', className: "text-center", name:"productos_clientes.monto", sWidth: '10%' },
+            {data: 'monto', className: "text-center", name:"productos_clientes.monto", sWidth: '10%' },
             {
                 data: null,
                 className: "text-center letrapequeña",
+                name:"compra_documento_detalles.precio_soles",
                 sWidth: '5%',
                 render: function(data) {
-                    if (data.precio == null) {
+                    if (data.precio_soles == null) {
                         return '0.00';
                     }else{
-                        return convertFloat(data.precio).toFixed(2);
+                        return convertFloat(data.precio_soles).toFixed(2);
                     }
                 }
             },
@@ -189,7 +190,7 @@ function obtenerLotesproductos(tipo_cliente) {
 }
 
 $(document).ready(function() {
-   
+
     $('buttons-html5').removeClass('.btn-default');
     $('#table_lotes_wrapper').removeClass('');
 
@@ -221,11 +222,11 @@ function ingresarProducto(producto) {
     $('#producto_id').val(producto.id)
     $('#producto_lote').val(producto.nombre+' - '+ producto.codigo_lote)
     //AGREGAR LIMITE A LA CANTIDAD SEGUN EL LOTE SELECCIONADO
-    $("#cantidad").attr({ 
+    $("#cantidad").attr({
         "max" : producto.cantidad_logica,
         "min" : 1,
     });
-    $("#precio").attr({ 
+    $("#precio").attr({
         "min" : 1,
     });
     document.getElementById('cantidad').focus()
@@ -244,7 +245,7 @@ function evaluarPrecioigv(producto) {
             //PRODUCTO CON IGV
             var precio = producto.precio_venta
             return Number(precio).toFixed(2)
-        }                        
+        }
     }else{
         toastr.error('Precio registrado diferente a Soles (S/.).', 'Error');
         return 0.00
@@ -257,7 +258,7 @@ function limpiarModallote() {
     //CERRAR MODAL
     $('#modal_lote').modal('hide');
 }
-//AL ABRIR EL MODAL SE DEBE DE ACTUALIZAR EL DATATABLE 
+//AL ABRIR EL MODAL SE DEBE DE ACTUALIZAR EL DATATABLE
 $('#modal_lote').on('show.bs.modal', function(e) {
     //ACTUALIZAR DATATABLE
     $('.dataTables-lotes').DataTable().ajax.reload();

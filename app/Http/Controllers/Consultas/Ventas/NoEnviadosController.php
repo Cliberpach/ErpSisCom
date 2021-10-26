@@ -36,9 +36,9 @@ class NoEnviadosController extends Controller
         {
             $documentos = Documento::where('estado','!=','ANULADO')->wherein('sunat',['0','2'])->where('tipo_venta','!=',129)->orderBy('id', 'desc')->get();
         }
-        
+
         $hoy = Carbon::now();
-        
+
         $coleccion = collect();
         foreach($documentos as $documento){
 
@@ -97,7 +97,7 @@ class NoEnviadosController extends Controller
 
         //CREAR LEYENDA DEL COMPROBANTE
         $arrayLeyenda = Array();
-        $arrayLeyenda[] = array(  
+        $arrayLeyenda[] = array(
             "code" => "1000",
             "value" => $convertir
         );
@@ -117,7 +117,7 @@ class NoEnviadosController extends Controller
                 "cantidad" => (float)$detalles[$i]->cantidad,
                 "mtoValorUnitario" => (float)($detalles[$i]->precio_nuevo / 1.18),
                 "mtoValorVenta" => (float)($detalles[$i]->valor_venta / 1.18),
-                "mtoBaseIgv" => (float)($detalles[$i]->valor_venta / 1.18), 
+                "mtoBaseIgv" => (float)($detalles[$i]->valor_venta / 1.18),
                 "porcentajeIgv" => 18,
                 "igv" => (float)($detalles[$i]->valor_venta - ($detalles[$i]->valor_venta / 1.18)),
                 "tipAfeIgv" => 10,
@@ -133,8 +133,8 @@ class NoEnviadosController extends Controller
     public function obtenerFechaEmision($documento)
     {
         $date = strtotime($documento->fecha_documento);
-        $fecha_emision = date('Y-m-d', $date); 
-        $hora_emision = date('H:i:s', $date); 
+        $fecha_emision = date('Y-m-d', $date);
+        $hora_emision = date('H:i:s', $date);
         $fecha = $fecha_emision.'T'.$hora_emision.'-05:00';
 
         return $fecha;
@@ -143,8 +143,8 @@ class NoEnviadosController extends Controller
     public function obtenerFechaVencimiento($documento)
     {
         $date = strtotime($documento->fecha_vencimiento);
-        $fecha_emision = date('Y-m-d', $date); 
-        $hora_emision = date('H:i:s', $date); 
+        $fecha_emision = date('Y-m-d', $date);
+        $hora_emision = date('H:i:s', $date);
         $fecha = $fecha_emision.'T'.$hora_emision.'-05:00';
 
         return $fecha;
@@ -152,7 +152,7 @@ class NoEnviadosController extends Controller
 
     public function sunat($id)
     {
-       
+
         $documento = Documento::findOrFail($id);
         //OBTENER CORRELATIVO DEL COMPROBANTE ELECTRONICO
         $existe = event(new DocumentoNumeracion($documento));
@@ -189,7 +189,7 @@ class NoEnviadosController extends Controller
                         "mtoOperGravadas" => (float)$documento->sub_total,
                         "mtoOperExoneradas" => 0,
                         "mtoIGV" => (float)$documento->total_igv,
-                        
+
                         "valorVenta" => (float)$documento->sub_total,
                         "totalImpuestos" => (float)$documento->total_igv,
                         "subTotal" => (float)$documento->total,
@@ -206,7 +206,7 @@ class NoEnviadosController extends Controller
                     //RESPUESTA DE LA SUNAT EN JSON
                     $json_sunat = json_decode($data);
                     if ($json_sunat->sunatResponse->success == true) {
-        
+
                         $documento->sunat = '1';
 
                         $data_comprobante = generarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
@@ -273,38 +273,38 @@ class NoEnviadosController extends Controller
 
                         Session::flash('success','Documento de Venta enviada a Sunat con exito.');
                         return view('consultas.ventas.documentos_no.index',[
-                            
+
                             'id_sunat' => $json_sunat->sunatResponse->cdrResponse->id,
                             'descripcion_sunat' => $json_sunat->sunatResponse->cdrResponse->description,
                             'notas_sunat' => $json_sunat->sunatResponse->cdrResponse->notes,
                             'sunat_exito' => true
-        
+
                         ])->with('sunat_exito', 'success');
-        
+
                     }else{
 
-                        //COMO SUNAT NO LO ADMITE VUELVE A SER 0 
+                        //COMO SUNAT NO LO ADMITE VUELVE A SER 0
                         $documento->sunat = '0';
-                        $documento->update(); 
-                        
+                        $documento->update();
+
                         if ($json_sunat->sunatResponse->error) {
                             $id_sunat = $json_sunat->sunatResponse->error->code;
                             $descripcion_sunat = $json_sunat->sunatResponse->error->message;
-        
-                        
+
+
                         }else {
                             $id_sunat = $json_sunat->sunatResponse->cdrResponse->id;
                             $descripcion_sunat = $json_sunat->sunatResponse->cdrResponse->description;
-                            
+
                         };
-        
-        
+
+
                         Session::flash('error','Documento de Venta sin exito en el envio a sunat.');
                         return view('consultas.ventas.documentos_no.index',[
                             'id_sunat' =>  $id_sunat,
                             'descripcion_sunat' =>  $descripcion_sunat,
                             'sunat_error' => true,
-        
+
                         ])->with('sunat_error', 'error');
                     }
                 }else{
@@ -321,7 +321,7 @@ class NoEnviadosController extends Controller
             Session::flash('error','Empresa sin parametros para emitir comprobantes electronicos');
             return redirect()->route('consultas.ventas.documentos_no.index');
         }
-        
+
     }
 
     public function edit($id)
@@ -352,7 +352,7 @@ class NoEnviadosController extends Controller
         $this->authorize('haveaccess','documento_venta.index');
         ini_set("max_execution_time", 60000);
         try{
-            
+
             DB::beginTransaction();
             $data = $request->all();
 
@@ -496,7 +496,7 @@ class NoEnviadosController extends Controller
                     $lote->update();
                 }
             }
-            
+
 
             $documento = Documento::find($documento->id);
             $documento->nombre_comprobante_archivo = $documento->serie.'-'.$documento->correlativo.'.pdf';
@@ -534,8 +534,9 @@ class NoEnviadosController extends Controller
             ->join('productos','productos.id','=','lote_productos.producto_id')
             ->join('categorias','categorias.id','=','productos.categoria_id')
             ->join('tabladetalles','tabladetalles.id','=','productos.medida')
-            ->select('lote_productos.*','productos.nombre','productos.codigo_barra','productos_clientes.cliente','productos_clientes.moneda','tabladetalles.simbolo as unidad_producto',
-                    'productos_clientes.monto as precio_venta','categorias.descripcion', DB::raw('DATE_FORMAT(lote_productos.fecha_vencimiento, "%d/%m/%Y") as fecha_venci'))
+            ->leftJoin('compra_documento_detalles','compra_documento_detalles.lote_id','=','lote_productos.id')
+            ->select('compra_documento_detalles.precio_soles','lote_productos.*','productos.nombre','productos.codigo_barra','productos_clientes.cliente','productos_clientes.moneda','tabladetalles.simbolo as unidad_producto',
+                    'productos_clientes.monto','categorias.descripcion', DB::raw('DATE_FORMAT(lote_productos.fecha_vencimiento, "%d/%m/%Y") as fecha_venci'))
             ->where('lote_productos.cantidad_logica','>',0)
             ->where('lote_productos.estado','1')
             ->where('productos_clientes.cliente','121')
@@ -617,7 +618,7 @@ class NoEnviadosController extends Controller
             }
 
             $lote->update();
-            
+
             $mensaje = 'Cantidad devuelta';
         };
 
@@ -648,7 +649,7 @@ class NoEnviadosController extends Controller
     public function returnLote(Request $request)
     {
         $data = $request->all();
-        $lote_id = $data['lote_id'];         
+        $lote_id = $data['lote_id'];
         $lote = LoteProducto::find($lote_id);
 
         if($lote)

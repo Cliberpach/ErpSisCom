@@ -4,12 +4,12 @@
             <div class="col-lg-3">
                 <div class="ibox ">
                     <div class="ibox-title">
-                        <span class="label label-success float-right">Mensual</span>
+                        <span class="label label-success float-right">{{ mes() }}</span>
                         <h5>Ventas</h5>
                     </div>
                     <div class="ibox-content">
-                        <h1 class="no-margins">40 886,200</h1>
-                        <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>
+                        <h1 class="no-margins">{{ ventas_mensual() }}</h1>
+                        <div class="stat-percent font-bold text-success d-none">98% <i class="fa fa-bolt"></i></div>
                         <small>Total de ventas:</small>
                     </div>
                 </div>
@@ -17,12 +17,12 @@
             <div class="col-lg-3">
                 <div class="ibox ">
                     <div class="ibox-title">
-                        <span class="label label-info float-right">Mensual</span>
+                        <span class="label label-info float-right">{{ mes() }}</span>
                         <h5>Compras</h5>
                     </div>
                     <div class="ibox-content">
-                        <h1 class="no-margins">275,800</h1>
-                        <div class="stat-percent font-bold text-info">20% <i class="fa fa-level-up"></i></div>
+                        <h1 class="no-margins">{{ compras_mensual() }}</h1>
+                        <div class="stat-percent font-bold text-info d-none">20% <i class="fa fa-level-up"></i></div>
                         <small>Total de Compras:</small>
                     </div>
                 </div>
@@ -30,26 +30,26 @@
             <div class="col-lg-3">
                 <div class="ibox ">
                     <div class="ibox-title">
-                        <span class="label label-primary float-right">Mensual</span>
-                        <h5>Producción</h5>
+                        <span class="label label-primary float-right">{{ mes() }}</span>
+                        <h5>Cuentas Cobrar</h5>
                     </div>
                     <div class="ibox-content">
                         <h1 class="no-margins">106,120</h1>
-                        <div class="stat-percent font-bold text-navy">44% <i class="fa fa-level-up"></i></div>
-                        <small>Producción total:</small>
+                        <div class="stat-percent font-bold text-navy d-none">44% <i class="fa fa-level-up"></i></div>
+                        <small>Cuentas Cobrar total:</small>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3">
                 <div class="ibox ">
                     <div class="ibox-title">
-                        <span class="label label-danger float-right">Mensual</span>
-                        <h5>Cobranza</h5>
+                        <span class="label label-danger float-right">{{ mes() }}</span>
+                        <h5>Cuentas Pagar</h5>
                     </div>
                     <div class="ibox-content">
                         <h1 class="no-margins">80,600</h1>
-                        <div class="stat-percent font-bold text-danger">38% <i class="fa fa-level-down"></i></div>
-                        <small>Total de cuentas por cobrar:</small>
+                        <div class="stat-percent font-bold text-danger d-none">38% <i class="fa fa-level-down"></i></div>
+                        <small>Cuentas Pagar total:</small>
                     </div>
                 </div>
     </div>

@@ -643,7 +643,7 @@ if (!function_exists('agregarEmpresaapi')) {
     function agregarEmpresaapi($empresa)
     {
         $url = "https://facturacion.apisperu.com/api/v1/companies";
-        $client = new \GuzzleHttp\Client();
+        $client = new \GuzzleHttp\Client(['verify'=>false]);
         $token = obtenerTokenapi();
         $response = $client->post($url, [
             'headers' => [
@@ -669,7 +669,7 @@ if (!function_exists('borrarEmpresaapi')) {
     function borrarEmpresaapi($id)
     {
         $url = "https://facturacion.apisperu.com/api/v1/companies/{$id}";
-        $client = new \GuzzleHttp\Client();
+        $client = new \GuzzleHttp\Client(['verify'=>false]);
         $token = obtenerTokenapi();
         $response = $client->delete($url, [
             'headers' => [
@@ -687,7 +687,7 @@ if (!function_exists('modificarEmpresaapi')) {
     function modificarEmpresaapi($empresa, $id)
     {
         $url = "https://facturacion.apisperu.com/api/v1/companies/{$id}";
-        $client = new \GuzzleHttp\Client();
+        $client = new \GuzzleHttp\Client(['verify'=>false]);
         $token = obtenerTokenapi();
         $response = $client->put($url, [
             'headers' => [
@@ -726,7 +726,7 @@ if (!function_exists('generarComprobanteapi')) {
     function generarComprobanteapi($comprobante, $empresa)
     {
         $url = "https://facturacion.apisperu.com/api/v1/invoice/pdf";
-        $client = new \GuzzleHttp\Client();
+        $client = new \GuzzleHttp\Client(['verify'=>false]);
         $token = tokenEmpresa($empresa);
         $response = $client->post($url, [
             'headers' => [
@@ -755,7 +755,7 @@ if (!function_exists('generarXmlapi')) {
     function generarXmlapi($comprobante, $empresa)
     {
         $url = "https://facturacion.apisperu.com/api/v1/invoice/xml";
-        $client = new \GuzzleHttp\Client();
+        $client = new \GuzzleHttp\Client(['verify'=>false]);
         $token = tokenEmpresa($empresa);
         $response = $client->post($url, [
             'headers' => [
@@ -787,7 +787,7 @@ if (!function_exists('generarQrApi')) {
     function generarQrApi($comprobante, $empresa)
     {
         $url = "https://facturacion.apisperu.com/api/v1/sale/qr";
-        $client = new \GuzzleHttp\Client();
+        $client = new \GuzzleHttp\Client(['verify'=>false]);
         $token = tokenEmpresa($empresa);
         $response = $client->post($url, [
             'headers' => [
@@ -817,7 +817,7 @@ if (!function_exists('enviarComprobanteapi')) {
     function enviarComprobanteapi($comprobante, $empresa)
     {
         $url = "https://facturacion.apisperu.com/api/v1/invoice/send";
-        $client = new \GuzzleHttp\Client();
+        $client = new \GuzzleHttp\Client(['verify'=>false]);
         $token = tokenEmpresa($empresa);
         $response = $client->post($url, [
             'headers' => [
@@ -846,7 +846,7 @@ if (!function_exists('pdfGuiaapi')) {
     function pdfGuiaapi($guia)
     {
         $url = "https://facturacion.apisperu.com/api/v1/despatch/pdf";
-        $client = new \GuzzleHttp\Client();
+        $client = new \GuzzleHttp\Client(['verify'=>false]);
         $token = obtenerTokenapi();
         $response = $client->post($url, [
             'headers' => [
@@ -876,7 +876,7 @@ if (!function_exists('enviarGuiaapi')) {
     function enviarGuiaapi($guia)
     {
         $url = "https://facturacion.apisperu.com/api/v1/despatch/send";
-        $client = new \GuzzleHttp\Client();
+        $client = new \GuzzleHttp\Client(['verify'=>false]);
         $token = obtenerTokenapi();
         $response = $client->post($url, [
             'headers' => [
@@ -904,7 +904,7 @@ if (!function_exists('pdfNotaapi')) {
     function pdfNotaapi($nota)
     {
         $url = "https://facturacion.apisperu.com/api/v1/note/pdf";
-        $client = new \GuzzleHttp\Client();
+        $client = new \GuzzleHttp\Client(['verify'=>false]);
         $token = obtenerTokenapi();
         $response = $client->post($url, [
             'headers' => [
@@ -930,7 +930,7 @@ if (!function_exists('enviarNotaapi')) {
     function enviarNotaapi($nota)
     {
         $url = "https://facturacion.apisperu.com/api/v1/note/send";
-        $client = new \GuzzleHttp\Client();
+        $client = new \GuzzleHttp\Client(['verify'=>false]);
         $token = obtenerTokenapi();
         $response = $client->post($url, [
             'headers' => [
@@ -1089,10 +1089,34 @@ if (!function_exists('precio_dolar')) {
     }
 }
 
+if (!function_exists('mes')) {
+    function mes()
+    {
+        date_default_timezone_set("America/Lima");
+        $mes = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"][date("n") - 1];
+        return $mes;
+    }
+}
+
 if (!function_exists('ventas_mensual')) {
     function ventas_mensual()
     {
+        $fecha_hoy = Carbon::now();
+        $mes = date_format($fecha_hoy,'m');
+        $anio = date_format($fecha_hoy,'Y');
+        $total = DocumentoDocumento::where('estado','!=','ANULADO')->whereMonth('fecha_documento',$mes)->whereYear('fecha_documento',$anio)->sum('total');
+        return number_format($total,3);
+    }
+}
 
+if (!function_exists('compras_mensual')) {
+    function compras_mensual()
+    {
+        $fecha_hoy = Carbon::now();
+        $mes = date_format($fecha_hoy,'m');
+        $anio = date_format($fecha_hoy,'Y');
+        $total = Documento::where('estado','!=','ANULADO')->whereMonth('fecha_emision',$mes)->whereYear('fecha_emision',$anio)->sum('total_soles');
+        return number_format($total,3);
     }
 }
 

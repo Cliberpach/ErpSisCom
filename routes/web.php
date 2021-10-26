@@ -582,7 +582,7 @@ Route::get('ventas/documentos/comprobante/{id}','Ventas\DocumentoController@vouc
 Route::get('ruta', function () {
     //https://www.oratlas.com/lector-online-de-texto
 
-    return precio_dolar();
+    return ventas_mensual();
     return '<h1>SISCOM</h1>';
     $dif = (int)(8-9);
 

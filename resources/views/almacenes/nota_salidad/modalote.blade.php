@@ -156,16 +156,18 @@ function obtenerLotesproductos() {
             {data: 'fecha_venci', className: "text-center", name:"lote_productos.fecha_vencimiento", sWidth: '5%' },
             {data: 'cantidad_logica', className: "text-center", name:"lote_productos.cantidad_logica", sWidth: '10%' },
             {data: 'codigo_barra', className: "text-center", name:"productos.codigo_barra", sWidth: '15%' },
-            {data: 'precio_venta', className: "text-center", name:"productos_clientes.monto", sWidth: '15%' },
+            {data: 'monto', className: "text-center", name:"productos_clientes.monto", sWidth: '15%' },
             {
                 data: null,
                 className: "text-center letrapequeña",
                 sWidth: '5%',
+                name:"compra_documento_detalles.precio_soles",
+                sWidth: '5%',
                 render: function(data) {
-                    if (data.precio == null) {
+                    if (data.precio_soles == null) {
                         return '0.00';
                     }else{
-                        return convertFloat(data.precio).toFixed(2);
+                        return convertFloat(data.precio_soles).toFixed(2);
                     }
                 }
             },
@@ -230,7 +232,7 @@ function ingresarProducto(producto) {
         "max" : producto.cantidad_logica,
         "min" : 1,
     });
-    
+
     $("#precio_form").attr({
         "min" : 1,
     });
