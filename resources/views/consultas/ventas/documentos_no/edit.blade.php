@@ -290,6 +290,7 @@
 
 
                                     </div>
+                                    <button type="button" class="btn btn-lg btn-success d-none" onclick="verificar()">Verificar</button>
                                     <hr>
 
 
@@ -361,6 +362,7 @@
         </div>
     </div>
 </div>
+
 @include('consultas.ventas.documentos_no.modal')
 @include('consultas.ventas.documentos_no.modalLote')
 @include('consultas.ventas.documentos_no.modalPago')
@@ -424,6 +426,11 @@
         }
     });
 
+    function verificar()
+    {
+        cargarProductos();
+        console.log($('#productos_tabla').val())
+    }
     //Editar Registro
     $(document).on('click', '.btn-edit', function(event) {
         var table = $('.dataTables-detalle-documento').DataTable();
@@ -431,7 +438,7 @@
         let indice = table.row($(this).parents('tr')).index();
         $.ajax({
             type: 'POST',
-            url: '{{ route('ventas.documento.obtener.lote') }}',
+            url: '{{ route('consultas.ventas.documento.no.obtener.lote') }}',
             data: {
                 '_token': $('input[name=_token]').val(),
                 'lote_id': data[0],
@@ -763,6 +770,21 @@
         precio_nuevo = precio_unitario - dinero;
         valor_venta = precio_nuevo * cantidad;
 
+        let lote_id = $('#lote_id').val();
+
+        let detalles = JSON.parse($("#productos_detalle").val());
+        let detalle_id = 0;
+        let cont = 0;
+        while(cont < detalles.length)
+        {
+            if(detalles[cont].lote_id == lote_id)
+            {
+                detalle_id = detalles[cont].id;
+                cont = detalles.length;
+            }
+            cont =  cont + 1;
+        }
+
         let detalle = {
             lote_id: $('#lote_id').val(),
             unidad: $('#producto_unidad').val(),
@@ -775,7 +797,7 @@
             dinero: dinero,
             descuento: pdescuento,
             precio_nuevo: precio_nuevo,
-            detalle_id: 0,
+            detalle_id: detalle_id,
         }
         agregarTabla(detalle);
         cambiarCantidad(detalle, '1');
@@ -828,6 +850,7 @@
                 descuento: value[11],
                 cantidad: value[2],
                 valor_venta: value[9],
+                detalle_id: value[12],
             };
             productos.push(fila);
         });
@@ -857,7 +880,7 @@
         $.ajax({
             dataType: 'json',
             type: 'post',
-            url: '{{ route('consultas.ventas.documento.no.devolver.cantidadesedit') }}',
+            url: '{{ route('consultas.ventas.documento.no.devolver.cantidades') }}',
             data: {
                 '_token': $('input[name=_token]').val(),
                 'cantidades': $('#productos_tabla').val(),
@@ -966,7 +989,6 @@
     }
 
     $('#btn_grabar').click(function(e) {
-    //$('#enviar_documento').submit(function(e) {
         e.preventDefault();
         cargarProductos();
         let correcto = validarCampos();
@@ -1134,7 +1156,7 @@
                 '',
                 detalles[i].cantidad,
                 detalles[i].unidad,
-                detalles[i].lote->producto->nombre.'-'.$detalle->lote->codigo_lote,
+                detalles[i].lote.producto.nombre+'-'+detalles[i].lote.codigo_lote,
                 detalles[i].valor_unitario,
                 detalles[i].precio_unitario,
                 detalles[i].dinero,
@@ -1145,6 +1167,7 @@
                 detalles[i].id,
             ]).draw(false);
         }
+        $('#asegurarCierre').val(1);
         //SUMATORIA TOTAL
         sumaTotal()
     }
@@ -1276,7 +1299,6 @@
                     document.getElementById("empresa_id").disabled = false;
                     document.getElementById("cliente_id").disabled = false;
                     //HABILITAR EL CARGAR PAGINA
-                    //$('#enviar_documento').submit();
                 }
                 else
                 {
@@ -1399,6 +1421,7 @@
     window.onbeforeunload = function() {
         //DEVOLVER CANTIDADES
         if ($('#asegurarCierre').val() == 1) {
+            console.log('ok')
             devolverCantidades()
 
             /*let detalles = JSON.parse($("#productos_detalle").val());
@@ -1433,7 +1456,6 @@
                     data : {
                         '_token' : $('input[name=_token]').val(),
                         'cantidades' :  JSON.stringify(arr),
-                        'nota_id' : '{{ $notasalidad->id }}'
                     }
                 }).done(function (result){
                     console.log(result)

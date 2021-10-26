@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Mantenimiento\Tabla\Detalle as TablaDetalle;
+use Exception;
 
 class DocumentoController extends Controller
 {
@@ -64,7 +65,7 @@ class DocumentoController extends Controller
                 $decimal_total = number_format($subtotal, 2, '.', '');
             }
             //TIPO DE PAGO (OTROS)
-            
+
             // CALCULAR ACUENTA EN MONEDA
             $acuenta = 0;
             $saldo = 0;
@@ -101,6 +102,8 @@ class DocumentoController extends Controller
                 'empresa' => $documento->empresa->razon_social,
                 'fecha_emision' =>  Carbon::parse($documento->fecha_emision)->format( 'd/m/Y'),
                 'igv' =>  $documento->igv,
+                'moneda' =>  $documento->moneda,
+                'tipo_cambio' =>  $documento->tipo_cambio,
                 'orden_compra' =>  $documento->orden_compra,
                 'subtotal' => $tipo_moneda.' '.number_format($subtotal, 2, '.', ''),
                 'estado' => $documento->estado,
@@ -160,97 +163,138 @@ class DocumentoController extends Controller
 
     public function store(Request $request){
         $this->authorize('haveaccess','documento_compra.index');
-        $productosJSON = $request->get('productos_tabla');
-        $productotabla = json_decode($productosJSON[0]);
+        try
+        {
+            DB::beginTransaction();
+            $productosJSON = $request->get('productos_tabla');
+            $productotabla = json_decode($productosJSON[0]);
 
-        $data = $request->all();
-        $rules = [
-            'fecha_emision'=> 'required',
-            'fecha_entrega'=> 'required',
-            'tipo_compra'=> 'required',
-            'numero_tipo'=> 'required',
-            'proveedor_id'=> 'required',
-            'modo_compra'=> 'required',
-            'observacion' => 'nullable',
-            'moneda' => 'nullable',
-            'tipo_cambio' => 'nullable|numeric',
-            'igv' => 'required_if:igv_check,==,on|numeric|digits_between:1,3',
-        ];
+            $data = $request->all();
+            $rules = [
+                'fecha_emision'=> 'required',
+                'fecha_entrega'=> 'required',
+                'tipo_compra'=> 'required',
+                'numero_tipo'=> 'required',
+                'proveedor_id'=> 'required',
+                'modo_compra'=> 'required',
+                'observacion' => 'nullable',
+                'moneda' => 'nullable',
+                'tipo_cambio' => 'nullable|numeric',
+                'igv' => 'required_if:igv_check,==,on|numeric|digits_between:1,3',
+            ];
 
-        $message = [
-            'fecha_emision.required' => 'El campo Fecha de Emisión es obligatorio.',
-            'tipo_compra.required' => 'El campo Tipo es obligatorio.',
-            'fecha_entrega.required' => 'El campo Fecha de Entrega es obligatorio.',
-            'numero_tipo.required' => 'El campo Número es obligatorio.',
-            'proveedor_id.required' => 'El campo Proveedor es obligatorio.',
-            'modo_compra.required' => 'El campo Modo de Compra es obligatorio.',
-            'moneda.required' => 'El campo Moneda es obligatorio.',
-            'igv.required_if' => 'El campo Igv es obligatorio.',
-            'igv.digits' => 'El campo Igv puede contener hasta 3 dígitos.',
-            'igv.numeric' => 'El campo Igv debe se numérico.',
-            'tipo_cambio.numeric' => 'El campo Tipo de Cambio debe se numérico.',
-        ];
+            $message = [
+                'fecha_emision.required' => 'El campo Fecha de Emisión es obligatorio.',
+                'tipo_compra.required' => 'El campo Tipo es obligatorio.',
+                'fecha_entrega.required' => 'El campo Fecha de Entrega es obligatorio.',
+                'numero_tipo.required' => 'El campo Número es obligatorio.',
+                'proveedor_id.required' => 'El campo Proveedor es obligatorio.',
+                'modo_compra.required' => 'El campo Modo de Compra es obligatorio.',
+                'moneda.required' => 'El campo Moneda es obligatorio.',
+                'igv.required_if' => 'El campo Igv es obligatorio.',
+                'igv.digits' => 'El campo Igv puede contener hasta 3 dígitos.',
+                'igv.numeric' => 'El campo Igv debe se numérico.',
+                'tipo_cambio.numeric' => 'El campo Tipo de Cambio debe se numérico.',
+            ];
 
-        Validator::make($data, $rules, $message)->validate();
-        $documento = new Documento();
-        $documento->fecha_emision = Carbon::createFromFormat('d/m/Y', $request->get('fecha_emision'))->format('Y-m-d');
-        $documento->fecha_entrega = Carbon::createFromFormat('d/m/Y', $request->get('fecha_entrega'))->format('Y-m-d');
-        $documento->sub_total = (float) $request->get('monto_sub_total');
-        $documento->total_igv = (float) $request->get('monto_total_igv');
-        $documento->total = (float) $request->get('monto_total');
-        $documento->empresa_id = '1';
-        $documento->numero_tipo = $request->get('numero_tipo');
-        $documento->proveedor_id = $request->get('proveedor_id');
-        $documento->modo_compra = $request->get('modo_compra');
-        $documento->observacion = $request->get('observacion');
-        $documento->moneda = $request->get('moneda');
-        $documento->tipo_cambio = $request->get('tipo_cambio');
-        $documento->usuario_id = auth()->user()->id;
-        $documento->igv = $request->get('igv');
-        if ($request->get('igv_check') == "on") {
-            $documento->igv_check = "1";
-        };
-        $documento->tipo_compra = $request->get('tipo_compra');
-        $documento->orden_compra = $request->get('orden_id');
-        $documento->save();
+            Validator::make($data, $rules, $message)->validate();
+            $documento = new Documento();
+            $documento->fecha_emision = Carbon::createFromFormat('d/m/Y', $request->get('fecha_emision'))->format('Y-m-d');
+            $documento->fecha_entrega = Carbon::createFromFormat('d/m/Y', $request->get('fecha_entrega'))->format('Y-m-d');
+            $documento->sub_total = (float) $request->get('monto_sub_total');
+            $documento->total_igv = (float) $request->get('monto_total_igv');
+            $documento->total = (float) $request->get('monto_total');
+            //-------------------------------
+            if($request->get('moneda') === 'DOLARES')
+            {
+                $documento->sub_total_soles = (float) $request->get('monto_sub_total') * (float) $request->get('tipo_cambio');
+                $documento->total_igv_soles = (float) $request->get('monto_total_igv') * (float) $request->get('tipo_cambio');
+                $documento->total_soles = (float) $request->get('monto_total') * (float) $request->get('tipo_cambio');
+            }
+            else
+            {
+                $documento->sub_total_soles = (float) $request->get('monto_sub_total');
+                $documento->total_igv_soles = (float) $request->get('monto_total_igv');
+                $documento->total_soles = (float) $request->get('monto_total');
+            }
+            //-------------------------------
+            $documento->empresa_id = '1';
+            $documento->numero_tipo = $request->get('numero_tipo');
+            $documento->proveedor_id = $request->get('proveedor_id');
+            $documento->modo_compra = $request->get('modo_compra');
+            $documento->observacion = $request->get('observacion');
+            $documento->moneda = $request->get('moneda');
+            $documento->tipo_cambio = $request->get('tipo_cambio');
+            $documento->usuario_id = auth()->user()->id;
+            $documento->igv = $request->get('igv');
+            if ($request->get('igv_check') == "on") {
+                $documento->igv_check = "1";
+            };
+            $documento->tipo_compra = $request->get('tipo_compra');
+            $documento->orden_compra = $request->get('orden_id');
+            $documento->save();
 
-        $numero_doc = $documento->id;
-        $documento->numero_doc = 'COMPRA-'.$numero_doc;
-        $documento->update();
-        //Llenado de los productos
-        $productosJSON = $request->get('productos_tabla');
-        $productotabla = json_decode($productosJSON[0]);
-        foreach ($productotabla as $detalle) {
-            $producto = Producto::findOrFail($detalle->producto_id);
-            DocumentoDetalle::create([
-                'documento_id' => $documento->id,
-                'producto_id' => $detalle->producto_id,
-                'descripcion_producto' => $producto->nombre,
-                'presentacion_producto' => '-',
-                'codigo_producto' => $producto->codigo,
-                'medida_producto' => $producto->medida,
-                'cantidad' => $detalle->cantidad,
-                'precio' => $detalle->precio,
-                'costo_flete' => $detalle->costo_flete,
-                'fecha_vencimiento' =>  Carbon::createFromFormat('d/m/Y', $detalle->fecha_vencimiento)->format('Y-m-d'),
-                'lote' => $detalle->lote,
-            ]);
-        }
-        // TRANSFERRIR PAGOS DE LA ORDEN SI EXISTEN
-        if($request->get('orden_id')){
-            
-            $documento = Documento::findOrFail($documento->id);
-            $documento->tipo_pago =  "1";
+            $numero_doc = $documento->id;
+            $documento->numero_doc = 'COMPRA-'.$numero_doc;
             $documento->update();
+            //Llenado de los productos
+            $productosJSON = $request->get('productos_tabla');
+            $productotabla = json_decode($productosJSON[0]);
+            foreach ($productotabla as $detalle) {
+                $producto = Producto::findOrFail($detalle->producto_id);
+                $precio_soles = $detalle->precio;
+                $costo_flete_soles = $detalle->costo_flete;
+                //-------------------------------
+                if($request->get('moneda') === 'DOLARES')
+                {
+                    $precio_soles = (float) $detalle->precio * (float) $request->get('tipo_cambio');
+                    $costo_flete_soles = (float) $detalle->costo_flete * (float) $request->get('tipo_cambio');
+                }
+                else
+                {
+                    $precio_soles = (float) $detalle->precio;
+                    $costo_flete_soles = (float) $detalle->costo_flete;
+                }
+                //-------------------------------
+                DocumentoDetalle::create([
+                    'documento_id' => $documento->id,
+                    'producto_id' => $detalle->producto_id,
+                    'descripcion_producto' => $producto->nombre,
+                    'presentacion_producto' => '-',
+                    'codigo_producto' => $producto->codigo,
+                    'medida_producto' => $producto->medida,
+                    'cantidad' => $detalle->cantidad,
+                    'precio' => $detalle->precio,
+                    'precio_soles' => $precio_soles,
+                    'costo_flete' => $detalle->costo_flete,
+                    'costo_flete_soles' => $costo_flete_soles,
+                    'fecha_vencimiento' =>  Carbon::createFromFormat('d/m/Y', $detalle->fecha_vencimiento)->format('Y-m-d'),
+                    'lote' => $detalle->lote,
+                ]);
+            }
+            // TRANSFERRIR PAGOS DE LA ORDEN SI EXISTEN
+            if($request->get('orden_id')){
+
+                $documento = Documento::findOrFail($documento->id);
+                $documento->tipo_pago =  "1";
+                $documento->update();
+            }
+            //Registro de actividad
+            $descripcion = "SE AGREGÓ EL DOCUMENTO DE COMPRA CON LA FECHA DE EMISION: ". Carbon::parse($documento->fecha_emision)->format('d/m/y');
+            $gestion = "DOCUMENTO DE COMPRA";
+
+            crearRegistro($documento, $descripcion , $gestion);
+            DB::commit();
+            Session::flash('success','Documento de Compra creada.');
+            return redirect()->route('compras.documento.index')->with('guardar', 'success');
+
         }
-        //Registro de actividad
-        $descripcion = "SE AGREGÓ EL DOCUMENTO DE COMPRA CON LA FECHA DE EMISION: ". Carbon::parse($documento->fecha_emision)->format('d/m/y');
-        $gestion = "DOCUMENTO DE COMPRA";
-
-        crearRegistro($documento, $descripcion , $gestion);
-        Session::flash('success','Documento de Compra creada.');
-        return redirect()->route('compras.documento.index')->with('guardar', 'success');
-
+        catch(Exception $e)
+        {
+            DB::rollBack();
+            Session::flash('error',$e->getMessage());
+            return redirect()->route('compras.documento.index')->with('guardar', 'error');
+        }
     }
 
     public function edit($id)
@@ -515,6 +559,6 @@ class DocumentoController extends Controller
 
     public function TypePay($id)
     {
-        
+
     }
 }

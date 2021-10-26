@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Consultas\Kardex;
 
 use App\Almacenes\NotaSalidad;
 use App\Http\Controllers\Controller;
+use App\Ventas\Documento\Detalle;
 use App\Ventas\Documento\Documento;
 use Carbon\Carbon;
 use Exception;
@@ -31,7 +32,8 @@ class SalidaController extends Controller
         
         $coleccion = collect();
         foreach($documentos as $documento){
-            foreach($documento->detalles as $detalle)
+            $detalles = Detalle::where('estado','ACTIVO')->where('documento_id',$documento->id)->get();
+            foreach($detalles as $detalle)
             {
                 $coleccion->push([
                     'codigo' => $detalle->lote->producto->codigo,
@@ -39,6 +41,7 @@ class SalidaController extends Controller
                     'producto' => $detalle->lote->producto->nombre,
                     'costo' => $detalle->lote->detalle_compra ? $detalle->lote->detalle_compra->precio : 0.00,
                     'precio' => $detalle->precio_nuevo,
+                    'importe' => number_format($detalle->precio_nuevo * $detalle->cantidad, 2)
                 ]);
             }
         }

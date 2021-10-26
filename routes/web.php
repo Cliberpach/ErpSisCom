@@ -256,6 +256,7 @@ function(){
         Route::get('documento/{id}','Compras\OrdenController@document')->name('compras.orden.documento');
         Route::get('nuevodocumento/{id}','Compras\OrdenController@newdocument')->name('compras.orden.nuevodocumento');
         Route::get('confirmarEliminar/{id}','Compras\OrdenController@confirmDestroy')->name('compras.orden.confirmDestroy');
+        Route::get('dolar','Compras\OrdenController@dolar')->name('compras.orden.dolar');
 
         //Pagos
         Route::get('pagos/index/{id}', 'Compras\PagoController@index')->name('compras.pago.index');
@@ -350,7 +351,7 @@ function(){
         Route::get('show/{id}','Ventas\DocumentoController@show')->name('ventas.documento.show');
         Route::get('reporte/{id}','Ventas\DocumentoController@report')->name('ventas.documento.reporte');
         Route::get('tipoPago/{id}','Ventas\DocumentoController@TypePay')->name('ventas.documento.tipo_pago.existente');
-        Route::get('comprobante/{id}','Ventas\DocumentoController@voucher')->name('ventas.documento.comprobante');
+        //Route::get('comprobante/{id}','Ventas\DocumentoController@voucher')->name('ventas.documento.comprobante');
         Route::get('xml/{id}','Ventas\DocumentoController@xml')->name('ventas.documento.xml');
 
         Route::post('cantidad', 'Ventas\DocumentoController@quantity')->name('ventas.documento.cantidad');
@@ -487,7 +488,7 @@ function(){
         Route::post('devolver/cantidadedit', 'Consultas\Ventas\NoEnviadosController@returnQuantityEdit')->name('consultas.ventas.documento.no.devolver.cantidadesedit');
         Route::post('devolver/lotesinicio', 'Consultas\Ventas\NoEnviadosController@returnQuantityLoteInicio')->name('consultas.ventas.documento.no.devolver.lotesinicio');
         Route::post('obtener/lote', 'Consultas\Ventas\NoEnviadosController@returnLote')->name('consultas.ventas.documento.no.obtener.lote');
-        Route::post('update/lote', 'Consultas\Ventas\NoEnviadosController@updateLote')->name('consultas.ventas.documento.no.update.lote');
+        Route::post('update/lote/edit', 'Consultas\Ventas\NoEnviadosController@updateLote')->name('consultas.ventas.documento.no.update.lote');
 
     });
 
@@ -576,10 +577,18 @@ function(){
     });
 });
 
+Route::get('ventas/documentos/comprobante/{id}','Ventas\DocumentoController@voucher')->name('ventas.documento.comprobante');
+
 Route::get('ruta', function () {
     //https://www.oratlas.com/lector-online-de-texto
+
+    return precio_dolar();
+    return '<h1>SISCOM</h1>';
     $dif = (int)(8-9);
 
-    $doc = Documento::find(2);
-    return $doc->cuenta;
+    $doc = Documento::find(3);
+    //$json_data = json_encode($doc->getCdrResponse,false);
+    //$json_data = json_decode($json_data, false);
+    $json_data = json_decode($doc->getCdrResponse, false);
+    return $json_data->code;
 });

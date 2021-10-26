@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Ventas\ErrorVenta;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Exception;
 use Illuminate\Support\Facades\Mail;
 //CONVERTIR DE NUMEROS A LETRAS
@@ -36,7 +37,7 @@ use Luecano\NumeroALetras\NumeroALetras;
 class DocumentoController extends Controller
 {
     public function index()
-    {        
+    {
         $this->authorize('haveaccess','documento_venta.index');
         return view('ventas.documentos.index');
     }
@@ -71,6 +72,8 @@ class DocumentoController extends Controller
             $fecha_v = $documento->created_at;
             $diff =  $fecha_v->diffInDays($hoy);
 
+            $cantidad_notas = count($documento->notas);
+
             $coleccion->push([
                 'id' => $documento->id,
                 'tipo_venta' => $documento->nombreTipo(),
@@ -89,7 +92,8 @@ class DocumentoController extends Controller
                 'efectivo' => 'S/. '.number_format($efectivo, 2, '.', ''),
                 'transferencia' => 'S/. '.number_format($transferencia, 2, '.', ''),
                 'total' => 'S/. '.number_format($documento->total, 2, '.', ''),
-                'dias' => (int)(7 - $diff < 0 ? 0  : 7 - $diff)
+                'dias' => (int)(7 - $diff < 0 ? 0  : 7 - $diff),
+                'notas' => $cantidad_notas
             ]);
         }
 
@@ -306,7 +310,7 @@ class DocumentoController extends Controller
         $this->authorize('haveaccess','documento_venta.index');
         ini_set("max_execution_time", 60000);
         try{
-            
+
             DB::beginTransaction();
             $data = $request->all();
 
@@ -436,7 +440,7 @@ class DocumentoController extends Controller
                     'mensaje'=> $envio_prev['mensaje']
                 ]);
             }
-            
+
 
             $documento = Documento::find($documento->id);
             $documento->nombre_comprobante_archivo = $documento->serie.'-'.$documento->correlativo.'.pdf';
@@ -501,8 +505,9 @@ class DocumentoController extends Controller
         try
         {
             $documento = Documento::find($id);
+            $detalles = Detalle::where('estado','ACTIVO')->where('documento_id',$id)->get();
             $empresa = Empresa::findOrFail($documento->empresa_id);
-            
+
             $legends = self::obtenerLeyenda($documento);
             $legends = json_encode($legends,true);
             $legends = json_decode($legends,true);
@@ -511,20 +516,20 @@ class DocumentoController extends Controller
                 mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantessiscom'));
             }
             $pdf_condicion = $empresa->condicion === '1' ? 'comprobante_normal_nuevo' : 'comprobante_normal';
-            
+
             PDF::loadview('ventas.documentos.impresion.'.$pdf_condicion,[
                 'documento' => $documento,
-                'detalles' => $documento->detalles,
+                'detalles' => $detalles,
                 'moneda' => $documento->simboloMoneda(),
                 'empresa' => $empresa,
                 "legends" =>  $legends,
                 ])->setPaper('a4')->setWarnings(false)
                 ->save(public_path().'/storage/comprobantessiscom/'.$documento->nombre_comprobante_archivo);
-            
+
             return array('success' => true,'mensaje' => 'Documento validado.');
         }
         catch(Exception $e)
-        {            
+        {
             $documento = Documento::find($id);
 
             $errorVenta = new ErrorVenta();
@@ -573,13 +578,13 @@ class DocumentoController extends Controller
                     });
                 }
             }
-            
+
             return array('success' => true,'mensaje' => 'Documento validado.');
         }
         catch(Exception $e)
         {
             $documento = Documento::find($id);
-            
+
             $errorVenta = new ErrorVenta();
             $errorVenta->documento_id = $documento->id;
             $errorVenta->tipo = 'email';
@@ -599,11 +604,6 @@ class DocumentoController extends Controller
 
         $detalles = Detalle::where('documento_id',$id)->where('estado', 'ACTIVO')->get();
         foreach ($detalles as $detalle) {
-            $lote = LoteProducto::find($detalle->lote_id);
-            $cantidad = $lote->cantidad + $detalle->cantidad;
-            $lote->cantidad = $cantidad;
-            $lote->cantidad_logica = $cantidad;
-            $lote->update();
             //ANULAMOS EL DETALLE
             $detalle->estado = "ANULADO";
             $detalle->update();
@@ -643,7 +643,7 @@ class DocumentoController extends Controller
     {
         $documento = Documento::findOrFail($id);
         $nombre_completo = $documento->user->persona->apellido_paterno.' '.$documento->user->persona->apellido_materno.' '.$documento->user->persona->nombres;
-        $detalles = Detalle::where('documento_id',$id)->where('estado'. 'ACTIVO')->get();
+        $detalles = Detalle::where('documento_id',$id)->where('estado', 'ACTIVO')->get();
         $subtotal = 0;
         $igv = '';
         $tipo_moneda = '';
@@ -729,7 +729,9 @@ class DocumentoController extends Controller
             $cadena = explode('-',$value);
             $id = $cadena[0];
             $size = (int) $cadena[1];
+            $qr = self::qr_code($id);
             $documento = Documento::findOrFail($id);
+            $detalles = Detalle::where('documento_id',$id)->where('estado','ACTIVO')->get();
             if((int)$documento->tipo_venta === 127 || (int)$documento->tipo_venta === 128)
             {
                 if ($documento->sunat == '0' || $documento->sunat == '2' ) {
@@ -798,7 +800,7 @@ class DocumentoController extends Controller
                         $pdf_condicion = $empresa->condicion === '1' ? 'comprobante_normal_nuevo' : 'comprobante_normal';
                         $pdf = PDF::loadview('ventas.documentos.impresion.'.$pdf_condicion,[
                             'documento' => $documento,
-                            'detalles' => $documento->detalles,
+                            'detalles' => $detalles,
                             'moneda' => $documento->simboloMoneda(),
                             'empresa' => $empresa,
                             "legends" =>  $legends,
@@ -826,12 +828,12 @@ class DocumentoController extends Controller
                     $legends = json_decode($legends,true);
 
                     $detalles = Detalle::where('estado','ACTIVO')->where('documento_id', $documento->id)->get();
-                    
+
                     if($size === 80)
                     {
                         $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_ticket',[
                             'documento' => $documento,
-                            'detalles' => $documento->detalles,
+                            'detalles' => $detalles,
                             'moneda' => $documento->simboloMoneda(),
                             'empresa' => $empresa,
                             "legends" =>  $legends,
@@ -843,7 +845,7 @@ class DocumentoController extends Controller
                         $pdf_condicion = $empresa->condicion === '1' ? 'comprobante_normal_nuevo' : 'comprobante_normal';
                         $pdf = PDF::loadview('ventas.documentos.impresion.'.$pdf_condicion,[
                             'documento' => $documento,
-                            'detalles' => $documento->detalles,
+                            'detalles' => $detalles,
                             'moneda' => $documento->simboloMoneda(),
                             'empresa' => $empresa,
                             "legends" =>  $legends,
@@ -870,7 +872,7 @@ class DocumentoController extends Controller
                 {
                     $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_ticket',[
                         'documento' => $documento,
-                        'detalles' => $documento->detalles,
+                        'detalles' => $detalles,
                         'moneda' => $documento->simboloMoneda(),
                         'empresa' => $empresa,
                         "legends" =>  $legends,
@@ -882,7 +884,7 @@ class DocumentoController extends Controller
                     $pdf_condicion = $empresa->condicion === '1' ? 'comprobante_normal_nuevo' : 'comprobante_normal';
                     $pdf = PDF::loadview('ventas.documentos.impresion.'.$pdf_condicion,[
                         'documento' => $documento,
-                        'detalles' => $documento->detalles,
+                        'detalles' => $detalles,
                         'moneda' => $documento->simboloMoneda(),
                         'empresa' => $empresa,
                         "legends" =>  $legends,
@@ -898,7 +900,7 @@ class DocumentoController extends Controller
             $id = $cadena[0];
             $size = (int) $cadena[1];
             $documento = Documento::findOrFail($id);
-
+            $detalles = Detalle::where('documento_id',$id)->where('estado','ACTIVO')->get();
             $empresa = Empresa::first();
 
             $legends = self::obtenerLeyenda($documento);
@@ -909,7 +911,7 @@ class DocumentoController extends Controller
             {
                 $pdf = PDF::loadview('ventas.documentos.impresion.comprobante_ticket',[
                     'documento' => $documento,
-                    'detalles' => $documento->detalles,
+                    'detalles' => $detalles,
                     'moneda' => $documento->simboloMoneda(),
                     'empresa' => $empresa,
                     "legends" =>  $legends,
@@ -921,7 +923,7 @@ class DocumentoController extends Controller
                 $pdf_condicion = $empresa->condicion === '1' ? 'comprobante_normal_nuevo' : 'comprobante_normal';
                 $pdf = PDF::loadview('ventas.documentos.impresion.'.$pdf_condicion,[
                     'documento' => $documento,
-                    'detalles' => $documento->detalles,
+                    'detalles' => $detalles,
                     'moneda' => $documento->simboloMoneda(),
                     'empresa' => $empresa,
                     "legends" =>  $legends,
@@ -1013,6 +1015,74 @@ class DocumentoController extends Controller
 
     }
 
+    public function qr_code($id)
+    {
+        try{
+            $documento = Documento::findOrFail($id);
+
+            if($documento->sunat == '1')
+            {
+                $arreglo_qr = array(
+                    "ruc" => $documento->ruc_empresa,
+                    "tipo" => $documento->tipoDocumento(),
+                    "serie" => $documento->serie,
+                    "numero" => $documento->correlativo,
+                    "emision" => self::obtenerFechaEmision($documento),
+                    "igv" => 18,
+                    "total" => (float)$documento->total,
+                    "clienteTipo" => $documento->tipoDocumentoCliente(),
+                    "clienteNumero" => $documento->documento_cliente
+                );
+
+                /********************************/
+                $data_qr = generarQrApi(json_encode($arreglo_qr), $documento->empresa_id);
+
+                $name_qr = $documento->serie."-".$documento->correlativo.'.svg';
+
+                $pathToFile_qr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'.DIRECTORY_SEPARATOR.$name_qr);
+
+                if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'))) {
+                    mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'));
+                }
+
+                file_put_contents($pathToFile_qr, $data_qr);
+
+                $documento->ruta_qr = 'public/qrs/'.$name_qr;
+                $documento->update();
+
+                return array('success' => true,'mensaje' => 'QR creado exitosamente');
+            }
+
+            if($documento->sunat == '0'){
+                $miQr = QrCode::
+                        format('svg')
+                        ->size(130)  //defino el tamaño
+                        ->backgroundColor(0, 0, 0) //defino el fondo
+                        ->color(255, 255, 255)
+                        ->margin(1)  //defino el margen
+                        ->generate($documento->ruc_empresa.'|'.$documento->tipoDocumento().'|'.$documento->serie.'|'.$documento->correlativo.'|'.$documento->total_igv.'|'.$documento->total.'|'.getFechaFormato( $documento->fecha_emision ,'d/m/Y'));
+
+                $name_qr = $documento->serie."-".$documento->correlativo.'.svg';
+
+                $pathToFile_qr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'.DIRECTORY_SEPARATOR.$name_qr);
+
+                if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'))) {
+                    mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'qrs'));
+                }
+
+                file_put_contents($pathToFile_qr, $miQr);
+
+                $documento->ruta_qr = 'public/qrs/'.$name_qr;
+                $documento->update();
+                return array('success' => false,'mensaje' => 'Ya tiene QR');
+            }
+        }
+        catch(Exception $e)
+        {
+            return array('success' => false,'mensaje' => $e->getMessage());
+        }
+    }
+
     public function obtenerLeyenda($documento)
     {
         $formatter = new NumeroALetras();
@@ -1082,7 +1152,7 @@ class DocumentoController extends Controller
             if($existe[0]){
                 if ($existe[0]->get('existe') == true) {
                     return array('success' => true,'mensaje' => 'Documento validado.');
-                }else{    
+                }else{
                     return array('success' => false, 'mensaje' => 'Tipo de Comprobante no registrado en la empresa.');
                 }
             }else{
@@ -1150,18 +1220,29 @@ class DocumentoController extends Controller
                 if ($json_sunat->sunatResponse->success == true) {
 
                     $documento->sunat = '1';
+                    $respuesta_cdr = json_encode($json_sunat->sunatResponse->cdrResponse, true);
+                    $respuesta_cdr = json_decode($respuesta_cdr, true);
+                    $documento->getCdrResponse = $respuesta_cdr;
 
                     $data_comprobante = generarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
-
                     $name = $documento->serie."-".$documento->correlativo.'.pdf';
 
-                    $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'.DIRECTORY_SEPARATOR.$name);
+                    $data_cdr = base64_decode($json_sunat->sunatResponse->cdrZip);
+                    $name_cdr = 'R-'.$documento->serie."-".$documento->correlativo.'.zip';
 
                     if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'))) {
                         mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'));
                     }
 
+                    if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'cdr'))) {
+                        mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'cdr'));
+                    }
+
+                    $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'.DIRECTORY_SEPARATOR.$name);
+                    $pathToFile_cdr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'cdr'.DIRECTORY_SEPARATOR.$name_cdr);
+
                     file_put_contents($pathToFile, $data_comprobante);
+                    file_put_contents($pathToFile_cdr, $data_cdr);
 
                     $arreglo_qr = array(
                         "ruc" => $documento->ruc_empresa,
@@ -1345,7 +1426,8 @@ class DocumentoController extends Controller
             ->join('productos','productos.id','=','lote_productos.producto_id')
             ->join('categorias','categorias.id','=','productos.categoria_id')
             ->join('tabladetalles','tabladetalles.id','=','productos.medida')
-            ->select('lote_productos.*','productos.nombre','productos.codigo_barra','productos_clientes.cliente','productos_clientes.moneda','tabladetalles.simbolo as unidad_producto',
+            ->leftJoin('compra_documento_detalles','compra_documento_detalles.lote_id','=','lote_productos.id')
+            ->select('compra_documento_detalles.precio_soles as precio','lote_productos.*','productos.nombre','productos.codigo_barra','productos_clientes.cliente','productos_clientes.moneda','tabladetalles.simbolo as unidad_producto',
                     'productos_clientes.monto as precio_venta','categorias.descripcion as categoria', DB::raw('DATE_FORMAT(lote_productos.fecha_vencimiento, "%d/%m/%Y") as fecha_venci')) //DB::raw('DATE_FORMAT(lote_productos.fecha_vencimiento, "%d/%m/%Y") as fecha_venci')
             ->where('lote_productos.cantidad_logica','>',0)
             ->where('lote_productos.estado','1')
@@ -1414,15 +1496,15 @@ class DocumentoController extends Controller
 
         if($lote)
         {
-        return response()->json([
-            'success' => true,
-            'lote' => $lote,
-        ]);
+            return response()->json([
+                'success' => true,
+                'lote' => $lote,
+            ]);
         }
         else{
-        return response()->json([
-            'success' => false,
-        ]);
+            return response()->json([
+                'success' => false,
+            ]);
         }
     }
 

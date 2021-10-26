@@ -27,6 +27,7 @@
                                 <th class="text-center">CANTID.</th>
                                 <th class="text-center">COD. BARRA</th>
                                 <th class="text-center">PREC.VENTA</th>
+                                <th class="text-center">PREC.COMPRA</th>
 
                             </tr>
                             </thead>
@@ -156,6 +157,18 @@ function obtenerLotesproductos() {
             {data: 'cantidad_logica', className: "text-center", name:"lote_productos.cantidad_logica", sWidth: '10%' },
             {data: 'codigo_barra', className: "text-center", name:"productos.codigo_barra", sWidth: '15%' },
             {data: 'precio_venta', className: "text-center", name:"productos_clientes.monto", sWidth: '15%' },
+            {
+                data: null,
+                className: "text-center letrapequeña",
+                sWidth: '5%',
+                render: function(data) {
+                    if (data.precio == null) {
+                        return '0.00';
+                    }else{
+                        return convertFloat(data.precio).toFixed(2);
+                    }
+                }
+            },
         ],
         "bLengthChange": true,
         "bFilter": true,

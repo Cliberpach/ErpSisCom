@@ -83,7 +83,7 @@
             .numero-documento {
                 margin: 1px;
                 padding-top: 20px;
-                padding-bottom: 20px;                
+                padding-bottom: 20px;
                 border: 1px solid #8f8f8f;
                 font-size: 14px;
             }
@@ -157,7 +157,7 @@
                     <p class="m-0 p-0 text-uppercase nombre-empresa">{{ DB::table('empresas')->count() == 0 ? 'SISCOM ' : DB::table('empresas')->first()->razon_social }}</p>
                     <p class="m-0 p-0 text-uppercase ruc-empresa">RUC {{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->ruc }}</p>
                     <p class="m-0 p-0 text-uppercase direccion-empresa">{{ DB::table('empresas')->count() == 0 ? '- ' : DB::table('empresas')->first()->direccion_fiscal }}</p>
-                    
+
                     <p class="m-0 p-0 text-info-empresa">Central telefónica: {{ DB::table('empresas')->count() == 0 ? '-' : DB::table('empresas')->first()->celular }}</p>
                     <p class="m-0 p-0 text-info-empresa">Email: {{ DB::table('empresas')->count() == 0 ? '-' : DB::table('empresas')->first()->correo }}</p>
                 </div>
@@ -176,12 +176,12 @@
                 <tr>
                     <td>FECHA DE EMISIÓN</td>
                     <td>:</td>
-                    <td>{{ getFechaFormato( $documento->fecha_documento ,'d/m/Y')}}</td>
+                    <td>{{ getFechaFormato( $documento->fecha_documento ,'d/m/Y') }}</td>
                 </tr>
                 <tr>
                     <td>FECHA DE VENCIMIENTO</td>
                     <td>:</td>
-                    <td>{{ getFechaFormato( $documento->fecha_vencimiento ,'d/m/Y')}}</td>
+                    <td>{{ getFechaFormato( $documento->fecha_vencimiento ,'d/m/Y') }}</td>
                 </tr>
                 <tr>
                     <td>CLIENTE</td>
@@ -209,20 +209,20 @@
             <table class="tbl-detalles text-uppercase" cellpadding="5" cellspacing="0">
                 <thead>
                     <tr >
-                        <th style="text-align: center">CANT</th>
-                        <th style="text-align: center">DESCRIPCIÓN</th>
-                        <th style="text-align: center">P. UNIT.</th>
-                        <th style="text-align: center">DESC.</th>
-                        <th style="text-align: right">TOTAL</th>
+                        <th style="text-align: left; width: 10%;">CANT</th>
+                        <th style="text-align: left;  width: 60%;">DESCRIPCIÓN</th>
+                        <th style="text-align: left;  width: 10%;">P. UNIT.</th>
+                        <th style="text-align: left;  width: 10%;">DESC.</th>
+                        <th style="text-align: right;  width: 10%;">TOTAL</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($detalles as $item)
                     <tr>
-                        <td style="text-align: center">{{ $item->cantidad }}</td>
-                        <td style="text-align: center">{{ $item->nombre_producto }}</td>
-                        <td style="text-align: center">{{ $item->precio_unitario }}</td>
-                        <td style="text-align: center">{{ $item->dinero }}</td>
+                        <td style="text-align: left">{{ $item->cantidad }}</td>
+                        <td style="text-align: left">{{ $item->nombre_producto }}</td>
+                        <td style="text-align: left">{{ $item->precio_unitario }}</td>
+                        <td style="text-align: left">{{ $item->dinero }}</td>
                         <td style="text-align: right">{{ $item->valor_venta }}</td>
                     </tr>
                     @endforeach
@@ -236,7 +236,7 @@
                     </tr>
                     <tr>
                         <th colspan="3" hidden></th>
-                        <th style="text-align:right">IGV: S/.</th>
+                        <th style="text-align:right">IGV {{ $documento->igv }}: S/.</th>
                         <th style="text-align:right">{{ number_format($documento->total_igv, 2) }}</th>
                     </tr>
                     @endif
@@ -259,8 +259,10 @@
                     </td>
                     <td style="text-align: right;">
                         @if($documento->ruta_qr)
-                        <img src="{{ base_path() . '/storage/app/'.$documento->ruta_qr }}">
-                        <p class="m-0 p-0" style="font-size: 9px;">Código Hash: {{ $documento->hash }}</p>
+                            <img src="{{ base_path() . '/storage/app/'.$documento->ruta_qr }}">
+                        @endif
+                        @if($documento->hash)
+                            <p class="m-0 p-0" style="font-size: 9px;">Código Hash: {{ $documento->hash }}</p>
                         @endif
                     </td>
                 </tr>

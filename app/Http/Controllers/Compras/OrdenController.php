@@ -58,9 +58,9 @@ class OrdenController extends Controller
         $coleccion = collect([]);
         foreach($ordenes as $orden){
 
-            
-            $detalles = Detalle::where('orden_id',$orden->id)->get(); 
-            $subtotal = 0; 
+
+            $detalles = Detalle::where('orden_id',$orden->id)->get();
+            $subtotal = 0;
             $igv = '';
             $tipo_moneda = '';
 
@@ -77,7 +77,7 @@ class OrdenController extends Controller
             if (!$orden->igv) {
                 $igv = $subtotal * 0.18;
                 $total = $subtotal + $igv;
-                $decimal_total = number_format($total, 2, '.', ''); 
+                $decimal_total = number_format($total, 2, '.', '');
             }else{
                 $calcularIgv = $orden->igv/100;
                 $base = $subtotal / (1 + $calcularIgv);
@@ -93,24 +93,24 @@ class OrdenController extends Controller
             $saldo = $decimal_total - $acuenta;
 
             //CAMBIAR ESTADO DE LA ORDEN A PAGADA
-        
+
             if ($saldo == 0.0) {
                 $orden->estado = "PAGADA";
                 $orden->update();
             }
 
-            
+
 
             $coleccion->push([
                 'id' => $orden->id,
                 'proveedor' => $orden->proveedor->descripcion,
                 'fecha_emision' =>  Carbon::parse($orden->fecha_emision)->format( 'd/m/Y'),
-                'fecha_entrega' =>  Carbon::parse($orden->fecha_entrega)->format( 'd/m/Y'), 
+                'fecha_entrega' =>  Carbon::parse($orden->fecha_entrega)->format( 'd/m/Y'),
                 'estado' => $orden->estado,
                 'total' => $tipo_moneda.' '.number_format($decimal_total, 2, '.', ''),
             ]);
         }
-  
+
         return DataTables::of($coleccion)->toJson();
     }
 
@@ -124,11 +124,11 @@ class OrdenController extends Controller
         $modos =  modo_compra();
         $fecha_hoy = Carbon::now()->toDateString();
         $monedas =  tipos_moneda();
-        
+
         return view('compras.ordenes.create',[
             'empresas' => $empresas,
             'proveedores' => $proveedores,
-            'productos' => $productos, 
+            'productos' => $productos,
             'presentaciones' => $presentaciones,
             'fecha_hoy' => $fecha_hoy,
             'modos' => $modos,
@@ -136,12 +136,12 @@ class OrdenController extends Controller
         ]);
     }
 
-    
+
     public function edit($id)
     {
         $this->authorize('haveaccess','orden.index');
         $empresas = Empresa::where('estado','ACTIVO')->get();
-        $detalles = Detalle::where('orden_id',$id)->get();        
+        $detalles = Detalle::where('orden_id',$id)->get();
         $proveedores = Proveedor::where('estado','ACTIVO')->get();
         $orden = Orden::findOrFail($id);
 
@@ -162,22 +162,22 @@ class OrdenController extends Controller
                 'empresas' => $empresas,
                 'proveedores' => $proveedores,
                 'orden' => $orden,
-                'productos' => $productos, 
+                'productos' => $productos,
                 'presentaciones' => $presentaciones,
-                'fecha_hoy' => $fecha_hoy, 
+                'fecha_hoy' => $fecha_hoy,
                 'detalles' => $detalles,
                 'modos' => $modos,
                 'monedas' => $monedas,
                 'aviso' => $aviso
             ]);
-        }else{       
+        }else{
             return view('compras.ordenes.edit',[
                 'empresas' => $empresas,
                 'proveedores' => $proveedores,
                 'orden' => $orden,
-                'productos' => $productos, 
+                'productos' => $productos,
                 'presentaciones' => $presentaciones,
-                'fecha_hoy' => $fecha_hoy, 
+                'fecha_hoy' => $fecha_hoy,
                 'detalles' => $detalles,
                 'modos' => $modos,
                 'monedas' => $monedas,
@@ -188,7 +188,7 @@ class OrdenController extends Controller
     public function store(Request $request){
 
         $this->authorize('haveaccess','orden.index');
-        
+
         $data = $request->all();
         $rules = [
             'fecha_emision'=> 'required',
@@ -199,7 +199,7 @@ class OrdenController extends Controller
             'moneda' => 'nullable',
             'tipo_cambio' => 'nullable|numeric',
             'igv' => 'required_if:igv_check,==,on|numeric|digits_between:1,3',
-            
+
         ];
         $message = [
             'fecha_emision.required' => 'El campo Fecha de Emisión es obligatorio.',
@@ -216,10 +216,10 @@ class OrdenController extends Controller
         ];
         Validator::make($data, $rules, $message)->validate();
 
-        $orden = new Orden();        
+        $orden = new Orden();
         $orden->fecha_emision = Carbon::createFromFormat('d/m/Y', $request->get('fecha_emision'))->format('Y-m-d');
         $orden->fecha_entrega = Carbon::createFromFormat('d/m/Y', $request->get('fecha_entrega'))->format('Y-m-d');
-        
+
         $orden->sub_total = (float) $request->get('monto_sub_total');
         $orden->total_igv = (float) $request->get('monto_total_igv');
         $orden->total = (float) $request->get('monto_total');
@@ -271,7 +271,7 @@ class OrdenController extends Controller
             'moneda' => 'nullable',
             'igv' => 'required_if:igv_check,==,on|digits_between:1,3',
         ];
-        
+
         $message = [
             'fecha_emision.required' => 'El campo Fecha de Emisión es obligatorio.',
             'fecha_entrega.required' => 'El campo Fecha de Entrega es obligatorio.',
@@ -285,10 +285,10 @@ class OrdenController extends Controller
         ];
         Validator::make($data, $rules, $message)->validate();
 
-        $orden = Orden::findOrFail($id);        
+        $orden = Orden::findOrFail($id);
         $orden->fecha_emision = Carbon::createFromFormat('d/m/Y', $request->get('fecha_emision'))->format('Y-m-d');
         $orden->fecha_entrega = Carbon::createFromFormat('d/m/Y', $request->get('fecha_entrega'))->format('Y-m-d');
-        
+
         $orden->sub_total = (float) $request->get('monto_sub_total');
         $orden->total_igv = (float) $request->get('monto_total_igv');
         $orden->total = (float) $request->get('monto_total');
@@ -302,7 +302,7 @@ class OrdenController extends Controller
         $orden->usuario_id = auth()->user()->id;
         $orden->igv = $request->get('igv');
         $orden->tipo_cambio = $request->get('tipo_cambio');
-        
+
         if ($request->get('igv_check') == "on") {
             $orden->igv_check = "1";
         }else{
@@ -313,7 +313,7 @@ class OrdenController extends Controller
         $productosJSON = $request->get('productos_tabla');
         $productotabla = json_decode($productosJSON[0]);
 
-        
+
         if ($productotabla) {
 
             Detalle::where('orden_id', $orden->id)->delete();
@@ -338,7 +338,7 @@ class OrdenController extends Controller
             {
                 MovimientoAlmacen::where('lote_id', $lot->id)->where('producto_id', $lot->producto_id)->where('compra_documento_id', $lot->compra_documento_id)->where('nota', 'COMPRA')->where('movimiento', 'INGRESO')->delete();
                 $lote = LoteProducto::find($lot->id);
-                $producto_id = $lote->producto_id;                
+                $producto_id = $lote->producto_id;
                 $lote->estado = '0';
                 $lote->update();
 
@@ -350,7 +350,7 @@ class OrdenController extends Controller
                 $producto->update();
             }
 
-            
+
 
            if($documento->cuenta)
            {
@@ -404,7 +404,7 @@ class OrdenController extends Controller
 
             Session::flash('success','Orden de compra eliminado.');
             return redirect()->route('compras.orden.index')->with('eliminar', 'success');
-    
+
         }
 
     }
@@ -436,7 +436,7 @@ class OrdenController extends Controller
             $descripcion = "SE ELIMINÓ LA CUENTA DE PROVEEDOR: ". Carbon::parse($documento->fecha_emision)->format('d/m/y');
             $gestion = "CUENTA PROVEEDOR";
             eliminarRegistro($documento, $descripcion , $gestion);
-            
+
             $orden->estado = 'ANULADO';
             $orden->update();
         }
@@ -454,13 +454,13 @@ class OrdenController extends Controller
     {
         $orden = Orden::findOrFail($id);
         $nombre_completo = $orden->usuario->user->persona->apellido_paterno.' '.$orden->usuario->user->persona->apellido_materno.' '.$orden->usuario->user->persona->nombres;
-        $detalles = Detalle::where('orden_id',$id)->get(); 
-        $presentaciones = presentaciones(); 
-        $subtotal = 0; 
+        $detalles = Detalle::where('orden_id',$id)->get();
+        $presentaciones = presentaciones();
+        $subtotal = 0;
         $igv = '';
         $tipo_moneda = '';
-   
-        
+
+
         foreach($detalles as $detalle){
             $subtotal = ($detalle->cantidad * $detalle->precio) + $subtotal;
         }
@@ -478,18 +478,18 @@ class OrdenController extends Controller
                $total = $subtotal + $igv;
                $decimal_subtotal = number_format($subtotal, 2, '.', '');
                $decimal_total = number_format($total, 2, '.', '');
-               $decimal_igv = number_format($igv, 2, '.', ''); 
+               $decimal_igv = number_format($igv, 2, '.', '');
         }else{
             $calcularIgv = $orden->igv/100;
             $base = $subtotal / (1 + $calcularIgv);
             $nuevo_igv = $subtotal - $base;
             $decimal_subtotal = number_format($base, 2, '.', '');
             $decimal_total = number_format($subtotal, 2, '.', '');
-            $decimal_igv = number_format($nuevo_igv, 2, '.', ''); 
+            $decimal_igv = number_format($nuevo_igv, 2, '.', '');
         }
 
- 
-        
+
+
         return view('compras.ordenes.show', [
             'orden' => $orden,
             'detalles' => $detalles,
@@ -508,7 +508,7 @@ class OrdenController extends Controller
         $orden = Orden::findOrFail($id);
         $nombre_completo = $orden->usuario->user->persona->apellido_paterno.' '.$orden->usuario->user->persona->apellido_materno.' '.$orden->usuario->user->persona->nombres;
         $detalles = Detalle::where('orden_id',$id)->get();
-        $subtotal = 0; 
+        $subtotal = 0;
         $igv = '';
         $tipo_moneda = '';
         foreach($detalles as $detalle){
@@ -525,19 +525,19 @@ class OrdenController extends Controller
             $total = $subtotal + $igv;
             $decimal_subtotal = number_format($subtotal, 2, '.', '');
             $decimal_total = number_format($total, 2, '.', '');
-            $decimal_igv = number_format($igv, 2, '.', ''); 
+            $decimal_igv = number_format($igv, 2, '.', '');
         }else{
             $calcularIgv = $orden->igv/100;
             $base = $subtotal / (1 + $calcularIgv);
             $nuevo_igv = $subtotal - $base;
             $decimal_subtotal = number_format($base, 2, '.', '');
             $decimal_total = number_format($subtotal, 2, '.', '');
-            $decimal_igv = number_format($nuevo_igv, 2, '.', ''); 
+            $decimal_igv = number_format($nuevo_igv, 2, '.', '');
         }
 
 
 
-        $presentaciones = presentaciones();  
+        $presentaciones = presentaciones();
         $paper_size = array(0,0,360,360);
         $pdf = PDF::loadview('compras.ordenes.reportes.detalle',[
             'orden' => $orden,
@@ -557,13 +557,13 @@ class OrdenController extends Controller
         $orden = Orden::findOrFail($id);
         $nombre_completo = $orden->usuario->user->persona->apellido_paterno.' '.$orden->usuario->user->persona->apellido_materno.' '.$orden->usuario->user->persona->nombres;
         $detalles = Detalle::where('orden_id',$id)->get();
-        $subtotal = 0; 
+        $subtotal = 0;
         $igv = '';
         $tipo_moneda = '';
         foreach($detalles as $detalle){
             $subtotal = ($detalle->cantidad * $detalle->precio) + $subtotal;
         }
-        
+
         foreach(tipos_moneda() as $moneda){
             if ($moneda->descripcion == $orden->moneda) {
                 $tipo_moneda= $moneda->simbolo;
@@ -576,19 +576,19 @@ class OrdenController extends Controller
             $total = $subtotal + $igv;
             $decimal_subtotal = number_format($subtotal, 2, '.', '');
             $decimal_total = number_format($total, 2, '.', '');
-            $decimal_igv = number_format($igv, 2, '.', ''); 
+            $decimal_igv = number_format($igv, 2, '.', '');
         }else{
             $calcularIgv = $orden->igv/100;
             $base = $subtotal / (1 + $calcularIgv);
             $nuevo_igv = $subtotal - $base;
             $decimal_subtotal = number_format($base, 2, '.', '');
             $decimal_total = number_format($subtotal, 2, '.', '');
-            $decimal_igv = number_format($nuevo_igv, 2, '.', ''); 
+            $decimal_igv = number_format($nuevo_igv, 2, '.', '');
         }
 
 
 
-        $presentaciones = presentaciones();  
+        $presentaciones = presentaciones();
         $paper_size = array(0,0,360,360);
         $pdf = PDF::loadview('compras.ordenes.reportes.detalle',[
             'orden' => $orden,
@@ -600,7 +600,7 @@ class OrdenController extends Controller
             'igv' => $decimal_igv,
             'total' => $decimal_total,
             ])->setPaper('a4')->setWarnings(false);
-        
+
         Mail::send('email.ordencompra',compact("orden"), function ($mail) use ($pdf,$orden) {
             $mail->to($orden->proveedor->correo);
             $mail->subject('ORDEN DE COMPRA OC-00'.$orden->id);
@@ -622,7 +622,7 @@ class OrdenController extends Controller
 
         Session::flash('success','Orden de Compra enviado al correo '.$orden->proveedor->correo);
         return redirect()->route('compras.orden.show',$orden->id)->with('enviar', 'success');
-        
+
     }
 
     public function concretized($id)
@@ -669,10 +669,10 @@ class OrdenController extends Controller
             //REDIRECCIONAR AL DOCUMENTO DE COMPRA
             return redirect()->route('compras.documento.create',['orden'=>$id]);
         }
-        
+
     }
 
-    
+
     public function newDocument($id){
         $documento_old = Documento::where('orden_compra',$id)->where('estado','!=','ANULADO')->first();
         DB::table('kardex')
@@ -691,5 +691,10 @@ class OrdenController extends Controller
         //REDIRECCIONAR AL NUEVO DOCUMENTO DE COMPRA
         return redirect()->route('compras.documento.create',['orden'=>$id]);
 
-    } 
+    }
+
+    public function dolar()
+    {
+        return precio_dolar();
+    }
 }

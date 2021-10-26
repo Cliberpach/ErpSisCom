@@ -38,7 +38,9 @@ class ProductoController extends Controller
                 'categoria' => $producto->categoria->descripcion,
                 'almacen' => $producto->almacen->descripcion,
                 'marca' => $producto->marca->marca,
-                'stock' => $producto->stock
+                'stock' => $producto->stock,
+                'precio_venta_minimo' => $producto->precio_venta_minimo,
+                'precio_venta_maximo' => $producto->precio_venta_maximo,
             ]);
         }
         return DataTables::of($coleccion)->make(true);

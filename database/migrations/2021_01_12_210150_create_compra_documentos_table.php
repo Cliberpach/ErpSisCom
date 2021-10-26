@@ -22,9 +22,9 @@ class CreateCompraDocumentosTable extends Migration
 
             $table->unsignedInteger('proveedor_id');
             $table->foreign('proveedor_id')->references('id')->on('proveedores')->onDelete('cascade');
-            
+
             $table->BigInteger('orden_compra')->nullable();
-            
+
             $table->string('modo_compra');
             $table->string('numero_tipo');
             $table->string('numero_doc')->nullable();
@@ -34,17 +34,21 @@ class CreateCompraDocumentosTable extends Migration
 
             $table->string('igv_check',2)->nullable();
             $table->char('igv',3)->nullable();
-            $table->unsignedDecimal('tipo_cambio', 15,2)->nullable();
+            $table->unsignedDecimal('tipo_cambio', 15, 3)->nullable();
 
-            $table->unsignedDecimal('sub_total', 15, 2);
-            $table->unsignedDecimal('total_igv', 15, 2);
-            $table->unsignedDecimal('total', 15, 2);
+            $table->unsignedDecimal('sub_total', 15, 3)->nullable();
+            $table->unsignedDecimal('total_igv', 15, 3)->nullable();
+            $table->unsignedDecimal('total', 15, 3)->nullable();
+
+            $table->unsignedDecimal('sub_total_soles', 15, 3)->nullable();
+            $table->unsignedDecimal('total_igv_soles', 15, 3)->nullable();
+            $table->unsignedDecimal('total_soles', 15, 3)->nullable();
 
             $table->mediumText('observacion')->nullable();
             $table->BigInteger('usuario_id');
 
             $table->enum('estado',['VIGENTE','PENDIENTE','ADELANTO','CONCRETADA','ANULADO','PAGADA'])->default('VIGENTE');
-            
+
             $table->timestamps();
         });
     }

@@ -3,6 +3,7 @@
 namespace App\Ventas\Documento;
 
 use App\Almacenes\Kardex;
+use App\Almacenes\LoteProducto;
 use Illuminate\Database\Eloquent\Model;
 
 class Detalle extends Model
@@ -58,6 +59,17 @@ class Detalle extends Model
             $kardex->stock = $detalle->lote->producto->stock - $detalle->cantidad;
             $kardex->save();
             
+        });
+
+        static::updated(function(Detalle $detalle){
+
+            if($detalle->estado == 'ANULADO')
+            {
+                $lote = LoteProducto::find($detalle->lote_id);
+                $lote->cantidad = $lote->cantidad + $detalle->cantidad;
+                $lote->cantidad_logica = $lote->cantidad_logica + $detalle->cantidad;
+                $lote->update();
+            }            
         });
     }
 }

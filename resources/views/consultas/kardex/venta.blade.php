@@ -54,6 +54,7 @@
                                     <th class="text-center" style="width: 10%">CANTIDAD</th>
                                     <th class="text-center" style="width: 10%">COSTO</th>
                                     <th class="text-center" style="width: 10%">PRECIO</th>
+                                    <th class="text-center" style="width: 10%">IMPORTE</th>
                             </thead>
                             <tbody>
 
@@ -193,6 +194,7 @@ function loadTable()
             {data: 'cantidad', name:'cantidad', className: "text-center letrapequeña"},
             {data: 'costo',name:'costo', className: "text-center letrapequeña"},
             {data: 'precio',name:'precio', className: "text-center letrapequeña"},
+            {data: 'importe',name:'importe', className: "text-center letrapequeña"},
         ],
         "language": {
                     "url": "{{asset('Spanish.json')}}"

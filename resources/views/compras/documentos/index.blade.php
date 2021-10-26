@@ -32,7 +32,7 @@
                         style="text-transform:uppercase">
                             <thead>
                                 <tr>
-                                    
+
                                     <th colspan="7" class="text-center">DOCUMENTO DE COMPRA</th>
                                     <th colspan="2" class="text-center">FORMAS DE PAGO</th>
                                     <th colspan="3" class="text-center"></th>
@@ -47,6 +47,8 @@
                                     <th class="text-center">PROVEEDOR</th>
                                     <th class="text-center">MODO</th>
                                     <th class="text-center">MONTO</th>
+                                    <th class="text-center">MONEDA</th>
+                                    <th class="text-center">TIPO_CAMBIO</th>
                                     <th class="text-center">A CUENTA</th>
                                     <th class="text-center">SALDO</th>
                                     <th class="text-center">ESTADO</th>
@@ -85,7 +87,7 @@ $(document).ready(function() {
                 extend: 'excelHtml5',
                 text: '<i class="fa fa-file-excel-o"></i> Excel',
                 titleAttr: 'Excel',
-                title: 'Tablas Generales'
+                title: 'DOC_COMPRAS'
             },
             {
                 titleAttr: 'Imprimir',
@@ -128,7 +130,7 @@ $(document).ready(function() {
                         return "<input type='checkbox' disabled>"
                     }
                 }
-                
+
             },
             {
                 data: 'fecha_emision',
@@ -149,6 +151,16 @@ $(document).ready(function() {
             {
                 data: 'total',
                 className: "text-center"
+            },
+            {
+                data: 'moneda',
+                className: "text-center",
+                visible: false,
+            },
+            {
+                data: 'tipo_cambio',
+                className: "text-center",
+                visible: false,
             },
             {
                 data: 'acuenta',
@@ -205,7 +217,7 @@ $(document).ready(function() {
                         ")' title='Eliminar'><b><i class='fa fa-trash'></i> Eliminar</a></b></li>" +
                         "<li class='dropdown-divider d-none'></li>" +
                         "<li class='d-none'><a class='dropdown-item' onclick='pagar(" +data.orden_compra+","+data.id+","+data.tipo_pago+  ")'  title='Pagar'><b><i class='fa fa-money'></i> Pagar</a></b></li>"
-                        
+
                     "</ul></div>"
                 }
             }
@@ -325,7 +337,7 @@ function pagar(orden,id,tipo) {
 
 
                 if (tipo == null || tipo == 1  ) {
-                    
+
                     var url = '{{ route("compras.documentos.transferencia.pago.index", ":id")}}';
                     url = url.replace(':id', id);
                     $(location).attr('href', url);
@@ -360,8 +372,8 @@ function pagar(orden,id,tipo) {
                     })
 
                 }
-            
-            
+
+
             } else if (
                 /* Read more about handling dismissals below */
                 result.dismiss === Swal.DismissReason.cancel
@@ -369,13 +381,13 @@ function pagar(orden,id,tipo) {
 
 
                 if (tipo  == null || tipo == 0  ) {
-                    
+
                     var url = '{{ route("compras.documentos.pago.index", ":id")}}';
                     url = url.replace(':id', id);
                     $(location).attr('href', url);
 
                 }else{
-                    
+
                     Swal.fire({
                             customClass: {
                                 container: 'my-swal'
@@ -407,7 +419,7 @@ function pagar(orden,id,tipo) {
 
 
                 }
-            
+
             }
         })
 

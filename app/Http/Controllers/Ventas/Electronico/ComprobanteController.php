@@ -159,21 +159,33 @@ class ComprobanteController extends Controller
 
                     //RESPUESTA DE LA SUNAT EN JSON
                     $json_sunat = json_decode($data);
+
                     if ($json_sunat->sunatResponse->success == true) {
         
                         $documento->sunat = '1';
+                        $respuesta_cdr = json_encode($json_sunat->sunatResponse->cdrResponse, true);
+                        $respuesta_cdr = json_decode($respuesta_cdr, true);
+                        $documento->getCdrResponse = $respuesta_cdr;
 
                         $data_comprobante = generarComprobanteapi(json_encode($arreglo_comprobante), $documento->empresa_id);
-
                         $name = $documento->serie."-".$documento->correlativo.'.pdf';
 
-                        $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'.DIRECTORY_SEPARATOR.$name);
+                        $data_cdr = base64_decode($json_sunat->sunatResponse->cdrZip);
+                        $name_cdr = 'R-'.$documento->serie."-".$documento->correlativo.'.zip';
 
                         if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'))) {
                             mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'));
                         }
 
+                        if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'cdr'))) {
+                            mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'cdr'));
+                        }
+
+                        $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'sunat'.DIRECTORY_SEPARATOR.$name);
+                        $pathToFile_cdr = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'cdr'.DIRECTORY_SEPARATOR.$name_cdr);                     
+
                         file_put_contents($pathToFile, $data_comprobante);
+                        file_put_contents($pathToFile_cdr, $data_cdr);
 
                         $arreglo_qr = array(
                             "ruc" => $documento->ruc_empresa,

@@ -17,7 +17,7 @@
         </ul>
     </div>
     <div class="logo-element">
-        <img src="{{ asset('img/ecologo.jpeg') }}" height="30" width="45">
+        <img src="{{ asset('img/default.png') }}" height="30" width="45">
     </div>
 </li>
 
@@ -35,7 +35,7 @@
         <li class="@yield('caja-active')"><a href="{{ route('Caja.index') }}"><i class="fa fa-archive"></i>Cajas</a></li>
         @endcan
         @can('haveaccess', 'movimiento_caja.index')
-        <li class="@yield('caja-movimiento-active')"><a href="{{ route('Caja.Movimiento.index') }}"><i class="fa fa-registered"></i> Apertura y Cierre Caja</a></li>  
+        <li class="@yield('caja-movimiento-active')"><a href="{{ route('Caja.Movimiento.index') }}"><i class="fa fa-registered"></i> Apertura y Cierre Caja</a></li>
         @endcan
         @can('haveaccess', 'egreso.index')
         <li class="@yield('egreso-active')"> <a href="{{ route('Egreso.index') }}"><i class="fa fa-arrow-right"></i> Egreso</a></li>
@@ -193,14 +193,14 @@
         @can('haveaccess', 'colaborador.index')
         <li class="@yield('colaboradores-active')"><a href="{{ route('mantenimiento.colaborador.index') }}">Colaboradores</a></li>
         @endcan
-        @can('haveaccess', 'vendedor.index')            
+        @can('haveaccess', 'vendedor.index')
         <li class="@yield('vendedores-active')"><a href="{{ route('mantenimiento.vendedor.index') }}">Vendedores</a></li>
         @endcan
         @can('haveaccess', 'empresa.index')
         <li class="@yield('empresas-active')"><a href="{{ route('mantenimiento.empresas.index') }}">Empresas</a></li>
         @endcan
         @can('haveaccess', 'tabla.index')
-        <li class="@yield('tablas-active')"><a href="{{ route('mantenimiento.tabla.general.index') }}">Tablas Generales</a></li> 
+        <li class="@yield('tablas-active')"><a href="{{ route('mantenimiento.tabla.general.index') }}">Tablas Generales</a></li>
         @endcan
     </ul>
 </li>
@@ -219,5 +219,5 @@
         @endcan
     </ul>
 </li>
- 
+
 @endcan

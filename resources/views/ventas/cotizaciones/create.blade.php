@@ -673,7 +673,7 @@
         }
 
         if ($('#cantidad').val() == '') {
-            toastr.error('Ingrese cantidad del artículo.', 'Error');
+            toastr.error('Ingrese cantidad del producto.', 'Error');
             enviar = true;
             $("#cantidad").addClass("is-invalid");
             $('#error-cantidad').text('El campo Cantidad es obligatorio.')
@@ -685,7 +685,7 @@
             $("#cantidad").addClass("is-invalid");
             $('#error-cantidad').text('El campo cantidad debe ser mayor a 0.')
         }
-       
+
         if (enviar != true) {
             Swal.fire({
                 title: 'Opción Agregar',
@@ -790,7 +790,7 @@
             precio_nuevo: precio_nuevo,
             precio_inicial: precio_inicial
         }
-        
+
         agregarTabla(detalle);
     }
 

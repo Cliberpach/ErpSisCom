@@ -23,8 +23,15 @@ class Detalle extends Model
         'presentacion_producto',
         'medida_producto',
         'cantidad',
+
         'precio',
+        'precio_inicial',
         'costo_flete',
+
+        'precio_soles',
+        'precio_inicial_soles',
+        'costo_flete_soles',
+
         'lote',
         'lote_id',
         'fecha_vencimiento'
@@ -52,7 +59,7 @@ class Detalle extends Model
 
     protected static function booted()
     {
-        static::created(function(Detalle $detalle){        
+        static::created(function(Detalle $detalle){
             $lote = new LoteProducto();
             $lote->compra_documento_id = $detalle->documento->id;
             $lote->codigo_lote = $detalle->lote;
@@ -79,7 +86,7 @@ class Detalle extends Model
             $movimiento->observacion = $producto->codigo.' - '.$producto->descripcion;
             $movimiento->usuario_id = auth()->user()->id;
             $movimiento->movimiento = 'INGRESO';
-            $movimiento->producto_id = $detalle->producto_id;            
+            $movimiento->producto_id = $detalle->producto_id;
             $movimiento->lote_id = $lote->id;
             $movimiento->compra_documento_id = $detalle->documento_id; //DOCUMENTO DE COMPRA
             $movimiento->save();
@@ -89,7 +96,7 @@ class Detalle extends Model
             $kardex->origen = 'COMPRA';
             $kardex->numero_doc = $detalle->documento->numero_doc;
             $kardex->fecha = $detalle->documento->fecha_emision;
-            $kardex->cantidad = $detalle->cantidad;            
+            $kardex->cantidad = $detalle->cantidad;
             $kardex->producto_id = $detalle->producto_id;
             $kardex->descripcion = 'PROVEEDOR: '.$detalle->documento->proveedor->descripcion;
             $kardex->precio = $detalle->precio;

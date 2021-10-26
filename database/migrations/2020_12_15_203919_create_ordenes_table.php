@@ -34,16 +34,20 @@ class CreateOrdenesTable extends Migration
             $table->char('igv',3)->nullable();
             $table->unsignedDecimal('tipo_cambio', 15,2)->nullable();
             $table->mediumText('observacion')->nullable();
-            $table->boolean('enviado')->nullable(); 
+            $table->boolean('enviado')->nullable();
 
-            
-            $table->unsignedDecimal('sub_total', 15, 2);
-            $table->unsignedDecimal('total_igv', 15, 2);
-            $table->unsignedDecimal('total', 15, 2);
 
-            
+            $table->unsignedDecimal('sub_total', 15, 2)->nullable();
+            $table->unsignedDecimal('total_igv', 15, 2)->nullable();
+            $table->unsignedDecimal('total', 15, 2)->nullable();
+
+            $table->unsignedDecimal('sub_total_soles', 15, 2)->nullable();
+            $table->unsignedDecimal('total_igv_soles', 15, 2)->nullable();
+            $table->unsignedDecimal('total_soles', 15, 2)->nullable();
+
+
             $table->BigInteger('usuario_id');
-            
+
             $table->enum('estado',['VIGENTE','PENDIENTE','ADELANTO','CONCRETADA','ANULADO','PAGADA'])->default('VIGENTE');
 
             $table->timestamps();

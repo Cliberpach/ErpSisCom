@@ -101,11 +101,12 @@ $("#btn_editar_detalle").click(function() {
     let cantidad_sum =  $('#cantidad_editar_actual').val();
     let lote_id = $('#producto_editar').val();
 
+    
     if(cantidad_res != '' && cantidad_sum != '' && lote_id != '')
     {
         $.ajax({
             type : 'POST',
-            url : '{{ route('consultas.ventas.documento.no.update.lote') }}',
+            url : '{{ route("consultas.ventas.documento.no.update.lote") }}',
             data : {
                 '_token' : $('input[name=_token]').val(),
                 'lote_id' : lote_id,
@@ -113,6 +114,7 @@ $("#btn_editar_detalle").click(function() {
                 'cantidad_sum' : cantidad_sum,
             }
         }).done(function (response){
+            console.log(response)
             if(!response.success)
             {
                 enviar = true;

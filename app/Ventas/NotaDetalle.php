@@ -51,8 +51,7 @@ class NotaDetalle extends Model
             $kardex->precio = $detalle->mtoPrecioUnitario;
             $kardex->importe = $detalle->mtoPrecioUnitario * $detalle->cantidad;
             $kardex->stock = $detalle->detalle->lote->producto->stock;
-            $kardex->save();
-            
+            $kardex->save();            
         });
     }
 

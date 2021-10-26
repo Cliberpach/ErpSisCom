@@ -38,6 +38,8 @@ class Documento extends Model
         'forma_pago',
         'cotizacion_venta',
         'sunat',
+        'envio_sunat',
+        'getCdrResponse',
         'correlativo',
         'serie',
         'ruta_comprobante_archivo',
@@ -49,6 +51,11 @@ class Documento extends Model
     public function detalles()
     {
         return $this->hasMany('App\Ventas\Documento\Detalle','documento_id');
+    }
+
+    public function notas()
+    {
+        return $this->hasMany('App\Ventas\Nota','documento_id');
     }
 
 
