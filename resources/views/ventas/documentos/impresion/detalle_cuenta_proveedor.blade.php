@@ -279,7 +279,7 @@
                     @foreach($detalles as $item)
                     <tr>
                         <td style="text-align: center; border-right: 2px solid #52BE80">{{ getFechaFormato($item->fecha ,'d/m/Y') }}</td>
-                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->monto }}</td>
+                        <td style="text-align: center; border-right: 2px solid #52BE80">{{ $item->efectivo+$item->importe }}</td>
                         <td style="text-align: right">{{ $item->saldo }}</td>
                     </tr>
                     @endforeach
@@ -309,7 +309,7 @@
                             </tr>
                             <tr>
                                 <td style="text-align:left; padding: 5px;"><p class="p-0 m-0">Total cuenta: S/.</p></td>
-                                <td style="text-align:right; padding: 5px;"><p class="p-0 m-0">{{ number_format($cuenta->documento->monto, 2) }}</p></td>
+                                <td style="text-align:right; padding: 5px;"><p class="p-0 m-0">{{ number_format($cuenta->documento->total, 2) }}</p></td>
                             </tr>
                         </table>
                     </td>
