@@ -175,6 +175,7 @@ class DocumentoController extends Controller
                 'fecha_entrega'=> 'required',
                 'tipo_compra'=> 'required',
                 'numero_tipo'=> 'required',
+                'serie_tipo'=> 'required',
                 'proveedor_id'=> 'required',
                 'modo_compra'=> 'required',
                 'observacion' => 'nullable',
@@ -188,6 +189,7 @@ class DocumentoController extends Controller
                 'tipo_compra.required' => 'El campo Tipo es obligatorio.',
                 'fecha_entrega.required' => 'El campo Fecha de Entrega es obligatorio.',
                 'numero_tipo.required' => 'El campo Número es obligatorio.',
+                'serie_tipo.required' => 'El campo Serie es obligatorio.',
                 'proveedor_id.required' => 'El campo Proveedor es obligatorio.',
                 'modo_compra.required' => 'El campo Modo de Compra es obligatorio.',
                 'moneda.required' => 'El campo Moneda es obligatorio.',
@@ -220,6 +222,7 @@ class DocumentoController extends Controller
             //-------------------------------
             $documento->empresa_id = '1';
             $documento->numero_tipo = $request->get('numero_tipo');
+            $documento->serie_tipo = $request->get('serie_tipo');
             $documento->proveedor_id = $request->get('proveedor_id');
             $documento->modo_compra = $request->get('modo_compra');
             $documento->observacion = $request->get('observacion');
@@ -332,6 +335,7 @@ class DocumentoController extends Controller
             'fecha_entrega'=> 'required',
             'tipo_compra'=> 'required',
             'numero_tipo'=> 'required',
+            'serie_tipo'=> 'required',
             'proveedor_id'=> 'required',
             'modo_compra'=> 'required',
             'observacion' => 'nullable',
@@ -344,6 +348,7 @@ class DocumentoController extends Controller
             'tipo_compra.required' => 'El campo Tipo es obligatorio.',
             'fecha_entrega.required' => 'El campo Fecha de Entrega es obligatorio.',
             'numero_tipo.required' => 'El campo Número es obligatorio.',
+            'serie_tipo.required' => 'El campo Serie es obligatorio.',
             'proveedor_id.required' => 'El campo Proveedor es obligatorio.',
             'modo_compra.required' => 'El campo Modo de Compra es obligatorio.',
             'moneda.required' => 'El campo Moneda es obligatorio.',
@@ -363,6 +368,7 @@ class DocumentoController extends Controller
         $documento->moneda = $request->get('moneda');
         $documento->tipo_cambio = $request->get('tipo_cambio');
         $documento->numero_tipo = $request->get('numero_tipo');
+        $documento->serie_tipo = $request->get('serie_tipo');
         $documento->usuario_id = auth()->user()->id;
         if ($request->get('igv_check') == "on") {
             $documento->igv_check = "1";
@@ -560,5 +566,31 @@ class DocumentoController extends Controller
     public function TypePay($id)
     {
 
+    }
+
+    public function comprobante_store(Request $request)
+    {
+        $compras = Documento::where('moneda', $request->moneda)->where('serie_tipo', $request->serie_tipo)->where('numero_tipo', $request->numero_tipo)->where('proveedor_id',$request->proveedor_id)->where('tipo_compra',$request->tipo_compra)->get();
+        $success = true;
+        if(count($compras) > 0){
+            $success = false;
+        }
+
+        return response()->json([
+            'success' => $success
+        ]);
+    }
+
+    public function comprobante_update(Request $request)
+    {
+        $compras = Documento::where('moneda', $request->moneda)->where('serie_tipo', $request->serie_tipo)->where('numero_tipo', $request->numero_tipo)->where('proveedor_id',$request->proveedor_id)->where('tipo_compra',$request->tipo_compra)->where('id', '!=',$request->id)->get();
+        $success = true;
+        if(count($compras) > 0){
+            $success = false;
+        }
+
+        return response()->json([
+            'success' => $success
+        ]);
     }
 }

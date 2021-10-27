@@ -34,7 +34,7 @@
                         <h5>Cuentas Cobrar</h5>
                     </div>
                     <div class="ibox-content">
-                        <h1 class="no-margins">106,120</h1>
+                        <h1 class="no-margins">{{ cuentas_cobrar() }}</h1>
                         <div class="stat-percent font-bold text-navy d-none">44% <i class="fa fa-level-up"></i></div>
                         <small>Cuentas Cobrar total:</small>
                     </div>
@@ -47,7 +47,7 @@
                         <h5>Cuentas Pagar</h5>
                     </div>
                     <div class="ibox-content">
-                        <h1 class="no-margins">80,600</h1>
+                        <h1 class="no-margins">{{ cuentas_pagar() }}</h1>
                         <div class="stat-percent font-bold text-danger d-none">38% <i class="fa fa-level-down"></i></div>
                         <small>Cuentas Pagar total:</small>
                     </div>

@@ -111,7 +111,7 @@
 
                                 <div class="form-group">
                                     <label class="required">Ruc / Dni: </label>
-                                 
+
                                     <select
                                         class="select2_form form-control {{ $errors->has('proveedor_id') ? ' is-invalid' : '' }}"
                                         style="text-transform: uppercase; width:100%" value="{{old('proveedor_id',$documento->proveedor_id)}}"
@@ -186,7 +186,7 @@
                                             </span>
                                             @endif
                                         </select>
-                                    
+
                                     </div>
                                     <div class="col-md-6">
                                         <label class="required">Moneda: </label>
@@ -207,8 +207,8 @@
                                             </span>
                                             @endif
                                         </select>
-                                    
-                                    
+
+
                                     </div>
 
 
@@ -235,16 +235,28 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="required" id="numero_comprobante">Nº: </label>
-                                        <input type="text" id="numero_tipo" name="numero_tipo" class="form-control {{ $errors->has('numero_tipo') ? ' is-invalid' : '' }}" value="{{old('numero_tipo',$documento->numero_tipo)}}" required >
-                                        
-                                        @if ($errors->has('numero_tipo'))
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('numero_tipo') }}</strong>
-                                        </span>
-                                        @endif
+                                        <div class="row">
+                                            <div class="col-12 col-md-4">
+                                                <label class="required" id="serie_comprobante">Serie: </label>
+                                                <input type="text" id="serie_tipo" name="serie_tipo" class="form-control {{ $errors->has('serie_tipo') ? ' is-invalid' : '' }}" value="{{old('serie_tipo',$documento->serie_tipo)}}" required >
 
+                                                @if ($errors->has('serie_tipo'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('serie_tipo') }}</strong>
+                                                </span>
+                                                @endif
+                                            </div>
+                                            <div class="col-12 col-md-8">
+                                                <label class="required" id="numero_comprobante">Nº: </label>
+                                                <input type="text" id="numero_tipo" name="numero_tipo" class="form-control {{ $errors->has('numero_tipo') ? ' is-invalid' : '' }}" value="{{old('numero_tipo',$documento->numero_tipo)}}" required >
 
+                                                @if ($errors->has('numero_tipo'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('numero_tipo') }}</strong>
+                                                </span>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -402,7 +414,7 @@
                                                         </div>
                                                     </div>
 
-                                                       
+
 
                                                     <div class="form-group row">
                                                         <div class="col-lg-6 col-xs-12">
@@ -416,9 +428,9 @@
 
 
                                                     </div>
-                                                   
 
-                                                
+
+
                                                 </div>
 
 
@@ -721,33 +733,67 @@ $('#igv').on('input', function() {
 
 
 function validarFecha() {
-    var enviar = false
+    var enviar = true;
     var productos = registrosproductos()
 
     if ($('#fecha_documento_campo').val() == '') {
         toastr.error('Ingrese Fecha de Documento de la Orden.', 'Error');
         $("#fecha_documento_campo").focus();
-        enviar = true;
+        enviar = false;
     }
 
     if ($('#fecha_entrega_campo').val() == '') {
         toastr.error('Ingrese Fecha de Entrega de la Orden.', 'Error');
         $("#fecha_entrega_campo").focus();
-        enviar = true;
+        enviar = false;
     }
 
     if (productos == 0) {
         toastr.error('Ingrese al menos 1 Producto.', 'Error');
-        enviar = true;
+        enviar = false;
     }
 
-    return enviar
+    let moneda = $('#moneda').val();
+        let serie_tipo = $('#serie_tipo').val();
+        let numero_tipo = $('#numero_tipo').val();
+        let proveedor_id = $('#proveedor_id').val();
+        let tipo_compra = $('#tipo_compra').val();
+
+
+        $.ajax({
+            dataType: 'json',
+            type: 'post',
+            async: false,
+            url: '{{ route('compras.documento.consulta_update') }}',
+            data: {
+                '_token': $('input[name=_token]').val(),
+                'id': '{{ $documento->id }}',
+                'moneda': $('#moneda').val(),
+                'serie_tipo': $('#serie_tipo').val(),
+                'numero_tipo': $('#numero_tipo').val(),
+                'proveedor_id': $('#proveedor_id').val(),
+                'tipo_compra': $('#tipo_compra').val(),
+            }
+        }).done(function(result) {
+            if(!result.success)
+            {
+                toastr.error('La serie ' + serie_tipo + ' con el numero ' + numero_tipo + ' ya tiene un documento de compra registrado');
+                enviar = false;
+            }
+            else
+            {
+                enviar = true;
+            }
+
+        });
+
+        return enviar;
 }
 
 $('#enviar_orden').submit(function(e) {
     e.preventDefault();
     var correcto = validarFecha()
-    if (correcto == false) {
+    if (correcto) {
 
         Swal.fire({
             title: 'Opción Guardar',
@@ -831,12 +877,12 @@ $(document).ready(function() {
                 }
             },
             {
-                "targets": [2],        
+                "targets": [2],
                 className: "text-center",
             },
             {
                 "targets": [3],
-            
+
             },
             {
                 "targets": [4],
@@ -867,7 +913,7 @@ $(document).ready(function() {
                 className: "text-center",
                 visible: false
             },
-                    
+
 
 
         ],
@@ -877,7 +923,7 @@ $(document).ready(function() {
         $("#igv_check").attr('checked', true);
         $('#igv').attr('disabled', false)
         $('#igv_requerido').addClass("required")
-        $('#igv').prop('required', true)        
+        $('#igv').prop('required', true)
         var igv = ($('#igv').val()) + ' %'
         $('#igv_int').text(igv)
 
@@ -898,7 +944,7 @@ $(document).ready(function() {
 function obtenerTabla() {
     var t = $('.dataTables-orden-detalle').DataTable();
     @foreach($detalles as $detalle)
-    
+
     t.row.add([
         "{{$detalle->producto_id}}",
         '',
@@ -925,22 +971,22 @@ $(document).on('click', '#editar_producto', function(event) {
     $('#lote_editar').val(data[8]);
     $('#editable_lote').val(data[10]);
     $('#cantidad_editar').val(data[2]);
-    
+
     //MOSTRAR TABLA SI ES INGRESO POR PRIMERA VEZ DEL LOTE
     if (data[9]=='' && data[8] != '') {
-        $('#modalLote').hide(); 
-        $('#editarLote').hide(); 
-        $('#editarRegistro').show(); 
+        $('#modalLote').hide();
+        $('#editarLote').hide();
+        $('#editarRegistro').show();
     }else{
-        if (data[9]!='1') { 
-            $('#modalLote').show(); 
-            $('#editarLote').show(); 
-            $('#editarRegistro').hide(); 
-        } else { 
-            $('#modalLote').hide(); 
-            $('#editarLote').hide(); 
-            $('#editarRegistro').show(); 
-        }   
+        if (data[9]!='1') {
+            $('#modalLote').show();
+            $('#editarLote').show();
+            $('#editarRegistro').hide();
+        } else {
+            $('#modalLote').hide();
+            $('#editarLote').hide();
+            $('#editarRegistro').show();
+        }
     }
     $('#modal_editar_orden').modal('show');
 
@@ -1107,14 +1153,14 @@ function limpiarErrores() {
     $('#error-lote').text('')
 }
 
-//OBTENER EL producto POR SU ID 
+//OBTENER EL producto POR SU ID
 function obtenerproducto(id) {
     var producto = "";
     $.ajax({
       url: '{{ route("getProducto", ":id") }}'.replace(':id', id),
-      async: false,  
+      async: false,
       success:function(data) {
-        producto = (data) ? data : toastr.error('El Producto no se encuentra en Base de Datos.', 'Error'); 
+        producto = (data) ? data : toastr.error('El Producto no se encuentra en Base de Datos.', 'Error');
       }
    });
    return producto;
@@ -1235,7 +1281,7 @@ function sumaTotal() {
 
     var igv = $('#igv').val()
     if (!igv) {
-        sinIgv(subtotal)   
+        sinIgv(subtotal)
     }else{
         conIgv(subtotal)
     }

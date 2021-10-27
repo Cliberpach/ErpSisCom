@@ -32,6 +32,9 @@ class Documento extends Model
             'total_igv',
             'total',
 
+            'serie_tipo',
+            'numero_tipo',
+
 
             'estado',
             'enviado',
@@ -87,7 +90,7 @@ class Documento extends Model
                 $cuenta_proveedor->fecha_doc = $documento->fecha_emision;
                 $cuenta_proveedor->saldo = $documento->total;
                 $cuenta_proveedor->acta = 'DOCUMENTO COMPRA';
-                $cuenta_proveedor->update();                
+                $cuenta_proveedor->update();
             }
             else
             {

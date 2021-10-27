@@ -27,6 +27,7 @@ class CreateCompraDocumentosTable extends Migration
 
             $table->string('modo_compra');
             $table->string('numero_tipo');
+            $table->string('serie_tipo');
             $table->string('numero_doc')->nullable();
             $table->string('tipo_compra');
             $table->string('tipo_pago')->nullable();

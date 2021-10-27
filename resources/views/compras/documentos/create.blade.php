@@ -353,9 +353,7 @@
                                             <option></option>
 
                                                 @foreach (tipo_compra() as $modo)
-                                                <option value="{{$modo->descripcion}}" @if(old('tipo_compra')==$modo->
-                                                    descripcion ) {{'selected'}} @endif
-                                                    >{{$modo->descripcion}}</option>
+                                                <option value="{{$modo->descripcion}}" @if(old('tipo_compra')==$modo->descripcion ) {{'selected'}} @endif>{{$modo->descripcion}}</option>
                                                 @endforeach
                                                 @if ($errors->has('tipo_compra'))
                                                 <span class="invalid-feedback" role="alert">
@@ -369,16 +367,28 @@
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label class="" id="numero_comprobante">Nº: </label>
-                                        <input type="text" id="numero_tipo" name="numero_tipo" class="form-control {{ $errors->has('numero_tipo') ? ' is-invalid' : '' }}" value="{{old('numero_tipo')}}" disabled>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="" id="serie_comprobante">Serie: </label>
+                                                <input type="text" id="serie_tipo" name="serie_tipo" minlength="4" maxlength="4" class="form-control {{ $errors->has('serie_tipo') ? ' is-invalid' : '' }}" value="{{old('serie_tipo')}}" disabled>
 
-                                        @if ($errors->has('numero_tipo'))
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('tipo_compra') }}</strong>
-                                        </span>
-                                        @endif
+                                                @if ($errors->has('serie_tipo'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('serie_tipo') }}</strong>
+                                                </span>
+                                                @endif
+                                            </div>
+                                            <div class="col-md-8">
+                                                <label class="" id="numero_comprobante">Nº: </label>
+                                                <input type="text" id="numero_tipo" name="numero_tipo" class="form-control {{ $errors->has('numero_tipo') ? ' is-invalid' : '' }}" value="{{old('numero_tipo')}}" disabled>
 
-
+                                                @if ($errors->has('numero_tipo'))
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('numero_tipo') }}</strong>
+                                                </span>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </div>
 
 
@@ -791,6 +801,10 @@
         $('#numero_comprobante').addClass('required')
         $('#numero_tipo').prop('required', true)
         $('#numero_tipo').prop('disabled', false)
+        $('#serie_tipo').val('')
+        $('#serie_comprobante').addClass('required')
+        $('#serie_tipo').prop('required', true)
+        $('#serie_tipo').prop('disabled', false)
     }
 
     $('#cantidad , #numero_tipo ').on('input', function() {
@@ -814,25 +828,59 @@
     });
 
     function validarFecha() {
-        var enviar = false
+        var enviar = true;
         var productos = registrosproductos()
 
         if ($('#fecha_documento_campo').val() == '') {
             toastr.error('Ingrese Fecha de Documento de la Orden.', 'Error');
             $("#fecha_documento_campo").focus();
-            enviar = true;
+            enviar = false;
         }
 
         if ($('#fecha_entrega_campo').val() == '') {
             toastr.error('Ingrese Fecha de Entrega de la Orden.', 'Error');
             $("#fecha_entrega_campo").focus();
-            enviar = true;
+            enviar = false;
         }
         if (productos == 0) {
             toastr.error('Ingrese al menos 1 Producto.', 'Error');
-            enviar = true;
+            enviar = false;
         }
-        return enviar
+
+        let moneda = $('#moneda').val();
+        let serie_tipo = $('#serie_tipo').val();
+        let numero_tipo = $('#numero_tipo').val();
+        let proveedor_id = $('#proveedor_id').val();
+        let tipo_compra = $('#tipo_compra').val();
+
+
+        $.ajax({
+            dataType: 'json',
+            type: 'post',
+            async: false,
+            url: '{{ route('compras.documento.consulta_store') }}',
+            data: {
+                '_token': $('input[name=_token]').val(),
+                'moneda': $('#moneda').val(),
+                'serie_tipo': $('#serie_tipo').val(),
+                'numero_tipo': $('#numero_tipo').val(),
+                'proveedor_id': $('#proveedor_id').val(),
+                'tipo_compra': $('#tipo_compra').val(),
+            }
+        }).done(function(result) {
+            if(!result.success)
+            {
+                toastr.error('La serie ' + serie_tipo + ' con el numero ' + numero_tipo + ' ya tiene un documento de compra registrado');
+                enviar = false;
+            }
+            else
+            {
+                enviar = true;
+            }
+
+        });
+
+        return enviar;
     }
 
     function cambioMoneda(b)
@@ -855,9 +903,9 @@
 
     $('#enviar_documento').submit(function(e) {
         e.preventDefault();
-        var correcto = validarFecha()
+        var correcto = validarFecha();
 
-        if (correcto == false) {
+        if (correcto) {
             Swal.fire({
                 title: 'Opción Guardar',
                 text: "¿Seguro que desea guardar cambios?",
