@@ -46,6 +46,7 @@ Route::group([
 ],
 function(){
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/home/dashboard', 'HomeController@dashboard')->name('home.dashboard');
 
     Route::get('logout', 'Auth\LoginController@logout')->name('logout');
 
@@ -577,14 +578,22 @@ function(){
         Route::post('getTable','Consultas\Caja\UtilidadController@getTable')->name('consultas.caja.utilidad.getTable');
 
     });
+
+
+    // Reportes - Producto - informe
+    Route::prefix('reportes/producto')->group(function(){
+
+        Route::get('informe', 'Reportes\ProductoController@informe')->name('reporte.producto.informe');
+        Route::get('llenarCompras/{id}', 'Reportes\ProductoController@llenarCompras')->name('reporte.producto.llenarCompras');
+        Route::get('llenarVentas/{id}', 'Reportes\ProductoController@llenarVentas')->name('reporte.producto.llenarVentas');
+
+    });
 });
 
 Route::get('ventas/documentos/comprobante/{id}','Ventas\DocumentoController@voucher')->name('ventas.documento.comprobante');
 
 Route::get('ruta', function () {
     //https://www.oratlas.com/lector-online-de-texto
-
-    return ventas_x_mes();
     return '<h1>SISCOM</h1>';
     $dif = (int)(8-9);
 

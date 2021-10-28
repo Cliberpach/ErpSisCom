@@ -1145,29 +1145,4 @@ if (!function_exists('cuentas_cobrar')) {
 }
 
 
-if (!function_exists('ventas_x_mes')) {
-    function ventas_x_mes()
-    {
-        $fecha_actual = Carbon::now();
-
-        $meses_aux = array();
-        for ($i = 0; $i < 6; $i++) {
-            $f_old = (string)date("d-m-Y", strtotime($fecha_actual . "- " . $i . " month"));
-            $m = array("ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC");
-            $f_old = Carbon::parse($f_old);
-            $mes = $m[($f_old->format('n')) - 1];
-            $nombre = $mes . ' ' . $f_old->format('Y');
-            $ob = new stdClass();
-            $ob->fecha = date("d-m-Y", strtotime($fecha_actual . "- " . $i . " month"));
-            $ob->nombre = $nombre;
-            $ob->anio = date("Y", strtotime($fecha_actual . "- " . $i . " month"));
-            $ob->mes = date("m", strtotime($fecha_actual . "- " . $i . " month"));
-            array_push($meses_aux, $ob);
-        }
-
-        return $meses_aux;
-    }
-}
-
-
 
