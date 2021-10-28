@@ -754,40 +754,39 @@ function validarFecha() {
     }
 
     let moneda = $('#moneda').val();
-        let serie_tipo = $('#serie_tipo').val();
-        let numero_tipo = $('#numero_tipo').val();
-        let proveedor_id = $('#proveedor_id').val();
-        let tipo_compra = $('#tipo_compra').val();
+    let serie_tipo = $('#serie_tipo').val();
+    let numero_tipo = $('#numero_tipo').val();
+    let proveedor_id = $('#proveedor_id').val();
+    let tipo_compra = $('#tipo_compra').val();
 
+    $.ajax({
+        dataType: 'json',
+        type: 'post',
+        async: false,
+        url: '{{ route('compras.documento.consulta_update') }}',
+        data: {
+            '_token': $('input[name=_token]').val(),
+            'id': '{{ $documento->id }}',
+            'moneda': $('#moneda').val(),
+            'serie_tipo': $('#serie_tipo').val(),
+            'numero_tipo': $('#numero_tipo').val(),
+            'proveedor_id': $('#proveedor_id').val(),
+            'tipo_compra': $('#tipo_compra').val(),
+        }
+    }).done(function(result) {
+        if(!result.success)
+        {
+            toastr.error('La serie ' + serie_tipo + ' con el numero ' + numero_tipo + ' ya tiene un documento de compra registrado');
+            enviar = false;
+        }
+        else
+        {
+            enviar = true;
+        }
 
-        $.ajax({
-            dataType: 'json',
-            type: 'post',
-            async: false,
-            url: '{{ route('compras.documento.consulta_update') }}',
-            data: {
-                '_token': $('input[name=_token]').val(),
-                'id': '{{ $documento->id }}',
-                'moneda': $('#moneda').val(),
-                'serie_tipo': $('#serie_tipo').val(),
-                'numero_tipo': $('#numero_tipo').val(),
-                'proveedor_id': $('#proveedor_id').val(),
-                'tipo_compra': $('#tipo_compra').val(),
-            }
-        }).done(function(result) {
-            if(!result.success)
-            {
-                toastr.error('La serie ' + serie_tipo + ' con el numero ' + numero_tipo + ' ya tiene un documento de compra registrado');
-                enviar = false;
-            }
-            else
-            {
-                enviar = true;
-            }
+    });
 
-        });
-
-        return enviar;
+    return enviar;
 }
 
 $('#enviar_orden').submit(function(e) {
@@ -1026,23 +1025,23 @@ $(document).on('click', '#borrar_producto', function(event) {
 //Validacion al ingresar tablas
 $(".enviar_producto").click(function() {
     limpiarErrores()
-    var enviar = false;
+    var enviar = true;
     if ($('#producto_id').val() == '') {
         toastr.error('Seleccione Producto.', 'Error');
-        enviar = true;
+        enviar = false;
         $('#producto_id').addClass("is-invalid")
         $('#error-producto').text('El campo Producto es obligatorio.')
     } else {
         var existe = buscarproducto($('#producto_id').val())
         if (existe == true) {
             toastr.error('Producto ya se encuentra ingresado.', 'Error');
-            enviar = true;
+            enviar = false;
         }
     }
     if ($('#precio').val() == '') {
 
         toastr.error('Ingrese el Producto del Producto.', 'Error');
-        enviar = true;
+        enviar = false;
 
         $("#precio").addClass("is-invalid");
         $('#error-precio').text('El campo Precio es obligatorio.')
@@ -1050,7 +1049,7 @@ $(".enviar_producto").click(function() {
 
     if ($('#cantidad').val() == '') {
         toastr.error('Ingrese cantidad del Producto.', 'Error');
-        enviar = true;
+        enviar = false;
 
         $("#cantidad").addClass("is-invalid");
         $('#error-cantidad').text('El campo Cantidad es obligatorio.')
@@ -1058,7 +1057,7 @@ $(".enviar_producto").click(function() {
 
     if ($('#costo_flete').val() == '') {
         toastr.error('Ingrese Costo de Flete del Producto.', 'Error');
-        enviar = true;
+        enviar = false;
 
         $("#costo_flete").addClass("is-invalid");
         $('#error-costo_flete').text('El campo Costo de Flete es obligatorio.')
@@ -1066,7 +1065,7 @@ $(".enviar_producto").click(function() {
 
     if ($('#lote').val() == '') {
         toastr.error('Ingrese el Lote del Producto.', 'Error');
-        enviar = true;
+        enviar = false;
 
         $("#lote").addClass("is-invalid");
         $('#error-lote').text('El campo Lote es obligatorio.')
@@ -1074,53 +1073,109 @@ $(".enviar_producto").click(function() {
 
     if ($('#fecha_vencimiento').val() == '') {
         toastr.error('Ingrese la Fecha de Vencimiento del Producto.', 'Error');
-        enviar = true;
+        enviar = false;
 
         $("#fecha_vencimiento").addClass("is-invalid");
         $('#error-fecha_vencimiento').text('El campo Fecha de Vencimiento es obligatorio.')
     }
 
+    let moneda = $('#moneda').val();
+    let serie_tipo = $('#serie_tipo').val();
+    let numero_tipo = $('#numero_tipo').val();
+    let proveedor_id = $('#proveedor_id').val();
+    let tipo_compra = $('#tipo_compra').val();
 
-
-    if (enviar != true) {
-
-        Swal.fire({
-            title: 'Opción Agregar',
-            text: "¿Seguro que desea agregar Producto?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: "#1ab394",
-            confirmButtonText: 'Si, Confirmar',
-            cancelButtonText: "No, Cancelar",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                var descripcion_producto = obtenerproducto($('#producto_id').val())
-                var detalle = {
-                    producto_id: $('#producto_id').val(),
-                    descripcion: descripcion_producto.nombre+' - '+$('#lote').val(),
-                    costo_flete: $('#costo_flete').val(),
-                    precio: $('#precio').val(),
-                    cantidad: $('#cantidad').val(),
-                    lote: $('#lote').val(),
-                    fecha_vencimiento: $('#fecha_vencimiento').val(),
-                }
-                // limpiarDetalle()
-                agregarTabla(detalle);
-                sumaTotal()
-
-            } else if (
-                /* Read more about handling dismissals below */
-                result.dismiss === Swal.DismissReason.cancel
-            ) {
-                swalWithBootstrapButtons.fire(
-                    'Cancelado',
-                    'La Solicitud se ha cancelado.',
-                    'error'
-                )
-            }
-        })
-
+    if(moneda == '')
+    {
+        toastr.error("Seleccionar moneda");
+        enviar = false;
     }
+
+    if(serie_tipo == '')
+    {
+        toastr.error("Completar Serie de documento");
+        enviar = false;
+    }
+
+    if(numero_tipo == '')
+    {
+        toastr.error("Completar Numero de documento");
+        enviar = false;
+    }
+
+    if(proveedor_id == '')
+    {
+        toastr.error("Seleccionar proveedor");
+        enviar = false;
+    }
+
+    if(tipo_compra == '')
+    {
+        toastr.error("Seleccionar tipo de compra");
+        enviar = false;
+    }
+
+    $.ajax({
+        dataType: 'json',
+        type: 'post',
+        async: false,
+        url: '{{ route('compras.documento.consulta_update') }}',
+        data: {
+            '_token': $('input[name=_token]').val(),
+            'id': '{{ $documento->id }}',
+            'moneda': $('#moneda').val(),
+            'serie_tipo': $('#serie_tipo').val(),
+            'numero_tipo': $('#numero_tipo').val(),
+            'proveedor_id': $('#proveedor_id').val(),
+            'tipo_compra': $('#tipo_compra').val(),
+        }
+    }).done(function(result) {
+        if(!result.success)
+        {
+            toastr.error('La serie ' + serie_tipo + ' con el numero ' + numero_tipo + ' ya tiene un documento de compra registrado');
+        }
+        else
+        {
+            if (enviar) {
+                Swal.fire({
+                    title: 'Opción Agregar',
+                    text: "¿Seguro que desea agregar Producto?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ab394",
+                    confirmButtonText: 'Si, Confirmar',
+                    cancelButtonText: "No, Cancelar",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var descripcion_producto = obtenerproducto($('#producto_id').val())
+                        var detalle = {
+                            producto_id: $('#producto_id').val(),
+                            descripcion: descripcion_producto.nombre+' - '+$('#lote').val(),
+                            costo_flete: $('#costo_flete').val(),
+                            precio: $('#precio').val(),
+                            cantidad: $('#cantidad').val(),
+                            lote: $('#lote').val(),
+                            fecha_vencimiento: $('#fecha_vencimiento').val(),
+                        }
+                        // limpiarDetalle()
+                        agregarTabla(detalle);
+                        sumaTotal()
+
+                    } else if (
+                        /* Read more about handling dismissals below */
+                        result.dismiss === Swal.DismissReason.cancel
+                    ) {
+                        swalWithBootstrapButtons.fire(
+                            'Cancelado',
+                            'La Solicitud se ha cancelado.',
+                            'error'
+                        )
+                    }
+                });
+            }
+        }
+
+    });
 })
 
 function limpiarDetalle() {

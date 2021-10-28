@@ -19,6 +19,9 @@
 
 <div class="wrapper wrapper-content animated fadeInRight" id="div_producto">
     <div class="row">
+        <div class="col-12 text-warning">
+            <span><b>Instrucciones:</b> Doble click en el registro del producto a ver informacion.</span>
+        </div>
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-content">
@@ -46,11 +49,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-<div class="wrapper wrapper-content animated fadeInRight">
-    <div class="row">
         <div class="col-12">
             <h2>COMPRAS</h2>
         </div>
@@ -80,11 +78,7 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="wrapper wrapper-content animated fadeInRight">
-    <div class="row">
         <div class="col-12">
             <h2>VENTAS</h2>
         </div>
@@ -145,52 +139,6 @@
         background-color: #18a689 !important;
         /* background-color: #CFCFCF !important; */
     }
-
-    #div_producto  div.dataTables_wrapper div.dataTables_filter{
-        text-align:left !important;
-    }
-
-
-    @media only screen and (max-width: 992px) {
-
-        #table_tabla_registro_filter{
-            text-align:left;
-        }
-
-        #table_productos_filter{
-            text-align: left;
-        }
-        #table_productos  div.dataTables_wrapper div.dataTables_paginate ul.pagination {
-            float:left;
-            margin: 10px 0;
-            white-space: nowrap;
-        }
-
-    }
-
-    @media only screen and (min-width: 428px) and (max-width: 1190px) {
-        /* Para tables: */
-        #div_producto div.dataTables_filter input {
-            width: 175% !important;
-            display: inline-block !important;
-        }
-    }
-
-    @media only screen and (max-width: 428px) {
-        /* Para celular: */
-        #div_producto  div.dataTables_filter input {
-            width: 100% !important;
-            display: inline-block !important;
-        }
-    }
-
-    @media only screen and (min-width: 1190px) {
-
-        #div_producto div.dataTables_filter input {
-            width: 363% !important;
-            display: inline-block !important;
-        }
-    }
 </style>
 @endpush
 
@@ -202,6 +150,7 @@
 <script>
     $(document).ready(function() {
         // DataTables
+        var productos = [];
         $('.dataTables-compras').dataTable({
             "dom": '<"html5buttons"B>lTfgitp',
             "buttons": [{
@@ -254,69 +203,8 @@
             },
             "order": [[ 0, "desc" ]],
         });
-        var lotes = $('.dataTables-producto').DataTable({
-            "dom":
-                    "<'row'<'col-sm-12 col-md-12 col-lg-12'f>>" +
-                    "<'row'<'col-sm-12'tr>>"+
-                    "<'row justify-content-between'<'col information-content p-0'i><''p>>",
 
-            "bPaginate": true,
-            "serverSide":true,
-            "processing":true,
-            "ajax": "{{ route('almacenes.producto.getTable') }}",
-            "columns": [{
-                    data: 'codigo',
-                    className: "text-left"
-                },
-                {
-                    data: 'codigo_barra',
-                    className: "text-left"
-                },
-                {
-                    data: 'nombre',
-                    className: "text-left"
-                },
-                {
-                    data: 'almacen',
-                    className: "text-left"
-                },
-                {
-                    data: 'marca',
-                    className: "text-left"
-                },
-                {
-                    data: 'categoria',
-                    className: "text-left"
-                },
-                {
-                    data: 'stock',
-                    className: "text-center"
-                },
-                {
-                    data: 'precio_venta_minimo',
-                    className: "text-center"
-                },
-                {
-                    data: 'precio_venta_maximo',
-                    className: "text-center"
-                }
-
-            ],
-            "bLengthChange": true,
-            "bFilter": true,
-            "order": [],
-            "bInfo": true,
-            'bAutoWidth': false,
-            "language": {
-                        "url": "{{asset('Spanish.json')}}"
-            },
-            createdRow: function(row, data, dataIndex, cells) {
-                $(row).addClass('fila_producto');
-                $(row).attr('data-href', "");
-            },
-
-
-        });
+        initTable();
 
         $('buttons-html5').removeClass('.btn-default');
 
@@ -329,7 +217,7 @@
         $ ('.dataTables-producto'). on ('dblclick', 'tbody td', function () {
             var lote =  $('.dataTables-producto').DataTable();
             var data = lote.row(this).data();
-
+            llenarCompras(data.id);
             llenarVentas(data.id);
         });
 
@@ -437,6 +325,134 @@
 
 
         });
+    }
+
+    function initTable()
+    {
+        let timerInterval;
+        Swal.fire({
+            title: 'Cargando...',
+            icon: 'info',
+            customClass: {
+                container: 'my-swal'
+            },
+            timer: 10,
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+                Swal.stopTimer();
+                $.ajax({
+                    dataType : 'json',
+                    type : 'get',
+                    url : '{{ route("reporte.producto.getTable")}}',
+                    success: function(response) {
+                        if (response.success) {
+                            productos = [];
+                            productos = response.productos;
+                            loadTable();
+                            timerInterval = 0;
+                            Swal.resumeTimer();
+                            //console.log(colaboradores);
+                        } else {
+                            Swal.resumeTimer();
+                            productos = [];
+                            loadTable();
+                        }
+                    }
+                });
+            },
+            willClose: () => {
+                clearInterval(timerInterval)
+            }
+        });
+    }
+
+    function loadTable()
+    {
+        $('.dataTables-producto').dataTable().fnDestroy();
+        var lotes = $('.dataTables-producto').DataTable({
+            "dom": '<"html5buttons"B>lTfgitp',
+            "buttons": [{
+                    extend: 'excelHtml5',
+                    text: '<i class="fa fa-file-excel-o"></i> Excel',
+                    titleAttr: 'Excel',
+                    title: 'CONSULTA DOCUMENTO VENTA'
+                },
+                {
+                    titleAttr: 'Imprimir',
+                    extend: 'print',
+                    text: '<i class="fa fa-print"></i> Imprimir',
+                    customize: function(win) {
+                        $(win.document.body).addClass('white-bg');
+                        $(win.document.body).css('font-size', '10px');
+                        $(win.document.body).find('table')
+                            .addClass('compact')
+                            .css('font-size', 'inherit');
+                    }
+                }
+            ],
+
+            "bPaginate": true,
+            "bLengthChange": true,
+            "bFilter": true,
+            "bInfo": true,
+            "bAutoWidth": false,
+            "data": productos,
+            "columns": [
+                {
+                    data: 'codigo',
+                    className: "text-left"
+                },
+                {
+                    data: 'codigo_barra',
+                    className: "text-left"
+                },
+                {
+                    data: 'nombre',
+                    className: "text-left"
+                },
+                {
+                    data: 'almacen',
+                    className: "text-left"
+                },
+                {
+                    data: 'marca',
+                    className: "text-left"
+                },
+                {
+                    data: 'categoria',
+                    className: "text-left"
+                },
+                {
+                    data: 'stock',
+                    className: "text-center"
+                },
+                {
+                    data: 'precio_venta_minimo',
+                    className: "text-center"
+                },
+                {
+                    data: 'precio_venta_maximo',
+                    className: "text-center"
+                }
+
+            ],
+            "bLengthChange": true,
+            "bFilter": true,
+            "order": [],
+            "bInfo": true,
+            'bAutoWidth': false,
+            "language": {
+                        "url": "{{asset('Spanish.json')}}"
+            },
+            createdRow: function(row, data, dataIndex, cells) {
+                $(row).addClass('fila_producto');
+                $(row).attr('data-href', "");
+            },
+
+
+        });
+        return false;
     }
 </script>
 @endpush

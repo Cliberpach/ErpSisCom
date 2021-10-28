@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Reportes;
 
+use App\Almacenes\Producto;
 use App\Compras\Documento\Detalle;
 use App\Http\Controllers\Controller;
 use App\Ventas\Documento\Detalle as DocumentoDetalle;
@@ -13,6 +14,31 @@ class ProductoController extends Controller
     public function informe()
     {
         return view('reportes.almacenes.producto.informe');
+    }
+
+    public function getTable()
+    {
+        $productos = Producto::where('estado','ACTIVO')->orderBy('id', 'desc')->get();
+        $coleccion = collect([]);
+        foreach($productos as $producto) {
+            $coleccion->push([
+                'id' => $producto->id,
+                'codigo' => $producto->codigo,
+                'codigo_barra' => $producto->codigo_barra,
+                'nombre' => $producto->nombre,
+                'categoria' => $producto->categoria->descripcion,
+                'almacen' => $producto->almacen->descripcion,
+                'marca' => $producto->marca->marca,
+                'stock' => $producto->stock,
+                'precio_venta_minimo' => $producto->precio_venta_minimo,
+                'precio_venta_maximo' => $producto->precio_venta_maximo,
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'productos' => $coleccion
+        ]);
     }
 
     public function llenarCompras($id)
