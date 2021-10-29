@@ -161,6 +161,14 @@ class DocumentoController extends Controller
         }
     }
 
+    public function getProduct()
+    {
+        $productos = Producto::where('estado', 'ACTIVO')->get();
+        return response()->json([
+            'productos' => $productos
+        ]);
+    }
+
     public function store(Request $request){
         $this->authorize('haveaccess','documento_compra.index');
         try

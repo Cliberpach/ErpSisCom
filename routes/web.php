@@ -279,6 +279,7 @@ function(){
         Route::put('/update/{id}', 'Compras\DocumentoController@update')->name('compras.documento.update');
         Route::get('/destroy/{id}', 'Compras\DocumentoController@destroy')->name('compras.documento.destroy');
         Route::get('/show/{id}','Compras\DocumentoController@show')->name('compras.documento.show');
+        Route::get('/getProduct','Compras\DocumentoController@getProduct')->name('compras.documento.getProduct');
         Route::get('/reporte/{id}','Compras\DocumentoController@report')->name('compras.documento.reporte');
 
         Route::get('/tipoPago/{id}','Compras\DocumentoController@TypePay')->name('compras.documento.tipo_pago.existente');
