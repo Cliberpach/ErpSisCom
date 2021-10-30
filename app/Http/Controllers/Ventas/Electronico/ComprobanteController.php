@@ -293,7 +293,7 @@ class ComprobanteController extends Controller
         }
         catch(Exception $e)
         {
-            Session::flash('error',$e->getMessage());
+            Session::flash('error', 'No se puede conectar con el servidor, porfavor intentar nuevamente.'); //$e->getMessage()
             return redirect()->route('ventas.documento.index');
         }
 
