@@ -48,7 +48,7 @@
                         <table class="table dataTables-orden table-striped table-bordered table-hover" style="text-transform:uppercase">
                             <thead>
                                 <tr>
-                                    
+
                                     <th colspan="2" class="text-center"></th>
                                     <th colspan="5" class="text-center">DOCUMENTO DE VENTA</th>
                                     <th colspan="3" class="text-center">FORMAS DE PAGO</th>
@@ -56,7 +56,7 @@
 
                                 </tr>
                                 <tr>
-                                   
+
                                     <th style="display:none;"></th>
                                     <th class="text-center">C.O</th>
                                     <th class="text-center"># DOC</th>
@@ -260,7 +260,7 @@ function loadTable()
                         return "<input type='checkbox' disabled>"
                     }
                 }
-                
+
             },
             {
                 data: 'numero_doc',
@@ -269,7 +269,7 @@ function loadTable()
             {
                 data: 'fecha_documento',
                 className: "text-center letrapequeña"
-            },            
+            },
             {
                 data: 'tipo_venta',
                 className: "text-center letrapequeña",
@@ -345,7 +345,7 @@ function loadTable()
                     return "<button class='btn btn-info btn-pdf mb-1' title='Detalle'>PDF</button>" +
                         "<button class='btn btn-info' onclick='xmlElectronico(" +data.id+ ")' title='Detalle'>XML</button>"
                 }
-            },            
+            },
             {
                 data: null,
                 className: "text-center letrapequeña",
@@ -363,7 +363,7 @@ function loadTable()
                     {
                         cadena = cadena + "<button type='button' class='btn btn-sm btn-success m-1 d-none' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><i class='fa fa-send'></i> Sunat</button>";
                     }
-                    
+
                     if(data.sunat == '1')
                     {
                         cadena = cadena  +
@@ -373,16 +373,30 @@ function loadTable()
 
                     if(data.sunat == '2')
                     {
-                        cadena = cadena +                        
+                        cadena = cadena +
                         "<button type='button' class='btn btn-sm btn-danger m-1 d-none' onclick='eliminar(" + data.id + ")' title='Eliminar'><i class='fa fa-trash'></i> Eliminar</button>";
                     }
 
                     return cadena;
-                        
+
                 }
             }
 
         ],
+        "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+            /*if (aData.sunat == 0 && aData.tipo_venta_id != 129) {
+                $('td', nRow).css('background-color', '#D6EAF8');
+            }
+
+            if (aData.sunat == 1 && aData.tipo_venta_id != 129) {
+                $('td', nRow).css('background-color', '#D1F2EB');
+            }*/
+
+            if(aData.notas > 0)
+            {
+                $('td', nRow).css('background-color', '#FDEBD0');
+            }
+        },
         "language": {
             "url": "{{asset('Spanish.json')}}"
         },
@@ -442,7 +456,7 @@ function comprobanteElectronico(id) {
 
 function comprobanteElectronicoTicket(id) {
     var url = '{{ route("ventas.documento.comprobante", ":id")}}';
-    url = url.replace(':id',id+'-80');    
+    url = url.replace(':id',id+'-80');
     window.open(url, "Comprobante SISCOM", "width=900, height=600");
 }
 
@@ -466,7 +480,7 @@ function xmlElectronico(id) {
         // showLoaderOnConfirm: true,
     }).then((result) => {
         if (result.value) {
-            
+
             var url = '{{ route("ventas.documento.xml", ":id")}}';
             url = url.replace(':id',id);
 
@@ -511,7 +525,7 @@ function  guia(id) {
                 'La Solicitud se ha cancelado.',
                 'error'
             )
-            
+
         }
     })
 }
@@ -536,7 +550,7 @@ function enviarSunat(id , sunat) {
         // showLoaderOnConfirm: true,
     }).then((result) => {
         if (result.value) {
-            
+
             var url = '{{ route("ventas.documento.sunat", ":id")}}';
             url = url.replace(':id',id);
 
