@@ -423,6 +423,10 @@ class DocumentoController extends Controller
                 ]);
 
                 $lote->cantidad =  $lote->cantidad - $producto->cantidad;
+                if($lote->cantidad == 0)
+                {
+                    $lote->cantidad_logica =  0;
+                }
                 $lote->update();
             }
 
