@@ -357,7 +357,12 @@ function loadTable()
                     var url_nota = '{{ route("ventas.notas", ":id")}}';
                     url_nota = url_nota.replace(':id', data.id);
 
-                    let cadena = "<a href='"+url_edit+"'  class='btn btn-sm btn-secondary m-1 btn-rounded'  title='Editar'><i class='fa fa-pencil'></i> Editar</a>";
+                    let cadena = "";
+
+                    if(data.sunat != '2')
+                    {
+                        cadena = cadena + "<a href='"+url_edit+"'  class='btn btn-sm btn-secondary m-1 btn-rounded'  title='Editar'><i class='fa fa-pencil'></i> Editar</a>"
+                    }
 
                     if(data.sunat === '0' && data.dias > 0 && data.tipo_venta_id != 129)
                     {
