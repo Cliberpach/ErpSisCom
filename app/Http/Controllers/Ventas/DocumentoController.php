@@ -493,7 +493,7 @@ class DocumentoController extends Controller
             //Session::flash('error', (string) $e->getMessage());
             return response()->json([
                 'success' => false,
-                'mensaje'=> 'Ocurrio un error porfavor volver a intentar, si el error persiste comunicarse con el administrador del sistema.',
+                'mensaje'=> $e->getMessage(), //'Ocurrio un error porfavor volver a intentar, si el error persiste comunicarse con el administrador del sistema.'
                 'excepcion' => $e->getMessage()
             ]);
             //return redirect()->route('ventas.documento.index');
