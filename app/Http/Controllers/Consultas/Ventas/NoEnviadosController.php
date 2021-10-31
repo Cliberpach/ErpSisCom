@@ -81,7 +81,7 @@ class NoEnviadosController extends Controller
                 'efectivo' => 'S/. '.number_format($efectivo, 2, '.', ''),
                 'transferencia' => 'S/. '.number_format($transferencia, 2, '.', ''),
                 'total' => 'S/. '.number_format($documento->total, 2, '.', ''),
-                'dias' => (int)(5 - $diff < 0 ? 0  : 5 - $diff),
+                'dias' => (int)(7 - $diff < 0 ? 0  : 7 - $diff),
                 'notas' => $cantidad_notas
             ]);
         }

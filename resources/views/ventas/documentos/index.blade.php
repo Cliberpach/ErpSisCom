@@ -292,7 +292,7 @@ $(document).ready(function() {
 
                     let cadena = "";
 
-                    if(data.sunat === '0' && data.tipo_venta_id != 129) //&& data.dias > 0
+                    if(data.sunat === '0' && data.tipo_venta_id != 129 && data.dias > 0) //&& data.dias > 0
                     {
                         cadena = cadena + "<button type='button' class='btn btn-sm btn-success m-1' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><i class='fa fa-send'></i> Sunat</button>";
                     }
