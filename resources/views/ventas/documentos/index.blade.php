@@ -293,7 +293,7 @@ $(document).ready(function() {
                         cadena = cadena + "<button type='button' class='btn btn-sm btn-success m-1' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><i class='fa fa-send'></i> Sunat</button>";
                     }
 
-                    if(data.sunat === '1' || data.notas > 0)
+                    if((data.sunat === '1' || data.notas > 0) && data.sunat != '2')
                     {
                         cadena = cadena  +
                         "<button type='button' class='btn btn-sm btn-info m-1' onclick='guia(" +data.id+ ")'  title='Guia Remisión'><i class='fa fa-file'></i> Guia</button>"
