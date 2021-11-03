@@ -470,6 +470,14 @@ function(){
         Route::post('proveedor','ImportExcelController@uploadproveedor')->name('ImportExcel.uploadproveedor');
     });
 
+    // Cosultas - Documentos
+    Route::prefix('consultas/documentos')->group(function(){
+
+        Route::get('index', 'Consultas\DocumentoController@index')->name('consultas.documento.index');
+        Route::post('getTable','Consultas\DocumentoController@getTable')->name('consultas.documento.getTable');
+
+    });
+
     // Cosultas - Ventas - Documentos
     Route::prefix('consultas/ventas/documentos')->group(function(){
 
@@ -596,6 +604,8 @@ Route::get('ventas/documentos/comprobante/{id}','Ventas\DocumentoController@vouc
 
 Route::get('ruta', function () {
     //https://www.oratlas.com/lector-online-de-texto
+    return comprobantes_empresa();
+
     return '<h1>SISCOM</h1>';
     $dif = (int)(8-9);
 

@@ -14,6 +14,7 @@ use App\Compras\Orden;
 use App\Compras\Documento\Documento;
 use App\Compras\Proveedor;
 use App\Mantenimiento\Colaborador\Colaborador;
+use App\Mantenimiento\Empresa\Empresa;
 //Bitacora de actividades
 use Spatie\Activitylog\Contracts\Activity;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +24,7 @@ use Illuminate\Support\Facades\Http;
 use App\Mantenimiento\Parametro\Parametro;
 use GuzzleHttp\Client;
 use App\Mantenimiento\Empresa\Facturacion;
+use App\Mantenimiento\Empresa\Numeracion;
 use App\Mantenimiento\Vendedor\Vendedor;
 use App\Pos\Caja;
 use App\Pos\MovimientoCaja;
@@ -1073,6 +1075,18 @@ if (!function_exists('cuadreMovimientoCajaEgresos')) {
             $totalEgresos = $totalEgresos + $item->efectivo;
         }
         return $totalEgresos;
+    }
+}
+
+if (!function_exists('comprobantes_empresa')) {
+    function comprobantes_empresa()
+    {
+        $comprobantes = Numeracion::where('empresa_id',Empresa::first()->id)->where('estado','ACTIVO')->get();
+        foreach($comprobantes as $arr)
+    {
+        $arr['descripcion'] = $arr->comprobanteDescripcion();
+    }
+        return $comprobantes;
     }
 }
 

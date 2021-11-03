@@ -275,14 +275,10 @@ $(document).ready(function() {
                         "<button class='btn btn-info' onclick='xmlElectronico(" +data.id+ ")' title='Detalle'>XML</button>"
                 }
             },
-
             {
                 data: null,
                 className: "text-center letrapequeña",
                 render: function(data) {
-                    //Ruta Detalle
-                    var url_detalle = '{{ route("ventas.documento.show", ":id")}}';
-                    url_detalle = url_detalle.replace(':id', data.id);
 
                     var url_nota = '{{ route("ventas.notas", ":id") }}';
                     url_nota = url_nota.replace(':id', data.id);
