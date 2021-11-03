@@ -1,8 +1,7 @@
 @extends('layout') @section('content')
 
 @section('consulta-active', 'active')
-@section('consulta-ventas-active', 'active')
-@section('consulta-ventas-cotizacion-active', 'active')
+@section('consulta-comprobantes-active', 'active')
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10 col-md-10">
@@ -105,7 +104,11 @@
         // DataTables
         //initTable();
 
-        $('.dataTables-documento').DataTable();
+        $('.dataTables-documento').DataTable({
+            "language": {
+                        "url": "{{asset('Spanish.json')}}"
+            },
+        });
 
     });
 
@@ -282,7 +285,7 @@
 
             ],
             "language": {
-                        "url": "{{asset('/Spanish.json')}}"
+                        "url": "{{asset('Spanish.json')}}"
             },
             "order": [[ 0, "desc" ]],
         });
