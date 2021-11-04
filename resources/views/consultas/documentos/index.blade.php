@@ -186,6 +186,21 @@
 
     function loadTable()
     {
+        let titulo = 'DOCUMENTOS';
+        var tipo = $('#tipo_id').val();
+
+        if (tipo == '127') {
+            titulo = 'FACTURAS';
+        }
+        if (tipo == '128') {
+            titulo = 'BOLETAS';
+        }
+        if (tipo == '129') {
+            titulo = 'NOTAS_VENTA';
+        }
+        if (tipo == '130') {
+            titulo = 'NOTAS_CREDITO';
+        }
         $('.dataTables-documento').dataTable().fnDestroy();
         $('.dataTables-documento').DataTable({
             "dom": '<"html5buttons"B>lTfgitp',
@@ -193,7 +208,7 @@
                     extend: 'excelHtml5',
                     text: '<i class="fa fa-file-excel-o"></i> Excel',
                     titleAttr: 'Excel',
-                    title: 'CONSULTA COTIZACION'
+                    title: titulo,
                 },
                 {
                     titleAttr: 'Imprimir',
