@@ -786,7 +786,7 @@ if (!function_exists('generarXmlapi')) {
     }
 }
 
-//GENERAR XML
+//GENERAR QR
 if (!function_exists('generarQrApi')) {
     function generarQrApi($comprobante, $empresa)
     {

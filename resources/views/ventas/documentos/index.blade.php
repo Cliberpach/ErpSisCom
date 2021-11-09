@@ -313,7 +313,6 @@ $(document).ready(function() {
                     }
 
                     return cadena;
-
                 }
             }
 

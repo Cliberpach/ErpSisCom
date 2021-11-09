@@ -78,7 +78,7 @@ class DocumentoController extends Controller
                 'id' => $documento->id,
                 'tipo_venta' => $documento->nombreTipo(),
                 'tipo_venta_id' => $documento->tipo_venta,
-                'tipo_pago' => $documento->tipo_pago,
+                'tipo_pago' => $documento->tipo_pago_id,
                 'numero_doc' =>  $documento->serie.'-'.$documento->correlativo,
                 'serie' => $documento->serie,
                 'correlativo' => $documento->correlativo,

@@ -368,7 +368,7 @@ class ClienteController extends Controller
                 'telefono_movil' => 'required|numeric',
                 'activo' => 'required',
             ];
-            
+
             $message = [
                 'tipo_documento.required' => 'El campo Tipo de documento es obligatorio.',
                 'tipo_cliente_id.required' => 'El campo Tipo de cliente es obligatorio.',
@@ -382,9 +382,9 @@ class ClienteController extends Controller
                 'direccion.required' => 'El campo direccion es obligatorio',
                 'telefono_movil.required' => 'El campo telefono movil es obligatorio',
                 'activo.required' => 'El campo Estado es obligatorio',
-    
+
             ];
-    
+
             //Validator::make($data, $rules, $message)->validate();
             $validator =  Validator::make($data, $rules, $message);
 
@@ -396,18 +396,18 @@ class ClienteController extends Controller
                     'mensaje' => 'Cliente creado exitosamente.',
                     'data' => array('mensajes' => $validator->getMessageBag()->toArray())
                 ]);
-    
+
             }
             $arrayDatos = $request->all();
             $cliente = new Cliente($arrayDatos);
             $cliente->tipo_documento = $request->get('tipo_documento');
-    
+
             $cliente->documento = $request->get('documento');
             $cliente->tabladetalles_id = $request->input('tipo_cliente_id');
             $cliente->nombre = $request->get('nombre');
             $cliente->codigo = $request->get('codigo');
             $cliente->zona = $request->get('zona');
-    
+
             $cliente->departamento_id = str_pad($request->get('departamento'), 2, "0", STR_PAD_LEFT);
             $cliente->provincia_id = str_pad($request->get('provincia'), 4, "0", STR_PAD_LEFT);
             $cliente->distrito_id = str_pad($request->get('distrito'), 6, "0", STR_PAD_LEFT);
@@ -416,9 +416,9 @@ class ClienteController extends Controller
             $cliente->telefono_movil = $request->get('telefono_movil');
             $cliente->telefono_fijo = $request->get('telefono_fijo');
             $cliente->activo = $request->get('activo');
-    
+
             $cliente->save();
-    
+
             //Registro de actividad
             $descripcion = "SE AGREGÓ EL CLIENTE CON EL NOMBRE: ". $cliente->nombre;
             $gestion = "CLIENTES";
@@ -437,7 +437,7 @@ class ClienteController extends Controller
             DB::rollBack();
             return response()->json([
                 'result' => 'error',
-                'data' => array('mensajes' => $e->getMessage())
+                'data' => array('mensajes' => array('mensaje' => [$e->getMessage()]))
             ]);
         }
     }

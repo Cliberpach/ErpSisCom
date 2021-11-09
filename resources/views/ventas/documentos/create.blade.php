@@ -620,7 +620,6 @@
                 },
                 success: function(data) {
                     clientes_global = data.clientes;
-                    console.log(clientes_global)
                 },
             })
         @endif
@@ -1535,6 +1534,7 @@
                         if (result.value !== undefined && result.isConfirmed) {
                             if(result.value.errors)
                             {
+                                $('#asegurarCierre').val(1);
                                 let mensaje = sHtmlErrores(result.value.data.mensajes);
                                 toastr.error(mensaje);
                             }
@@ -1553,6 +1553,7 @@
                             }
                             else
                             {
+                                $('#asegurarCierre').val(1);
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error',
