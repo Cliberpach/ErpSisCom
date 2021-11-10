@@ -61,8 +61,13 @@
                                 <tr>
                                     <th class="text-center">TIPO</th>
                                     <th class="text-center"># DOC</th>
+                                    <th class="text-center">DOC. CLIENTE</th>
+                                    <th class="text-center">CLIENTE</th>
+                                    <th class="text-center">DIRECCIÓN</th>
                                     <th class="text-center">FECHA</th>
-                                    <th class="text-center">MONTO</th>
+                                    <th class="text-center">TOTAL</th>
+                                    <th class="text-center">SUB TOTAL</th>
+                                    <th class="text-center">IGV</th>
                                     <th class="text-center">ESTADO</th>
                                     <th class="text-center">VISTA</th>
                                 </tr>
@@ -238,11 +243,31 @@
                     className: "text-center",
                 },
                 {
+                    data: 'documento',
+                    className: "text-center",
+                },
+                {
+                    data: 'cliente',
+                    className: "text-center",
+                },
+                {
+                    data: 'direccion',
+                    className: "text-center",
+                },
+                {
                     data: 'fecha',
                     className: "text-center",
                 },
                 {
                     data: 'total',
+                    className: "text-center",
+                },
+                {
+                    data: 'subtotal',
+                    className: "text-center",
+                },
+                {
+                    data: 'igv',
                     className: "text-center",
                 },
                 {

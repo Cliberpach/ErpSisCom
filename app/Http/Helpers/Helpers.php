@@ -1037,7 +1037,7 @@ if (!function_exists('movimientoUser')) {
         }
     }
 }
-if (!function_exists('MovimientoCajaIngresos')) {
+if (!function_exists('cuadreMovimientoCajaIngresos')) {
     function cuadreMovimientoCajaIngresos(MovimientoCaja $movimiento)
     {
         $totalIngresos = 0;

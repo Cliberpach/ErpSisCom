@@ -38,9 +38,14 @@ class DocumentoController extends Controller
             foreach($consulta as $doc){
                 $coleccion->push([
                     'id' => $doc->id,
+                    'documento' => $doc->tipo_documento_cliente.': '.$doc->documento_cliente,
+                    'cliente' => $doc->cliente,
+                    'direccion' => $doc->direccion_cliente,
                     'tipo_doc' => $doc->descripcionTipo(),
                     'numero' => $doc->serie . '-' . $doc->correlativo,
                     'total' => $doc->total,
+                    'subtotal' => $doc->sub_total,
+                    'igv' => $doc->total_igv,
                     'fecha' => Carbon::parse($doc->fecha_documento)->format( 'd/m/Y'),
                     'estado' => $doc->estado,
                     'tipo' => $tipo
@@ -66,9 +71,14 @@ class DocumentoController extends Controller
             foreach($consulta as $doc){
                 $coleccion->push([
                     'id' => $doc->id,
+                    'documento' => $doc->documento->tipo_documento_cliente.': '.$doc->documento->documento_cliente,
+                    'cliente' => $doc->documento->cliente,
+                    'direccion' => $doc->documento->direccion_cliente,
                     'tipo_doc' => 'NOTA DE CRÉDITO',
                     'numero' => $doc->serie . '-' . $doc->correlativo,
                     'total' => $doc->mtoImpVenta,
+                    'subtotal' => $doc->mtoOperGravadas,
+                    'igv' => $doc->mtoIGV,
                     'fecha' => Carbon::parse($doc->fechaEmision)->format( 'd/m/Y'),
                     'estado' => $doc->estado,
                     'tipo' => $tipo
@@ -94,9 +104,14 @@ class DocumentoController extends Controller
             foreach($consulta as $doc){
                 $coleccion->push([
                     'id' => $doc->id,
+                    'documento' => $doc->documento->tipo_documento_cliente.': '.$doc->documento->documento_cliente,
+                    'cliente' => $doc->documento->cliente,
+                    'direccion' => $doc->documento->direccion_cliente,
                     'tipo_doc' => 'GUÍA DE REMISIÓN',
                     'numero' => $doc->serie . '-' . $doc->correlativo,
                     'total' => '-',
+                    'subtotal' => '-',
+                    'igv' => '-',
                     'fecha' => Carbon::parse($doc->created_at)->format( 'd/m/Y'),
                     'estado' => $doc->estado,
                     'tipo' => $tipo

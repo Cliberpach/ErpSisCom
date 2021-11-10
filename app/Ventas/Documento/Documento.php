@@ -47,8 +47,6 @@ class Documento extends Model
         'nombre_comprobante_archivo',
     ];
 
-
-
     public function detalles()
     {
         return $this->hasMany('App\Ventas\Documento\Detalle','documento_id');
