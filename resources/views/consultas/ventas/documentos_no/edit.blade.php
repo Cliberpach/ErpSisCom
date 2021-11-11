@@ -92,7 +92,7 @@
                                         <select
                                             class="select2_form form-control {{ $errors->has('tipo_venta') ? ' is-invalid' : '' }}"
                                             style="text-transform: uppercase; width:100%" value="{{ old('tipo_venta', $documento->tipo_venta) }}"
-                                            name="tipo_venta" id="tipo_venta" required onchange="consultarSeguntipo()">
+                                            name="tipo_venta" id="tipo_venta" required onchange="consultarSeguntipo()" disabled required>
                                             <option></option>
 
                                             @foreach (tipos_venta() as $tipo)
@@ -114,7 +114,7 @@
                                         <label>Moneda:</label>
                                         <select id="moneda" name="moneda"
                                             class="select2_form form-control {{ $errors->has('moneda') ? ' is-invalid' : '' }}"
-                                            disabled>
+                                            required disabled>
                                             <option selected>SOLES</option>
                                         </select>
 
@@ -144,7 +144,7 @@
                                         <label class="required">Forma de pago</label>
                                         <select name="forma_pago" id="forma_pago"
                                             class="select2_form form-control {{ $errors->has('forma_pago') ? ' is-invalid' : '' }}"
-                                            style="text-transform: uppercase; width:100%" value="{{ old('forma_pago') }}" required>
+                                            style="text-transform: uppercase; width:100%" value="{{ old('forma_pago') }}" required disabled>
                                             <option value=""></option>
                                             @foreach (forma_pago() as $pago)
                                                 <option value="{{ $pago->id }}" {{$pago->id === $documento->forma_pago ? 'selected' : '' }}>{{ $pago->descripcion }}</option>
@@ -906,7 +906,7 @@
             let precio_nuevo = precio_unitario - dinero;
             let valor_venta = precio_nuevo * el[2];
             let detalle_id = el[12];
-            
+
             let detalle = {
                 lote_id: el[0],
                 unidad: el[3],
@@ -1439,8 +1439,8 @@
                         existe = true;
                     }
                     cont++;
-                }    
-                
+                }
+
                 if(!existe)
                 {
                     arr.push(element);

@@ -95,7 +95,7 @@ class Documento extends Model
             else
             {
                 $modo = TablaDetalle::where('descripcion',$documento->modo_compra)->first();
-                if($modo->simbolo === 'CREDITO' || $modo->simbolo === 'credito' || $modo->simbolo === 'CRÉDITO' || $modo->simbolo === 'crédito')
+                if($modo->simbolo == 'CREDITO' || $modo->simbolo == 'credito' || $modo->simbolo == 'CRÉDITO' || $modo->simbolo == 'crédito')
                 {
                     $cuenta_proveedor = new CuentaProveedor();
                     $cuenta_proveedor->compra_documento_id = $documento->id;
