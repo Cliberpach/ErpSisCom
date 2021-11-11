@@ -180,8 +180,40 @@ class Documento extends Model
             if($documento->cuenta)
             {
                 $cuenta_cliente = CuentaCliente::find($documento->cuenta->id);
+                $cuenta_cliente->cotizacion_documento_id = $documento->id;
                 $cuenta_cliente->numero_doc = $documento->numero_doc;
+                $cuenta_cliente->fecha_doc = $documento->fecha_documento;
+                $cuenta_cliente->monto = $documento->total;
+                $cuenta_cliente->acta = 'DOCUMENTO VENTA';
+                $cuenta_cliente->saldo = $documento->total;
                 $cuenta_cliente->update();
+
+                if($cuenta_cliente->saldo - $cuenta_cliente->detalles->sum('monto') > 0)
+                {
+                    $cuenta_cliente->saldo =  $cuenta_cliente->saldo - $cuenta_cliente->detalles->sum('monto');
+                }
+                else
+                {
+                    $cuenta_cliente->saldo = 0;
+                    $cuenta_cliente->estado = 'PAGADO';
+                }
+
+                $cuenta_cliente->update();
+            }
+            else
+            {
+                $modo = TablaDetalle::find($documento->forma_pago);
+                if($modo->simbolo === 'CREDITO' || $modo->simbolo === 'credito' || $modo->simbolo === 'CRÉDITO' || $modo->simbolo === 'crédito')
+                {
+                    $cuenta_cliente = new CuentaCliente();
+                    $cuenta_cliente->cotizacion_documento_id = $documento->id;
+                    $cuenta_cliente->numero_doc = $documento->numero_doc;
+                    $cuenta_cliente->fecha_doc = $documento->fecha_documento;
+                    $cuenta_cliente->monto = $documento->total;
+                    $cuenta_cliente->acta = 'DOCUMENTO VENTA';
+                    $cuenta_cliente->saldo = $documento->total;
+                    $cuenta_cliente->save();
+                }
             }
 
         });
