@@ -223,7 +223,8 @@ class Documento extends Model
             if($documento->cuenta)
             {
                 $cuenta_cliente = CuentaCliente::find($documento->cuenta->id);
-                $cuenta_cliente->delete();
+                $cuenta_cliente->estado = 'ANULADO';
+                $cuenta_cliente->update();
             }
 
         });
