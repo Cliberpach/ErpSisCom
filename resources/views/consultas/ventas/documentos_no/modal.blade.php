@@ -11,7 +11,7 @@
                 <small class="font-bold">Editar detalle</small>
             </div>
             <div class="modal-body">
-                
+
                 <input type="hidden" id="id_editar" name="id_editar">
                 <input type="hidden" id="presentacion_producto_editar" name="presentacion_producto_editar">
                 <input type="hidden" id="indice" name="indice">
@@ -19,8 +19,8 @@
 
                 <div class="form-group">
                     <label class="col-form-label required">Producto-lote:</label>
-                    <input type="text" class="form-control" id="producto_lote_editar" name="producto_lote_editar" readonly> 
-                    <input type="hidden" class="form-control" id="producto_editar" name="producto_editar"> 
+                    <input type="text" class="form-control" id="producto_lote_editar" name="producto_lote_editar" readonly>
+                    <input type="hidden" class="form-control" id="producto_editar" name="producto_editar">
                 </div>
                 <div class="form-group">
                     <label class="">Unidad de Medida</label>
@@ -101,26 +101,121 @@ $("#btn_editar_detalle").click(function() {
     let cantidad_sum =  $('#cantidad_editar_actual').val();
     let lote_id = $('#producto_editar').val();
 
-    
+
     if(cantidad_res != '' && cantidad_sum != '' && lote_id != '')
     {
-        $.ajax({
-            type : 'POST',
-            url : '{{ route("consultas.ventas.documento.no.update.lote") }}',
-            data : {
-                '_token' : $('input[name=_token]').val(),
-                'lote_id' : lote_id,
-                'cantidad_res' : cantidad_res,
-                'cantidad_sum' : cantidad_sum,
-            }
-        }).done(function (response){
-            console.log(response)
-            if(!response.success)
+        let detalles = JSON.parse($("#productos_detalle").val());
+        let detalle_id = 0;
+        let cont = 0;
+        let existe = false;
+        while(cont < detalles.length)
+        {
+            if(detalles[cont].lote_id == lote_id)
             {
-                enviar = true;
-                toastr.warning('Ocurrió un error porfavor recargar la pagina.')
-            } 
-        });
+                detalle_id = detalles[cont].id;
+                existe = true;
+                cont = detalles.length;
+            }
+            cont =  cont + 1;
+        }
+
+        if(existe)
+        {
+            let iIndice = detalles.findIndex(detalle => detalle.lote_id == lote_id);
+            let lot = detalles[iIndice];
+            let cant_aux = 0;
+            let condicion = '1';
+            if(lot.cantidad - cantidad_res >= 0)
+            {
+                if(cantidad_sum - lot.cantidad > 0)
+                {
+                    let detalle_aux = {
+                        lote_id: lot.lote_id,
+                        cantidad: cantidad_sum - lot.cantidad
+                    }
+                    cambiarCantidad(detalle_aux, '0');
+                }
+            }
+            else
+            {
+                if(lot.cantidad - cantidad_res > 0)
+                {
+                    if(cantidad_sum - lot.cantidad > 0)
+                    {
+                        let detalle_aux = {
+                            lote_id: lot.lote_id,
+                            cantidad: cantidad_sum - lot.cantidad
+                        }
+                        cambiarCantidad(detalle_aux, '0');
+                    }
+                    else
+                    {
+                        let detalle_aux = {
+                            lote_id: lot.lote_id,
+                            cantidad: lot.cantidad - cantidad_sum
+                        }
+                        cambiarCantidad(detalle_aux, '1');
+                    }
+
+                    let detalle_aux = {
+                        lote_id: lot.lote_id,
+                        cantidad: lot.cantidad - cantidad_res
+                    }
+                    cambiarCantidad(detalle_aux, '0');
+                }
+                else
+                {
+                    if(cantidad_sum - lot.cantidad > 0)
+                    {
+                        let detalle_aux = {
+                            lote_id: lot.lote_id,
+                            cantidad: cantidad_sum - lot.cantidad
+                        }
+                        cambiarCantidad(detalle_aux, '0');
+                    }
+                    else
+                    {
+                        if(cantidad_sum > lot.cantidad)
+                        {
+                            let detalle_aux = {
+                                lote_id: lot.lote_id,
+                                cantidad: lot.cantidad - cantidad_sum
+                            }
+                            cambiarCantidad(detalle_aux, '1');
+                        }
+                    }
+
+                    let detalle_aux = {
+                        lote_id: lot.lote_id,
+                        cantidad: cantidad_res - lot.cantidad
+                    }
+                    cambiarCantidad(detalle_aux, '1');
+                }
+            }
+
+
+        }
+        else
+        {
+            $.ajax({
+                type : 'POST',
+                url : '{{ route("consultas.ventas.documento.no.update.lote") }}',
+                data : {
+                    '_token' : $('input[name=_token]').val(),
+                    'lote_id' : lote_id,
+                    'cantidad_res' : cantidad_res,
+                    'cantidad_sum' : cantidad_sum,
+                }
+            }).done(function (response){
+                console.log(response)
+                if(!response.success)
+                {
+                    enviar = true;
+                    toastr.warning('Ocurrió un error porfavor recargar la pagina.')
+                }
+            });
+        }
+
     }else{
         toastr.error('Cerrar ventana y volver a editar producto.', 'Error');
         enviar = true;
@@ -185,7 +280,7 @@ function actualizarTabla(i) {
     let cantidad = convertFloat($('#cantidad_editar').val());
 
     precio_unitario = precio_inicial;
-    valor_unitario = precio_unitario / (1 + igv_calculado);                
+    valor_unitario = precio_unitario / (1 + igv_calculado);
     dinero = precio_unitario * (pdescuento / 100);
     precio_nuevo = precio_unitario - dinero;
     valor_venta = precio_nuevo * cantidad;
@@ -205,7 +300,7 @@ function actualizarTabla(i) {
                 detalle_id: $('#id_editar').val()
             }
 
-    agregarTabla(detalle);     
+    agregarTabla(detalle);
     $('#asegurarCierre').val(1)
     sumaTotal()
 }

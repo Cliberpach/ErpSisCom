@@ -290,50 +290,56 @@
 
 
                                     </div>
-                                    <button type="button" class="btn btn-lg btn-success d-none" onclick="verificar()">Verificar</button>
-                                    <hr>
-
-
-                                        <div class="table-responsive">
-                                            <table
-                                                class="table dataTables-detalle-documento table-striped table-bordered table-hover"
-                                                style="text-transform:uppercase">
-                                                <thead>
-                                                    <tr>
-                                                        <th></th>
-                                                        <th class="text-center">ACCIONES</th>
-                                                        <th class="text-center">CANTIDAD</th>
-                                                        <th class="text-center">UM</th>
-                                                        <th class="text-center">PRODUCTO</th>
-                                                        <th class="text-center">V. UNITARIO</th>
-                                                        <th class="text-center">P. UNITARIO</th>
-                                                        <th class="text-center">DESCUENTO</th>
-                                                        <th class="text-center">P. NUEVO</th>
-                                                        <th class="text-center">TOTAL</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <th class="text-center" colspan="9">Sub Total:</th>
-                                                        <th class="text-center"><span
-                                                                id="subtotal">0.0</span></th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th class="text-center" colspan="9">IGV <span id="igv_int"></span>:</th>
-                                                        <th class="text-center"><span
-                                                                id="igv_monto">0.0</span></th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th class="text-center" colspan="9">TOTAL:</th>
-                                                        <th class="text-center"><span id="total">0.0</span>
-                                                        </th>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <button type="button" class="btn btn-sm btn-info" onclick="verificar()">Buscar lotes recientes</button>
                                         </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="table-responsive">
+                                                <table
+                                                    class="table dataTables-detalle-documento table-striped table-bordered table-hover"
+                                                    style="text-transform:uppercase">
+                                                    <thead>
+                                                        <tr>
+                                                            <th></th>
+                                                            <th class="text-center">ACCIONES</th>
+                                                            <th class="text-center">CANTIDAD</th>
+                                                            <th class="text-center">UM</th>
+                                                            <th class="text-center">PRODUCTO</th>
+                                                            <th class="text-center">V. UNITARIO</th>
+                                                            <th class="text-center">P. UNITARIO</th>
+                                                            <th class="text-center">DESCUENTO</th>
+                                                            <th class="text-center">P. NUEVO</th>
+                                                            <th class="text-center">TOTAL</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th class="text-center" colspan="9">Sub Total:</th>
+                                                            <th class="text-center"><span
+                                                                    id="subtotal">0.0</span></th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th class="text-center" colspan="9">IGV <span id="igv_int"></span>:</th>
+                                                            <th class="text-center"><span
+                                                                    id="igv_monto">0.0</span></th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th class="text-center" colspan="9">TOTAL:</th>
+                                                            <th class="text-center"><span id="total">0.0</span>
+                                                            </th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -404,7 +410,6 @@
 
 
 <script>
-
     //PRUEBA
     var clientes_global = [];
     const swalWithBootstrapButtons = Swal.mixin({
@@ -456,7 +461,32 @@
                 $('#medida_editar').val(data[3]);
                 $('#modal_editar_detalle').modal('show');
 
-                let suma_cant = parseFloat(response.lote.cantidad_logica) + parseFloat(data[2]);
+                let detalles = JSON.parse($("#productos_detalle").val());
+                let cont = 0;
+                let existe = false;
+                while(cont < detalles.length)
+                {
+                    if(detalles[cont].lote_id == data[0])
+                    {
+                        existe = true;
+                        cont = detalles.length;
+                    }
+                    cont =  cont + 1;
+                }
+
+                let suma_cant = 0;
+                if(existe)
+                {
+                    let iIndice = detalles.findIndex(detalle => detalle.lote_id == data[0]);
+                    let lot = detalles[iIndice];
+                    suma_cant = parseFloat(response.lote.cantidad_logica) + parseFloat(lot.cantidad);
+                }
+                else
+                {
+                    suma_cant = parseFloat(response.lote.cantidad_logica) + parseFloat(data[2]);
+                }
+
+
                 //AGREGAR LIMITE A LA CANTIDAD SEGUN EL LOTE SELECCIONADO
                 $("#cantidad_editar").attr({
                     "max": suma_cant,
@@ -502,7 +532,39 @@
                     cantidad: data[2],
                 }
                 //DEVOLVER LA CANTIDAD LOGICA
-                cambiarCantidad(detalle, '0')
+
+                let detalles = JSON.parse($("#productos_detalle").val());
+                let cont = 0;
+                let existe = false;
+                while(cont < detalles.length)
+                {
+                    if(detalles[cont].lote_id == detalle.lote_id)
+                    {
+                        existe = true;
+                        cont = detalles.length;
+                    }
+                    cont =  cont + 1;
+                }
+
+                if(existe)
+                {
+                    let iIndice = detalles.findIndex(detalle => detalle.lote_id == lote_id);
+                    let lot = detalles[iIndice];
+
+                    if(lot.cantidad - detalle.cantidad > 0)
+                    {
+                        let detalle_aux = {
+                            lote_id: lot.lote_id,
+                            cantidad: lot.cantidad - detalle.cantidad
+                        }
+                        cambiarCantidad(detalle_aux, '0');
+                    }
+                }
+                else
+                {
+                    cambiarCantidad(detalle, '0')
+                }
+
                 $('#asegurarCierre').val(1);
                 table.row($(this).parents('tr')).remove().draw();
                 sumaTotal()
@@ -775,11 +837,13 @@
         let detalles = JSON.parse($("#productos_detalle").val());
         let detalle_id = 0;
         let cont = 0;
+        let existe = false;
         while(cont < detalles.length)
         {
             if(detalles[cont].lote_id == lote_id)
             {
                 detalle_id = detalles[cont].id;
+                existe = true;
                 cont = detalles.length;
             }
             cont =  cont + 1;
@@ -800,7 +864,33 @@
             detalle_id: detalle_id,
         }
         agregarTabla(detalle);
-        cambiarCantidad(detalle, '1');
+        if(existe)
+        {
+            let iIndice = detalles.findIndex(detalle => detalle.lote_id == lote_id);
+            let lot = detalles[iIndice];
+            let cant_aux = 0;
+            let condicion = '1';
+            if(cantidad > lot.cantidad)
+            {
+                cant_aux  = cantidad - lot.cantidad;
+                condicion = '1';
+            }
+            // else
+            // {
+            //     cant_aux  = lot.cantidad - cantidad;
+            //     condicion = '0';
+            // }
+            let detalle_aux = {
+                lote_id: lot.lote_id,
+                cantidad: cant_aux
+            }
+            cambiarCantidad(detalle_aux, condicion);
+
+        }
+        else
+        {
+            cambiarCantidad(detalle, '1');
+        }
         $('#precio').prop('disabled' , true)
         $('#cantidad').prop('disabled' , true)
     }
@@ -1150,6 +1240,7 @@
     function obtenerTabla() {
         var t = $('.dataTables-detalle-documento').DataTable();
         var detalles = JSON.parse($("#productos_detalle").val());
+
         for (var i = 0; i < detalles.length; i++) {
             t.row.add([
                 detalles[i].lote_id,
@@ -1167,6 +1258,7 @@
                 detalles[i].id,
             ]).draw(false);
         }
+
         $('#asegurarCierre').val(1);
         //SUMATORIA TOTAL
         sumaTotal()
@@ -1421,8 +1513,7 @@
     window.onbeforeunload = function() {
         //DEVOLVER CANTIDADES
         if ($('#asegurarCierre').val() == 1) {
-            console.log('ok')
-            devolverCantidades()
+            //devolverCantidades()
 
             /*let detalles = JSON.parse($("#productos_detalle").val());
             let newdetalles = JSON.parse($("#productos_tabla").val());

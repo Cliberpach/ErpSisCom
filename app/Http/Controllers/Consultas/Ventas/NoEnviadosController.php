@@ -335,12 +335,12 @@ class NoEnviadosController extends Controller
         $productos = Producto::where('estado', 'ACTIVO')->get();
         $documento = Documento::findOrFail($id);
         $detalles = Detalle::where('documento_id',$id)->where('estado','ACTIVO')->with(['lote','lote.producto'])->get();
-        foreach($detalles as $detalle)
-        {
-            $lote = LoteProducto::find($detalle->lote_id);
-            $lote->cantidad_logica = $lote->cantidad_logica - $detalle->cantidad;
-            $lote->update();
-        }
+        // foreach($detalles as $detalle)
+        // {
+        //     $lote = LoteProducto::find($detalle->lote_id);
+        //     $lote->cantidad_logica = $lote->cantidad_logica + $detalle->cantidad;
+        //     $lote->update();
+        // }
         return view('consultas.ventas.documentos_no.edit',[
             'documento' => $documento,
             'detalles' => $detalles,
@@ -528,7 +528,7 @@ class NoEnviadosController extends Controller
         }
     }
 
-    public function getLot()
+    public function getLot($id)
     {
         $this->authorize('haveaccess','nota_salida.index');
         return datatables()->query(
@@ -703,5 +703,23 @@ class NoEnviadosController extends Controller
                 'success' => false,
             ]);
         }
+    }
+
+    public function updateQuantityEdit(Request $request)
+    {
+        $data = $request->all();
+        $cantidades = $data['cantidades'];
+        $productosJSON = $cantidades;
+        $productotabla = json_decode($productosJSON);
+        foreach ($productotabla as $detalle) {
+            //DEVOLVEMOS CANTIDAD AL LOTE Y AL LOTE LOGICO
+            $lote = LoteProducto::findOrFail($detalle->lote_id);
+            $lote->cantidad_logica = $lote->cantidad_logica - $detalle->cantidad;
+            $lote->update();
+        };
+
+        return response()->json([
+            'success' => true
+        ]);
     }
 }

@@ -128,288 +128,256 @@
 <script src="{{asset('Inspinia/js/plugins/dataTables/dataTables.bootstrap4.min.js')}}"></script>
 
 <script>
-$(document).ready(function() {
+    $(document).ready(function() {
 
-    // DataTables
-    $('.dataTables-documento').DataTable({
-        "dom": '<"html5buttons"B>lTfgitp',
-        "buttons": [{
-                extend: 'excelHtml5',
-                text: '<i class="fa fa-file-excel-o"></i> Excel',
-                titleAttr: 'Excel',
-                title: 'DOC_VENTAS'
-            },
-            {
-                titleAttr: 'Imprimir',
-                extend: 'print',
-                text: '<i class="fa fa-print"></i> Imprimir',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ],
-        "bPaginate": true,
-        "bLengthChange": true,
-        "bFilter": true,
-        "bInfo": true,
-        "bAutoWidth": false,
-        "processing": true,
-        "ajax": "{{ route('ventas.getDocument')}}",
-        "columns": [
-            //DOCUMENTO DE VENTA
-            {
-                data: 'cotizacion_venta',
-                className: "text-center letrapequeña",
-                visible: false
-            },
-
-            {
-                data: null,
-                className: "text-center letrapequeña",
-                render: function(data) {
-                    if (data.cotizacion_venta) {
-                        return "<input type='checkbox' disabled checked>"
-                    }else{
-                        return "<input type='checkbox' disabled>"
+        // DataTables
+        $('.dataTables-documento').DataTable({
+            "dom": '<"html5buttons"B>lTfgitp',
+            "buttons": [{
+                    extend: 'excelHtml5',
+                    text: '<i class="fa fa-file-excel-o"></i> Excel',
+                    titleAttr: 'Excel',
+                    title: 'DOC_VENTAS'
+                },
+                {
+                    titleAttr: 'Imprimir',
+                    extend: 'print',
+                    text: '<i class="fa fa-print"></i> Imprimir',
+                    customize: function(win) {
+                        $(win.document.body).addClass('white-bg');
+                        $(win.document.body).css('font-size', '10px');
+                        $(win.document.body).find('table')
+                            .addClass('compact')
+                            .css('font-size', 'inherit');
                     }
                 }
+            ],
+            "bPaginate": true,
+            "bLengthChange": true,
+            "bFilter": true,
+            "bInfo": true,
+            "bAutoWidth": false,
+            "processing": true,
+            "ajax": "{{ route('ventas.getDocument')}}",
+            "columns": [
+                //DOCUMENTO DE VENTA
+                {
+                    data: 'cotizacion_venta',
+                    className: "text-center letrapequeña",
+                    visible: false
+                },
 
-            },
+                {
+                    data: null,
+                    className: "text-center letrapequeña",
+                    render: function(data) {
+                        if (data.cotizacion_venta) {
+                            return "<input type='checkbox' disabled checked>"
+                        }else{
+                            return "<input type='checkbox' disabled>"
+                        }
+                    }
 
-            {
-                data: 'numero_doc',
-                className: "text-center letrapequeña",
-            },
+                },
 
-            {
-                data: 'fecha_documento',
-                className: "text-center letrapequeña"
-            },
+                {
+                    data: 'numero_doc',
+                    className: "text-center letrapequeña",
+                },
 
-            {
-                data: 'tipo_venta',
-                className: "text-center letrapequeña",
-                visible: false
-            },
+                {
+                    data: 'fecha_documento',
+                    className: "text-center letrapequeña"
+                },
 
-            {
-                data: 'cliente',
-                className: "text-left letrapequeña"
-            },
+                {
+                    data: 'tipo_venta',
+                    className: "text-center letrapequeña",
+                    visible: false
+                },
 
-            {
-                data: 'total',
-                className: "text-center letrapequeña"
-            },
-            {
-                data: 'transferencia',
-                className: "text-center letrapequeña"
-            },
+                {
+                    data: 'cliente',
+                    className: "text-left letrapequeña"
+                },
 
-            {
-                data: 'otros',
-                className: "text-center letrapequeña"
-            },
-            {
-                data: 'efectivo',
-                className: "text-center letrapequeña"
-            },
-            {
-                data: 'dias',
-                className: "text-center letrapequeña"
-            },
+                {
+                    data: 'total',
+                    className: "text-center letrapequeña"
+                },
+                {
+                    data: 'transferencia',
+                    className: "text-center letrapequeña"
+                },
 
-            {
-                data: null,
-                className: "text-center letrapequeña",
-                render: function(data) {
-                    switch (data.estado) {
-                        case "PENDIENTE":
-                            return "<span class='badge badge-warning' d-block>" + data.estado +
-                                "</span>";
-                            break;
-                        case "PAGADA":
-                            return "<span class='badge badge-danger' d-block>" + data.estado +
-                                "</span>";
-                            break;
-                        case "ADELANTO":
-                            return "<span class='badge badge-success' d-block>" + data.estado +
-                                "</span>";
-                            break;
-                        case "DEVUELTO":
-                            return "<span class='badge badge-warning' d-block>" + data.estado +
-                                "</span>";
-                            break;
-                        default:
-                            return "<span class='badge badge-success' d-block>" + data.estado +
-                                "</span>";
+                {
+                    data: 'otros',
+                    className: "text-center letrapequeña"
+                },
+                {
+                    data: 'efectivo',
+                    className: "text-center letrapequeña"
+                },
+                {
+                    data: 'dias',
+                    className: "text-center letrapequeña"
+                },
+
+                {
+                    data: null,
+                    className: "text-center letrapequeña",
+                    render: function(data) {
+                        switch (data.estado) {
+                            case "PENDIENTE":
+                                return "<span class='badge badge-warning' d-block>" + data.estado +
+                                    "</span>";
+                                break;
+                            case "PAGADA":
+                                return "<span class='badge badge-danger' d-block>" + data.estado +
+                                    "</span>";
+                                break;
+                            case "ADELANTO":
+                                return "<span class='badge badge-success' d-block>" + data.estado +
+                                    "</span>";
+                                break;
+                            case "DEVUELTO":
+                                return "<span class='badge badge-warning' d-block>" + data.estado +
+                                    "</span>";
+                                break;
+                            default:
+                                return "<span class='badge badge-success' d-block>" + data.estado +
+                                    "</span>";
+                        }
+                    },
+                },
+
+                {
+                    data: null,
+                    className: "text-center letrapequeña",
+                    render: function(data) {
+                        switch (data.sunat) {
+                            case "1":
+                                return "<span class='badge badge-primary' d-block>ACEPTADO</span>";
+                                break;
+                            case "2":
+                                return "<span class='badge badge-danger' d-block>NULA</span>";
+                                break;
+                            default:
+                                return "<span class='badge badge-success' d-block>REGISTRADO</span>";
+                        }
+                    },
+                },
+                {
+                    data: null,
+                    className: "text-center letrapequeña",
+                    render: function(data) {
+                        return "<button class='btn btn-info btn-pdf mb-1' title='Detalle'>PDF</button>" +
+                            "<button class='btn btn-info' onclick='xmlElectronico(" +data.id+ ")' title='Detalle'>XML</button>"
                     }
                 },
-            },
+                {
+                    data: null,
+                    className: "text-center letrapequeña",
+                    render: function(data) {
 
-            {
-                data: null,
-                className: "text-center letrapequeña",
-                render: function(data) {
-                    switch (data.sunat) {
-                        case "1":
-                            return "<span class='badge badge-primary' d-block>ACEPTADO</span>";
-                            break;
-                        case "2":
-                            return "<span class='badge badge-danger' d-block>NULA</span>";
-                            break;
-                        default:
-                            return "<span class='badge badge-success' d-block>REGISTRADO</span>";
+                        var url_nota = '{{ route("ventas.notas", ":id") }}';
+                        url_nota = url_nota.replace(':id', data.id);
+
+                        var url_devolucion = '{{ route("ventas.notas_dev", ":id")}}';
+                        url_devolucion = url_devolucion.replace(':id', data.id);
+
+                        let cadena = "";
+
+                        if(data.sunat == '0' && data.tipo_venta_id != 129 && data.dias > 0) //&& data.dias > 0
+                        {
+                            cadena = cadena + "<button type='button' class='btn btn-sm btn-success m-1' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><i class='fa fa-send'></i> Sunat</button>";
+                        }
+
+                        if((data.sunat === '1' || data.notas > 0))
+                        {
+                            cadena = cadena  +
+                            "<button type='button' class='btn btn-sm btn-info m-1' onclick='guia(" +data.id+ ")'  title='Guia Remisión'><i class='fa fa-file'></i> Guia</button>"
+                            + "<a class='btn btn-sm btn-warning m-1' href='"+ url_nota +"'  title='Notas'><i class='fa fa-file-o'></i> Notas</a>" ;
+                        }
+
+                        if(data.tipo_venta_id == 129)
+                        {
+                            cadena = cadena
+                            + "<a class='btn btn-sm btn-warning m-1' href='"+ url_devolucion +"'  title='Devoluciones'><i class='fa fa-file-o'></i> Devoluciones</a>" ;
+                        }
+
+                        if(data.sunat === '2')
+                        {
+                            cadena = cadena +
+                            "<button type='button' class='btn btn-sm btn-danger m-1 d-none' onclick='eliminar(" + data.id + ")' title='Eliminar'><i class='fa fa-trash'></i> Eliminar</button>";
+                        }
+
+                        return cadena;
                     }
-                },
-            },
-            {
-                data: null,
-                className: "text-center letrapequeña",
-                render: function(data) {
-                    return "<button class='btn btn-info btn-pdf mb-1' title='Detalle'>PDF</button>" +
-                        "<button class='btn btn-info' onclick='xmlElectronico(" +data.id+ ")' title='Detalle'>XML</button>"
+                }
+
+            ],
+            "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                /*if (aData.sunat == 0 && aData.tipo_venta_id != 129) {
+                    $('td', nRow).css('background-color', '#D6EAF8');
+                }
+
+                if (aData.sunat == 1 && aData.tipo_venta_id != 129) {
+                    $('td', nRow).css('background-color', '#D1F2EB');
+                }*/
+
+                if(aData.notas > 0)
+                {
+                    $('td', nRow).css('background-color', '#FDEBD0');
                 }
             },
-            {
-                data: null,
-                className: "text-center letrapequeña",
-                render: function(data) {
+            "language": {
+                "url": "{{asset('Spanish.json')}}"
+            },
+            "order": [],
+        });
+        tablaDatos = $('.dataTables-enviados').DataTable();
 
-                    var url_nota = '{{ route("ventas.notas", ":id") }}';
-                    url_nota = url_nota.replace(':id', data.id);
-
-                    var url_devolucion = '{{ route("ventas.notas_dev", ":id")}}';
-                    url_devolucion = url_devolucion.replace(':id', data.id);
-
-                    let cadena = "";
-
-                    if(data.sunat === '0' && data.tipo_venta_id != 129 && data.dias > 0) //&& data.dias > 0
-                    {
-                        cadena = cadena + "<button type='button' class='btn btn-sm btn-success m-1' onclick='enviarSunat(" +data.id+ ")'  title='Enviar Sunat'><i class='fa fa-send'></i> Sunat</button>";
-                    }
-
-                    if((data.sunat === '1' || data.notas > 0) && data.sunat != '2')
-                    {
-                        cadena = cadena  +
-                        "<button type='button' class='btn btn-sm btn-info m-1' onclick='guia(" +data.id+ ")'  title='Guia Remisión'><i class='fa fa-file'></i> Guia</button>"
-                        + "<a class='btn btn-sm btn-warning m-1' href='"+ url_nota +"'  title='Notas'><i class='fa fa-file-o'></i> Notas</a>" ;
-                    }
-
-                    if(data.tipo_venta_id == 129)
-                    {
-                        cadena = cadena
-                        + "<a class='btn btn-sm btn-warning m-1' href='"+ url_devolucion +"'  title='Devoluciones'><i class='fa fa-file-o'></i> Devoluciones</a>" ;
-                    }
-
-                    if(data.sunat === '2')
-                    {
-                        cadena = cadena +
-                        "<button type='button' class='btn btn-sm btn-danger m-1 d-none' onclick='eliminar(" + data.id + ")' title='Eliminar'><i class='fa fa-trash'></i> Eliminar</button>";
-                    }
-
-                    return cadena;
-                }
-            }
-
-        ],
-        "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-            /*if (aData.sunat == 0 && aData.tipo_venta_id != 129) {
-                $('td', nRow).css('background-color', '#D6EAF8');
-            }
-
-            if (aData.sunat == 1 && aData.tipo_venta_id != 129) {
-                $('td', nRow).css('background-color', '#D1F2EB');
-            }*/
-
-            if(aData.notas > 0)
-            {
-                $('td', nRow).css('background-color', '#FDEBD0');
-            }
-        },
-        "language": {
-            "url": "{{asset('Spanish.json')}}"
-        },
-        "order": [],
     });
-    tablaDatos = $('.dataTables-enviados').DataTable();
 
-});
+    $(".dataTables-documento").on('click','.btn-pdf',function(){
+        var data = $(".dataTables-documento").dataTable().fnGetData($(this).closest('tr'));
+        let fn_pdf = 'comprobanteElectronico(' + data.id + ')';
+        let fn_ticket = 'comprobanteElectronicoTicket(' + data.id + ')';
+        $('.descarga-title').html(data.serie + '-' + data.correlativo);
+        $('.file-pdf').attr('onclick',fn_pdf);
+        $('.file-ticket').attr('onclick',fn_ticket);
+        $('#modal_descargas_pdf').modal('show');
+    });
 
-$(".dataTables-documento").on('click','.btn-pdf',function(){
-    var data = $(".dataTables-documento").dataTable().fnGetData($(this).closest('tr'));
-    let fn_pdf = 'comprobanteElectronico(' + data.id + ')';
-    let fn_ticket = 'comprobanteElectronicoTicket(' + data.id + ')';
-    $('.descarga-title').html(data.serie + '-' + data.correlativo);
-    $('.file-pdf').attr('onclick',fn_pdf);
-    $('.file-ticket').attr('onclick',fn_ticket);
-    $('#modal_descargas_pdf').modal('show');
-});
+    //Controlar Error
+    $.fn.DataTable.ext.errMode = 'throw';
 
-//Controlar Error
-$.fn.DataTable.ext.errMode = 'throw';
-
-const swalWithBootstrapButtons = Swal.mixin({
-    customClass: {
-        confirmButton: 'btn btn-success',
-        cancelButton: 'btn btn-danger',
-    },
-    buttonsStyling: false
-})
-
-
-function eliminar(id) {
-
-    Swal.fire({
-        title: 'Opción Eliminar',
-        text: "¿Seguro que desea guardar cambios?",
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: "#1ab394",
-        confirmButtonText: 'Si, Confirmar',
-        cancelButtonText: "No, Cancelar",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            //Ruta Eliminar
-            var url_eliminar = '{{ route("ventas.documento.destroy", ":id")}}';
-            url_eliminar = url_eliminar.replace(':id', id);
-            $(location).attr('href', url_eliminar);
-
-        } else if (
-            /* Read more about handling dismissals below */
-            result.dismiss === Swal.DismissReason.cancel
-        ) {
-            swalWithBootstrapButtons.fire(
-                'Cancelado',
-                'La Solicitud se ha cancelado.',
-                'error'
-            )
-        }
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger',
+        },
+        buttonsStyling: false
     })
-}
 
-function modificar(cotizacion,id) {
-    if (cotizacion) {
-        toastr.error('El documento de venta fue generado por una cotización (Opción "Editar" en cotizaciones).', 'Error');
-    }else{
+
+    function eliminar(id) {
+
         Swal.fire({
-            title: 'Opción Modificar',
-            text: "¿Seguro que desea modificar registro?",
-            icon: 'warning',
+            title: 'Opción Eliminar',
+            text: "¿Seguro que desea guardar cambios?",
+            icon: 'question',
             showCancelButton: true,
             confirmButtonColor: "#1ab394",
             confirmButtonText: 'Si, Confirmar',
             cancelButtonText: "No, Cancelar",
         }).then((result) => {
             if (result.isConfirmed) {
-                //Ruta Modificar
-                var url_editar = '{{ route("ventas.documento.edit", ":id")}}';
-                url_editar = url_editar.replace(':id', id);
-                $(location).attr('href', url_editar);
+                //Ruta Eliminar
+                var url_eliminar = '{{ route("ventas.documento.destroy", ":id")}}';
+                url_eliminar = url_eliminar.replace(':id', id);
+                $(location).attr('href', url_eliminar);
 
             } else if (
                 /* Read more about handling dismissals below */
@@ -423,181 +391,213 @@ function modificar(cotizacion,id) {
             }
         })
     }
-}
 
-function comprobanteElectronico(id) {
-    var url = '{{ route("ventas.documento.comprobante", ":id")}}';
-    url = url.replace(':id',id+'-100');
-    window.open(url, "Comprobante SISCOM", "width=900, height=600")
-}
-
-function comprobanteElectronicoTicket(id) {
-    var url = '{{ route("ventas.documento.comprobante", ":id")}}';
-    url = url.replace(':id',id+'-80');
-    window.open(url, "Comprobante SISCOM", "width=900, height=600");
-}
-
-function xmlElectronico(id) {
-    const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-            confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger',
-        },
-        buttonsStyling: false
-    });
-
-    Swal.fire({
-        title: "Opción XML",
-        text: "¿Seguro que desea obtener el documento de venta en xml?",
-        showCancelButton: true,
-        icon: 'info',
-        confirmButtonColor: "#1ab394",
-        confirmButtonText: 'Si, Confirmar',
-        cancelButtonText: "No, Cancelar",
-        // showLoaderOnConfirm: true,
-    }).then((result) => {
-        if (result.value) {
-
-            var url = '{{ route("ventas.documento.xml", ":id")}}';
-            url = url.replace(':id',id);
-
-            window.location.href = url
-
-            // Swal.fire({
-            //     title: '¡Cargando!',
-            //     type: 'info',
-            //     text: 'Generando XML',
-            //     showConfirmButton: false,
-            //     onBeforeOpen: () => {
-            //         Swal.showLoading()
-            //     }
-            // })
-
-        } else if (
-            /* Read more about handling dismissals below */
-            result.dismiss === Swal.DismissReason.cancel
-        ) {
-            swalWithBootstrapButtons.fire(
-                'Cancelado',
-                'La Solicitud se ha cancelado.',
-                'error'
-            )
-        }
-    })
-
-}
-
-function  guia(id) {
-    Swal.fire({
-        title: 'Opción Guia de Remision',
-        text: "¿Seguro que desea crear una guia de remision?",
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: "#1ab394",
-        confirmButtonText: 'Si, Confirmar',
-        cancelButtonText: "No, Cancelar",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            //Ruta Guia
-            var url = '{{ route("ventas.guiasremision.create", ":id")}}';
-            url = url.replace(':id', id);
-            $(location).attr('href', url);
-
-        } else if (
-            /* Read more about handling dismissals below */
-            result.dismiss === Swal.DismissReason.cancel
-        ) {
-            swalWithBootstrapButtons.fire(
-                'Cancelado',
-                'La Solicitud se ha cancelado.',
-                'error'
-            )
-
-        }
-    })
-}
-
-function enviarSunat(id , sunat) {
-    const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-            confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger',
-        },
-        buttonsStyling: false
-    })
-
-    Swal.fire({
-        title: "Opción Enviar a Sunat",
-        text: "¿Seguro que desea enviar documento de venta a Sunat?",
-        showCancelButton: true,
-        icon: 'info',
-        confirmButtonColor: "#1ab394",
-        confirmButtonText: 'Si, Confirmar',
-        cancelButtonText: "No, Cancelar",
-        // showLoaderOnConfirm: true,
-    }).then((result) => {
-        if (result.value) {
-
-            var url = '{{ route("ventas.documento.sunat", ":id")}}';
-            url = url.replace(':id',id);
-
-            window.location.href = url
-
+    function modificar(cotizacion,id) {
+        if (cotizacion) {
+            toastr.error('El documento de venta fue generado por una cotización (Opción "Editar" en cotizaciones).', 'Error');
+        }else{
             Swal.fire({
-                title: '¡Cargando!',
-                type: 'info',
-                text: 'Enviando documento de venta a Sunat',
-                showConfirmButton: false,
-                onBeforeOpen: () => {
-                    Swal.showLoading()
+                title: 'Opción Modificar',
+                text: "¿Seguro que desea modificar registro?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: "#1ab394",
+                confirmButtonText: 'Si, Confirmar',
+                cancelButtonText: "No, Cancelar",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    //Ruta Modificar
+                    var url_editar = '{{ route("ventas.documento.edit", ":id")}}';
+                    url_editar = url_editar.replace(':id', id);
+                    $(location).attr('href', url_editar);
+
+                } else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    swalWithBootstrapButtons.fire(
+                        'Cancelado',
+                        'La Solicitud se ha cancelado.',
+                        'error'
+                    )
                 }
             })
-
-        } else if (
-            /* Read more about handling dismissals below */
-            result.dismiss === Swal.DismissReason.cancel
-        ) {
-            swalWithBootstrapButtons.fire(
-                'Cancelado',
-                'La Solicitud se ha cancelado.',
-                'error'
-            )
         }
-    })
+    }
 
-}
+    function comprobanteElectronico(id) {
+        var url = '{{ route("ventas.documento.comprobante", ":id")}}';
+        url = url.replace(':id',id+'-100');
+        window.open(url, "Comprobante SISCOM", "width=900, height=600")
+    }
 
-@if(!empty($sunat_exito))
-    Swal.fire({
-        icon: 'success',
-        title: '{{$id_sunat}}',
-        text: '{{$descripcion_sunat}}',
-        showConfirmButton: false,
-        timer: 2500
-    })
-@endif
+    function comprobanteElectronicoTicket(id) {
+        var url = '{{ route("ventas.documento.comprobante", ":id")}}';
+        url = url.replace(':id',id+'-80');
+        window.open(url, "Comprobante SISCOM", "width=900, height=600");
+    }
 
-@if(!empty($sunat_error))
-    Swal.fire({
-        icon: 'error',
-        title: '{{$id_sunat}}',
-        text: '{{$descripcion_sunat}}',
-        showConfirmButton: false,
-        timer: 5500
-    })
-@endif
+    function xmlElectronico(id) {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger',
+            },
+            buttonsStyling: false
+        });
 
-@if(Session::has('documento_id'))
-    let doc = '{{ Session::get("documento_id")}}';
-    let id = doc+'-100';
+        Swal.fire({
+            title: "Opción XML",
+            text: "¿Seguro que desea obtener el documento de venta en xml?",
+            showCancelButton: true,
+            icon: 'info',
+            confirmButtonColor: "#1ab394",
+            confirmButtonText: 'Si, Confirmar',
+            cancelButtonText: "No, Cancelar",
+            // showLoaderOnConfirm: true,
+        }).then((result) => {
+            if (result.value) {
 
-    console.log(id);
+                var url = '{{ route("ventas.documento.xml", ":id")}}';
+                url = url.replace(':id',id);
 
-    var url = '{{ route("ventas.documento.comprobante", ":id")}}';
-    url = url.replace(':id', id);
-    // $('#nueva_ventana').attr('href',url);
-    // document.getElementById('nueva_ventana').click;
-    window.open(url, "Comprobante SISCOM", "width=900, height=600")
-@endif
+                window.location.href = url
+
+                // Swal.fire({
+                //     title: '¡Cargando!',
+                //     type: 'info',
+                //     text: 'Generando XML',
+                //     showConfirmButton: false,
+                //     onBeforeOpen: () => {
+                //         Swal.showLoading()
+                //     }
+                // })
+
+            } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                swalWithBootstrapButtons.fire(
+                    'Cancelado',
+                    'La Solicitud se ha cancelado.',
+                    'error'
+                )
+            }
+        })
+
+    }
+
+    function  guia(id) {
+        Swal.fire({
+            title: 'Opción Guia de Remision',
+            text: "¿Seguro que desea crear una guia de remision?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: "#1ab394",
+            confirmButtonText: 'Si, Confirmar',
+            cancelButtonText: "No, Cancelar",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                //Ruta Guia
+                var url = '{{ route("ventas.guiasremision.create", ":id")}}';
+                url = url.replace(':id', id);
+                $(location).attr('href', url);
+
+            } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                swalWithBootstrapButtons.fire(
+                    'Cancelado',
+                    'La Solicitud se ha cancelado.',
+                    'error'
+                )
+
+            }
+        })
+    }
+
+    function enviarSunat(id , sunat) {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger',
+            },
+            buttonsStyling: false
+        })
+
+        Swal.fire({
+            title: "Opción Enviar a Sunat",
+            text: "¿Seguro que desea enviar documento de venta a Sunat?",
+            showCancelButton: true,
+            icon: 'info',
+            confirmButtonColor: "#1ab394",
+            confirmButtonText: 'Si, Confirmar',
+            cancelButtonText: "No, Cancelar",
+            // showLoaderOnConfirm: true,
+        }).then((result) => {
+            if (result.value) {
+
+                var url = '{{ route("ventas.documento.sunat", ":id")}}';
+                url = url.replace(':id',id);
+
+                window.location.href = url
+
+                Swal.fire({
+                    title: '¡Cargando!',
+                    type: 'info',
+                    text: 'Enviando documento de venta a Sunat',
+                    showConfirmButton: false,
+                    onBeforeOpen: () => {
+                        Swal.showLoading()
+                    }
+                })
+
+            } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                swalWithBootstrapButtons.fire(
+                    'Cancelado',
+                    'La Solicitud se ha cancelado.',
+                    'error'
+                )
+            }
+        })
+
+    }
+
+    @if(!empty($sunat_exito))
+        Swal.fire({
+            icon: 'success',
+            title: '{{$id_sunat}}',
+            text: '{{$descripcion_sunat}}',
+            showConfirmButton: false,
+            timer: 2500
+        })
+    @endif
+
+    @if(!empty($sunat_error))
+        Swal.fire({
+            icon: 'error',
+            title: '{{$id_sunat}}',
+            text: '{{$descripcion_sunat}}',
+            showConfirmButton: false,
+            timer: 5500
+        })
+    @endif
+
+    @if(Session::has('documento_id'))
+        let doc = '{{ Session::get("documento_id")}}';
+        let id = doc+'-100';
+
+        console.log(id);
+
+        var url = '{{ route("ventas.documento.comprobante", ":id")}}';
+        url = url.replace(':id', id);
+        // $('#nueva_ventana').attr('href',url);
+        // document.getElementById('nueva_ventana').click;
+        window.open(url, "Comprobante SISCOM", "width=900, height=600")
+    @endif
 </script>
 @endpush

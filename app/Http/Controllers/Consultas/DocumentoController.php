@@ -48,6 +48,7 @@ class DocumentoController extends Controller
                     'igv' => $doc->total_igv,
                     'fecha' => Carbon::parse($doc->fecha_documento)->format( 'd/m/Y'),
                     'estado' => $doc->estado,
+                    'sunat' => $doc->sunat,
                     'tipo' => $tipo
                 ]);
             }
@@ -81,6 +82,7 @@ class DocumentoController extends Controller
                     'igv' => $doc->mtoIGV,
                     'fecha' => Carbon::parse($doc->fechaEmision)->format( 'd/m/Y'),
                     'estado' => $doc->estado,
+                    'sunat' => $doc->sunat,
                     'tipo' => $tipo
                 ]);
             }
@@ -114,6 +116,7 @@ class DocumentoController extends Controller
                     'igv' => '-',
                     'fecha' => Carbon::parse($doc->created_at)->format( 'd/m/Y'),
                     'estado' => $doc->estado,
+                    'sunat' => $doc->sunat,
                     'tipo' => $tipo
                 ]);
             }

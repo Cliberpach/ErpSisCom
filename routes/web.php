@@ -494,10 +494,11 @@ function(){
         Route::get('edit/{id}','Consultas\Ventas\NoEnviadosController@edit')->name('consultas.ventas.documento.no.edit');
         Route::post('update/{id}','Consultas\Ventas\NoEnviadosController@update')->name('consultas.ventas.documento.no.update');
 
-        Route::get('getLot','Consultas\Ventas\NoEnviadosController@getLot')->name('consultas.ventas.documento.no.getLot');
+        Route::get('getLot/{id}','Consultas\Ventas\NoEnviadosController@getLot')->name('consultas.ventas.documento.no.getLot');
         Route::post('cantidad/', 'Consultas\Ventas\NoEnviadosController@quantity')->name('consultas.ventas.documento.no.cantidad');
         Route::post('devolver/cantidad', 'Consultas\Ventas\NoEnviadosController@returnQuantity')->name('consultas.ventas.documento.no.devolver.cantidades');
         Route::post('devolver/cantidadedit', 'Consultas\Ventas\NoEnviadosController@returnQuantityEdit')->name('consultas.ventas.documento.no.devolver.cantidadesedit');
+        Route::post('updateQuantityEdit', 'Consultas\Ventas\NoEnviadosController@updateQuantityEdit')->name('consultas.ventas.documento.no.updateQuantityEdit');
         Route::post('devolver/lotesinicio', 'Consultas\Ventas\NoEnviadosController@returnQuantityLoteInicio')->name('consultas.ventas.documento.no.devolver.lotesinicio');
         Route::post('obtener/lote', 'Consultas\Ventas\NoEnviadosController@returnLote')->name('consultas.ventas.documento.no.obtener.lote');
         Route::post('update/lote/edit', 'Consultas\Ventas\NoEnviadosController@updateLote')->name('consultas.ventas.documento.no.update.lote');

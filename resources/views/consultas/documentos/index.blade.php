@@ -69,6 +69,7 @@
                                     <th class="text-center">SUB TOTAL</th>
                                     <th class="text-center">IGV</th>
                                     <th class="text-center">ESTADO</th>
+                                    <th class="text-center">SUNAT</th>
                                     <th class="text-center">VISTA</th>
                                 </tr>
                             </thead>
@@ -294,6 +295,22 @@
                                 return "<span class='badge badge-success' d-block>" + data
                                     .estado +
                                     "</span>";
+                        }
+                    },
+                },
+                {
+                    data: null,
+                    className: "text-center letrapequeña",
+                    render: function(data) {
+                        switch (data.sunat) {
+                            case "1":
+                                return "<span class='badge badge-primary' d-block>ACEPTADO</span>";
+                                break;
+                            case "2":
+                                return "<span class='badge badge-danger' d-block>NULA</span>";
+                                break;
+                            default:
+                                return "<span class='badge badge-success' d-block>REGISTRADO</span>";
                         }
                     },
                 },
