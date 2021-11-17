@@ -373,6 +373,7 @@ function(){
         Route::get('/', 'Ventas\Electronico\ComprobanteController@index')->name('ventas.comprobantes');
         Route::get('getVouchers','Ventas\Electronico\ComprobanteController@getVouchers')->name('ventas.getVouchers');
         Route::get('sunat/{id}','Ventas\Electronico\ComprobanteController@sunat')->name('ventas.documento.sunat');
+        Route::get('cdr/{id}','Ventas\Electronico\ComprobanteController@cdr')->name('ventas.documento.cdr');
     });
 
     //GUIAS DE REMISION

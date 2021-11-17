@@ -254,7 +254,6 @@ class ComprobanteController extends Controller
 
                             //COMO SUNAT NO LO ADMITE VUELVE A SER 0
                             $documento->sunat = '0';
-                            $documento->update();
 
                             if ($json_sunat->sunatResponse->error) {
                                 $id_sunat = $json_sunat->sunatResponse->error->code;
@@ -266,6 +265,10 @@ class ComprobanteController extends Controller
                                 $descripcion_sunat = $json_sunat->sunatResponse->cdrResponse->description;
 
                             };
+
+                            $documento->getRegularizeResponse = $id_sunat;
+                            $documento->regularize = '1';
+                            $documento->update();
 
 
                             Session::flash('error','Documento de Venta sin exito en el envio a sunat.');
@@ -289,6 +292,41 @@ class ComprobanteController extends Controller
             }else{
                 Session::flash('error','Empresa sin parametros para emitir comprobantes electronicos');
                 return redirect()->route('ventas.documento.index');
+            }
+        }
+        catch(Exception $e)
+        {
+            Session::flash('error', 'No se puede conectar con el servidor, porfavor intentar nuevamente.'); //$e->getMessage()
+            return redirect()->route('ventas.documento.index');
+        }
+
+    }
+
+    public function cdr($id)
+    {
+
+        try
+        {
+            $documento = Documento::findOrFail($id);
+            if($documento->regularize == '1' && $documento->getRegularizeResponse == '1033')
+            {
+                $documento->regularize = '0';
+                $documento->sunat = '1';
+                $documento->update();
+                Session::flash('success','Documento de Venta regularizado con exito.');
+                return view('ventas.documentos.index',[
+
+                    'id_sunat' => $documento->serie.'-'.$documento->correlativo,
+                    'descripcion_sunat' => 'CDR regularizado.',
+                    'notas_sunat' => '',
+                    'sunat_exito' => true
+
+                ])->with('sunat_exito', 'success');
+            }
+            else
+            {
+                Session::flash('error','Este documento tiene un error diferente al CDR, intentar enviar a sunat.');
+                return redirect()->route('ventas.documento.index')->with('sunat_existe', 'error');
             }
         }
         catch(Exception $e)

@@ -41,6 +41,8 @@ class Documento extends Model
         'sunat',
         'envio_sunat',
         'getCdrResponse',
+        'getRegularizeResponse',
+        'regularize',
         'correlativo',
         'serie',
         'ruta_comprobante_archivo',

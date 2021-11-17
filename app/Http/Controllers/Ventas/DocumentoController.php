@@ -82,6 +82,8 @@ class DocumentoController extends Controller
                 'numero_doc' =>  $documento->serie.'-'.$documento->correlativo,
                 'serie' => $documento->serie,
                 'correlativo' => $documento->correlativo,
+                'regularize' => $documento->regularize,
+                'code' => $documento->getRegularizeResponse,
                 'cliente' => $documento->tipo_documento_cliente.': '.$documento->documento_cliente.' - '.$documento->cliente,
                 'empresa' => $documento->empresa,
                 'cotizacion_venta' =>  $documento->cotizacion_venta,

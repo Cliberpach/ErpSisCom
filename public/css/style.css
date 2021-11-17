@@ -161,6 +161,11 @@ select.form-control:not([size]):not([multiple]) {
 
 }
 
+.btn-primary-cdr {
+background-color: #3CDB34;
+color: #fff;
+}
+
 
 
 

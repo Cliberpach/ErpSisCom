@@ -306,10 +306,16 @@
                             + "<a class='btn btn-sm btn-warning m-1' href='"+ url_devolucion +"'  title='Devoluciones'><i class='fa fa-file-o'></i> Devoluciones</a>" ;
                         }
 
-                        if(data.sunat === '2')
+                        if(data.sunat == '2')
                         {
                             cadena = cadena +
                             "<button type='button' class='btn btn-sm btn-danger m-1 d-none' onclick='eliminar(" + data.id + ")' title='Eliminar'><i class='fa fa-trash'></i> Eliminar</button>";
+                        }
+
+                        if(data.code == '1033' && data.regularize == '1')
+                        {
+                            cadena = cadena +
+                            "<button type='button' class='btn btn-sm btn-primary-cdr m-1' onclick='cdr(" + data.id + ")' title='CDR'>CDR</button>";
                         }
 
                         return cadena;
@@ -547,6 +553,56 @@
                     title: '¡Cargando!',
                     type: 'info',
                     text: 'Enviando documento de venta a Sunat',
+                    showConfirmButton: false,
+                    onBeforeOpen: () => {
+                        Swal.showLoading()
+                    }
+                })
+
+            } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                swalWithBootstrapButtons.fire(
+                    'Cancelado',
+                    'La Solicitud se ha cancelado.',
+                    'error'
+                )
+            }
+        })
+
+    }
+
+    function cdr(id) {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger',
+            },
+            buttonsStyling: false
+        })
+
+        Swal.fire({
+            title: "Opción Regularizar CDR",
+            text: "¿Seguro que desea regularizar CDR?",
+            showCancelButton: true,
+            icon: 'info',
+            confirmButtonColor: "#1ab394",
+            confirmButtonText: 'Si, Confirmar',
+            cancelButtonText: "No, Cancelar",
+            // showLoaderOnConfirm: true,
+        }).then((result) => {
+            if (result.value) {
+
+                var url = '{{ route("ventas.documento.cdr", ":id")}}';
+                url = url.replace(':id',id);
+
+                window.location.href = url
+
+                Swal.fire({
+                    title: '¡Cargando!',
+                    type: 'info',
+                    text: 'Regularizando CDR',
                     showConfirmButton: false,
                     onBeforeOpen: () => {
                         Swal.showLoading()

@@ -19,14 +19,14 @@ class CreateCotizacionDocumentoTable extends Migration
             $table->BigInteger('ruc_empresa');
             $table->string('empresa');
             $table->mediumText('direccion_fiscal_empresa');
-            $table->unsignedInteger('empresa_id'); //OBTENER NUMERACION DE LA EMPRESA 
+            $table->unsignedInteger('empresa_id'); //OBTENER NUMERACION DE LA EMPRESA
             //CLIENTE
             $table->string('tipo_documento_cliente');
             $table->BigInteger('documento_cliente');
             $table->mediumText('direccion_cliente');
             $table->string('cliente');
-            $table->unsignedInteger('cliente_id'); //OBTENER TIENDAS DEL CLIENTE 
-            
+            $table->unsignedInteger('cliente_id'); //OBTENER TIENDAS DEL CLIENTE
+
             $table->date('fecha_documento');
             $table->date('fecha_vencimiento');
             $table->date('fecha_atencion')->nullable();
@@ -45,7 +45,7 @@ class CreateCotizacionDocumentoTable extends Migration
             $table->longText('xml')->nullable();
             $table->longText('ruta_qr')->nullable();
             $table->longText('hash')->nullable();
-            
+
             $table->string('igv_check',2)->nullable();
             $table->char('igv',3)->nullable();
             $table->string('moneda');
@@ -62,6 +62,8 @@ class CreateCotizacionDocumentoTable extends Migration
             $table->enum('sunat',['0','1','2'])->default('0');
             $table->enum('envio_sunat',['0','1'])->default('0');
             $table->json('getCdrResponse')->nullable();
+            $table->text('getRegularizeResponse')->nullable();
+            $table->enum('regularize',['0','1'])->default('0');
             $table->BigInteger('correlativo')->nullable();
             $table->string('serie')->nullable();
 
