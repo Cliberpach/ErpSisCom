@@ -41,7 +41,11 @@ class Producto extends Model
     }
     public function detalles()
     {
-        return $this->hasMany('App\Almacenes\ProductoDetalle');
+        return $this->hasMany('App\Almacenes\ProductoDetalle','producto_id', 'id');
+    }
+    public function tipoCliente()
+    {
+        return $this->hasMany('App\Almacenes\TipoCliente','producto_id', 'id');
     }
     public function getDescripcionCompleta()
     {

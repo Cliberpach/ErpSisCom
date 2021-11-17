@@ -292,7 +292,8 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-12">
-                                            <button type="button" class="btn btn-sm btn-info" onclick="verificar()">Buscar lotes recientes</button>
+                                            <button  type="button" class="btn btn-info" id="buscarLotesRecientes"
+                                            data-toggle="modal" data-target="#modal_lote_recientes">Buscar lotes recientes</button>
                                         </div>
                                     </div>
                                     <hr>
@@ -372,6 +373,7 @@
 @include('consultas.ventas.documentos_no.modal')
 @include('consultas.ventas.documentos_no.modalLote')
 @include('consultas.ventas.documentos_no.modalPago')
+@include('consultas.ventas.documentos_no.modalLoteRecientes')
 @stop
 
 @push('styles')
@@ -431,11 +433,6 @@
         }
     });
 
-    function verificar()
-    {
-        cargarProductos();
-        console.log($('#productos_tabla').val())
-    }
     //Editar Registro
     $(document).on('click', '.btn-edit', function(event) {
         var table = $('.dataTables-detalle-documento').DataTable();
@@ -479,7 +476,7 @@
                 {
                     let iIndice = detalles.findIndex(detalle => detalle.lote_id == data[0]);
                     let lot = detalles[iIndice];
-                    suma_cant = parseFloat(response.lote.cantidad_logica) + parseFloat(lot.cantidad);
+                    suma_cant = parseFloat(response.lote.cantidad_logica) + (parseFloat(data[2]));// - lot.cantidad
                 }
                 else
                 {
@@ -548,14 +545,14 @@
 
                 if(existe)
                 {
-                    let iIndice = detalles.findIndex(detalle => detalle.lote_id == lote_id);
+                    let iIndice = detalles.findIndex(item => item.lote_id == detalle.lote_id);
                     let lot = detalles[iIndice];
 
-                    if(lot.cantidad - detalle.cantidad > 0)
+                    if(detalle.cantidad - lot.cantidad > 0)
                     {
                         let detalle_aux = {
                             lote_id: lot.lote_id,
-                            cantidad: lot.cantidad - detalle.cantidad
+                            cantidad: detalle.cantidad - lot.cantidad
                         }
                         cambiarCantidad(detalle_aux, '0');
                     }
@@ -863,32 +860,14 @@
             precio_nuevo: precio_nuevo,
             detalle_id: detalle_id,
         }
-        agregarTabla(detalle);
         if(existe)
         {
-            let iIndice = detalles.findIndex(detalle => detalle.lote_id == lote_id);
-            let lot = detalles[iIndice];
-            let cant_aux = 0;
-            let condicion = '1';
-            if(cantidad > lot.cantidad)
-            {
-                cant_aux  = cantidad - lot.cantidad;
-                condicion = '1';
-            }
-            // else
-            // {
-            //     cant_aux  = lot.cantidad - cantidad;
-            //     condicion = '0';
-            // }
-            let detalle_aux = {
-                lote_id: lot.lote_id,
-                cantidad: cant_aux
-            }
-            cambiarCantidad(detalle_aux, condicion);
-
+            toastr.warning('Este producto es parte del detalle actual, si desea ingresarlo nuevamente buscarlo en lotes recientes.');
+            limpiarDetalleLote();
         }
         else
         {
+            agregarTabla(detalle);
             cambiarCantidad(detalle, '1');
         }
         $('#precio').prop('disabled' , true)
@@ -913,10 +892,11 @@
             $detalle.descuento,
             $detalle.detalle_id,
         ]).draw(false);
-        //cargarProductos()
-        //INGRESADO EL PRODUCTO SUMA TOTAL DEL DETALLE
-        //sumaTotal()
-        //LIMPIAR LOS CAMPOS DESPUES DE LA BUSQUEDA
+        limpiarDetalleLote();
+    }
+
+    function limpiarDetalleLote()
+    {
         $('#precio').val('')
         $('#cantidad').val('')
         $('#producto_unidad').val('')
@@ -974,6 +954,7 @@
             data: {
                 '_token': $('input[name=_token]').val(),
                 'cantidades': $('#productos_tabla').val(),
+                'detalles' : $("#productos_detalle").val()
             }
         }).done(function(result) {
             alert('DEVOLUCION REALIZADA')
@@ -1459,6 +1440,8 @@
                             {
                                 let mensaje = sHtmlErrores(result.value.data.mensajes);
                                 toastr.error(mensaje);
+
+                                $('#asegurarCierre').val(1);
                             }
                             else if(result.value.success)
                             {
@@ -1480,6 +1463,7 @@
                                     showConfirmButton: false,
                                     timer: 2500
                                 });
+                                $('#asegurarCierre').val(1);
                             }
                         }
                     });
@@ -1513,45 +1497,7 @@
     window.onbeforeunload = function() {
         //DEVOLVER CANTIDADES
         if ($('#asegurarCierre').val() == 1) {
-            //devolverCantidades()
-
-            /*let detalles = JSON.parse($("#productos_detalle").val());
-            let newdetalles = JSON.parse($("#productos_tabla").val());
-            let arr = [];
-            detalles.forEach(element => {
-                let cont = 0;
-                //let iIndice = newdetalles.findIndex(detalle => detalle.lote_id === element.lote_id);
-                let existe = false;
-                while(cont < newdetalles.length)
-                {
-                    if(newdetalles[cont].lote_id === element.lote_id)
-                    {
-                        cont = newdetalles.length;
-                        existe = true;
-                    }
-                    cont++;
-                }
-
-                if(!existe)
-                {
-                    arr.push(element);
-                }
-            });
-
-            if(arr.length > 0)
-            {
-                $.ajax({
-                    dataType : 'json',
-                    type : 'post',
-                    url : '{{ route('consultas.ventas.documento.no.devolver.lotesinicio') }}',
-                    data : {
-                        '_token' : $('input[name=_token]').val(),
-                        'cantidades' :  JSON.stringify(arr),
-                    }
-                }).done(function (result){
-                    console.log(result)
-                });
-            }*/
+            devolverCantidades();
         }
 
     };

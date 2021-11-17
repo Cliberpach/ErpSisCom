@@ -18,6 +18,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Luecano\NumeroALetras\NumeroALetras;
+use Yajra\DataTables\Facades\DataTables;
 
 class NoEnviadosController extends Controller
 {
@@ -448,6 +449,9 @@ class NoEnviadosController extends Controller
             $detalles = Detalle::where('estado', 'ACTIVO')->where('documento_id',$id)->get();
             foreach($detalles as $item)
             {
+                // $lote = LoteProducto::findOrFail($item->lote_id);
+                // $lote->cantidad =  $lote->cantidad + $item->cantidad;
+                // $lote->update();
                 $item->estado = 'ANULADO';
                 $item->update();
             }
@@ -457,6 +461,7 @@ class NoEnviadosController extends Controller
                 {
                     $lote = LoteProducto::findOrFail($producto->lote_id);
                     $detalle = Detalle::find($producto->detalle_id);
+                    $cantidad = $detalle->cantidad;
                     $detalle->codigo_producto = $lote->producto->codigo;
                     $detalle->unidad = $lote->producto->getMedida();
                     $detalle->nombre_producto = $lote->producto->nombre;
@@ -473,6 +478,14 @@ class NoEnviadosController extends Controller
                     $detalle->update();
 
                     $lote->cantidad =  $lote->cantidad - $producto->cantidad;
+                    if($producto->cantidad - $cantidad >= 0)
+                    {
+                        $lote->cantidad_logica =  $lote->cantidad_logica - $cantidad;
+                    }
+                    else
+                    {
+                        $lote->cantidad_logica =  $lote->cantidad_logica + (($cantidad - $producto->cantidad) - $cantidad);
+                    }
                     $lote->update();
                 }
                 else
@@ -530,7 +543,6 @@ class NoEnviadosController extends Controller
 
     public function getLot($id)
     {
-        $this->authorize('haveaccess','nota_salida.index');
         return datatables()->query(
             DB::table('lote_productos')
             ->join('productos_clientes','productos_clientes.producto_id','=','lote_productos.producto_id')
@@ -547,6 +559,47 @@ class NoEnviadosController extends Controller
             ->orderBy('lote_productos.id','ASC')
             ->where('productos_clientes.estado','ACTIVO')
         )->toJson();
+    }
+
+    public function getLotRecientes($id)
+    {
+        $detalles = Detalle::where('estado','ACTIVO')->where('documento_id', $id)->get();
+        $colecction = collect([]);
+        foreach($detalles as $detalle)
+        {
+            $precio_soles = 0;
+            if(!empty($detalle->lote->detalle_compra))
+            {
+                $precio_soles = $detalle->lote->detalle_compra->precio_soles;
+            }
+
+            $colecction->push([
+                'id' => $detalle->lote->id,
+                'detalle_id' => $detalle->id,
+                'precio_soles' => $precio_soles,
+                'precio_nuevo' => $detalle->precio_nuevo,
+                'precio_inicial' => $detalle->precio_inicial,
+                'precio_unitario' => $detalle->precio_unitario,
+                'valor_unitario' => $detalle->valor_unitario,
+                'valor_venta' => $detalle->valor_venta,
+                'dinero' => $detalle->dinero,
+                'descuento' => $detalle->descuento,
+                'nombre' => $detalle->lote->producto->nombre,
+                'codigo_barra' => $detalle->lote->producto->codigo_barra,
+                'cliente' => $detalle->lote->producto->tipoCliente->where('cliente', 121)->first()->cliente,
+                'monto' => $detalle->lote->producto->tipoCliente->where('cliente', 121)->first()->monto,
+                'moneda' => $detalle->lote->producto->tipoCliente->where('cliente', 121)->first()->moneda,
+                'unidad_producto' => $detalle->lote->producto->getMedida(),
+                'descripcion' => $detalle->lote->producto->categoria->descripcion,
+                'fecha_venci' => $detalle->lote->fecha_vencimiento,
+                'codigo_lote' => $detalle->lote->codigo_lote,
+                'cantidad' => $detalle->lote->cantidad,
+                'cantidad_logica' => $detalle->cantidad,
+            ]);
+
+
+        }
+        return DataTables::of($colecction)->make(true);
     }
 
     //CAMBIAR CANTIDAD LOGICA DEL LOTE
@@ -583,65 +636,50 @@ class NoEnviadosController extends Controller
         $cantidades = $data['cantidades'];
         $productosJSON = $cantidades;
         $productotabla = json_decode($productosJSON);
+
+        $detalles_aux = $data['detalles'];
+        $productos = $detalles_aux;
+        $detalles = json_decode($productos);
+
         $mensaje = '';
         foreach ($productotabla as $detalle) {
-            //DEVOLVEMOS CANTIDAD AL LOTE Y AL LOTE LOGICO
-            $lote = LoteProducto::findOrFail($detalle->lote_id);
-            $lote->cantidad_logica = $lote->cantidad_logica + $detalle->cantidad;
-            //$lote->cantidad =  $lote->cantidad_logica;
-            $lote->estado = '1';
-            $lote->update();
-            $mensaje = 'Cantidad devuelta';
-        };
-
-        return $mensaje;
-    }
-
-    //DEVOLVER CANTIDAD LOGICA AL CERRAR VENTANA EDIT
-    public function returnQuantityEdit(Request $request)
-    {
-        $data = $request->all();
-        $cantidades = $data['cantidades'];
-        $productosJSON = $cantidades;
-        $productotabla = json_decode($productosJSON);
-        $mensaje = '';
-        foreach ($productotabla as $detalle) {
-            //DEVOLVEMOS CANTIDAD AL LOTE Y AL LOTE LOGICO
-            $lote = LoteProducto::findOrFail($detalle->lote_id);
-            if($detalle->detalle_id != 0)
+            $cont = 0;
+            $existe = false;
+            $indice =  -1;
+            while($cont < count($detalles))
             {
-                $lote->cantidad_logica = $lote->cantidad_logica + $detalle->cantidad;
-            }else
-            {
-                $detalle_venta = Detalle::find($detalle->detalle_id);
-                if($detalle_venta)
+                if($detalles[$cont]->id == $detalle->detalle_id)
                 {
-                    $lote->cantidad_logica = ($lote->cantidad_logica + $detalle->cantidad) - $detalle_venta->cantidad;
+                    $existe = true;
+                    $indice = $cont;
+                    $cont = count($detalles);
                 }
+                $cont = $cont + 1;
             }
 
-            $lote->update();
+            if($existe)
+            {
+                if($indice >= 0)
+                {
+                    $lot = $detalles[$indice];
 
-            $mensaje = 'Cantidad devuelta';
-        };
-
-        return $mensaje;
-    }
-
-    //DEVOLVER CANTIDAD LOGICA DEL LOTE ELIMINADO
-    public function returnQuantityLoteInicio(Request $request)
-    {
-        $data = $request->all();
-        $cantidades = $data['cantidades'];
-        $productosJSON = $cantidades;
-        $productotabla = json_decode($productosJSON);
-        $mensaje = '';
-        foreach ($productotabla as $detalle) {
-            //DEVOLVEMOS CANTIDAD AL LOTE Y AL LOTE LOGICO
-            $lote = LoteProducto::findOrFail($detalle->lote_id);
-            $lote->cantidad_logica = $lote->cantidad_logica - $detalle->cantidad;
-            $lote->estado = '1';
-            $lote->update();
+                    if($detalle->cantidad - $lot->cantidad > 0)
+                    {
+                        $lote = LoteProducto::findOrFail($lot->lote_id);
+                        $lote->cantidad_logica = $lote->cantidad_logica + ($detalle->cantidad - $lot->cantidad);
+                        $lote->estado = '1';
+                        $lote->update();
+                    }
+                }
+            }
+            else
+            {
+                //DEVOLVEMOS CANTIDAD AL LOTE Y AL LOTE LOGICO
+                $lote = LoteProducto::findOrFail($detalle->lote_id);
+                $lote->cantidad_logica = $lote->cantidad_logica + $detalle->cantidad;
+                $lote->estado = '1';
+                $lote->update();
+            }
             $mensaje = 'Cantidad devuelta';
         };
 
@@ -703,23 +741,5 @@ class NoEnviadosController extends Controller
                 'success' => false,
             ]);
         }
-    }
-
-    public function updateQuantityEdit(Request $request)
-    {
-        $data = $request->all();
-        $cantidades = $data['cantidades'];
-        $productosJSON = $cantidades;
-        $productotabla = json_decode($productosJSON);
-        foreach ($productotabla as $detalle) {
-            //DEVOLVEMOS CANTIDAD AL LOTE Y AL LOTE LOGICO
-            $lote = LoteProducto::findOrFail($detalle->lote_id);
-            $lote->cantidad_logica = $lote->cantidad_logica - $detalle->cantidad;
-            $lote->update();
-        };
-
-        return response()->json([
-            'success' => true
-        ]);
     }
 }

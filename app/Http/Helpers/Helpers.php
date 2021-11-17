@@ -958,7 +958,7 @@ if (!function_exists('enviarNotaapi')) {
 //MODIFICAR LOTES CANTIDADES
 
 if (!function_exists('actualizarStockLotes')) {
-    function actualizarStockLotes($id = null)
+    function actualizarStockLotes()
     {
         DB::update('update lote_productos set cantidad_logica = cantidad');
     }
