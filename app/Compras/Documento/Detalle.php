@@ -34,6 +34,7 @@ class Detalle extends Model
 
         'lote',
         'lote_id',
+        'estado',
         'fecha_vencimiento'
     ];
 
@@ -105,15 +106,17 @@ class Detalle extends Model
             $kardex->save();
         });
 
-        static::deleted(function(Detalle $detalle){
-            //ANULAR LOTE producto
-            $lote = LoteProducto::where('compra_documento_detalle_id', $detalle->id)->first();
-            $producto= Producto::findOrFail($lote->producto_id);
-            $producto->stock=$producto->stock-$lote->cantidad;
-            $producto->save();
-            //$lote->estado = '0';
-            //$lote->update();
-            $lote->delete();
+        static::updated(function(Detalle $detalle){
+            if($detalle->estado == 'ANULADO')
+            {
+                MovimientoAlmacen::where('lote_id', $detalle->id)->where('producto_id', $detalle->producto_id)->where('compra_documento_id', $detalle->compra_documento_id)->where('nota', 'COMPRA')->where('movimiento', 'INGRESO')->delete();
+                $lote = LoteProducto::where('compra_documento_id', $detalle->documento_id)->where('producto_id',$detalle->producto_id)->first();
+                $lote->estado = '0';
+                $lote->update();
+                // $producto= Producto::findOrFail($lote->producto_id);
+                // $producto->stock=$producto->stock-$lote->cantidad;
+                // $producto->save();
+            }
 
         });
 

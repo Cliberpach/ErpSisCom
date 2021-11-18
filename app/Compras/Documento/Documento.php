@@ -105,6 +105,15 @@ class Documento extends Model
                     $cuenta_proveedor->save();
                 }
             }
+
+            if($documento->estado == 'ANULADO')
+            {
+                if($documento->cuenta)
+                {
+                    $cuenta_proveedor = CuentaProveedor::find($documento->cuenta->id);
+                    $cuenta_proveedor->delete();
+                }
+            }
         });
 
         static::deleted(function(Documento $documento){

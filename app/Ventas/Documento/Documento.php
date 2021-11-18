@@ -218,6 +218,16 @@ class Documento extends Model
                 }
             }
 
+            if($documento->estado == 'ANULADO')
+            {
+                $detalles = Detalle::where('documento_id', $documento->id)->get();
+                foreach($detalles as $detalle)
+                {
+                    $detalle->estado = 'ANULADO';
+                    $detalle->update();
+                }
+            }
+
         });
 
         static::deleted(function(Documento $documento){
@@ -228,7 +238,6 @@ class Documento extends Model
                 $cuenta_cliente->estado = 'ANULADO';
                 $cuenta_cliente->update();
             }
-
         });
 
     }
