@@ -516,7 +516,7 @@ function(){
     });
 
      // Cosultas - Compras - Ordenes
-     Route::prefix('consultas/compras/cotizaciones')->group(function(){
+     Route::prefix('consultas/compras/ordenes')->group(function(){
 
         Route::get('index', 'Consultas\Compras\OrdenController@index')->name('consultas.compras.orden.index');
         Route::post('getTable','Consultas\Compras\OrdenController@getTable')->name('consultas.compras.orden.getTable');
