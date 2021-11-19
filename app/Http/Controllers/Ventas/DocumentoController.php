@@ -465,7 +465,7 @@ class DocumentoController extends Controller
                     $envio_ = self::sunat_valida($documento->id);
                     $documento->envio_sunat = '1';
                 }
-                $vp = self::venta_comprobante($documento->id);
+                //$vp = self::venta_comprobante($documento->id);
                 $ve = self::venta_email($documento->id);
                 Session::flash('success','Documento de venta creado.');
 
@@ -476,14 +476,13 @@ class DocumentoController extends Controller
             }
             else{
                 DB::commit();
-                $vp = self::venta_comprobante($documento->id);
+                //$vp = self::venta_comprobante($documento->id);
                 $ve = self::venta_email($documento->id);
                 Session::flash('success','Documento de venta creado.');
                 return response()->json([
                     'success' => true,
                     'documento_id'=> $documento->id
                 ]);
-                //return redirect()->route('ventas.documento.index')->with('documento_id', $documento->id);
             }
         }
         catch(Exception $e)
@@ -491,12 +490,6 @@ class DocumentoController extends Controller
             $productosJSON = $request->get('productos_tabla[]');
             $productotabla = json_decode($productosJSON);
             DB::rollBack();
-            /*foreach ($productotabla as $producto) {
-                $lote = LoteProducto::findOrFail($producto->producto_id);
-                $lote->cantidad_logica =  $lote->cantidad_logica + $producto->cantidad;
-                $lote->update();
-            }*/
-            //Session::flash('error', (string) $e->getMessage());
             return response()->json([
                 'success' => false,
                 'mensaje'=> $e->getMessage(), //'Ocurrio un error porfavor volver a intentar, si el error persiste comunicarse con el administrador del sistema.'

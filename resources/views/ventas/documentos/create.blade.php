@@ -1466,9 +1466,6 @@
                     document.getElementById("fecha_atencion_campo").disabled = false;
                     document.getElementById("empresa_id").disabled = false;
                     document.getElementById("cliente_id").disabled = false;
-                    //HABILITAR EL CARGAR PAGINA
-                    //$('#asegurarCierre').val(2)
-                    //$('#enviar_documento').submit();
                 }
                 else
                 {
