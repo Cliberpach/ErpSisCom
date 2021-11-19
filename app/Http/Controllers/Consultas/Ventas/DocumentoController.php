@@ -60,6 +60,8 @@ class DocumentoController extends Controller
                 'fecha_documento' =>  Carbon::parse($documento->fecha_documento)->format( 'd/m/Y'),
                 'estado' => $documento->estado,
                 'sunat' => $documento->sunat,
+                'serie' => $documento->serie,
+                'correlativo' => $documento->correlativo,
                 'otros' => number_format($otros, 2, '.', ''),
                 'efectivo' => number_format($efectivo, 2, '.', ''),
                 'transferencia' => number_format($transferencia, 2, '.', ''),
