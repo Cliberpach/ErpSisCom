@@ -1,20 +1,8 @@
 <?php
-
-use App\Almacenes\Kardex;
-use App\Almacenes\LoteProducto;
-use App\Http\Controllers\Almacenes\NotaSalidadController;
-use App\Mantenimiento\Empresa\Empresa;
-use App\Pos\MovimientoCaja;
-use App\User;
-use App\Ventas\CuentaCliente;
-use App\Ventas\Documento\Detalle;
 use App\Ventas\Documento\Documento;
-use App\Ventas\NotaDetalle;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
