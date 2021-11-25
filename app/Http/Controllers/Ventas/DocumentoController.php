@@ -735,7 +735,7 @@ class DocumentoController extends Controller
             {
                 if ($documento->sunat == '0' || $documento->sunat == '2' ) {
                     //ARREGLO COMPROBANTE
-                    $arreglo_comprobante = array(
+                    /*$arreglo_comprobante = array(
                         "tipoOperacion" => $documento->tipoOperacion(),
                         "tipoDoc"=> $documento->tipoDocumento(),
                         "serie" => '000',
@@ -770,14 +770,14 @@ class DocumentoController extends Controller
 
                     $comprobante= json_encode($arreglo_comprobante);
                     $data = generarComprobanteapi($comprobante, $documento->empresa_id);
-                    $name = $documento->serie.'-'.$documento->correlativo.'-'.$documento->id.'.pdf';
+                    $name = $documento->serie.'-'.$documento->correlativo.'-'.$documento->id.'.pdf';*/
 
                     if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'))) {
                         mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'));
                     }
-                    $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
-                    file_put_contents($pathToFile, $data);
-                    //return response()->file($pathToFile);
+                    /*$pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
+                    file_put_contents($pathToFile, $data);*/
+
                     $empresa = Empresa::first();
 
                     $legends = self::obtenerLeyenda($documento);
@@ -805,22 +805,24 @@ class DocumentoController extends Controller
                             'empresa' => $empresa,
                             "legends" =>  $legends,
                             ])->setPaper('a4')->setWarnings(false);
+
+                        $pdf->save(public_path().'/storage/comprobantes/'.$documento->serie.'-'.$documento->correlativo.'-'.$documento->id.'.pdf');
 
                         return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
                     }
                 }else{
 
                     //OBTENER CORRELATIVO DEL COMPROBANTE ELECTRONICO
-                    $comprobante = event(new ComprobanteRegistrado($documento,$documento->serie));
+                    /*$comprobante = event(new ComprobanteRegistrado($documento,$documento->serie));
                     //ENVIAR COMPROBANTE PARA LUEGO GENERAR PDF
                     $data = generarComprobanteapi($comprobante[0],$documento->empresa_id);
-                    $name = $documento->serie.'-'.$documento->correlativo.'-'.$documento->id.'.pdf';
+                    $name = $documento->serie.'-'.$documento->correlativo.'-'.$documento->id.'.pdf';*/
 
                     if(!file_exists(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'))) {
                         mkdir(storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'));
                     }
-                    $pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
-                    file_put_contents($pathToFile, $data);
+                    /*$pathToFile = storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'comprobantes'.DIRECTORY_SEPARATOR.$name);
+                    file_put_contents($pathToFile, $data);*/
 
                     $empresa = Empresa::first();
 
@@ -851,6 +853,8 @@ class DocumentoController extends Controller
                             'empresa' => $empresa,
                             "legends" =>  $legends,
                             ])->setPaper('a4')->setWarnings(false);
+
+                        $pdf->save(public_path().'/storage/comprobantes/'.$documento->serie.'-'.$documento->correlativo.'-'.$documento->id.'.pdf');
 
                         return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
                     }
@@ -896,6 +900,7 @@ class DocumentoController extends Controller
                         ])->setPaper('a4')->setWarnings(false);
 
                     $pdf->save(public_path().'/storage/comprobantes/'.$documento->serie.'-'.$documento->correlativo.'-'.$documento->id.'.pdf');
+
                     return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
                 }
             }
@@ -942,6 +947,7 @@ class DocumentoController extends Controller
                     ])->setPaper('a4')->setWarnings(false);
 
                 $pdf->save(public_path().'/storage/comprobantes/'.$documento->serie.'-'.$documento->correlativo.'-'.$documento->id.'.pdf');
+
                 return $pdf->stream($documento->serie.'-'.$documento->correlativo.'.pdf');
             }
         }
