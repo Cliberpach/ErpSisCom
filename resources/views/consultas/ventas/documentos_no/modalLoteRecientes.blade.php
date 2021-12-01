@@ -128,7 +128,7 @@
 function obtenerLotesproductosRecientes() {
     //RUTA LOTES PRODUCTOS
     var url = '{{ route("consultas.ventas.documento.no.getLotRecientes", ":id")}}';
-    url = url.replace(':id', 1);
+    url = url.replace(':id', '{{ $documento->id }}');
     //ELIMINAR EL DATATABLE PARA VOLVER A INSTANCIARLO
     $(".dataTables-lotes-recientes").dataTable().fnDestroy();
     //INSTANCIAR DATATABLE
