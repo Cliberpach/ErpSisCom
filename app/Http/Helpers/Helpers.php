@@ -1042,7 +1042,7 @@ if (!function_exists('cuadreMovimientoCajaIngresos')) {
     {
         $totalIngresos = 0;
         foreach ($movimiento->detalleMovimientoVentas as $item) {
-            if ($item->documento->forma_pago == 160) {
+            if ($item->documento->forma_pago == 160 && $item->documento->sunat != '2') {
                 if ($item->documento->tipo_pago_id == 1) {
                     $totalIngresos = $totalIngresos + $item->documento->importe;
                 } else {

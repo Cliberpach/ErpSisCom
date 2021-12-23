@@ -286,7 +286,7 @@
             </thead>
             <tbody>
                 @foreach ($movimiento->detalleMovimientoVentas as $ventas)
-                    @if ($ventas->documento->forma_pago == 160)
+                    @if ($ventas->documento->forma_pago == 160 && $ventas->documento->sunat != '2')
                         <tr>
                             <td style="text-align: center; border-right: 2px solid #52BE80">
                                 {{ $ventas->documento->nombreDocumento() }}</td>
