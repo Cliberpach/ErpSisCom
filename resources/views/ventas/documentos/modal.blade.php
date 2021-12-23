@@ -11,7 +11,7 @@
                 <small class="font-bold">Editar detalle</small>
             </div>
             <div class="modal-body">
-                
+
                 <input type="hidden" id="id_editar" name="id_editar">
                 <input type="hidden" id="presentacion_producto_editar" name="presentacion_producto_editar">
                 <input type="hidden" id="indice" name="indice">
@@ -19,8 +19,8 @@
 
                 <div class="form-group">
                     <label class="col-form-label required">Producto-lote:</label>
-                    <input type="text" class="form-control" id="producto_lote_editar" name="producto_lote_editar" readonly> 
-                    <input type="hidden" class="form-control" id="producto_editar" name="producto_editar"> 
+                    <input type="text" class="form-control" id="producto_lote_editar" name="producto_lote_editar" readonly>
+                    <input type="hidden" class="form-control" id="producto_editar" name="producto_editar">
                 </div>
                 <div class="form-group">
                     <label class="">Unidad de Medida</label>
@@ -30,12 +30,12 @@
 
                     <div class="col-lg-6 col-xs-12">
                         <label class="required">Cantidad</label>
-                        <input type="number" id="cantidad_editar" name="cantidad_editar" class="form-control" min="1" onkeypress="return isNumber(event);">
+                        <input type="text" id="cantidad_editar" name="cantidad_editar" class="form-control" min="1" onkeypress="return filterFloat(event, this, false);">
                         <input type="hidden" id="cantidad_editar_actual" name="cantidad_editar_actual" class="form-control">
                     </div>
                     <div class="col-lg-6 col-xs-12">
                         <label class="required">Precio</label>
-                        <input type="text" id="precio_editar" name="precio_editar" class="form-control" maxlength="15" onkeypress="return filterFloat(event, this, true);" required>
+                        <input type="text" id="precio_editar" name="precio_editar" class="form-control" maxlength="15" onkeypress="return filterFloat(event, this, false);" required>
                     </div>
                 </div>
             </div>
@@ -58,9 +58,9 @@
 <script>
 
 $('#cantidad_editar').on('input', function() {
-    this.value = this.value.replace(/[^0-9]/g, '');
-    let max= parseInt(this.max);
-    let valor = parseInt(this.value);
+    //this.value = this.value.replace(/[^0-9]/g, '');
+    let max = convertFloat(this.max);
+    let valor = convertFloat(this.value);
     if(valor>max){
         toastr.error('La cantidad ingresada supera al stock del producto Max('+max+').', 'Error');
         this.value = max;
@@ -117,7 +117,7 @@ $("#btn_editar_detalle").click(function() {
             {
                 enviar = true;
                 toastr.warning('Ocurrió un error porfavor recargar la pagina.')
-            } 
+            }
         });
     }else{
         toastr.error('Cerrar ventana y volver a editar producto.', 'Error');
@@ -183,7 +183,7 @@ function actualizarTabla(i) {
     let cantidad = convertFloat($('#cantidad_editar').val());
 
     precio_unitario = precio_inicial;
-    valor_unitario = precio_unitario / (1 + igv_calculado);                
+    valor_unitario = precio_unitario / (1 + igv_calculado);
     dinero = precio_unitario * (pdescuento / 100);
     precio_nuevo = precio_unitario - dinero;
     valor_venta = precio_nuevo * cantidad;

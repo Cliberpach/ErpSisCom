@@ -193,8 +193,8 @@
                                                     </div>
                                                     <div class="col-lg-2 col-xs-12">
                                                         <label class="required">Cantidad</label>
-                                                        <input type="numer" id="cantidad" class="form-control"
-                                                            maxlength="10" onkeypress="return isNumber(event);"
+                                                        <input type="text" id="cantidad" class="form-control"
+                                                            maxlength="10" onkeypress="return filterFloat(event, this);"
                                                             disabled>
                                                         <div class="invalid-feedback"><b><span
                                                                     id="error-cantidad"></span></b></div>

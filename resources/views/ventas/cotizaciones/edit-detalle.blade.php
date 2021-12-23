@@ -32,7 +32,7 @@
                 <div class="form-group row">
                     <div class="col-lg-6 col-xs-12">
                         <label class="required">Cantidad</label>
-                        <input type="text" id="cantidad_editar" name="cantidad_editar" class="form-control" maxlength="10" onkeypress="return isNumber(event);" required>
+                        <input type="text" id="cantidad_editar" name="cantidad_editar" class="form-control" maxlength="10" onkeypress="return filterFloat(event, this);" required>
                     </div>
                     <div class="col-lg-6 col-xs-12">
                         <label class="required">Precio</label>

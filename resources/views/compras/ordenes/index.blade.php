@@ -32,7 +32,7 @@
                         style="text-transform:uppercase">
                             <thead>
                                 <tr>
-                                    
+
                                     <th colspan="3" class="text-center">FECHAS</th>
                                     <th colspan="3" class="text-center">ORDEN DE COMPRA</th>
                                     <th colspan="1" class="text-center"></th>
@@ -195,7 +195,7 @@ $(document).ready(function() {
                     }
                 },
             },
-            
+
             {
                 data: null,
                 className: "text-center",
@@ -328,7 +328,7 @@ function concretada(id) {
 
 function enviado(id) {
 
-    $("#modal_listar_enviados").on("shown.bs.modal", function () { 
+    $("#modal_listar_enviados").on("shown.bs.modal", function () {
         $.get('/compras/ordenes/consultaEnvios/' + id, function(data) {
         if (data.length > 0) {
             enviado_usuario.style.display = "";
@@ -383,7 +383,7 @@ function documento(id) {
 
 
 @if(!empty($id))
-   
+
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
@@ -407,7 +407,7 @@ function documento(id) {
             url_nuevo = url_nuevo.replace(':id', "{{$id}}");
             $(location).attr('href', url_nuevo);
 
-                
+
         } else if (
             /* Read more about handling dismissals below */
             result.dismiss === Swal.DismissReason.cancel
@@ -421,7 +421,7 @@ function documento(id) {
     })
 @endif
 
-@if (!empty($id_eliminar)) 
+@if (!empty($id_eliminar))
 
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
@@ -446,7 +446,7 @@ function documento(id) {
             url_nuevo = url_nuevo.replace(':id', "{{$id_eliminar}}");
             $(location).attr('href', url_nuevo);
 
-                
+
         } else if (
             /* Read more about handling dismissals below */
             result.dismiss === Swal.DismissReason.cancel
